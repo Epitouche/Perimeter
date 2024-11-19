@@ -1,39 +1,93 @@
-import gleam/int
+import gleam/dynamic
+import gleam/option.{type Option, None, Some}
 import lustre
-import lustre/element.{text}
-import lustre/element/html.{button, div, p}
-import lustre/event.{on_click}
+import lustre/attribute
+import lustre/effect.{type Effect}
+import lustre/element.{type Element}
+import lustre/element/html
+import lustre/event
+
+// Lustre_http is a community package that provides a simple API for making
+// HTTP requests from your update function. You can find the docs for the package
+// here: https://hexdocs.pm/lustre_http/index.html
+import lustre/ui
+import lustre/ui/layout/aside
+import lustre_http.{type HttpError}
+
+// MAIN ------------------------------------------------------------------------
 
 pub fn main() {
-  // let app = lustre.simple(init, update, view)
-  // let assert Ok(_) = lustre.start(app, "#app", Nil)
-
-  // Nil
-  let app = lustre.element(html.h1([], [text("Hello, World!")]))
+  let app = lustre.application(init, update, view)
   let assert Ok(_) = lustre.start(app, "#app", Nil)
 }
-// fn init(_flags) {
-//   0
-// }
 
-// type Msg {
-//   Incr
-//   Decr
-// }
+// MODEL -----------------------------------------------------------------------
 
-// fn update(model, msg) {
-//   case msg {
-//     Incr -> model + 1
-//     Decr -> model - 1
-//   }
-// }
+type Model {
+  Model(quote: Option(Quote))
+}
 
-// fn view(model) {
-//   let count = int.to_string(model)
+type Quote {
+  Quote(author: String, content: String)
+}
 
-//   div([], [
-//     button([on_click(Incr)], [text(" + ")]),
-//     p([], [text(count)]),
-//     button([on_click(Decr)], [text(" - ")]),
-//   ])
-// }
+fn init(_flags) -> #(Model, Effect(Msg)) {
+  #(Model(quote: None), effect.none())
+}
+
+// UPDATE ----------------------------------------------------------------------
+
+pub opaque type Msg {
+  UserClickedRefresh
+  ApiUpdatedQuote(Result(Quote, HttpError))
+}
+
+fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
+  case msg {
+    UserClickedRefresh -> #(model, get_quote())
+    ApiUpdatedQuote(Ok(quote)) -> #(Model(quote: Some(quote)), effect.none())
+    ApiUpdatedQuote(Error(_)) -> #(model, effect.none())
+  }
+}
+
+fn get_quote() -> Effect(Msg) {
+  let url = "https://api.quotable.io/random"
+  let decoder =
+    dynamic.decode2(
+      Quote,
+      dynamic.field("author", dynamic.string),
+      dynamic.field("content", dynamic.string),
+    )
+
+  lustre_http.get(url, lustre_http.expect_json(decoder, ApiUpdatedQuote))
+}
+
+// VIEW ------------------------------------------------------------------------
+
+fn view(model: Model) -> Element(Msg) {
+  let styles = [#("width", "100vw"), #("height", "100vh"), #("padding", "1rem")]
+
+  ui.centre(
+    [attribute.style(styles)],
+    ui.aside(
+      [aside.min_width(70), attribute.style([#("width", "60ch")])],
+      view_quote(model.quote),
+      ui.button([event.on_click(UserClickedRefresh)], [
+        element.text("New quote"),
+      ]),
+    ),
+  )
+}
+
+fn view_quote(quote: Option(Quote)) -> Element(msg) {
+  case quote {
+    Some(quote) ->
+      ui.stack([], [
+        element.text(quote.author <> " once said..."),
+        html.p([attribute.style([#("font-style", "italic")])], [
+          element.text(quote.content),
+        ]),
+      ])
+    None -> html.p([], [element.text("Click the button to get a quote!")])
+  }
+}
