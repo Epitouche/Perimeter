@@ -1,46 +1,28 @@
-# POC Gleam
+# POC Java
 
-## GLEAM
+## JAVA
 
-### install gleam
+### install java Spring boot
 
-[gleam install documentation](https://gleam.run/getting-started/installing/)
+[quick start](https://spring.io/quickstart)
 
-Creating a project
+use:
 
-```bash
-gleam new projectD
-```
+[spring initialzr](start.spring.io)
 
-### run gleam
+to create a new project
 
-```bash
-gleam run
-```
-
-### documentation gleam
-
-[gleam documentation](https://gleam.run/documentation/)
-
-## LUSTRE
-
-A framework for building Web apps in Gleam!
-
-### install lustre
-
-in a gleam project
+### run java
 
 ```bash
-gleam add lustre
-gleam add --dev lustre_dev_tools
+mvn install
+java -jar ./target/demo-0.0.1-SNAPSHOT.jar
 ```
 
-### run lustre
+### documentation java
 
-```bash
-gleam run -m lustre/dev start
-```
+[java documentation](https://java.run/documentation/)
 
-### documentation lustre
+### documentation spring
 
-[lustre documentation](https://hexdocs.pm/lustre/)
+[spring documentation](https://spring.io)
