@@ -31,5 +31,7 @@ WORKDIR /app
 # Copy the built application
 COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar /app/
 
+EXPOSE 8080
+
 # Command to run the application
 CMD ["java", "-jar", "/app/demo-0.0.1-SNAPSHOT.jar"]

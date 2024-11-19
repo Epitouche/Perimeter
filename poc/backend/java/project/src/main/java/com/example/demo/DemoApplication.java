@@ -14,8 +14,21 @@ public class DemoApplication {
 
     @GetMapping("/")
     public String documentation() {
-      return String.format("possible routes: /, /ping, /hello");
+      return String.format("possible routes: /, /ping, /hello, /about.json");
     }
+
+    @GetMapping("/about.json")
+    public String about() {
+
+      String json = "{"
+      + "\"name\": \"Spring Boot\","
+      + "\"description\": \"Spring Boot is a Spring module which provides RAD (Rapid Application Development) feature to Spring framework.\","
+      + "\"website\": \"https://spring.io/projects/spring-boot\""
+      + "}";
+      return json;
+}
+
+
 
     @GetMapping("/ping")
     public String ping() {
