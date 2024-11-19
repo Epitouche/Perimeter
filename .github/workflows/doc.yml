@@ -18,6 +18,6 @@ jobs:
       - name: Github Project to Markdown
         uses: imnotjames/github-project-to-markdown@v0.0.11
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.SSH_PRIVATE_KEY }}
           markdown_path: docs/README.md
           project_uri: ${{ github.repository }}
