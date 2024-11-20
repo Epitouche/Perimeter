@@ -1,0 +1,68 @@
+[
+    {
+        "id": 1,
+        "question": "Which word do you prefer?",
+        "options": [
+            {
+                "id": 1,
+                "text": "Schtroumpfy"
+            },
+            {
+                "id": 2,
+                "text": "Caracasieue"
+            },
+            {
+                "id": 3,
+                "text": "Prouetz"
+            },
+            {
+                "id": 4,
+                "text": "Snerferwerfel"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "question": "What can't you live without?",
+        "options": [
+            {
+                "id": 1,
+                "text": "A bowling ball"
+            },
+            {
+                "id": 2,
+                "text": "A turtle shell"
+            },
+            {
+                "id": 3,
+                "text": "Tom mendy"
+            },
+            {
+                "id": 4,
+                "text": "A rotten butternut squash"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "question": "Would you rather... ?",
+        "options": [
+            {
+                "id": 1,
+                "text": "Have a hairy tongue"
+            },
+            {
+                "id": 2,
+                "text": "Your sweat smell like cheese"
+            },
+            {
+                "id": 3,
+                "text": "Look 70 your whole life"
+            },
+            {
+                "id": 4,
+                "text": ""
+            }
+        ]
+    }
+]
