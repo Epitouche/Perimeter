@@ -11,14 +11,16 @@ export class WeatherService {
 
   constructor(private http: HttpClient) { }
 
-  getWeatherData(cityName: string, lang: string = 'FR'): Observable<WeatherData> {
-    const url = `${environment.weatherApiBaseUrl}/city/${cityName}/${lang}`;
+  // Calling API
+  getWeatherData(cityName: string): Observable<WeatherData> {
+    const url = `${environment.weatherApiBaseUrl}`;
 
-    const headers = {
-      'x-rapidapi-key': environment.XRapidAPIKeyHeaderValue,
-      'x-rapidapi-host': environment.XRapidAPIUrlHostHeaderValue,
+    const params = {
+      q: cityName,
+      appid: environment.OpenWeatherMapKeyValue,
+      units: 'metric'
     };
 
-    return this.http.get<WeatherData>(url, { headers });
+    return this.http.get<WeatherData>(url, { params });
   }
 }
