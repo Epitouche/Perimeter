@@ -24,6 +24,10 @@ CREATE AN AUTOMATION PLATFORM
       - [POC Backend](#poc-backend)
       - [POC Mobile](#poc-mobile)
   - [Tech Stack](#tech-stack)
+  - [Role](#role)
+    - [Role Frontend](#role-frontend)
+    - [Role Backend](#role-backend)
+    - [Role Mobile](#role-mobile)
 
 ## General Info
 
@@ -60,12 +64,28 @@ docker compose up --build
 
 ## Tech Stack
 
-**Frontend:** [Nuxt](https://nuxt.com/) [TailwindCSS](https://tailwindcss.com/)
+**Frontend:** [Nuxt](https://nuxt.com/), [TailwindCSS](https://tailwindcss.com/)
 
 **Mobile:** [React Native](https://reactnative.dev/)
 
-**Backend:** [Golang](https://golang.google.cn/) [Gin](https://gin-gonic.com) [Gorm](https://gorm.io/)
+**Backend:** [Golang](https://golang.google.cn/), [Gin](https://gin-gonic.com), [Gorm](https://gorm.io/)
 
-**Container:** [Docker](https://www.docker.com/) [Docker Compose](https://docs.docker.com/compose/)
+**Container:** [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/)
 
 **Organisation** [Github Project](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
+
+## Role
+
+### Role Frontend
+
+- [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
+- [@ItsMeHope](https://github.com/ItsMeHope)
+
+### Role Backend
+
+- [@arthurgauffre](https://github.com/arthurgauffre)
+- [@Tom-Mendy](https://www.github.com/Tom-Mendy)
+
+### Role Mobile
+
+- [@QuentinLeguay](https://www.github.com/QuentinLeguay)
