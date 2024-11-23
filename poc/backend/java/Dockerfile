@@ -4,7 +4,7 @@ FROM maven:3.9 AS dependencies
 WORKDIR /app
 
 # Copy only the pom.xml and settings files for dependency resolution
-COPY ./project/pom.xml .
+COPY backend/java/project/pom.xml .
 
 # Download dependencies
 RUN mvn dependency:go-offline -B
@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=dependencies /root/.m2 /root/.m2
 
 # Copy the source code
-COPY ./project/. .
+COPY backend/java/project/. .
 
 # Build the application
 RUN mvn install -DskipTests
