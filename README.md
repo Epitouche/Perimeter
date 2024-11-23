@@ -37,12 +37,17 @@ docker compose up --build
 
 ## Documentation
 
-[Developer Documentation](./docs/DeveloperDocumentation.md)
+[Developer Documentation](./docs/developerDocumentation.md)
+[GithubProject](https://github.com/orgs/Epitouche/projects/1/views/1)
 
 ## Tech Stack
 
-**Frontend:** [Nuxt](https://nuxt.com/)
+**Frontend:** [Nuxt](https://nuxt.com/) [TailwindCSS](https://tailwindcss.com/)
 
 **Mobile:** [React Native](https://reactnative.dev/)
 
-**Backend:** [Golang](https://golang.google.cn/)
+**Backend:** [Golang](https://golang.google.cn/) [Gin](https://gin-gonic.com) [Gorm](https://gorm.io/)
+
+**Container:** [Docker](https://www.docker.com/) [Docker Compose](https://docs.docker.com/compose/)
+
+**Organisation** [Github Project](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
