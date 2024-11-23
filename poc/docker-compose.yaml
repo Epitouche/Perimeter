@@ -28,3 +28,15 @@ services:
     build:
       target: test
       dockerfile: backend/go/Dockerfile
+
+  mobile-react-native:
+    container_name: mobile-react-native
+    build:
+      target: run
+      dockerfile: mobile/react-native/Dockerfile
+
+  mobile-react-native-build-apk:
+    container_name: mobile-react-native-build-apk
+    build:
+      target: build-apk
+      dockerfile: mobile/react-native/Dockerfile

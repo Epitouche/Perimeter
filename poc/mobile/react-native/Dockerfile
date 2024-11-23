@@ -2,7 +2,7 @@ FROM reactnativecommunity/react-native-android AS node-install
 
 WORKDIR /app
 
-COPY mobile/package.json /app
+COPY mobile/react-native/project/package.json /app
 
 RUN apt-get update 
 
@@ -22,16 +22,26 @@ FROM java-install AS build
 
 WORKDIR /app
 
-COPY mobile/ /app
+COPY mobile/react-native/project/ /app
 
 WORKDIR /app/android
 
 RUN ./gradlew :app:assembleRelease
 
-FROM alpine:latest AS final-mobile
+
+FROM alpine:latest AS build-apk
 
 WORKDIR /app/public/apk
 
 COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/public/apk/client.apk
 
 CMD ["echo", "Mobile build complete"]
+
+
+FROM java-install AS run
+
+WORKDIR /app
+
+COPY mobile/react-native/project/ /app
+
+CMD ["npm", "start"]
