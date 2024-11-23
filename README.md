@@ -19,6 +19,10 @@ CREATE AN AUTOMATION PLATFORM
   - [Features](#features)
   - [Usage/Examples](#usageexamples)
   - [Documentation](#documentation)
+    - [Prof of Concept](#prof-of-concept)
+      - [POC Frontend](#poc-frontend)
+      - [POC Backend](#poc-backend)
+      - [POC Mobile](#poc-mobile)
   - [Tech Stack](#tech-stack)
 
 ## General Info
@@ -39,6 +43,20 @@ docker compose up --build
 
 [Developer Documentation](./docs/developerDocumentation.md)
 [GithubProject](https://github.com/orgs/Epitouche/projects/1/views/1)
+
+### Prof of Concept
+
+#### POC Frontend
+
+#### POC Backend
+
+[Comparative Study](poc/backend/README.md)
+
+- [gleam](poc/backend/gleam/doc.md)
+- [go](poc/backend/go/doc.md)
+- [java](poc/backend/java/doc.md)
+
+#### POC Mobile
 
 ## Tech Stack
 

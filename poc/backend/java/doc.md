@@ -1,5 +1,18 @@
 # Technical Analysis of Java for the Action-Reaction Project
 
+## Table of Contents
+
+- [Technical Analysis of Java for the Action-Reaction Project](#technical-analysis-of-java-for-the-action-reaction-project)
+  - [Table of Contents](#table-of-contents)
+  - [Backend Comparative Study](#backend-comparative-study)
+  - [Strengths of Java for This Type of Project](#strengths-of-java-for-this-type-of-project)
+  - [Weaknesses or Identified Limitations](#weaknesses-or-identified-limitations)
+  - [Potential for Evolution or Integration into a Larger Environment](#potential-for-evolution-or-integration-into-a-larger-environment)
+
+## Backend Comparative Study
+
+[Comparative Study](../README.md)
+
 ## Strengths of Java for This Type of Project
 
 1. **Rich Library Ecosystem**

@@ -1,5 +1,35 @@
 # Technical Analysis: Go (Golang) for the Action-Reaction Automation Platform
 
+## Table of Contents
+
+- [Technical Analysis: Go (Golang) for the Action-Reaction Automation Platform](#technical-analysis-go-golang-for-the-action-reaction-automation-platform)
+  - [Table of Contents](#table-of-contents)
+  - [Backend Comparative Study](#backend-comparative-study)
+  - [Strengths of Golang for This Project](#strengths-of-golang-for-this-project)
+    - [1. **Concurrency and Performance**](#1-concurrency-and-performance)
+    - [2. **Microservices and API-First Design**](#2-microservices-and-api-first-design)
+    - [3. **Ease of Deployment**](#3-ease-of-deployment)
+    - [4. **Ecosystem and Libraries**](#4-ecosystem-and-libraries)
+    - [5. **Developer Productivity**](#5-developer-productivity)
+    - [6. **Community and Documentation**](#6-community-and-documentation)
+  - [Weaknesses and Limitations of Golang](#weaknesses-and-limitations-of-golang)
+    - [1. **Verbose Error Handling**](#1-verbose-error-handling)
+    - [2. **Limited Library Maturity for Advanced Features**](#2-limited-library-maturity-for-advanced-features)
+    - [3. **Lack of Native GUI Libraries**](#3-lack-of-native-gui-libraries)
+    - [4. **Generic Programming**](#4-generic-programming)
+    - [5. **Memory Management**](#5-memory-management)
+  - [Potential for Evolution and Integration](#potential-for-evolution-and-integration)
+    - [1. **Scaling to Larger Architectures**](#1-scaling-to-larger-architectures)
+    - [2. **Improved Developer Workflow**](#2-improved-developer-workflow)
+    - [3. **Future-Proofing with Ecosystem Advances**](#3-future-proofing-with-ecosystem-advances)
+    - [4. **Cross-Team Collaboration**](#4-cross-team-collaboration)
+    - [5. **Security Enhancements**](#5-security-enhancements)
+  - [Conclusion](#conclusion)
+
+## Backend Comparative Study
+
+[Comparative Study](../README.md)
+
 ## Strengths of Golang for This Project
 
 ### 1. **Concurrency and Performance**
