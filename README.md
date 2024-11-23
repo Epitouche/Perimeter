@@ -46,6 +46,7 @@ docker compose up --build
 ## Documentation
 
 [Developer Documentation](./docs/developerDocumentation.md)
+[Service Documentation](./docs/services.md)
 [GithubProject](https://github.com/orgs/Epitouche/projects/1/views/1)
 
 ### Prof of Concept

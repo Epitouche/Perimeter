@@ -1,11 +1,10 @@
 # Developer Documentation
 
-[main documentation](../README.md)
-
 ## Table of Contents
 
 - [Developer Documentation](#developer-documentation)
   - [Table of Contents](#table-of-contents)
+  - [Main Document](#main-document)
   - [Git](#git)
     - [Commit](#commit)
     - [Branch](#branch)
@@ -14,6 +13,10 @@
     - [File](#file)
     - [Folder - Directory](#folder---directory)
     - [Visual](#visual)
+
+## Main Document
+
+[main documentation](../README.md)
 
 ## Git
 
