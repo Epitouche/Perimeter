@@ -16,6 +16,12 @@ COPY backend/go/project/ .
 RUN go build -o /app
 
 
+FROM dependencies AS test
+
+COPY backend/go/project/ .
+
+CMD ["go", "test", "-v"]
+
 FROM alpine:3.15 AS run
 
 WORKDIR /app
