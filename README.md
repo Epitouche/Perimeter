@@ -1,7 +1,5 @@
 # ACTION-REACTION
 
-CREATE AN AUTOMATION PLATFORM
-
 ## Authors
 
 - [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
@@ -10,6 +8,8 @@ CREATE AN AUTOMATION PLATFORM
 - [@QuentinLeguay](https://www.github.com/QuentinLeguay)
 - [@Tom-Mendy](https://www.github.com/Tom-Mendy)
 
+---
+
 ## Table of Contents
 
 - [ACTION-REACTION](#action-reaction)
@@ -17,76 +17,110 @@ CREATE AN AUTOMATION PLATFORM
   - [Table of Contents](#table-of-contents)
   - [General Info](#general-info)
   - [Features](#features)
-  - [Usage/Examples](#usageexamples)
+  - [Usage](#usage)
   - [Documentation](#documentation)
-    - [Prof of Concept](#prof-of-concept)
-      - [POC Frontend](#poc-frontend)
-      - [POC Backend](#poc-backend)
-      - [POC Mobile](#poc-mobile)
+    - [Proof of Concept (POC)](#proof-of-concept-poc)
+      - [Frontend POCs](#frontend-pocs)
+      - [Backend POCs](#backend-pocs)
+      - [Mobile POCs](#mobile-pocs)
   - [Tech Stack](#tech-stack)
-  - [Role](#role)
-    - [Role Frontend](#role-frontend)
-    - [Role Backend](#role-backend)
-    - [Role Mobile](#role-mobile)
+  - [Roles](#roles)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
+    - [Mobile](#mobile)
+
+---
 
 ## General Info
 
-AREA is a web automation platform
+**AREA** (Action-Reaction) is a web automation platform designed to handle actions from external services and trigger corresponding reactions seamlessly.
+
+---
 
 ## Features
 
-it can handle handle action from external service and perform reaction
+- Integrates with external services to automate workflows.
+- Supports complex action-reaction chains.
 
-## Usage/Examples
+---
+
+## Usage
+
+To build and run the project:
 
 ```bash
 docker compose up --build
 ```
 
+---
+
 ## Documentation
 
-[Developer Documentation](./docs/developerDocumentation.md)
-[Service Documentation](./docs/services.md)
-[GithubProject](https://github.com/orgs/Epitouche/projects/1/views/1)
+- [Developer Documentation](./docs/developerDocumentation.md)
+- [Service Documentation](./docs/services.md)
+- [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
 
-### Prof of Concept
+### Proof of Concept (POC)
 
-#### POC Frontend
+#### Frontend POCs
 
-#### POC Backend
+_Details pending..._
 
+#### Backend POCs
+
+A comparative study of different backend technologies is available:
 [Comparative Study](poc/backend/README.md)
 
-- [gleam](poc/backend/gleam/doc.md)
-- [go](poc/backend/go/doc.md)
-- [java](poc/backend/java/doc.md)
+- [Gleam Documentation](poc/backend/gleam/doc.md)
+- [Go Documentation](poc/backend/go/doc.md)
+- [Java Documentation](poc/backend/java/doc.md)
 
-#### POC Mobile
+#### Mobile POCs
+
+_Details pending..._
+
+---
 
 ## Tech Stack
 
-**Frontend:** [Nuxt](https://nuxt.com/), [TailwindCSS](https://tailwindcss.com/)
+**Frontend:**
 
-**Mobile:** [React Native](https://reactnative.dev/)
+- [Nuxt](https://nuxt.com/)
+- [TailwindCSS](https://tailwindcss.com/)
 
-**Backend:** [Golang](https://golang.google.cn/), [Gin](https://gin-gonic.com), [Gorm](https://gorm.io/)
+**Mobile:**
 
-**Container:** [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/)
+- [React Native](https://reactnative.dev/)
 
-**Organisation** [Github Project](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
+**Backend:**
 
-## Role
+- [Golang](https://golang.google.cn/)
+- [Gin](https://gin-gonic.com)
+- [Gorm](https://gorm.io/)
 
-### Role Frontend
+**Containers:**
+
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+**Project Management:**
+
+- [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
+
+---
+
+## Roles
+
+### Frontend
 
 - [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
 - [@ItsMeHope](https://github.com/ItsMeHope)
 
-### Role Backend
+### Backend
 
 - [@arthurgauffre](https://github.com/arthurgauffre)
 - [@Tom-Mendy](https://www.github.com/Tom-Mendy)
 
-### Role Mobile
+### Mobile
 
 - [@QuentinLeguay](https://www.github.com/QuentinLeguay)
