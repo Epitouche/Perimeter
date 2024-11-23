@@ -1,10 +1,10 @@
 ARG GLEAM_VERSION=v1.5.1
 
-FROM ghcr.io/gleam-lang/gleam:${GLEAM_VERSION}-erlang-alpine
+FROM ghcr.io/gleam-lang/gleam:${GLEAM_VERSION}-erlang-alpine AS run
 
 WORKDIR /app
 
-COPY ./project .
+COPY /backend/gleam/project .
 
 # Install dependencies
 RUN gleam deps download

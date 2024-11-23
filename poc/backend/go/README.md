@@ -12,10 +12,22 @@
 go mod init your_repository_project
 ```
 
-### add Gin golang framework
+### Add Gin golang framework
 
 ```bash
 go get github.com/gin-gonic/gin
+```
+
+### Add Testify for test
+
+```bash
+go get github.com/stretchr/testify
+go get github.com/stretchr/testify/assert@v1.10.0
+```
+
+run test:
+```bash
+go test -v
 ```
 
 ### Run a project

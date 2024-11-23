@@ -2,16 +2,16 @@ FROM golang:1.22-alpine AS dependencies
 
 WORKDIR /app
 
-COPY project/go.mod .
+COPY backend/go/project/go.mod .
 
-COPY project/go.sum .
+COPY backend/go/project/go.sum .
 
 RUN go mod download
 
 
 FROM dependencies AS build
 
-COPY project/ .
+COPY backend/go/project/ .
 
 RUN go build -o /app
 
