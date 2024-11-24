@@ -6,6 +6,7 @@
 
 - [Developer Documentation](#developer-documentation)
   - [Table of Contents](#table-of-contents)
+  - [Subject](#subject)
   - [Git](#git)
     - [Commit](#commit)
     - [Branch](#branch)
@@ -14,6 +15,10 @@
     - [File](#file)
     - [Folder - Directory](#folder---directory)
     - [Visual](#visual)
+
+## Subject
+
+This documentation aims to list the architecture of the project, github branches and commit standards. How the project is structured so you can implement other features while keeping the same implementation standard.
 
 ## Git
 
