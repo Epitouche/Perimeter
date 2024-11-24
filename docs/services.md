@@ -1,280 +1,326 @@
-# Service
+# Services
 
 ## Table of Contents
 
-- [Service](#service)
+- [Services](#services)
   - [Table of Contents](#table-of-contents)
   - [Main Document](#main-document)
-    - [Must Service](#must-service)
-      - [1. Gmail (Google service)](#1-gmail-google-service)
-      - [2. Google Drive (Google service)](#2-google-drive-google-service)
-      - [3. Google Calendar (Google service)](#3-google-calendar-google-service)
-      - [4. Facebook (Meta service)](#4-facebook-meta-service)
-      - [5. Instagram (Meta service)](#5-instagram-meta-service)
-      - [5. Whatsapp (Meta service)](#5-whatsapp-meta-service)
-      - [6. Spotify (Spotify Service)](#6-spotify-spotify-service)
-      - [7. Github (Github Service)](#7-github-github-service)
-      - [8. OpenWeatherMap (OpenWeatherMap Service)](#8-openweathermap-openweathermap-service)
-      - [9. Timer (Timer Service)](#9-timer-timer-service)
-    - [Maybe Service](#maybe-service)
-      - [10. Dropbox (Dropbox Service)](#10-dropbox-dropbox-service)
-      - [11. Youtube (Google service)](#11-youtube-google-service)
-      - [12. RSS flux (RSS Service)](#12-rss-flux-rss-service)
-      - [13. X (X Service)](#13-x-x-service)
-      - [14. Outlook (Microsoft Service)](#14-outlook-microsoft-service)
-      - [15. OneDrive (Microsoft Service)](#15-onedrive-microsoft-service)
-      - [16. Outlook calendar (Microsoft Service)](#16-outlook-calendar-microsoft-service)
-      - [17. Deezer (Deezer Service)](#17-deezer-deezer-service)
+  - [Must Services](#must-services)
+    - [1. Gmail (Google Service)](#1-gmail-google-service)
+    - [2. Google Drive (Google Service)](#2-google-drive-google-service)
+    - [3. Google Calendar (Google Service)](#3-google-calendar-google-service)
+    - [4. Facebook (Meta Service)](#4-facebook-meta-service)
+    - [5. Instagram (Meta Service)](#5-instagram-meta-service)
+    - [6. WhatsApp (Meta Service)](#6-whatsapp-meta-service)
+    - [7. Spotify (Spotify Service)](#7-spotify-spotify-service)
+    - [8. GitHub (GitHub Service)](#8-github-github-service)
+    - [9. OpenWeatherMap (OpenWeatherMap Service)](#9-openweathermap-openweathermap-service)
+    - [10. Timer (Timer Service)](#10-timer-timer-service)
+  - [Optional Services](#optional-services)
+    - [11. Dropbox (Dropbox Service)](#11-dropbox-dropbox-service)
+    - [12. YouTube (Google Service)](#12-youtube-google-service)
+    - [13. RSS Feed (RSS Service)](#13-rss-feed-rss-service)
+    - [14. X (X Service)](#14-x-x-service)
+    - [15. Outlook (Microsoft Service)](#15-outlook-microsoft-service)
+    - [16. OneDrive (Microsoft Service)](#16-onedrive-microsoft-service)
+    - [17. Outlook Calendar (Microsoft Service)](#17-outlook-calendar-microsoft-service)
+    - [18. Deezer (Deezer Service)](#18-deezer-deezer-service)
+
+---
 
 ## Main Document
 
-[main documentation](../README.md)
+Refer to the [main documentation](../README.md).
 
-### Must Service
+---
 
-if we implement a service we will at least do:
+## Must Services
 
-- 1 action
-- 1 reaction
+For each service we implement, the minimum requirements are:
 
-List the service we will serve
+- **One action**
+- **One reaction**
 
-#### 1. Gmail (Google service)
+### 1. Gmail (Google Service)
 
-[Gmail API](https://developers.google.com/gmail)
-Action:
+[Gmail API Documentation](https://developers.google.com/gmail)
 
-- Receipt of a message
-- Receipt of a message from a user X
-- Receipt of a message whose title contains the word X
+**Actions:**
 
-Reaction:
+- [ ] Receive a message
+- [ ] Receive a message from user X
+- [ ] Receive a message with a subject containing the word X
 
-- The user sends a message M to a recipient D
+**Reactions:**
+
+- [ ] Send message M to recipient D
   - [API Guide](https://developers.google.com/gmail/api/guides/sending)
   - [API Reference](https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send)
 
-#### 2. Google Drive (Google service)
+---
 
-[Google Drive API](https://developers.google.com/drive)
-Action:
+### 2. Google Drive (Google Service)
 
-- A new file is present
-- A new file is present in the X directory
-- A user shares a file
+[Google Drive API Documentation](https://developers.google.com/drive)
 
-Reaction:
+**Actions:**
 
-- The user adds the file F in the drive
+- [ ] Detect a new file
+- [ ] Detect a new file in directory X
+- [ ] Detect a file shared by a user
+
+**Reactions:**
+
+- [ ] Add file F to the drive
   - [API Reference](https://developers.google.com/drive/api/reference/rest/v3/files/create)
-- The user shares the F file with another U user
+- [ ] Share file F with user U
 
-#### 3. Google Calendar (Google service)
+---
 
-[Google Calendar API](https://developers.google.com/calendar)
-Action:
+### 3. Google Calendar (Google Service)
 
-- Start of an event
-- End of an event
-- Add of an event
+[Google Calendar API Documentation](https://developers.google.com/calendar)
 
-Reaction:
+**Actions:**
 
-- Add event
-  - [insert API Reference](https://developers.google.com/calendar/api/v3/reference/events/insert)
+- [ ] Event starts
+- [ ] Event ends
+- [ ] Add an event
 
-#### 4. Facebook (Meta service)
+**Reactions:**
 
-[Facebook API](https://developers.facebook.com/docs/facebook-login/)
+- [ ] Add an event
+  - [API Reference](https://developers.google.com/calendar/api/v3/reference/events/insert)
 
-Action:
+---
 
-- A new message is posted in group G
-- A new message containing a #hashtag is posted
-- A new private message is received by the user
-- One of the user’s messages gets a like
-- The user gains a Follower
+### 4. Facebook (Meta Service)
 
-Reaction:
+[Facebook API Documentation](https://developers.facebook.com/docs/facebook-login/)
 
-- The user posts a message in group G
-- The user is a new person P
+**Actions:**
 
-#### 5. Instagram (Meta service)
+- [ ] A new message is posted in group G
+- [ ] A new message containing #hashtag
+- [ ] Receive a private message
+- [ ] User's message gets a like
+- [ ] User gains a follower
 
-[Instagram API](https://developers.facebook.com/docs/instagram-platform)
+**Reactions:**
 
-Action:
+- [ ] Post a message in group G
+- [ ] Follow a new user P
 
-- A new message is posted in group G
-- A new message containing a #hashtag is posted
-- A new private message is received by the user
-- One of the user’s messages gets a like
-- The user gains a Follower
+---
 
-Reaction:
+### 5. Instagram (Meta Service)
 
-- The user posts a message in group G
-- The user is a new person P
+[Instagram API Documentation](https://developers.facebook.com/docs/instagram-platform)
 
-#### 5. Whatsapp (Meta service)
+**Actions:**
 
-[Whatsapp API](https://developers.facebook.com/docs/whatsapp) LIMITED
+- [ ] A new message is posted in group G
+- [ ] A new message containing #hashtag
+- [ ] Receive a private message
+- [ ] User's message gets a like
+- [ ] User gains a follower
 
-Action:
+**Reactions:**
 
-- A new message is posted in group G
-- A new private message is received by the user
+- [ ] Post a message in group G
+- [ ] Follow a new user P
 
-Reaction:
+---
 
-- The user posts a message in group G
-- The user is a new person P
+### 6. WhatsApp (Meta Service)
 
-#### 6. Spotify (Spotify Service)
+[WhatsApp API Documentation](https://developers.facebook.com/docs/whatsapp)
+_(Limited functionality)_
 
-[Spotify API](https://developer.spotify.com/documentation/web-api)
-Action:
+**Actions:**
 
-- User current-playback music
-  - [get-information-about-the-users-current-playback API](https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback)
+- [ ] New message in group G
+- [ ] Receive a private message
 
-Reaction:
+**Reactions:**
 
-- Start music
-  - [start-a-users-playback API](https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback)
-- Stop music
-  - [pause-a-users-playback API](https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback)
-- Give information on the music/artist
-- Change volume of the music
+- [ ] Post a message in group G
+- [ ] Follow a new user P
 
-#### 7. Github (Github Service)
+---
 
-[Github API](https://docs.github.com/en/rest)
-Action:
+### 7. Spotify (Spotify Service)
 
-- **Create a new repository R**
-- Create a new branch in the repo R
-- Commit a file in the repo R in the branch B
+[Spotify API Documentation](https://developer.spotify.com/documentation/web-api)
 
-Reaction:
+**Actions:**
 
-- **Create a new repository R**
-- Create a new branch in the repo R
-  - [get-a-branch API](https://docs.github.com/en/rest/branches/branches?apiVersion=2022-11-28#get-a-branch)
-- Commit a file in the repo R
-  - [create-or-update-file-contents API](https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents)
+- [ ] Get user’s current playback information
+  - [API Reference](https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback)
 
-#### 8. OpenWeatherMap (OpenWeatherMap Service)
+**Reactions:**
 
-[OpenWeatherMap API](http://api.openweathermap.org/data/2.5/weather)
-[OpenWeatherMap API](https://openweathermap.org/api) (there are a lot of API)
+- [ ] Start playback
+  - [API Reference](https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback)
+- [ ] Pause playback
+  - [API Reference](https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback)
+- [ ] Change volume
+- [ ] Retrieve music/artist details
 
-- Can put params like “q: cityName, appid: apiKey, units: 'metric'”
+---
 
-Action:
+### 8. GitHub (GitHub Service)
 
-- Temperature lower or greater than T
-- Weather forecast
+[GitHub API Documentation](https://docs.github.com/en/rest)
 
-Reaction:
+**Actions:**
 
-- Show current weather
-  - [weather_overview API](https://openweathermap.org/api/one-call-3#weather_overview)
+- [ ] Create a new repository
+- [ ] Create a branch in repository R
+- [ ] Commit a file in branch B of repository R
 
-#### 9. Timer (Timer Service)
+**Reactions:**
 
-[WorldTimeApi API](https://worldtimeapi.org/pages/examples)
-Action:
+- [ ] Create a branch in repository R
+  - [Branch API](https://docs.github.com/en/rest/branches/branches?apiVersion=2022-11-28#get-a-branch)
+- [ ] Commit a file in branch B of repository R
+  - [File Contents API](https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents)
 
-- Specific Time T
+---
 
-Reaction:
+### 9. OpenWeatherMap (OpenWeatherMap Service)
 
-- Show time
+[OpenWeatherMap API Documentation](https://openweathermap.org/api)
 
-### Maybe Service
+**Actions:**
 
-List the service we MAYBE will serve
+- [ ] Temperature below or above T
+- [ ] Fetch weather forecast
 
-#### 10. Dropbox (Dropbox Service)
+**Reactions:**
 
-[Dropbox API](https://www.dropbox.com/developers/documentation/http/documentation)
-Action:
+- [ ] Display current weather
+  - [API Reference](https://openweathermap.org/api/one-call-3#weather_overview)
 
-- New file
+---
 
-Reaction:
+### 10. Timer (Timer Service)
 
-- Add File T
-  - [files-upload API](https://www.dropbox.com/developers/documentation/http/documentation#files-upload)
-- Download file
-  - [files-download API](https://www.dropbox.com/developers/documentation/http/documentation#files-download)
+[WorldTimeAPI Documentation](https://worldtimeapi.org/pages/examples)
 
-#### 11. Youtube (Google service)
+**Actions:**
 
-[Youtube API](https://developers.google.com/youtube/v3/docs)
-Action:
+- [ ] Trigger at specific time T
 
-- New video in subscribe
+**Reactions:**
 
-Reaction:
+- [ ] Get current time
 
-- Get info of a video
-  - [videos API](https://developers.google.com/youtube/v3/docs/videos)
+---
 
-#### 12. RSS flux (RSS Service)
+## Optional Services
 
-Action:
+### 11. Dropbox (Dropbox Service)
 
-- A new article is available
-- An article is added to their favorites by the user
+[Dropbox API Documentation](https://www.dropbox.com/developers/documentation/http/documentation)
 
-Reaction:
+**Actions:**
 
-- get the latest article
+- [ ] New file added
 
-#### 13. X (X Service)
+**Reactions:**
 
-[X API](https://developer.x.com/en/docs)
-Action:
+- [ ] Upload file
+  - [API Reference](https://www.dropbox.com/developers/documentation/http/documentation#files-upload)
+- [ ] Download file
+  - [API Reference](https://www.dropbox.com/developers/documentation/http/documentation#files-download)
 
-- A new message is posted in group G
-- A new message containing a #hashtag is posted
-- A new private message is received by the user
-- One of the user’s messages gets a like
-- The user gains a Follower
+---
 
-Reaction:
+### 12. YouTube (Google Service)
 
-- The user posts a message in group G
-- The user is a new person P
-- Get user info
-  - [api-reference API](https://developer.x.com/en/docs/x-api/users/lookup/api-reference)
+[YouTube API Documentation](https://developers.google.com/youtube/v3/docs)
 
-#### 14. Outlook (Microsoft Service)
+**Actions:**
 
-[Outlook API](https://learn.microsoft.com/en-us/outlook/rest/reference)
+- [ ] New video in a subscription feed
 
-#### 15. OneDrive (Microsoft Service)
+**Reactions:**
 
-[OneDrive API](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/?view=odsp-graph-online)
+- [ ] Retrieve video information
+  - [API Reference](https://developers.google.com/youtube/v3/docs/videos)
 
-#### 16. Outlook calendar (Microsoft Service)
+---
 
-[Outlook calendar API](https://learn.microsoft.com/en-us/graph/outlook-calendar-concept-overview)
+### 13. RSS Feed (RSS Service)
 
-#### 17. Deezer (Deezer Service)
+**Actions:**
 
-[API](https://developers.deezer.com/api)
-Action:
+- [ ] New article available
+- [ ] Article marked as favorite
 
-- User start music
-- User stop music
+**Reactions:**
 
-Reaction:
+- [ ] Retrieve latest article
 
-- Start music
-- Stop music
-- Give informations on the music/artist
-- Change volume of the music
+---
+
+### 14. X (X Service)
+
+[X API Documentation](https://developer.x.com/en/docs)
+
+**Actions:**
+
+- [ ] A new message is posted in group G
+- [ ] A new message containing #hashtag
+- [ ] Receive a private message
+- [ ] User's message gets a like
+- [ ] User gains a follower
+
+**Reactions:**
+
+- [ ] Post a message in group G
+- [ ] Follow a new user P
+
+---
+
+### 15. Outlook (Microsoft Service)
+
+[Outlook API Documentation](https://learn.microsoft.com/en-us/outlook/rest/reference)
+
+---
+
+### 16. OneDrive (Microsoft Service)
+
+[OneDrive API Documentation](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/?view=odsp-graph-online)
+
+---
+
+### 17. Outlook Calendar (Microsoft Service)
+
+[Outlook Calendar API Documentation](https://learn.microsoft.com/en-us/graph/outlook-calendar-concept-overview)
+
+---
+
+### 18. Deezer (Deezer Service)
+
+[Deezer API Documentation](https://developers.deezer.com/api)
+
+Application registration
+
+```text
+We're not accepting new application creation at this time. Please check again later.
+```
+
+**Actions:**
+
+- [ ] Start music playback
+- [ ] Stop playback
+- [ ] Get user’s current playback information
+
+**Reactions:**
+
+- [ ] Start playback
+- [ ] Pause playback
+- [ ] Change volume
+- [ ] Retrieve music/artist details
