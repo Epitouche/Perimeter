@@ -1,93 +1,60 @@
-import gleam/dynamic
-import gleam/option.{type Option, None, Some}
+import gleam/int
 import lustre
 import lustre/attribute
-import lustre/effect.{type Effect}
 import lustre/element.{type Element}
 import lustre/element/html
 import lustre/event
-
-// Lustre_http is a community package that provides a simple API for making
-// HTTP requests from your update function. You can find the docs for the package
-// here: https://hexdocs.pm/lustre_http/index.html
 import lustre/ui
-import lustre/ui/layout/aside
-import lustre_http.{type HttpError}
 
 // MAIN ------------------------------------------------------------------------
 
 pub fn main() {
-  let app = lustre.application(init, update, view)
-  let assert Ok(_) = lustre.start(app, "#app", Nil)
+  let app = lustre.simple(init, update, view)
+  let assert Ok(_) = lustre.start(app, "#app", 0)
+
+  Nil
 }
 
 // MODEL -----------------------------------------------------------------------
 
-type Model {
-  Model(quote: Option(Quote))
-}
+type Model =
+  Int
 
-type Quote {
-  Quote(author: String, content: String)
-}
-
-fn init(_flags) -> #(Model, Effect(Msg)) {
-  #(Model(quote: None), effect.none())
+fn init(initial_count: Int) -> Model {
+  case initial_count < 0 {
+    True -> 0
+    False -> initial_count
+  }
 }
 
 // UPDATE ----------------------------------------------------------------------
 
 pub opaque type Msg {
-  UserClickedRefresh
-  ApiUpdatedQuote(Result(Quote, HttpError))
+  Incr
+  Decr
 }
 
-fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
+fn update(model: Model, msg: Msg) -> Model {
   case msg {
-    UserClickedRefresh -> #(model, get_quote())
-    ApiUpdatedQuote(Ok(quote)) -> #(Model(quote: Some(quote)), effect.none())
-    ApiUpdatedQuote(Error(_)) -> #(model, effect.none())
+    Incr -> model + 1
+    Decr -> model - 1
   }
-}
-
-fn get_quote() -> Effect(Msg) {
-  let url = "https://api.quotable.io/random"
-  let decoder =
-    dynamic.decode2(
-      Quote,
-      dynamic.field("author", dynamic.string),
-      dynamic.field("content", dynamic.string),
-    )
-
-  lustre_http.get(url, lustre_http.expect_json(decoder, ApiUpdatedQuote))
 }
 
 // VIEW ------------------------------------------------------------------------
 
 fn view(model: Model) -> Element(Msg) {
   let styles = [#("width", "100vw"), #("height", "100vh"), #("padding", "1rem")]
+  let count = int.to_string(model)
 
   ui.centre(
     [attribute.style(styles)],
-    ui.aside(
-      [aside.min_width(70), attribute.style([#("width", "60ch")])],
-      view_quote(model.quote),
-      ui.button([event.on_click(UserClickedRefresh)], [
-        element.text("New quote"),
+    ui.stack([], [
+      ui.button([event.on_click(Incr)], [element.text("+")]),
+      html.p([attribute.style([#("text-align", "center")])], [
+        element.text(count),
       ]),
-    ),
+      ui.button([event.on_click(Decr)], [element.text("-")]),
+    ]),
   )
-}
-
-fn view_quote(quote: Option(Quote)) -> Element(msg) {
-  case quote {
-    Some(quote) ->
-      ui.stack([], [
-        element.text(quote.author <> " once said..."),
-        html.p([attribute.style([#("font-style", "italic")])], [
-          element.text(quote.content),
-        ]),
-      ])
-    None -> html.p([], [element.text("Click the button to get a quote!")])
-  }
 }

@@ -1,5 +1,29 @@
 # Technical Analysis of Gleam for the "Action-Reaction" Project
 
+## Table of Contents
+
+- [Technical Analysis of Gleam for the "Action-Reaction" Project](#technical-analysis-of-gleam-for-the-action-reaction-project)
+  - [Table of Contents](#table-of-contents)
+  - [Backend Comparative Study](#backend-comparative-study)
+  - [Strengths of Gleam for This Type of Project](#strengths-of-gleam-for-this-type-of-project)
+    - [Simplicity and Readability of Code](#simplicity-and-readability-of-code)
+    - [Easy Integration with the Erlang/OTP Ecosystem](#easy-integration-with-the-erlangotp-ecosystem)
+    - [Microservices-Oriented Design](#microservices-oriented-design)
+    - [Explicit Error Handling](#explicit-error-handling)
+  - [Identified Weaknesses or Limitations](#identified-weaknesses-or-limitations)
+    - [Emerging Ecosystem](#emerging-ecosystem)
+    - [Learning Curve](#learning-curve)
+    - [Raw Performance](#raw-performance)
+  - [Potential for Growth and Integration in a Broader Environment](#potential-for-growth-and-integration-in-a-broader-environment)
+    - [Ecosystem Growth](#ecosystem-growth)
+    - [Integration with Cloud Environments](#integration-with-cloud-environments)
+    - [Large-Scale Scalability](#large-scale-scalability)
+    - [Conclusion](#conclusion)
+
+## Backend Comparative Study
+
+[Comparative Study](../README.md)
+
 ## Strengths of Gleam for This Type of Project
 
 ### Simplicity and Readability of Code
