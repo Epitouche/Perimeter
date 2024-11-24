@@ -1,4 +1,5 @@
 # Nuxt POC
+Nuxt is a fullstack Vue.js framework.
 
 ## Description
 A simple Nuxt project to test it's capabilities and efficiency.
