@@ -1,0 +1,21 @@
+name: push to mirror
+run-name: push_to_mirror
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  push_to_mirror:
+    name: push_to_mirror
+    runs-on: self-hosted
+    steps:
+      - name: Checkout GH repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push to mirror repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ vars.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
