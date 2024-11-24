@@ -2,7 +2,7 @@
 
 ## Description
 A simple Remix project to test it's capabilities and efficiency.
-The project
+The project is a to do list app.
 
 ### Location
 If you are still in the remix-poc folder then run `cd automatic/`
