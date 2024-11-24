@@ -26,6 +26,7 @@ Run command line: `npm start`
 Then navigate to `http://localhost:3000` to see the project web page(s).
 
 ### Functionalities tested
+#### Route
 
 ### Further information
 - [Remix Website](https://remix.run/)
