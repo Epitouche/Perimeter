@@ -3,7 +3,7 @@
 ## Description
 
 A simple Remix project to test it's capabilities and efficiency.
-The project
+The project is a to do list app.
 
 ### Location
 
@@ -35,6 +35,7 @@ Run command line: `npm start`
 Then navigate to `http://localhost:3000` to see the project web page(s).
 
 ### Functionalities tested
+#### Route
 
 ### Further information
 
