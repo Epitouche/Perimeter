@@ -1,14 +1,15 @@
-name: push to mirror
-run-name: push_to_mirror
+name: Mirroring
+run-name: mirroring
 
 on:
   push:
   pull_request:
+  delete:
 
 jobs:
   push_to_mirror:
     name: push_to_mirror
-    runs-on: self-hosted
+    runs-on: ubuntu
     steps:
       - name: Checkout GH repository
         uses: actions/checkout@v4
