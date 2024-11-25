@@ -1,0 +1,74 @@
+services:
+  backend-go:
+    container_name: backend-go
+    build:
+      target: run
+      dockerfile: backend/go/Dockerfile
+    ports:
+      - "8080:8080"
+
+  backend-java:
+    container_name: backend-java
+    build:
+      target: run
+      dockerfile: backend/java/Dockerfile
+    ports:
+      - "8080:8080"
+
+  backend-gleam:
+    container_name: backend-gleam
+    build:
+      target: run
+      dockerfile: backend/gleam/Dockerfile
+    ports:
+      - "1234:1234"
+
+  backend-go-test:
+    container_name: backend-go-test
+    build:
+      target: test
+      dockerfile: backend/go/Dockerfile
+
+  mobile-react-native:
+    container_name: mobile-react-native
+    build:
+      target: run
+      dockerfile: mobile/react-native/Dockerfile
+
+  mobile-react-native-build-apk:
+    container_name: mobile-react-native-build-apk
+    build:
+      target: build-apk
+      dockerfile: mobile/react-native/Dockerfile
+
+  frontend-angular:
+    container_name: frontend-angular
+    build:
+      target: run
+      dockerfile: frontend/angular/Dockerfile
+    ports:
+      - "4200:4200"
+
+  frontend-nuxt:
+    container_name: frontend-nuxt
+    build:
+      target: run
+      dockerfile: frontend/nuxt/Dockerfile
+    ports:
+      - "3000:3000"
+  
+  frontend-remix-manual:
+    container_name: frontend-remix-manual
+    build:
+      target: run-manual
+      dockerfile: frontend/remix/Dockerfile
+    ports:
+      - "3000:3000"
+
+  frontend-remix-auto:
+    container_name: frontend-remix-auto
+    build:
+      target: run-auto
+      dockerfile: frontend/remix/Dockerfile
+    ports:
+      - "5173:5173"
