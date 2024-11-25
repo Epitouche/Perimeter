@@ -2,7 +2,7 @@
 
 ## Authors
 
-- [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
+- [@AleaChlodnik](https://www.github.com/AleaChlodnik)
 - [@arthurgauffre](https://github.com/arthurgauffre)
 - [@ItsMeHope](https://github.com/ItsMeHope)
 - [@QuentinLeguay](https://www.github.com/QuentinLeguay)
@@ -155,7 +155,7 @@ A comparative study of different backend technologies is available:
 
 ### Frontend
 
-- [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
+- [@AleaChlodnik](https://www.github.com/AleaChlodnik)
 - [@ItsMeHope](https://github.com/ItsMeHope)
 
 ### Backend
