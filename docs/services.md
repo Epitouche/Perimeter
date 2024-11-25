@@ -38,9 +38,17 @@ For each service we implement, the minimum requirements are:
 - **One action**
 - **One reaction**
 
+the bold action / reaction are the one we take
+
 ### 1. Spotify (Spotify Service)
 
 [Spotify API Documentation](https://developer.spotify.com/documentation/web-api)
+
+API limit:
+
+- Free plan: 100,000 requests per day for the Web API (requests to retrieve information about tracks, albums, etc.).
+- Limited to 5,000 requests per user per day for integrated Spotify applications.
+- For actions like playing or controlling playback, it may be limited to 100 calls per second.
 
 **Actions:**
 
@@ -60,6 +68,8 @@ For each service we implement, the minimum requirements are:
 
 [OpenWeatherMap API Documentation](https://openweathermap.org/api)
 
+API limit: 1,000 requests per day to obtain current weather data, forecasts, etc.
+
 **Actions:**
 
 - [ ] **Temperature below or above T**
@@ -76,6 +86,8 @@ For each service we implement, the minimum requirements are:
 
 [WorldTimeAPI Documentation](https://worldtimeapi.org/pages/examples)
 
+API limit: we don't find it
+
 **Actions:**
 
 - [ ] **Trigger at specific time T**
@@ -89,6 +101,8 @@ For each service we implement, the minimum requirements are:
 ### 4. Gmail (Google Service)
 
 [Gmail API Documentation](https://developers.google.com/gmail)
+
+API limit: up to 10 000 calls API per day for app using OAuth2
 
 **Actions:**
 
@@ -108,6 +122,8 @@ For each service we implement, the minimum requirements are:
 
 [GitHub API Documentation](https://docs.github.com/en/rest)
 
+API limit: All of these requests count towards your personal rate limit of 5,000 requests per hour.
+
 **Actions:**
 
 - [ ] Create a new repository
@@ -126,6 +142,8 @@ For each service we implement, the minimum requirements are:
 ### 6. Dropbox (Dropbox Service)
 
 [Dropbox API Documentation](https://www.dropbox.com/developers/documentation/http/documentation)
+
+API limit: no obvious limit, but get code `429` when limit reach.
 
 **Actions:**
 
