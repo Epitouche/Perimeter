@@ -7,6 +7,7 @@
 
 - [Comparative Study](#comparative-study)
   - [Table of Contents](#table-of-contents)
+  - [main documentation](#main-documentation)
   - [1. Language and Framework Overview](#1-language-and-framework-overview)
   - [2. Development Paradigm](#2-development-paradigm)
   - [3. Performance](#3-performance)
@@ -20,6 +21,10 @@
   - [Conclusion](#conclusion)
 
 ---
+
+## main documentation
+
+[main doc](../../../README.md)
 
 ## 1. Language and Framework Overview
 
