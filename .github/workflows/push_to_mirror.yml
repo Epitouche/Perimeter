@@ -1,9 +1,10 @@
-name: push to mirror
-run-name: push_to_mirror
+name: Mirroring
+run-name: mirroring
 
 on:
   push:
   pull_request:
+  delete:
 
 jobs:
   push_to_mirror:
@@ -15,13 +16,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure remote mirror (ensure idempotence)
-        run: |
-          if ! git remote | grep -q "mirror"; then
-            git remote add mirror ${{ vars.MIRROR_URL }}
-          fi
-
       - name: Push to mirror repository
-        run: git push --mirror mirror
         env:
-          GIT_SSH_COMMAND: ssh -i "${{ secrets.SSH_PRIVATE_KEY }}" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          MIRROR_URL: ${{ vars.MIRROR_URL }}
+        run: |
+          # Set up SSH authentication
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
+          # Add the mirror remote and push
+          git remote add mirror ${MIRROR_URL} || true
+          git push mirror --all --force
