@@ -1,9 +1,28 @@
 
-# Comparative Study: Kotlin vs React Native
+# Comparative Study
+
+---
+
+## Table of Contents
+
+- [Comparative Study](#comparative-study)
+  - [Table of Contents](#table-of-contents)
+  - [1. Language and Framework Overview](#1-language-and-framework-overview)
+  - [2. Development Paradigm](#2-development-paradigm)
+  - [3. Performance](#3-performance)
+  - [4. Ecosystem and Libraries](#4-ecosystem-and-libraries)
+  - [5. Developer Experience](#5-developer-experience)
+  - [6. Platform Integration](#6-platform-integration)
+  - [7. Learning Curve](#7-learning-curve)
+  - [8. Use Cases](#8-use-cases)
+  - [9. Popular Apps Built](#9-popular-apps-built)
+  - [10. Long-Term Considerations](#10-long-term-considerations)
+  - [Conclusion](#conclusion)
 
 ---
 
 ## 1. Language and Framework Overview
+
 - **Kotlin**: A modern, statically typed programming language primarily used for Android development. It is developed by JetBrains and officially supported by Google. Kotlin Multiplatform allows sharing logic across iOS, Android, and other platforms.
   
 - **React Native**: A JavaScript framework developed by Facebook for building mobile apps using React. It enables cross-platform development with a single codebase for Android and iOS.
@@ -11,6 +30,7 @@
 ---
 
 ## 2. Development Paradigm
+
 - **Kotlin**:
   - Supports **object-oriented** and **functional programming** paradigms.
   - Provides **Kotlin Multiplatform Mobile (KMM)** for code sharing across platforms while retaining native UI and performance.
@@ -24,6 +44,7 @@
 ---
 
 ## 3. Performance
+
 - **Kotlin**:
   - Native performance for Android apps as it compiles directly to JVM bytecode (for Android) or native binaries (KMM).
   - For iOS, KMM code interacts directly with Swift/Objective-C.
@@ -35,6 +56,7 @@
 ---
 
 ## 4. Ecosystem and Libraries
+
 - **Kotlin**:
   - Vast ecosystem for Android development with Android Jetpack and other libraries.
   - Growing support for KMM, though fewer third-party libraries support cross-platform out of the box compared to React Native.
@@ -47,6 +69,7 @@
 ---
 
 ## 5. Developer Experience
+
 - **Kotlin**:
   - Seamless integration with Android Studio and IntelliJ IDEA.
   - Offers concise, type-safe code with fewer runtime errors.
@@ -60,6 +83,7 @@
 ---
 
 ## 6. Platform Integration
+
 - **Kotlin**:
   - Deep integration with Android and iOS platforms via KMM.
   - Enables writing platform-specific code where necessary while sharing logic.
@@ -71,6 +95,7 @@
 ---
 
 ## 7. Learning Curve
+
 - **Kotlin**:
   - Straightforward for Java or C# developers.
   - Demands familiarity with platform-specific APIs (Android/iOS).
@@ -82,6 +107,7 @@
 ---
 
 ## 8. Use Cases
+
 - **Kotlin**:
   - Ideal for Android apps, especially if native performance and platform-specific features are priorities.
   - Best for teams already experienced with Android or JVM ecosystems.
@@ -93,6 +119,7 @@
 ---
 
 ## 9. Popular Apps Built
+
 - **Kotlin**: 
   - Pinterest, Trello (Android), and Netflix (some features using KMM).
   
@@ -102,6 +129,7 @@
 ---
 
 ## 10. Long-Term Considerations
+
 - **Kotlin**:
   - Backed by JetBrains and Google, ensuring strong long-term support.
   - Growing adoption of Kotlin Multiplatform could reduce the gap with cross-platform frameworks.
