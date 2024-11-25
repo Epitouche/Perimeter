@@ -3,11 +3,11 @@ run-name: update-dev-base-branch
 
 on:
   push:
-    # branches:
-    #   - dev
+    branches:
+      - dev
   pull_request:
-    # branches:
-    #   - dev
+    branches:
+      - dev
 
 permissions:
   contents: write
@@ -23,16 +23,16 @@ jobs:
           fetch-depth: 0
 
       # Update the backend branch of the dev branch
-      - run: git switch backend && git pull origin dev && git push || echo "No backend branch"
+      - run: git switch backend && git pull origin dev && git push || echo "No backend branch or no changes"
 
       # Update the frontend branch of the dev branch
-      - run: git switch frontend && git pull origin dev && git push || echo "No frontend branch"
+      - run: git switch frontend && git pull origin dev && git push || echo "No frontend branch or no changes"
 
       # Update the mobile branch of the dev branch
-      - run: git switch mobile && git pull origin dev && git push || echo "No mobile branch"
+      - run: git switch mobile && git pull origin dev && git push || echo "No mobile branch or no changes"
 
       # Update the documentation branch of the dev branch
-      - run: git switch documentation && git pull origin dev && git push || echo "No documentation branch"
+      - run: git switch documentation && git pull origin dev && git push || echo "No documentation branch or no changes"
 
       # Update the devops branch of the dev branch
-      - run: git switch devops && git pull origin dev && git push || echo "No devops branch"
+      - run: git switch devops && git pull origin dev && git push || echo "No devops branch or no changes"
