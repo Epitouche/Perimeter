@@ -1,5 +1,26 @@
 # Kotlin Android Project: Simple App
 
+## Table of Contents
+
+- [Kotlin Android Project: Simple App](#kotlin-android-project-simple-app)
+  - [Table of Contents](#table-of-contents)
+  - [main documentation](#main-documentation)
+  - [Features](#features)
+  - [Prerequisites](#prerequisites)
+  - [Setup Instructions](#setup-instructions)
+    - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Open the Project in Android Studio](#2-open-the-project-in-android-studio)
+  - [3. Install Dependencies](#3-install-dependencies)
+  - [4. Configure an Emulator (Optional)](#4-configure-an-emulator-optional)
+  - [5. Build the Project](#5-build-the-project)
+  - [6. Run the Application](#6-run-the-application)
+
+---
+
+## main documentation
+
+[main doc](../../../README.md)
+
 This project is a simple Android application that demonstrates basic navigation between two activities:
 - **Home Page**: Contains a text input field and a button to navigate to the Select Page.
 - **Select Page**: Contains a dropdown menu (Spinner) and a button to navigate back to the Home Page.
