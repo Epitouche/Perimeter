@@ -3,11 +3,11 @@ run-name: update-dev-base-branch
 
 on:
   push:
-    branches:
-      - dev
+    # branches:
+    #   - dev
   pull_request:
-    branches:
-      - dev
+    # branches:
+    #   - dev
 
 permissions:
   contents: write
@@ -42,6 +42,7 @@ jobs:
       # Update the mobile branch of the dev branch
       - run: git switch mobile
       - run: git pull origin dev
+      - run: git push
 
       # Update the documentation branch of the dev branch
       - run: git switch documentation
