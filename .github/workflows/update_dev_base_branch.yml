@@ -23,26 +23,16 @@ jobs:
           fetch-depth: 0
 
       # Update the backend branch of the dev branch
-      - run: git switch backend
-      - run: git pull origin dev
-      - run: git push
+      - run: git switch backend && git pull origin dev && git push || echo "No backend branch"
 
       # Update the frontend branch of the dev branch
-      - run: git switch frontend
-      - run: git pull origin dev
-      - run: git push
+      - run: git switch frontend && git pull origin dev && git push || echo "No frontend branch"
 
       # Update the mobile branch of the dev branch
-      - run: git switch mobile
-      - run: git pull origin dev
-      - run: git push
+      - run: git switch mobile && git pull origin dev && git push || echo "No mobile branch"
 
       # Update the documentation branch of the dev branch
-      - run: git switch documentation
-      - run: git pull origin dev
-      - run: git push
+      - run: git switch documentation && git pull origin dev && git push || echo "No documentation branch"
 
       # Update the devops branch of the dev branch
-      - run: git switch devops
-      - run: git pull origin dev
-      - run: git push
+      - run: git switch devops && git pull origin dev && git push || echo "No devops branch"
