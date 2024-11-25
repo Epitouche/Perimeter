@@ -31,4 +31,4 @@ COPY frontend/remix/project/automatic/ ./
 
 EXPOSE 5173
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "--host", "--port", "5173"]
