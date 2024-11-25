@@ -134,7 +134,11 @@ func main() {
 	router := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8000
-	err := router.Run(":8000")
+	appPort := os.Getenv("APP_PORT")
+	if appPort == "" {
+		panic("APP_PORT is not set")
+	}
+	err := router.Run(":" + appPort)
 	if err != nil {
 		panic("Error when running the server")
 	}
