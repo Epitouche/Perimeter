@@ -33,6 +33,9 @@ services:
       - "zinit:/home/node/.zinit"
       - "${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached"
     command: sleep infinity
+    environment:
+      - NODE_ENV=development
+      - PORT=8081
     ports:
       - 8081:8081
     networks:

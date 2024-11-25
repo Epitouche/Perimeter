@@ -3,7 +3,7 @@
 {
 	"name": "Frontend",
 	"dockerComposeFile": "../../compose.dev.yaml",
-	"service": "frontend",
+	"service": "client_web",
 	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/frontend",
 
@@ -28,6 +28,6 @@
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
-		3000
+		8081
 	]
 }
