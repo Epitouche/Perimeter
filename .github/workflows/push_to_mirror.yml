@@ -16,17 +16,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push to mirror repository
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          MIRROR_URL: ${{ vars.MIRROR_URL }}
-        run: |
-          # Set up SSH authentication
-          mkdir -p ~/.ssh
-          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+      - run: mkdir -p ~/.ssh
+      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+      - run: chmod 600 ~/.ssh/id_rsa
+      - run: chmod 600 ~/.ssh/id_rsa
+      - run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
-          # Add the mirror remote and push
-          git remote add mirror ${MIRROR_URL} || true
-          git push mirror --all --force
+      - run: git remote set-url mirror ${{ vars.MIRROR_URL }}
+      - run: git remote -v
+      - run: git push mirror --all --force
