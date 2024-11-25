@@ -9,6 +9,9 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: write
+
 jobs:
   update_dev_base_branch:
     name: update_dev_base_branch
