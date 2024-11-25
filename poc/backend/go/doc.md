@@ -4,7 +4,7 @@
 
 - [Technical Analysis: Go (Golang) for the Action-Reaction Automation Platform](#technical-analysis-go-golang-for-the-action-reaction-automation-platform)
   - [Table of Contents](#table-of-contents)
-  - [Backend Comparative Study](#backend-comparative-study)
+  - [Other Documents](#other-documents)
   - [Strengths of Golang for This Project](#strengths-of-golang-for-this-project)
     - [1. **Concurrency and Performance**](#1-concurrency-and-performance)
     - [2. **Microservices and API-First Design**](#2-microservices-and-api-first-design)
@@ -26,9 +26,11 @@
     - [5. **Security Enhancements**](#5-security-enhancements)
   - [Conclusion](#conclusion)
 
-## Backend Comparative Study
+## Other Documents
 
+[Main Documentation](../../../README.md)
 [Comparative Study](../README.md)
+[POC Go README](./README.md)
 
 ## Strengths of Golang for This Project
 

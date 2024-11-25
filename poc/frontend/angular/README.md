@@ -1,4 +1,25 @@
-### README for Angular Weather App
+# POC Angular
+
+## Table Of Contents
+
+- [POC Angular](#poc-angular)
+  - [Table Of Contents](#table-of-contents)
+  - [Other Documents](#other-documents)
+  - [**Angular Weather App**](#angular-weather-app)
+    - [**Installation and Setup**](#installation-and-setup)
+      - [**1. Prerequisites**](#1-prerequisites)
+      - [**2. Clone the Repository**](#2-clone-the-repository)
+      - [**3. Install Dependencies**](#3-install-dependencies)
+      - [**4. Start the Application**](#4-start-the-application)
+    - [**Environment Configuration**](#environment-configuration)
+      - [**Modifying the Environment**](#modifying-the-environment)
+    - [**Using the OpenWeatherMap API**](#using-the-openweathermap-api)
+    - [**Limitations of the API**](#limitations-of-the-api)
+
+## Other Documents
+
+[Main Documentation](../../../README.md)
+[Comparative Study](../README.md)
 
 ---
 
@@ -90,5 +111,3 @@ https://api.openweathermap.org/data/2.5/weather?q=Paris&lang=FR&units=metric&app
 
 4. **Free Tier Restrictions**:
    - Some advanced features (e.g., hourly forecasts, historical data) require a paid plan.
-
----
