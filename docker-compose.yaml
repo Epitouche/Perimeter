@@ -1,0 +1,12 @@
+services:
+  mobile:
+    container_name: mobile
+    build:
+      target: run
+      dockerfile: mobile/Dockerfile
+
+  mobile-build-apk:
+    container_name: mobile-build-apk
+    build:
+      target: build-apk
+      dockerfile: mobile/Dockerfile
