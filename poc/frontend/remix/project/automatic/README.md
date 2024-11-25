@@ -11,7 +11,8 @@
       - [Nodejs \& npm](#nodejs--npm)
     - [Build](#build)
     - [Run and View](#run-and-view)
-    - [Functionalities Tested](#functionalities-tested)
+    - [Functionalities tested](#functionalities-tested)
+      - [Routes](#routes)
   - [Further information](#further-information)
 
 ## Other Documents
@@ -24,7 +25,7 @@
 ## Description
 
 A simple Remix project to test it's capabilities and efficiency.
-The project
+The project is a to do list app.
 
 ### Location
 
@@ -55,7 +56,9 @@ Run command line: `npm run build`
 Run command line: `npm start`
 Then navigate to `http://localhost:3000` to see the project web page(s).
 
-### Functionalities Tested
+### Functionalities tested
+
+#### Routes
 
 ## Further information
 

@@ -11,7 +11,7 @@ export default function Index() {
   return (
     <div className="flex flex-col justify-center items-center gap-48 h-[70vh]">
       <div className="">
-        <h1 className="text-[10rem] font-semibold">To Do List</h1>
+        <h1 className="text-[11rem] font-semibold">To Do List</h1>
       </div>
       <div className="">
         <Link to="/todo">

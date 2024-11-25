@@ -96,6 +96,7 @@ A comparative study of different backend technologies is available:
 [Comparative Study](poc/mobile/)
 
 - [React-Native Documentation](poc/mobile/react-native/README.md)
+- [Kotlin](poc/mobile/kotlin/)
 
 ---
 
