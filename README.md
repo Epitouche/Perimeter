@@ -24,6 +24,15 @@
       - [Backend POCs](#backend-pocs)
       - [Mobile POCs](#mobile-pocs)
   - [Tech Stack](#tech-stack)
+    - [Frontend Tech](#frontend-tech)
+    - [Mobile Tech](#mobile-tech)
+    - [Backend Tech](#backend-tech)
+    - [Database Tech](#database-tech)
+    - [Tools Tech](#tools-tech)
+  - [Accessibility](#accessibility)
+    - [Visual](#visual)
+    - [Auditory](#auditory)
+    - [Other](#other)
   - [Roles](#roles)
     - [Frontend](#frontend)
     - [Backend](#backend)
@@ -84,29 +93,52 @@ _Details pending..._
 
 ## Tech Stack
 
-**Frontend:**
+### Frontend Tech
 
 - [Nuxt](https://nuxt.com/)
 - [TailwindCSS](https://tailwindcss.com/)
 
-**Mobile:**
+### Mobile Tech
 
 - [React Native](https://reactnative.dev/)
 
-**Backend:**
+### Backend Tech
 
 - [Golang](https://golang.google.cn/)
 - [Gin](https://gin-gonic.com)
 - [Gorm](https://gorm.io/)
 
-**Containers:**
+### Database Tech
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
+- [PostgreSQL](https://www.postgresql.org/)
 
-**Project Management:**
+### Tools Tech
 
-- [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
+- **Project Management:**
+  - [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
+- **Containers:**
+  - [Docker](https://www.docker.com/)
+  - [Docker Compose](https://docs.docker.com/compose/)
+- **UI/UX Model:**
+  - [Figma](https://www.figma.com)
+
+---
+
+## Accessibility
+
+### Visual
+
+- Daltonism: High contrast color palette
+- Dark mode
+- Zoom
+
+### Auditory
+
+- Closed captioning for audio media
+
+### Other
+
+- Keyboard navigation (website only)
 
 ---
 
