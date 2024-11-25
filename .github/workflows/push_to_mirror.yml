@@ -14,14 +14,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Configure remote mirror (ensure idempotence)
-        run: |
-          if ! git remote | grep -q "mirror"; then
-            git remote add mirror ${{ vars.MIRROR_URL }}
-          fi
-
       - name: Push to mirror repository
-        run: git push --mirror mirror
-        env:
-          GIT_SSH_COMMAND: ssh -i "${{ secrets.SSH_PRIVATE_KEY }}" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ vars.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
