@@ -1,4 +1,4 @@
-# Comparative Study Backend Technology
+# Comparative Study of Backend Technology
 
 Here’s a comparative study of Golang, Gleam, and Java for the backend of the "AREA" project:
 
@@ -10,7 +10,7 @@ Here’s a comparative study of Golang, Gleam, and Java for the backend of the "
   - [Comparative Table](#comparative-table)
   - [Why Choose Golang?](#why-choose-golang)
 
-## Other Document
+## Other Documents
 
 [Main Document](../../README.md)
 [POC Gleam](./gleam/doc.md)

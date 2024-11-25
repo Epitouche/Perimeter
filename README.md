@@ -74,7 +74,12 @@ docker compose up --build
 
 #### Frontend POCs
 
-_Details pending..._
+A comparative study of different backend technologies is available:
+[Comparative Study](poc/frontend/README.md)
+
+- [Angular Documentation](poc/frontend/angular/README.md)
+- [Nuxt Documentation](poc/frontend/nuxt/README.md)
+- [Remix Documentation](poc/frontend/remix/README.md)
 
 #### Backend POCs
 
@@ -87,7 +92,11 @@ A comparative study of different backend technologies is available:
 
 #### Mobile POCs
 
-_Details pending..._
+A comparative study of different backend technologies is available:
+[Comparative Study](poc/mobile/)
+
+- [React-Native Documentation](poc/mobile/react-native/README.md)
+- [Kotlin](poc/mobile/kotlin/)
 
 ---
 

@@ -4,7 +4,7 @@
 
 - [Technical Analysis of Gleam for the "Action-Reaction" Project](#technical-analysis-of-gleam-for-the-action-reaction-project)
   - [Table of Contents](#table-of-contents)
-  - [Backend Comparative Study](#backend-comparative-study)
+  - [Other Documents](#other-documents)
   - [Strengths of Gleam for This Type of Project](#strengths-of-gleam-for-this-type-of-project)
     - [Simplicity and Readability of Code](#simplicity-and-readability-of-code)
     - [Easy Integration with the Erlang/OTP Ecosystem](#easy-integration-with-the-erlangotp-ecosystem)
@@ -20,9 +20,11 @@
     - [Large-Scale Scalability](#large-scale-scalability)
     - [Conclusion](#conclusion)
 
-## Backend Comparative Study
+## Other Documents
 
+[Main Documentation](../../../README.md)
 [Comparative Study](../README.md)
+[POC Gleam README](./README.md)
 
 ## Strengths of Gleam for This Type of Project
 
