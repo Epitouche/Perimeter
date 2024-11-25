@@ -3,6 +3,7 @@ FROM node:20.12.2-alpine AS build-manual
 WORKDIR /app
 
 COPY frontend/remix/project/manual/package.json ./
+COPY frontend/remix/project/manual/package-lock.json ./
 
 RUN npm install
 
@@ -20,6 +21,7 @@ FROM node:20.12.2-alpine AS build-auto
 WORKDIR /app
 
 COPY frontend/remix/project/automatic/package.json ./
+COPY frontend/remix/project/automatic/package-lock.json ./
 
 RUN npm install
 
