@@ -9,7 +9,7 @@ on:
 jobs:
   push_to_mirror:
     name: push_to_mirror
-    runs-on: ubuntu
+    runs-on: self-hosted
     steps:
       - name: Checkout GH repository
         uses: actions/checkout@v4
