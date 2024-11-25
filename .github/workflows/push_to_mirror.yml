@@ -15,11 +15,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure remote mirror (ensure idempotence)
+      - name: Debug Git Remotes
+        run: git remote -v
+
+      - name: Add mirror remote if missing
         run: |
           if ! git remote | grep -q "mirror"; then
             git remote add mirror ${{ vars.MIRROR_URL }}
           fi
+        env:
+          MIRROR_URL: ${{ vars.MIRROR_URL }}
+
+      - name: Test SSH connection
+        run: ssh -T git@github.com
+        env:
+          GIT_SSH_COMMAND: ssh -i "${{ secrets.SSH_PRIVATE_KEY }}" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
 
       - name: Push to mirror repository
         run: git push --mirror mirror
