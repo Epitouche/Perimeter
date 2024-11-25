@@ -22,13 +22,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Add the SSH key to the runner
-      - run: mkdir -p ~/.ssh
-      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      - run: chmod 600 ~/.ssh/id_rsa
-      - run: chmod 600 ~/.ssh/id_rsa
-      - run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-
       # Update the backend branch of the dev branch
       - run: git switch backend
       - run: git pull origin dev
@@ -50,6 +43,6 @@ jobs:
       - run: git push
 
       # Update the devops branch of the dev branch
-      # - run: git switch devops
-      # - run: git pull origin dev
-      # - run: git push
+      - run: git switch devops
+      - run: git pull origin dev
+      - run: git push
