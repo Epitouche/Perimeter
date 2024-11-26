@@ -8,6 +8,7 @@
   - [Dev](#dev)
     - [Dev Frontend](#dev-frontend)
     - [Dev Backend](#dev-backend)
+  - [Remove Container](#remove-container)
 
 ---
 
@@ -21,6 +22,8 @@
 
 Install [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) in VSCode
 
+setup `.env` file
+
 ### Dev Frontend
 
 open `backend` dev container with : `Dev Containers: Rebuild and Reopen in Container` -> `backend`
@@ -32,3 +35,9 @@ start dev to frontend
 open `frontend` dev container with : `Dev Containers: Rebuild and Reopen in Container` -> `frontend`
 switch to `backend` container with : `Dev Containers: Switch Container` -> `backend`
 start dev to backend
+
+## Remove Container
+
+```bash
+docker compose -f compose.dev.yaml down --volumes
+```
