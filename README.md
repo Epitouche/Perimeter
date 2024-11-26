@@ -68,6 +68,7 @@ docker compose up --build
 - [Developer Documentation](./docs/developerDocumentation.md)
 - [Service Documentation](./docs/services.md)
 - [Database Documentation](./docs/database.md)
+- [Backend Documentation](./docs/backend.md)
 - [Dev Container](./docs/devContainer.md)
 - [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
 
