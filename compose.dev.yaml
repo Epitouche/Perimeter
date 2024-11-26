@@ -11,7 +11,7 @@ services:
       - "zinit:/home/vscode/.zinit"
       - "${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached"
     env_file:
-      - ./backend/.env
+      - .env
     command: sleep infinity
     ports:
       - 8080:8080
