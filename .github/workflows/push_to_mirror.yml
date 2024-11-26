@@ -19,7 +19,6 @@ jobs:
       - run: mkdir -p ~/.ssh
       - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
       - run: chmod 600 ~/.ssh/id_rsa
-      - run: chmod 600 ~/.ssh/id_rsa
       - run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
       - run: git remote set-url mirror ${{ vars.MIRROR_URL }}
