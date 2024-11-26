@@ -3,7 +3,7 @@ package repository
 import (
 	"gorm.io/gorm"
 
-	"github.com/Tom-Mendy/SentryLink/schemas"
+	"area/schemas"
 )
 
 type UserRepository interface {

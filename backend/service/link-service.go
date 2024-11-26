@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/Tom-Mendy/SentryLink/repository"
-	"github.com/Tom-Mendy/SentryLink/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 type LinkService interface {

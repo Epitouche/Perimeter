@@ -10,14 +10,14 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/Tom-Mendy/SentryLink/api"
-	"github.com/Tom-Mendy/SentryLink/controller"
-	"github.com/Tom-Mendy/SentryLink/database"
-	"github.com/Tom-Mendy/SentryLink/docs"
-	"github.com/Tom-Mendy/SentryLink/middlewares"
-	"github.com/Tom-Mendy/SentryLink/repository"
-	"github.com/Tom-Mendy/SentryLink/schemas"
-	"github.com/Tom-Mendy/SentryLink/service"
+	"area/api"
+	"area/controller"
+	"area/database"
+	"area/docs"
+	"area/middlewares"
+	"area/repository"
+	"area/schemas"
+	"area/service"
 )
 
 func setupRouter() *gin.Engine {

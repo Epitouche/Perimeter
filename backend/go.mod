@@ -1,4 +1,4 @@
-module github.com/Tom-Mendy/SentryLink
+module area
 
 go 1.22.1
 

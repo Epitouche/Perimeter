@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/Tom-Mendy/SentryLink/repository"
-	"github.com/Tom-Mendy/SentryLink/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 type GithubTokenService interface {

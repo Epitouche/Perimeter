@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Tom-Mendy/SentryLink/database"
-	"github.com/Tom-Mendy/SentryLink/repository"
-	"github.com/Tom-Mendy/SentryLink/schemas"
+	"area/database"
+	"area/repository"
+	"area/schemas"
 )
 
 type UserService interface {
