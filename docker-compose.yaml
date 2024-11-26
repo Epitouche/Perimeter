@@ -15,7 +15,7 @@ services:
       target: build-apk
       dockerfile: mobile/Dockerfile
     volumes:
-      - shared_apk:/app/apk
+      - shared_apk:/app/public/apk
     networks:
       - app-networks
 
@@ -29,7 +29,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - shared_apk:/app/apk
+      - shared_apk:/app/public/apk
     networks:
       - app-networks
     depends_on:
