@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS dependencies
+FROM golang:1.23-alpine AS dependencies
 
 WORKDIR /app
 
