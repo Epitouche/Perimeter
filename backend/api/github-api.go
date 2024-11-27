@@ -12,7 +12,7 @@ type GithubApi struct {
 	githubTokenController controller.GithubTokenController
 }
 
-func NewGithubAPI(githubTokenController controller.GithubTokenController) *GithubApi {
+func NewGithubApi(githubTokenController controller.GithubTokenController) *GithubApi {
 	return &GithubApi{
 		githubTokenController: githubTokenController,
 	}

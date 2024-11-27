@@ -51,6 +51,8 @@ func setupRouter() *gin.Engine {
 		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
 		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
 		serviceRepository     repository.ServiceRepository     = repository.NewServiceRepository(databaseConnection)
+		actionRepository      repository.ActionRepository      = repository.NewActionRepository(databaseConnection)
+		reactionRepository    repository.ReactionRepository    = repository.NewReactionRepository(databaseConnection)
 
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
@@ -58,21 +60,27 @@ func setupRouter() *gin.Engine {
 		jwtService         service.JWTService         = service.NewJWTService()
 		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
 		serviceService     service.ServiceService     = service.NewServiceService(serviceRepository)
+		actionService      service.ActionService      = service.NewActionService(actionRepository, serviceService)
+		reactionService    service.ReactionService    = service.NewReactionService(reactionRepository, serviceService)
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
 		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
 		serviceController     controller.ServiceController     = controller.NewServiceController(serviceService)
+		actionController      controller.ServiceController     = controller.NewActionController(actionService)
+		reactionController    controller.ServiceController     = controller.NewReactionController(reactionService)
 	)
 
-	linkApi := api.NewLinkAPI(linkController)
+	linkApi := api.NewLinkApi(linkController)
 
-	userApi := api.NewUserAPI(userController)
+	userApi := api.NewUserApi(userController)
 
-	githubApi := api.NewGithubAPI(githubTokenController)
+	githubApi := api.NewGithubApi(githubTokenController)
 
-	api.NewServiceAPI(serviceController)
+	api.NewServiceApi(serviceController)
+	api.NewActionApi(actionController)
+	api.NewReactionApi(reactionController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
@@ -150,7 +158,7 @@ func main() {
 			},
 		})
 	})
-	
+
 	// Listen and Server in 0.0.0.0:8000
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {

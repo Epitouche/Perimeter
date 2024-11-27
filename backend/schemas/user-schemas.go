@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	Id        uint64    `json:"id,omitempty" gorm:"primary_key;auto_increment"`
+	Id        uint64    `json:"id,omitempty" gorm:"primaryKey;autoIncrement"`
 	Username  string    `json:"username" binding:"required" gorm:"type:varchar(100);unique"`
 	Email     string    `json:"email" binding:"requiredcredentials" gorm:"type:varchar(100);unique"`
 	Password  string    `json:"password" gorm:"type:varchar(100)"` // can be null for Oauth2.0 users

@@ -14,22 +14,38 @@ type ServiceService interface {
 
 type serviceService struct {
 	repository repository.ServiceRepository
+	allService []schemas.Service
 }
 
 func NewServiceService(repository repository.ServiceRepository) ServiceService {
-	InitialSaveService(repository)
-	return &serviceService{
+	newService := serviceService{
 		repository: repository,
+		allService: []schemas.Service{
+			{
+				Name:        string(schemas.Spotify),
+				Description: "This service is a music service",
+			},
+			{
+				Name:        string(schemas.OpenWeatherMap),
+				Description: "This service is a weather service",
+			},
+			{
+				Name:        string(schemas.Timer),
+				Description: "This service is a time service",
+			},
+		},
 	}
+	newService.InitialSaveService()
+	return &newService
 }
 
-func InitialSaveService(repository repository.ServiceRepository) {
-	repository.Save(schemas.Service{
-		Name:        "Github",
-		Description: "Github API",
-	})
-
-	println("Service Github created\n")
+func (service *serviceService) InitialSaveService() {
+	for _, oneService := range service.allService {
+		serviceByName := service.repository.FindByName(oneService.Name)
+		if len(serviceByName) == 0 {
+			service.repository.Save(oneService)
+		}
+	}
 }
 
 func (service *serviceService) Save(newService schemas.Service) error {

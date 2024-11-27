@@ -11,7 +11,7 @@ type GitHubTokenResponse struct {
 
 // GithubToken represents the GithubToken entity in the database
 type GithubToken struct {
-	Id          uint64    `json:"id,omitempty" gorm:"primary_key;auto_increment"`
+	Id          uint64    `json:"id,omitempty" gorm:"primaryKey;autoIncrement"`
 	AccessToken string    `json:"access_token"`
 	Scope       string    `json:"scope"`
 	TokenType   string    `json:"token_type"`
@@ -20,7 +20,7 @@ type GithubToken struct {
 
 type GithubUserInfo struct {
 	Login     string `json:"login"`
-	Id        uint64 `json:"id" gorm:"primary_key"`
+	Id        uint64 `json:"id" gorm:"primaryKey"`
 	AvatarUrl string `json:"avatar_url"`
 	Type      string `json:"type"`
 	HtmlUrl   string `json:"html_url"`

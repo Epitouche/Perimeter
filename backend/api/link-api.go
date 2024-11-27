@@ -13,7 +13,7 @@ type LinkApi struct {
 	linkController controller.LinkController
 }
 
-func NewLinkAPI(
+func NewLinkApi(
 	linkController controller.LinkController) *LinkApi {
 	return &LinkApi{
 		linkController: linkController,
