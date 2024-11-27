@@ -11,6 +11,7 @@ type ServiceRepository interface {
 	Update(service schemas.Service)
 	Delete(service schemas.Service)
 	FindAll() []schemas.Service
+	FindByName(name string) []schemas.Service
 }
 
 type serviceRepository struct {
@@ -57,4 +58,13 @@ func (repo *serviceRepository) FindAll() []schemas.Service {
 		panic(err.Error)
 	}
 	return service
+}
+
+func (repo *serviceRepository) FindByName(name string) []schemas.Service {
+	var services []schemas.Service
+	err := repo.db.Connection.Where(&schemas.Service{Name: name}).Find(&services)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return services
 }

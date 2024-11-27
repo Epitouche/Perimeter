@@ -5,21 +5,6 @@ import (
 	"area/schemas"
 )
 
-allService := []schemas.Service{
-	{
-		Name:        "Spotify",
-		Description: "This service is a music service",
-	},
-	{
-		Name:        "OpenWeatherMap",
-		Description: "This service is a weather service",
-	},
-	{
-		Name:        "Time",
-		Description: "This service is a time service",
-	}
-}
-
 type ServiceService interface {
 	Save(newService schemas.Service) error
 	Update(newService schemas.Service) error
@@ -29,21 +14,38 @@ type ServiceService interface {
 
 type serviceService struct {
 	repository repository.ServiceRepository
+	allService []schemas.Service
 }
 
 func NewServiceService(repository repository.ServiceRepository) ServiceService {
-	InitialSaveService(repository)
-	return &serviceService{
+	newService := serviceService{
 		repository: repository,
+		allService: []schemas.Service{
+			{
+				Name:        "Spotify",
+				Description: "This service is a music service",
+			},
+			{
+				Name:        "OpenWeatherMap",
+				Description: "This service is a weather service",
+			},
+			{
+				Name:        "Time",
+				Description: "This service is a time service",
+			},
+		},
 	}
+	newService.InitialSaveService()
+	return &newService
 }
 
-func InitialSaveService(repository repository.ServiceRepository) {
-	for _, service := range allService {
-		repository.Save(service)
+func (service *serviceService) InitialSaveService() {
+	for _, oneService := range service.allService {
+		serviceByName := service.repository.FindByName(oneService.Name)
+		if len(serviceByName) == 0 {
+			service.repository.Save(oneService)
+		}
 	}
-
-	println("All Service created\n")
 }
 
 func (service *serviceService) Save(newService schemas.Service) error {
