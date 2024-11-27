@@ -13,37 +13,83 @@ type ActionService interface {
 }
 
 type actionService struct {
-	repository repository.ActionRepository
-	action     []schemas.Action
+	repository     repository.ActionRepository
+	serviceService ServiceService
+	allAction      map[schemas.ServiceName][]schemas.Action
 }
 
-func NewActionService(repository repository.ActionRepository) ActionService {
+func NewActionService(repository repository.ActionRepository, serviceService ServiceService) ActionService {
 	newService := actionService{
-		repository: repository,
-		action: []schemas.Action{
-			{
-				Name:        "Spotify",
-				Description: "This service is a music service",
+		repository:     repository,
+		serviceService: serviceService,
+		allAction: map[schemas.ServiceName][]schemas.Action{
+			schemas.Spotify: {
+				{
+					Name:        "action1",
+					Description: "do something",
+				},
+				{
+					Name:        "action2",
+					Description: "do something",
+				},
+				{
+					Name:        "action3",
+					Description: "do something",
+				},
 			},
-			{
-				Name:        "OpenWeatherMap",
-				Description: "This service is a weather service",
+			schemas.OpenWeatherMap: {
+				{
+					Name:        "action1",
+					Description: "do something",
+				},
+				{
+					Name:        "action2",
+					Description: "do something",
+				},
+				{
+					Name:        "action3",
+					Description: "do something",
+				},
 			},
-			{
-				Name:        "Time",
-				Description: "This service is a time service",
+			schemas.Timer: {
+				{
+					Name:        "action1",
+					Description: "do something",
+				},
+				{
+					Name:        "action2",
+					Description: "do something",
+				},
+				{
+					Name:        "action3",
+					Description: "do something",
+				},
 			},
 		},
 	}
-	newService.InitialSaveService()
+	newService.InitialSaveAction()
 	return &newService
 }
 
-func (service *actionService) InitialSaveService() {
-	for _, oneService := range service.action {
-		serviceByName := service.repository.FindByName(oneService.Name)
-		if len(serviceByName) == 0 {
-			service.repository.Save(oneService)
+func (service *actionService) InitialSaveAction() {
+	// Find all service and save action
+	for _, oneService := range service.serviceService.FindAll() {
+		// Find all action by service name
+		for _, oneAction := range service.allAction[schemas.ServiceName(oneService.Name)] {
+
+			// actionAll := service.repository.FindAll()
+			// if len(actionAll) != 0 {
+			// actionByName := service.repository.FindByName(oneAction.Name)
+			// if len(actionByName) == 0 {
+			// 	oneAction.ServiceRefId = oneService
+			// 	oneAction.ServiceId = oneService.Id
+			// 	service.repository.Save(oneAction)
+			// }
+			// } else {
+			// oneAction.ServiceRefId = oneService
+			// oneAction.ServiceId = oneService.Id
+			service.repository.Save(oneAction)
+			// }
 		}
 	}
 }

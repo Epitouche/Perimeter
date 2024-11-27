@@ -2,6 +2,14 @@ package schemas
 
 import "time"
 
+type ServiceName string
+
+const (
+	Spotify ServiceName = "Spotify"
+	OpenWeatherMap ServiceName = "OpenWeatherMap"
+	Timer ServiceName = "Timer"
+)
+
 // GithubToken represents the GithubToken entity in the database
 type Service struct {
 	Id          uint64    `json:"id,omitempty" gorm:"primary_key;auto_increment"`
