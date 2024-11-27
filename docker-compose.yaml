@@ -4,10 +4,14 @@ services:
     build:
       target: run
       dockerfile: backend/Dockerfile
+    env_file:
+      - .env
     networks:
       - app-networks
     ports:
       - "8080:8080"
+    depends_on:
+      - postgres
 
   client_mobile:
     container_name: client_mobile
