@@ -8,6 +8,7 @@
   - [Dev](#dev)
     - [Dev Frontend](#dev-frontend)
     - [Dev Backend](#dev-backend)
+  - [Exit Dev Container](#exit-dev-container)
   - [Remove Container](#remove-container)
 
 ---
@@ -35,6 +36,10 @@ start dev to frontend
 open `frontend` dev container with : `Dev Containers: Rebuild and Reopen in Container` -> `frontend`
 switch to `backend` container with : `Dev Containers: Switch Container` -> `backend`
 start dev to backend
+
+## Exit Dev Container
+
+exit dev container with : `Dev Containers: Reopen Folder Locally`
 
 ## Remove Container
 

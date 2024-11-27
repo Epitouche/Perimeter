@@ -26,8 +26,8 @@ FROM alpine:3.15 AS run
 
 WORKDIR /app
 
-COPY --from=build /app/SentryLink .
+COPY --from=build /app/area .
 
 EXPOSE 8080
 
-CMD ["/app/SentryLink"]
+CMD ["/app/area"]
