@@ -66,13 +66,13 @@ func setupRouter() *gin.Engine {
 		serviceController     controller.ServiceController     = controller.NewServiceController(serviceService)
 	)
 
-	linkApi := api.NewLinkAPI(linkController)
+	linkApi := api.NewLinkApi(linkController)
 
-	userApi := api.NewUserAPI(userController)
+	userApi := api.NewUserApi(userController)
 
-	githubApi := api.NewGithubAPI(githubTokenController)
+	githubApi := api.NewGithubApi(githubTokenController)
 
-	api.NewServiceAPI(serviceController)
+	api.NewServiceApi(serviceController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
@@ -150,7 +150,7 @@ func main() {
 			},
 		})
 	})
-	
+
 	// Listen and Server in 0.0.0.0:8000
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {

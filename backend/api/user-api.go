@@ -13,7 +13,7 @@ type UserApi struct {
 	userController controller.UserController
 }
 
-func NewUserAPI(userController controller.UserController) *UserApi {
+func NewUserApi(userController controller.UserController) *UserApi {
 	return &UserApi{
 		userController: userController,
 	}
