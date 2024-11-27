@@ -11,7 +11,13 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/about.json"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
 
   client_mobile:
     container_name: client_mobile
@@ -40,26 +46,23 @@ services:
       - server
       - client_mobile
 
-  postgres:
+  database:
     image: postgres:13
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: admin
-      DB_HOST: postgres
+    container_name: database
+    env_file:
+      - .env
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - database-data:/var/lib/postgresql/data
     networks:
       - app-networks
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d area-database"]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
-  db-data:
+  database-data:
   shared_apk:
 
 networks:
