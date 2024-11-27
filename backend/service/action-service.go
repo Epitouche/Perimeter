@@ -79,8 +79,12 @@ func (service *actionService) InitialSaveAction() {
 		// Find all action by service name
 		for _, oneAction := range service.allAction[schemas.ServiceName(oneService.Name)] {
 
-			oneAction.Service = oneService
-			service.repository.Save(oneAction)
+			existingActions := service.repository.FindByServiceByName(oneService.Id, oneAction.Name)
+
+			if len(existingActions) == 0 {
+				oneAction.Service = oneService
+				service.repository.Save(oneAction)
+			}
 		}
 	}
 }
