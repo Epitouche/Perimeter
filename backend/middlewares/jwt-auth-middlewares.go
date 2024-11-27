@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 
-	"github.com/Tom-Mendy/SentryLink/service"
+	"area/service"
 )
 
 // AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid

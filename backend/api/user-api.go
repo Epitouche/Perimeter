@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Tom-Mendy/SentryLink/controller"
-	"github.com/Tom-Mendy/SentryLink/schemas"
+	"area/controller"
+	"area/schemas"
 )
 
 type UserApi struct {

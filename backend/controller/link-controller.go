@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
-	"github.com/Tom-Mendy/SentryLink/schemas"
-	"github.com/Tom-Mendy/SentryLink/service"
+	"area/schemas"
+	"area/service"
 )
 
 type LinkController interface {

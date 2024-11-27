@@ -5,38 +5,38 @@ import (
 	"area/schemas"
 )
 
-type LinkService interface {
+type ServiceService interface {
 	Save(schemas.Link) error
 	Update(schemas.Link) error
 	Delete(schemas.Link) error
 	FindAll() []schemas.Link
 }
 
-type linkService struct {
+type serviceService struct {
 	repository repository.LinkRepository
 }
 
-func NewLinkService(videoRepository repository.LinkRepository) LinkService {
-	return &linkService{
+func NewServiceService(videoRepository repository.LinkRepository) ServiceService {
+	return &serviceService{
 		repository: videoRepository,
 	}
 }
 
-func (service *linkService) Save(link schemas.Link) error {
+func (service *serviceService) Save(link schemas.Link) error {
 	service.repository.Save(link)
 	return nil
 }
 
-func (service *linkService) Update(link schemas.Link) error {
+func (service *serviceService) Update(link schemas.Link) error {
 	service.repository.Update(link)
 	return nil
 }
 
-func (service *linkService) Delete(link schemas.Link) error {
+func (service *serviceService) Delete(link schemas.Link) error {
 	service.repository.Delete(link)
 	return nil
 }
 
-func (service *linkService) FindAll() []schemas.Link {
+func (service *serviceService) FindAll() []schemas.Link {
 	return service.repository.FindAll()
 }

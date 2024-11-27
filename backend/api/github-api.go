@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Tom-Mendy/SentryLink/controller"
+	"area/controller"
 )
 
 type GithubApi struct {
