@@ -6,8 +6,8 @@
 	"service": "server",
 	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/backend",
-	"postCreateCommand": "sudo chown vscode -R /home/vscode/.zinit && sudo chown vscode -R /home/vscode/.zsh_history && sudo chown vscode -R /home/vscode/.ssh && go mod download && go install github.com/codegangsta/gin@latest && go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0",
-	"postStartCommand": "gin --appPort 8080 --port 8088",
+	"postCreateCommand": "sudo chown vscode -R /home/vscode/.zinit && sudo chown vscode -R /home/vscode/.zsh_history && sudo chown vscode -R /home/vscode/.ssh && go mod download && go install github.com/air-verse/air@latest && go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0",
+	"postStartCommand": "air main.go",
 	"customizations": {
 		"vscode": {
 			"settings": {
