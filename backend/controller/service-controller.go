@@ -10,16 +10,14 @@ type ServiceController interface {
 }
 
 type serviceController struct {
-	service     service.ServiceService
-	serviceUser service.UserService
+	service service.ServiceService
 }
 
 var validateService *validator.Validate
 
-func NewServiceController(service service.ServiceService, serviceUser service.UserService) ServiceController {
+func NewServiceController(service service.ServiceService) ServiceController {
 	validateService = validator.New()
 	return &serviceController{
-		service:     service,
-		serviceUser: serviceUser,
+		service: service,
 	}
 }
