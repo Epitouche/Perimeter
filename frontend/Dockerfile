@@ -13,4 +13,4 @@ COPY frontend/ ./
 
 EXPOSE 8081
 
-CMD ["npm", "run", "dev", "--"]
+CMD ["npx", "nuxt", "dev"]
