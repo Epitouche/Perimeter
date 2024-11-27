@@ -72,24 +72,15 @@ func NewActionService(repository repository.ActionRepository, serviceService Ser
 }
 
 func (service *actionService) InitialSaveAction() {
+
+	allService := service.serviceService.FindAll()
 	// Find all service and save action
-	for _, oneService := range service.serviceService.FindAll() {
+	for _, oneService := range allService {
 		// Find all action by service name
 		for _, oneAction := range service.allAction[schemas.ServiceName(oneService.Name)] {
 
-			// actionAll := service.repository.FindAll()
-			// if len(actionAll) != 0 {
-			// actionByName := service.repository.FindByName(oneAction.Name)
-			// if len(actionByName) == 0 {
-			// 	oneAction.ServiceRefId = oneService
-			// 	oneAction.ServiceId = oneService.Id
-			// 	service.repository.Save(oneAction)
-			// }
-			// } else {
-			// oneAction.ServiceRefId = oneService
-			// oneAction.ServiceId = oneService.Id
+			oneAction.Service = oneService
 			service.repository.Save(oneAction)
-			// }
 		}
 	}
 }

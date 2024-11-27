@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
 	"name": "Backend",
-	"dockerComposeFile": "../../compose.dev.yaml",
+	"dockerComposeFile": "../../docker-compose.dev.yaml",
 	"service": "server",
 	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/backend",

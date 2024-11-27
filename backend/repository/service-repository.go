@@ -53,7 +53,7 @@ func (repo *serviceRepository) Delete(service schemas.Service) {
 
 func (repo *serviceRepository) FindAll() []schemas.Service {
 	var service []schemas.Service
-	err := repo.db.Connection.Preload("UrlId").Find(&service)
+	err := repo.db.Connection.Find(&service)
 	if err.Error != nil {
 		panic(err.Error)
 	}

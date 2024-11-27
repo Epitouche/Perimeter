@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
 	"name": "Frontend",
-	"dockerComposeFile": "../../compose.dev.yaml",
+	"dockerComposeFile": "../../docker-compose.dev.yaml",
 	"service": "client_web",
 	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/frontend",

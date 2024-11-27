@@ -22,15 +22,15 @@ func NewServiceService(repository repository.ServiceRepository) ServiceService {
 		repository: repository,
 		allService: []schemas.Service{
 			{
-				Name:        "Spotify",
+				Name:        string(schemas.Spotify),
 				Description: "This service is a music service",
 			},
 			{
-				Name:        "OpenWeatherMap",
+				Name:        string(schemas.OpenWeatherMap),
 				Description: "This service is a weather service",
 			},
 			{
-				Name:        "Time",
+				Name:        string(schemas.Timer),
 				Description: "This service is a time service",
 			},
 		},

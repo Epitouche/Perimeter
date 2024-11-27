@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 
 	"area/schemas"
 	"area/service"
@@ -23,10 +22,7 @@ type githubTokenController struct {
 	serviceUser service.UserService
 }
 
-var validateGithubToken *validator.Validate
-
 func NewGithubTokenController(service service.GithubTokenService, serviceUser service.UserService) GithubTokenController {
-	validateGithubToken = validator.New()
 	return &githubTokenController{
 		service:     service,
 		serviceUser: serviceUser,
