@@ -52,6 +52,7 @@ func setupRouter() *gin.Engine {
 		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
 		serviceRepository     repository.ServiceRepository     = repository.NewServiceRepository(databaseConnection)
 		actionRepository      repository.ActionRepository      = repository.NewActionRepository(databaseConnection)
+		reactionRepository    repository.ReactionRepository    = repository.NewReactionRepository(databaseConnection)
 
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
@@ -60,6 +61,7 @@ func setupRouter() *gin.Engine {
 		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
 		serviceService     service.ServiceService     = service.NewServiceService(serviceRepository)
 		actionService      service.ActionService      = service.NewActionService(actionRepository, serviceService)
+		reactionService    service.ReactionService    = service.NewReactionService(reactionRepository, serviceService)
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
@@ -67,6 +69,7 @@ func setupRouter() *gin.Engine {
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
 		serviceController     controller.ServiceController     = controller.NewServiceController(serviceService)
 		actionController      controller.ServiceController     = controller.NewActionController(actionService)
+		reactionController    controller.ServiceController     = controller.NewReactionController(reactionService)
 	)
 
 	linkApi := api.NewLinkApi(linkController)
@@ -77,6 +80,7 @@ func setupRouter() *gin.Engine {
 
 	api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
+	api.NewReactionApi(reactionController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
