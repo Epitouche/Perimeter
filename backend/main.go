@@ -4,11 +4,10 @@ import (
 	"net/http"
 	"os"
 
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 
 	"area/api"
 	"area/controller"
@@ -51,17 +50,20 @@ func setupRouter() *gin.Engine {
 		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
 		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
 		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
+		serviceRepository     repository.ServiceRepository     = repository.NewServiceRepository(databaseConnection)
 
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
 		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
 		jwtService         service.JWTService         = service.NewJWTService()
 		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
+		serviceService     service.ServiceService     = service.NewServiceService(serviceRepository)
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
 		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
+		serviceController     controller.ServiceController     = controller.NewServiceController(serviceService)
 	)
 
 	linkApi := api.NewLinkAPI(linkController)
@@ -69,6 +71,8 @@ func setupRouter() *gin.Engine {
 	userApi := api.NewUserAPI(userController)
 
 	githubApi := api.NewGithubAPI(githubTokenController)
+
+	api.NewServiceAPI(serviceController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{

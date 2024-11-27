@@ -6,37 +6,47 @@ import (
 )
 
 type ServiceService interface {
-	Save(schemas.Link) error
-	Update(schemas.Link) error
-	Delete(schemas.Link) error
-	FindAll() []schemas.Link
+	Save(newService schemas.Service) error
+	Update(newService schemas.Service) error
+	Delete(newService schemas.Service) error
+	FindAll() []schemas.Service
 }
 
 type serviceService struct {
-	repository repository.LinkRepository
+	repository repository.ServiceRepository
 }
 
-func NewServiceService(videoRepository repository.LinkRepository) ServiceService {
+func NewServiceService(repository repository.ServiceRepository) ServiceService {
+	InitialSaveService(repository)
 	return &serviceService{
-		repository: videoRepository,
+		repository: repository,
 	}
 }
 
-func (service *serviceService) Save(link schemas.Link) error {
-	service.repository.Save(link)
+func InitialSaveService(repository repository.ServiceRepository) {
+	repository.Save(schemas.Service{
+		Name:        "Github",
+		Description: "Github API",
+	})
+
+	println("Service Github created\n")
+}
+
+func (service *serviceService) Save(newService schemas.Service) error {
+	service.repository.Save(newService)
 	return nil
 }
 
-func (service *serviceService) Update(link schemas.Link) error {
-	service.repository.Update(link)
+func (service *serviceService) Update(newService schemas.Service) error {
+	service.repository.Update(newService)
 	return nil
 }
 
-func (service *serviceService) Delete(link schemas.Link) error {
-	service.repository.Delete(link)
+func (service *serviceService) Delete(newService schemas.Service) error {
+	service.repository.Delete(newService)
 	return nil
 }
 
-func (service *serviceService) FindAll() []schemas.Link {
+func (service *serviceService) FindAll() []schemas.Service {
 	return service.repository.FindAll()
 }
