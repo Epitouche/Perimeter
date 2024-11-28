@@ -1,13 +1,11 @@
-<template>
-  <div>
-    Base
-  </div>
-</template>
-
-<script lang="ts" setup>
+<script setup lang="ts">
 
 </script>
 
-<style>
+<template>
+  <div class="p-40">
+    <SearchBar />
+  </div>
+</template>
 
-</style>
+<style scoped></style>
