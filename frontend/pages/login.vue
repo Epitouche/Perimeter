@@ -23,7 +23,7 @@ const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-log
           <ULink to="/forgotpassword" class="text-xl text-custom_color-text_link self-end px-5">Forgot password?</ULink>
         </div>
         <div class="flex flex-col justify-center items-center min-w-full pt-4">
-          <UButton class="text-center text-[2.5rem] px-7">Log in</UButton>
+          <UButton class="text-center text-[2.5rem] px-12">Log in</UButton>
           <p class="text-xl">New? <ULink to="/signup" class="hover:text-custom_color-text_link"><u>Sign Up</u></ULink>
           </p>
         </div>
