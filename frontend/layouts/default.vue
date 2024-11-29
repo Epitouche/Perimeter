@@ -2,13 +2,7 @@
 </script>
 
 <template>
-    <div class="bg-custom_background h-screen w-screen">
+    <div class="bg-custom_color-bg_page h-screen w-screen">
         <slot />
     </div>
 </template>
-
-<!--
-- no border for UContainer in area
-- use UContainers for sections
-- borders rounded-[3.125rem]
--->

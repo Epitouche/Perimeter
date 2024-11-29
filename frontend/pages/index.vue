@@ -1,11 +1,11 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
-  <div class="p-40">
-    <SearchBar />
+  <div>
+    <h1>Home page</h1>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

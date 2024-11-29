@@ -5,27 +5,24 @@ module.exports = {
     "./layouts/**/*.vue",
     "./pages/**/*.vue",
     "./plugins/**/*.{js,ts}",
+    "./composables/**/*.{js,ts,mjs}",
+    "./utils/**/*.{js,ts,mjs}",
+    "./{A,a}pp.{vue,js,jsx,mjs,ts,tsx}",
+    "./{E,e}rror.{vue,js,jsx,mjs,ts,tsx}",
     "./nuxt.config.{js,ts}",
+    "./app.config.{js,ts,mjs}",
   ],
   theme: {
     extend: {
       colors: {
-        custom_color_background: {
-          DEFAULT: "#F4F4F4", // Light grey
-          section: "#FFFFFF", // White
-        },
-        custom_color_text: {
-          DEFAULT: "#000000", // Black
-          link: "#4187FF", // Blue
-          other: "#878787", // Dark grey
-        },
-        custom_color_component: {
-          DEFAULT: "#FFFFFF", // White
+        custom_color: {
+          bg_page: "#F4F4F4", // Light grey
+          bg_section: "#FFFFFF", // White
+          text: "#000000", // Black
+          text_link: "#4187FF", // Blue
+          text_other: "#878787", // Dark grey
           border: "#000000", // Black
           input: "#F4F4F4", // Light grey
-        },
-        custom_color_service: {
-          DEFAULT: "#979797", // grey
           google: "#E60000", // Red
           spotify: "#1DC000", // Green
           dropbox: "#001DDA", // Blue
@@ -34,16 +31,11 @@ module.exports = {
         },
       },
       fontSize: {
-        custom_text_size: {
-          DEFAULT: '3rem',
-          title: '7rem',
-        }
+        custom_size_title: '7rem'
       },
       fontWeight: {
-        custom_text_weight: {
-          DEFAULT: '700',
-          title: '900',
-        }
+        custom_weight_title: '800',
+        custom_weight_connection_title: '600'
       },
       borderRadius: {
         custom_border_radius: '3.125rem'
