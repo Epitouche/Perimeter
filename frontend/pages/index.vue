@@ -2,10 +2,9 @@
 </script>
 
 <template>
-  <div>
+  <div class="p-48">
     <h1>Home page</h1>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

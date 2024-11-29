@@ -3,7 +3,7 @@ export default defineAppConfig({
         strategy: 'override',
         button: {
             default: {
-                color: 'black'
+                color: 'black',
             },
             rounded: 'rounded-custom_border_radius'
         },
