@@ -10,9 +10,9 @@ import (
 )
 
 type JWTService interface {
-	GenerateToken(userId string, name string, admin bool) string
+	GenerateToken(userID string, name string, admin bool) string
 	ValidateToken(tokenString string) (*jwt.Token, error)
-	GetUserIdfromJWTToken(tokenString string) (userId uint64, err error)
+	GetUserIdfromJWTToken(tokenString string) (userID uint64, err error)
 }
 
 // jwtCustomClaims are custom claims extending default ones.
@@ -42,8 +42,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bool) string {
-
+func (jwtSrv *jwtService) GenerateToken(userID string, username string, admin bool) string {
 	// Set custom and standard claims
 	claims := &jwtCustomClaims{
 		username,
@@ -52,7 +51,7 @@ func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bo
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			Issuer:    jwtSrv.issuer,
 			IssuedAt:  time.Now().Unix(),
-			Id:        userId,
+			Id:        userID,
 		},
 	}
 
@@ -68,7 +67,7 @@ func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bo
 }
 
 func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	result, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Signing method validation
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -76,10 +75,10 @@ func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) 
 		// Return the secret signing key
 		return []byte(jwtSrv.secretKey), nil
 	})
+	return result, err
 }
 
-func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userId uint64, err error) {
-
+func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userID uint64, err error) {
 	token, err := jwtSrv.ValidateToken(tokenString)
 	if err != nil {
 		return 0, err
@@ -90,12 +89,12 @@ func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userId uint
 		if jti, ok := claims["jti"].(string); ok {
 			id, err := strconv.ParseUint(jti, 10, 64)
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("jti claim is not a float64")
 			}
 			return id, nil
 		}
 		return 0, fmt.Errorf("jti claim is not a float64")
 	} else {
-		return 0, err
+		return 0, fmt.Errorf("invalid token")
 	}
 }

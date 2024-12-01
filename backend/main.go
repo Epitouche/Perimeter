@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"gorm.io/gorm"
 
 	"area/api"
 	"area/controller"
@@ -20,7 +19,6 @@ import (
 )
 
 func setupRouter() *gin.Engine {
-
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
 		panic("APP_PORT is not set")
@@ -42,41 +40,34 @@ func setupRouter() *gin.Engine {
 		})
 	})
 
-	var (
-		// Database connection
-		databaseConnection *gorm.DB = database.Connection()
+	// Database connection
+	databaseConnection := database.Connection()
 
-		// Repositories
-		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
-		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
-		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
-		serviceRepository     repository.ServiceRepository     = repository.NewServiceRepository(databaseConnection)
-		actionRepository      repository.ActionRepository      = repository.NewActionRepository(databaseConnection)
-		reactionRepository    repository.ReactionRepository    = repository.NewReactionRepository(databaseConnection)
+	// Repositories
+	githubTokenRepository := repository.NewGithubTokenRepository(databaseConnection)
+	userRepository := repository.NewUserRepository(databaseConnection)
+	serviceRepository := repository.NewServiceRepository(databaseConnection)
+	actionRepository := repository.NewActionRepository(databaseConnection)
+	reactionRepository := repository.NewReactionRepository(databaseConnection)
 
-		// Services
-		linkService        service.LinkService        = service.NewLinkService(linkRepository)
-		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-		jwtService         service.JWTService         = service.NewJWTService()
-		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
-		serviceService     service.ServiceService     = service.NewServiceService(serviceRepository)
-		actionService      service.ActionService      = service.NewActionService(actionRepository, serviceService)
-		reactionService    service.ReactionService    = service.NewReactionService(reactionRepository, serviceService)
+	// Services
+	githubTokenService := service.NewGithubTokenService(githubTokenRepository)
+	jwtService := service.NewJWTService()
+	userService := service.NewUserService(userRepository, jwtService)
+	serviceService := service.NewServiceService(serviceRepository)
+	actionService := service.NewActionService(actionRepository, serviceService)
+	reactionService := service.NewReactionService(reactionRepository, serviceService)
 
-		// Controllers
-		linkController        controller.LinkController        = controller.NewLinkController(linkService)
-		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
-		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
-		serviceController     controller.ServiceController     = controller.NewServiceController(serviceService)
-		actionController      controller.ServiceController     = controller.NewActionController(actionService)
-		reactionController    controller.ServiceController     = controller.NewReactionController(reactionService)
-	)
+	// Controllers
+	githubTokenController := controller.NewGithubTokenController(githubTokenService, userService)
+	userController := controller.NewUserController(userService, jwtService)
+	serviceController := controller.NewServiceController(serviceService)
+	actionController := controller.NewActionController(actionService)
+	reactionController := controller.NewReactionController(reactionService)
 
-	linkApi := api.NewLinkApi(linkController)
+	userAPI := api.NewUserApi(userController)
 
-	userApi := api.NewUserApi(userController)
-
-	githubApi := api.NewGithubApi(githubTokenController)
+	GithubAPI := api.NewGithubAPI(githubTokenController)
 
 	api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
@@ -87,35 +78,25 @@ func setupRouter() *gin.Engine {
 		// User Auth
 		auth := apiRoutes.Group("/auth")
 		{
-			auth.POST("/login", userApi.Login)
-			auth.POST("/register", userApi.Register)
-		}
-
-		// Links
-		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())
-		{
-			links.GET("", linkApi.GetLink)
-			links.POST("", linkApi.CreateLink)
-			links.PUT(":id", linkApi.UpdateLink)
-			links.DELETE(":id", linkApi.DeleteLink)
+			auth.POST("/login", userAPI.Login)
+			auth.POST("/register", userAPI.Register)
 		}
 
 		// Github
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				githubApi.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				GithubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				githubApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				GithubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
 
 			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
 			{
-				githubInfo.GET("/user", githubApi.GetUserInfo)
+				githubInfo.GET("/user", GithubAPI.GetUserInfo)
 			}
-
 		}
 	}
 
@@ -141,7 +122,7 @@ func init() {
 
 // @securityDefinitions.apiKey bearerAuth
 // @in header
-// @name Authorization
+// @name Authorization.
 func main() {
 	router := setupRouter()
 
@@ -164,6 +145,7 @@ func main() {
 	if appPort == "" {
 		panic("APP_PORT is not set")
 	}
+
 	err := router.Run(":" + appPort)
 	if err != nil {
 		panic("Error when running the server")
