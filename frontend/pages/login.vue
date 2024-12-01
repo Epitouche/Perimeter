@@ -4,6 +4,25 @@ const password = ref('')
 
 const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
 
+const loginError = ref<string | null>(null);
+
+const handleLogin = async () => {
+  try {
+    loginError.value = null;
+
+    const response = await $fetch('http://localhost:8080/api/v1/auth/login', {
+      method: 'POST',
+      body: {
+        username: username.value,
+        password: password.value,
+      },
+    });
+    console.log('Login successful:', response);
+  } catch (error: any) {
+    console.error('Login failed:', error);
+    loginError.value = error?.data?.message || 'Login failed. Please try again.';
+  }
+};
 </script>
 
 <template>
@@ -23,7 +42,10 @@ const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-log
           <ULink to="/forgotpassword" class="text-xl text-custom_color-text_link self-end px-5">Forgot password?</ULink>
         </div>
         <div class="flex flex-col justify-center items-center min-w-full pt-4">
-          <UButton class="text-center text-[2.5rem] px-12">Log in</UButton>
+          <div v-if="loginError" class="text-red-500 text-xl mt-4">
+            {{ loginError }}
+          </div>
+          <UButton @click="handleLogin" class="text-center text-[2.5rem] px-12">Log in</UButton>
           <p class="text-xl">New? <ULink to="/signup" class="hover:text-custom_color-text_link"><u>Sign Up</u></ULink>
           </p>
         </div>

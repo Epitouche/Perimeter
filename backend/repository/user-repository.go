@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"gorm.io/gorm"
-
 	"area/schemas"
+
+	"gorm.io/gorm"
 )
 
 type UserRepository interface {
@@ -16,7 +16,7 @@ type UserRepository interface {
 	FindById(id uint64) schemas.User
 }
 
-// Define a struct that embeds `*schemas.Database` and implements `UserRepository`
+// Define a struct that embeds `*schemas.Database` and implements `UserRepository`.
 type userRepository struct {
 	db *schemas.Database
 }

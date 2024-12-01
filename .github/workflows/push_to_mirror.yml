@@ -4,7 +4,6 @@ run-name: mirroring
 on:
   push:
   pull_request:
-  delete:
 
 jobs:
   push_to_mirror:

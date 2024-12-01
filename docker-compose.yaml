@@ -1,29 +1,32 @@
+name: area
 services:
   server:
     container_name: server
     build:
+      context: ./backend
       target: run
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env
     networks:
       - app-networks
     ports:
-      - "8080:8080"
+      - "0.0.0.0:8080:8080"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/about.json"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/about.json || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 20
-      start_period: 5s
 
   client_mobile:
     container_name: client_mobile
     build:
+      context: ./mobile
       target: build-apk
-      dockerfile: mobile/Dockerfile
+      dockerfile: Dockerfile
     volumes:
       - shared_apk:/app/public/apk
     networks:
@@ -32,25 +35,31 @@ services:
   client_web:
     container_name: client_web
     build:
+      context: ./frontend
       target: run
-      dockerfile: frontend/Dockerfile
+      dockerfile: Dockerfile
     environment:
       - PORT=8081
     ports:
-      - "8081:8081"
+      - "0.0.0.0:8081:8081"
     volumes:
       - shared_apk:/app/public/apk
     networks:
       - app-networks
     depends_on:
-      - server
-      - client_mobile
+      client_mobile:
+        condition: service_started
+      server:
+        condition: service_healthy
 
   database:
-    image: postgres:13
+    image: postgres:17
     container_name: database
-    env_file:
-      - .env
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: area-database
+      POSTGRES_USER: admin
+      DB_HOST: postgres
     volumes:
       - database-data:/var/lib/postgresql/data
     networks:

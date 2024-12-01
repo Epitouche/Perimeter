@@ -44,5 +44,5 @@ exit dev container with : `Dev Containers: Reopen Folder Locally`
 ## Remove Container
 
 ```bash
-docker compose -f compose.dev.yaml down --volumes
+docker compose -f docker-compose.dev.yaml down --volumes
 ```
