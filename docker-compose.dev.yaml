@@ -1,6 +1,9 @@
+name: area-dev
 services:
   server:
-    image: mcr.microsoft.com/devcontainers/go:1-1.23-bookworm
+    build:
+      context: .devcontainer/backend
+      dockerfile: Dockerfile
     volumes:
       - .:/workspace:cached
         #  SSH keys
@@ -14,7 +17,7 @@ services:
       - .env
     command: sleep infinity
     ports:
-      - 8080:8080
+      - "0.0.0.0:8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,7 +40,7 @@ services:
       - NODE_ENV=development
       - PORT=8081
     ports:
-      - 8081:8081
+      - "0.0.0.0:8081:8081"
     networks:
       - app-networks
 
@@ -64,7 +67,7 @@ services:
       context: ./pgadmin
     container_name: pgadmin
     ports:
-      - "8079:80"
+      - "0.0.0.0:8079:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: "user@domain.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
