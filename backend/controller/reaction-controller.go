@@ -4,8 +4,7 @@ import (
 	"area/service"
 )
 
-type ReactionController interface {
-}
+type ReactionController interface{}
 
 type reactionController struct {
 	service service.ReactionService

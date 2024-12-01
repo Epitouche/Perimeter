@@ -1,8 +1,8 @@
 package service
 
 import (
-	"errors"
 	"fmt"
+	"strconv"
 
 	"area/database"
 	"area/repository"
@@ -34,12 +34,16 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 func (service *userService) Login(newUser schemas.User) (JWTtoken string, err error) {
 	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
 	if len(userWiththisUserName) == 0 {
-		return "", errors.New("invalid credentials")
+		return "", fmt.Errorf("invalid credentials")
 	}
 	// regular user
 	for _, user := range userWiththisUserName {
 		if database.DoPasswordsMatch(user.Password, newUser.Password) {
-			return service.serviceJWT.GenerateToken(fmt.Sprint(user.Id), user.Username, false), nil
+			return service.serviceJWT.GenerateToken(
+				strconv.FormatUint(user.Id, 10),
+				user.Username,
+				false,
+			), nil
 		}
 	}
 
@@ -47,24 +51,28 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 	for _, user := range userWiththisUserName {
 		if user.Email == newUser.Email {
 			if newUser.GithubId != 0 {
-				return service.serviceJWT.GenerateToken(fmt.Sprint(user.Id), user.Username, false), nil
+				return service.serviceJWT.GenerateToken(
+					strconv.FormatUint(user.Id, 10),
+					user.Username,
+					false,
+				), nil
 			}
 		}
 	}
 
-	return "", errors.New("invalid credentials")
+	return "", fmt.Errorf("invalid credentials")
 }
 
 func (service *userService) Register(newUser schemas.User) (JWTtoken string, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
-		return "", errors.New("email already in use")
+		return "", fmt.Errorf("email already in use")
 	}
 
 	if newUser.Password != "" {
 		hashedPassword, err := database.HashPassword(newUser.Password)
 		if err != nil {
-			return "", errors.New("error while hashing the password")
+			return "", fmt.Errorf("error while hashing the password")
 		}
 		newUser.Password = hashedPassword
 	}
@@ -76,7 +84,7 @@ func (service *userService) Register(newUser schemas.User) (JWTtoken string, err
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {
 	userId, err := service.serviceJWT.GetUserIdfromJWTToken(token)
 	if err != nil {
-		return schemas.User{}, err
+		return schemas.User{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 	userInfo = service.repository.FindById(userId)
 	return userInfo, nil
