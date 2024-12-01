@@ -1,7 +1,9 @@
 name: area-dev
 services:
   server:
-    image: mcr.microsoft.com/devcontainers/go:1-1.23-bookworm
+    build:
+      context: .devcontainer/backend
+      dockerfile: Dockerfile
     volumes:
       - .:/workspace:cached
         #  SSH keys
