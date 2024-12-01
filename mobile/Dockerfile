@@ -2,9 +2,9 @@ FROM reactnativecommunity/react-native-android AS node-install
 
 WORKDIR /app
 
-COPY mobile/package.json /app
+COPY ./package.json /app
 
-RUN apt-get update 
+RUN apt-get update
 
 RUN apt-get install -y nodejs npm
 
@@ -22,7 +22,7 @@ FROM java-install AS build
 
 WORKDIR /app
 
-COPY mobile/ /app
+COPY ./ /app
 
 WORKDIR /app/android
 
@@ -42,6 +42,6 @@ FROM java-install AS run
 
 WORKDIR /app
 
-COPY mobile/ /app
+COPY ./ /app
 
 CMD ["npm", "start"]

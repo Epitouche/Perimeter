@@ -2,23 +2,23 @@ FROM golang:1.23-alpine AS dependencies
 
 WORKDIR /app
 
-COPY backend/go.mod .
+COPY ./go.mod .
 
-COPY backend/go.sum .
+COPY ./go.sum .
 
 RUN go mod download
 
 
 FROM dependencies AS build
 
-COPY backend/ .
+COPY ./ .
 
 RUN go build -o /app
 
 
 FROM dependencies AS test
 
-COPY backend/ .
+COPY ./ .
 
 CMD ["go", "test", "-v"]
 
