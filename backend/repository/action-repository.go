@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"gorm.io/gorm"
-
 	"area/schemas"
+
+	"gorm.io/gorm"
 )
 
 type ActionRepository interface {
@@ -70,9 +70,13 @@ func (repo *actionRepository) FindByName(actionName string) []schemas.Action {
 	return actions
 }
 
-func (repo *actionRepository) FindByServiceByName(serviceId uint64, actionName string) []schemas.Action {
+func (repo *actionRepository) FindByServiceByName(
+	serviceId uint64,
+	actionName string,
+) []schemas.Action {
 	var actions []schemas.Action
-	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).Find(&actions)
+	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).
+		Find(&actions)
 	if err.Error != nil {
 		panic(err.Error)
 	}

@@ -10,12 +10,11 @@ import (
 	"area/service"
 )
 
-// AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid
+// AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid.
 func AuthorizeJWT() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		const BEARER_SCHEMA = "Bearer "
-		authHeader := c.GetHeader("Authorization")
-		tokenString := authHeader[len(BEARER_SCHEMA):]
+	return func(ctx *gin.Context) {
+		authHeader := ctx.GetHeader("Authorization")
+		tokenString := authHeader[len("Bearer "):]
 
 		token, err := service.NewJWTService().ValidateToken(tokenString)
 
@@ -30,7 +29,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 			log.Println("Claims[ExpiresAt]: ", claims["exp"])
 		} else {
 			log.Println(err)
-			c.AbortWithStatus(http.StatusUnauthorized)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}
 }

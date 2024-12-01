@@ -18,7 +18,10 @@ type reactionService struct {
 	allAction      map[schemas.ServiceName][]schemas.Reaction
 }
 
-func NewReactionService(repository repository.ReactionRepository, serviceService ServiceService) ReactionService {
+func NewReactionService(
+	repository repository.ReactionRepository,
+	serviceService ServiceService,
+) ReactionService {
 	newService := reactionService{
 		repository:     repository,
 		serviceService: serviceService,
@@ -72,13 +75,11 @@ func NewReactionService(repository repository.ReactionRepository, serviceService
 }
 
 func (service *reactionService) InitialSaveAction() {
-
 	allService := service.serviceService.FindAll()
 	// Find all service and save action
 	for _, oneService := range allService {
 		// Find all action by service name
 		for _, oneAction := range service.allAction[schemas.ServiceName(oneService.Name)] {
-
 			existingActions := service.repository.FindByServiceByName(oneService.Id, oneAction.Name)
 
 			if len(existingActions) == 0 {
