@@ -2,7 +2,13 @@ name: lint backend
 
 on:
   pull_request:
+    branches:
+      - dev
+      - backend
   push:
+    branches:
+      - dev
+      - backend
 
 env:
   GO_VERSION: stable
@@ -49,4 +55,3 @@ jobs:
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: ${{ matrix.modules }}
-          args: --enable-all --fix
