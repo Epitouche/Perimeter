@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"area/schemas"
-
 	"gorm.io/gorm"
+
+	"area/schemas"
 )
 
 type ReactionRepository interface {
@@ -12,7 +12,7 @@ type ReactionRepository interface {
 	Delete(action schemas.Reaction)
 	FindAll() []schemas.Reaction
 	FindByName(actionName string) []schemas.Reaction
-	FindByServiceByName(serviceId uint64, actionName string) []schemas.Reaction
+	FindByServiceByName(serviceID uint64, actionName string) []schemas.Reaction
 }
 
 type reactionRepository struct {
@@ -71,11 +71,11 @@ func (repo *reactionRepository) FindByName(actionName string) []schemas.Reaction
 }
 
 func (repo *reactionRepository) FindByServiceByName(
-	serviceId uint64,
+	serviceID uint64,
 	actionName string,
 ) []schemas.Reaction {
 	var actions []schemas.Reaction
-	err := repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceId, Name: actionName}).
+	err := repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceID, Name: actionName}).
 		Find(&actions)
 	if err.Error != nil {
 		panic(err.Error)

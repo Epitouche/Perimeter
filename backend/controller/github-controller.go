@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gin-gonic/gin"
+
 	"area/schemas"
 	"area/service"
 	"area/tools"
-
-	"github.com/gin-gonic/gin"
 )
 
 type GithubTokenController interface {
 	RedirectToGithub(ctx *gin.Context, path string) (string, error)
-	HandleGithubTokenCallback(c *gin.Context, path string) (string, error)
-	GetUserInfo(c *gin.Context) (userInfo schemas.GithubUserInfo, err error)
+	HandleGithubTokenCallback(ctx *gin.Context, path string) (string, error)
+	GetUserInfo(ctx *gin.Context) (userInfo schemas.GithubUserInfo, err error)
 }
 
 type githubTokenController struct {
@@ -40,10 +40,12 @@ func (controller *githubTokenController) RedirectToGithub(
 	if clientID == "" {
 		return "", fmt.Errorf("GITHUB_CLIENT_ID is not set")
 	}
+
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
 		return "", fmt.Errorf("APP_PORT is not set")
 	}
+
 	// Generate the CSRF token
 	state, err := tools.GenerateCSRFToken()
 	if err != nil {
@@ -65,16 +67,16 @@ func (controller *githubTokenController) RedirectToGithub(
 }
 
 func (controller *githubTokenController) HandleGithubTokenCallback(
-	c *gin.Context,
+	ctx *gin.Context,
 	path string,
 ) (string, error) {
-	code := c.Query("code")
+	code := ctx.Query("code")
 	if code == "" {
 		return "", fmt.Errorf("missing code")
 	}
-	state := c.Query("state")
 
-	latestCSRFToken, err := c.Cookie("latestCSRFToken")
+	state := ctx.Query("state")
+	latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
 	if err != nil {
 		return "", fmt.Errorf("missing CSRF token")
 	}
@@ -104,10 +106,12 @@ func (controller *githubTokenController) HandleGithubTokenCallback(
 			return "", fmt.Errorf("unable to save token because %w", err)
 		}
 	}
+
 	userInfo, err := controller.service.GetUserInfo(newGithubToken.AccessToken)
 	if err != nil {
 		return "", fmt.Errorf("unable to get user info because %w", err)
 	}
+
 	newUser := schemas.User{
 		Username: userInfo.Login,
 		Email:    userInfo.Email,
@@ -139,10 +143,12 @@ func (controller *githubTokenController) GetUserInfo(
 	if err != nil {
 		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
+
 	token, err := controller.service.GetTokenById(user.GithubId)
 	if err != nil {
 		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}
+
 	githubUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
 	if err != nil {
 		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)

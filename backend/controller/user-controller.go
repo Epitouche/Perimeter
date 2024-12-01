@@ -3,10 +3,10 @@ package controller
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
+
 	"area/schemas"
 	"area/service"
-
-	"github.com/gin-gonic/gin"
 )
 
 type UserController interface {

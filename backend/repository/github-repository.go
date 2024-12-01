@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"area/schemas"
-
 	"gorm.io/gorm"
+
+	"area/schemas"
 )
 
 type GithubTokenRepository interface {

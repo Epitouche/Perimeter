@@ -145,6 +145,7 @@ func main() {
 	if appPort == "" {
 		panic("APP_PORT is not set")
 	}
+
 	err := router.Run(":" + appPort)
 	if err != nil {
 		panic("Error when running the server")

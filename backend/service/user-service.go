@@ -84,7 +84,7 @@ func (service *userService) Register(newUser schemas.User) (JWTtoken string, err
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {
 	userId, err := service.serviceJWT.GetUserIdfromJWTToken(token)
 	if err != nil {
-		return schemas.User{}, err
+		return schemas.User{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 	userInfo = service.repository.FindById(userId)
 	return userInfo, nil

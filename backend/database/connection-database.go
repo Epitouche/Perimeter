@@ -12,18 +12,22 @@ func Connection() *gorm.DB {
 	if host == "" {
 		panic("DB_HOST is not set")
 	}
+
 	port := os.Getenv("DB_PORT")
 	if port == "" {
 		panic("DB_PORT is not set")
 	}
+
 	user := os.Getenv("POSTGRES_USER")
 	if user == "" {
 		panic("POSTGRES_USER is not set")
 	}
+
 	password := os.Getenv("POSTGRES_PASSWORD")
 	if password == "" {
 		panic("POSTGRES_PASSWORD is not set")
 	}
+
 	dbname := os.Getenv("POSTGRES_DB")
 	if dbname == "" {
 		panic("POSTGRES_DB is not set")
