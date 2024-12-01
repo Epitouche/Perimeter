@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"errors"
+	"fmt"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -32,16 +32,16 @@ func NewGithubTokenController(service service.GithubTokenService, serviceUser se
 func (controller *githubTokenController) RedirectToGithub(ctx *gin.Context, path string) (string, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
-		return "", errors.New("GITHUB_CLIENT_ID is not set")
+		return "", fmt.Errorf("GITHUB_CLIENT_ID is not set")
 	}
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
-		return "", errors.New("APP_PORT is not set")
+		return "", fmt.Errorf("APP_PORT is not set")
 	}
 	// Generate the CSRF token
 	state, err := tools.GenerateCSRFToken()
 	if err != nil {
-		return "", errors.New("unable to generate CSRF token")
+		return "", fmt.Errorf("unable to generate CSRF token")
 	}
 
 	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
@@ -61,22 +61,22 @@ func (controller *githubTokenController) RedirectToGithub(ctx *gin.Context, path
 func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Context, path string) (string, error) {
 	code := c.Query("code")
 	if code == "" {
-		return "", errors.New("missing code")
+		return "", fmt.Errorf("missing code")
 	}
 	state := c.Query("state")
 
 	latestCSRFToken, err := c.Cookie("latestCSRFToken")
 	if err != nil {
-		return "", errors.New("missing CSRF token")
+		return "", fmt.Errorf("missing CSRF token")
 	}
 
 	if state != latestCSRFToken {
-		return "", errors.New("invalid CSRF token")
+		return "", fmt.Errorf("invalid CSRF token")
 	}
 
 	githubTokenResponse, err := controller.service.AuthGetGithubAccessToken(code, path)
 	if err != nil {
-		return "", errors.New("unable to get access token because " + err.Error())
+		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
 	newGithubToken := schemas.GithubToken{
@@ -92,12 +92,12 @@ func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Contex
 		if err.Error() == "token already exists" {
 			userAlreadExists = true
 		} else {
-			return "", errors.New("unable to save token because " + err.Error())
+			return "", fmt.Errorf("unable to save token because %w", err)
 		}
 	}
 	userInfo, err := controller.service.GetUserInfo(newGithubToken.AccessToken)
 	if err != nil {
-		return "", errors.New("unable to get user info because " + err.Error())
+		return "", fmt.Errorf("unable to get user info because %w", err)
 	}
 	newUser := schemas.User{
 		Username: userInfo.Login,
@@ -108,34 +108,33 @@ func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Contex
 	if userAlreadExists {
 		token, err := controller.serviceUser.Login(newUser)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("unable to login user because %w", err)
 		}
 		return token, nil
 	} else {
 		token, err := controller.serviceUser.Register(newUser)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("unable to register user because %w", err)
 		}
 		return token, nil
 	}
 }
 
 func (controller *githubTokenController) GetUserInfo(ctx *gin.Context) (userInfo schemas.GithubUserInfo, err error) {
-	const BEARER_SCHEMA = "Bearer "
 	authHeader := ctx.GetHeader("Authorization")
-	tokenString := authHeader[len(BEARER_SCHEMA):]
+	tokenString := authHeader[len("Bearer "):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.GithubUserInfo{}, err
+		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 	token, err := controller.service.GetTokenById(user.GithubId)
 	if err != nil {
-		return schemas.GithubUserInfo{}, err
+		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}
 	githubUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
 	if err != nil {
-		return schemas.GithubUserInfo{}, err
+		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	return githubUserInfo, nil

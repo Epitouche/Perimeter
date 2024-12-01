@@ -1,14 +1,15 @@
 package service
 
 import (
-	"area/repository"
-	"area/schemas"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+
+	"area/repository"
+	"area/schemas"
 )
 
 type GithubTokenService interface {
@@ -35,15 +36,15 @@ func NewGithubTokenService(githubTokenRepository repository.GithubTokenRepositor
 func (service *githubTokenService) AuthGetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID is not set")
+		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_CLIENT_ID is not set")
 	}
 	clientSecret := os.Getenv("GITHUB_SECRET")
 	if clientSecret == "" {
-		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_SECRET is not set")
+		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_SECRET is not set")
 	}
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
-		return schemas.GitHubTokenResponse{}, errors.New("APP_PORT is not set")
+		return schemas.GitHubTokenResponse{}, fmt.Errorf("APP_PORT is not set")
 	}
 	redirectURI := "http://localhost:" + appPort + path
 
@@ -69,7 +70,6 @@ func (service *githubTokenService) AuthGetGithubAccessToken(code string, path st
 	if err != nil {
 		return schemas.GitHubTokenResponse{}, err
 	}
-	defer resp.Body.Close()
 
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
@@ -77,17 +77,18 @@ func (service *githubTokenService) AuthGetGithubAccessToken(code string, path st
 		return schemas.GitHubTokenResponse{}, err
 	}
 
+	resp.Body.Close()
 	return result, nil
 }
 
 func (service *githubTokenService) SaveToken(token schemas.GithubToken) (tokenId uint64, err error) {
 	tokens := service.repository.FindByAccessToken(token.AccessToken)
-
 	for _, t := range tokens {
 		if t.AccessToken == token.AccessToken {
-			return t.Id, errors.New("token already exists")
+			return t.Id, fmt.Errorf("token already exists")
 		}
 	}
+
 	service.repository.Save(token)
 	tokens = service.repository.FindByAccessToken(token.AccessToken)
 
@@ -96,7 +97,7 @@ func (service *githubTokenService) SaveToken(token schemas.GithubToken) (tokenId
 			return t.Id, nil
 		}
 	}
-	return 0, errors.New("unable to save token")
+	return 0, fmt.Errorf("unable to save token")
 }
 
 func (service *githubTokenService) GetUserInfo(accessToken string) (schemas.GithubUserInfo, error) {
@@ -115,13 +116,14 @@ func (service *githubTokenService) GetUserInfo(accessToken string) (schemas.Gith
 	if err != nil {
 		return schemas.GithubUserInfo{}, err
 	}
-	defer resp.Body.Close()
 
 	result := schemas.GithubUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.GithubUserInfo{}, err
 	}
+
+	resp.Body.Close()
 	return result, nil
 }
 

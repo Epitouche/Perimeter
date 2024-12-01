@@ -67,7 +67,7 @@ func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bo
 }
 
 func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	result, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Signing method validation
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -75,6 +75,7 @@ func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) 
 		// Return the secret signing key
 		return []byte(jwtSrv.secretKey), nil
 	})
+	return result, err
 }
 
 func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userId uint64, err error) {

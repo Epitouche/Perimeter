@@ -54,6 +54,7 @@ func (api *UserApi) Register(ctx *gin.Context) {
 		})
 		return
 	}
+
 	ctx.JSON(http.StatusCreated, &schemas.JWT{
 		Token: token,
 	})
