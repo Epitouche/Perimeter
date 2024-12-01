@@ -4,8 +4,7 @@ import (
 	"area/service"
 )
 
-type ServiceController interface {
-}
+type ServiceController interface{}
 
 type serviceController struct {
 	service service.ServiceService

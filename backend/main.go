@@ -20,7 +20,6 @@ import (
 )
 
 func setupRouter() *gin.Engine {
-
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
 		panic("APP_PORT is not set")
@@ -115,7 +114,6 @@ func setupRouter() *gin.Engine {
 			{
 				githubInfo.GET("/user", githubApi.GetUserInfo)
 			}
-
 		}
 	}
 
@@ -141,7 +139,7 @@ func init() {
 
 // @securityDefinitions.apiKey bearerAuth
 // @in header
-// @name Authorization
+// @name Authorization.
 func main() {
 	router := setupRouter()
 

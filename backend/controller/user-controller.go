@@ -20,7 +20,8 @@ type userController struct {
 }
 
 func NewUserController(userService service.UserService,
-	jWtService service.JWTService) UserController {
+	jWtService service.JWTService,
+) UserController {
 	return &userController{
 		userService: userService,
 		jWtService:  jWtService,

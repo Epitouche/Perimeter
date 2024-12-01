@@ -1,12 +1,11 @@
 package service
 
 import (
-	"errors"
-	"fmt"
-
 	"area/database"
 	"area/repository"
 	"area/schemas"
+	"errors"
+	"fmt"
 )
 
 type UserService interface {

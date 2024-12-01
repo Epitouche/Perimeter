@@ -31,7 +31,7 @@ func NewUserApi(userController controller.UserController) *UserApi {
 // @Param password formData string true "Password"
 // @Success 200 {object} schemas.JWT
 // @Failure 401 {object} schemas.Response
-// @Router /auth/token [post]
+// @Router /auth/token [post].
 func (api *UserApi) Login(ctx *gin.Context) {
 	token, err := api.userController.Login(ctx)
 	if err != nil {
@@ -40,6 +40,7 @@ func (api *UserApi) Login(ctx *gin.Context) {
 		})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, &schemas.JWT{
 		Token: token,
 	})

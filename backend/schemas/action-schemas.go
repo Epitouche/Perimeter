@@ -4,13 +4,13 @@ import (
 	"time"
 )
 
-// GithubToken represents the GithubToken entity in the database
+// GithubToken represents the GithubToken entity in the database.
 type Action struct {
-	Id          uint64    `json:"id,omitempty" gorm:"primaryKey;autoIncrement"`
-	Name        string    `json:"name" binding:"required"`
-	Description string    `json:"description" binding:"required"`
+	Id          uint64    `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`
+	Name        string    `binding:"required"               json:"name"`
+	Description string    `binding:"required"               json:"description"`
 	ServiceId   uint64    `json:"-"` // Foreign key for Service
-	Service     Service   `json:"service_id,omitempty" binding:"required" gorm:"foreignKey:ServiceId;references:Id"`
-	CreatedAt   time.Time `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
-	UpdateAt    time.Time `json:"update_at" gorm:"default:CURRENT_TIMESTAMP"`
+	Service     Service   `binding:"required"               gorm:"foreignKey:ServiceId;references:Id" json:"service_id,omitempty"`
+	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdateAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }

@@ -49,4 +49,4 @@ jobs:
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: ${{ matrix.modules }}
-          args: --enable-all --fix
+          args: --enable-all
