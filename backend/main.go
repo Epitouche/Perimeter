@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -100,6 +102,19 @@ func setupRouter() *gin.Engine {
 		}
 	}
 
+	// basic about.json route
+	router.GET("/about.json", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"client": map[string]string{
+				"host": ctx.ClientIP(),
+			},
+			"server": map[string]string{
+				"current_time": fmt.Sprintf("%d", time.Now().Unix()),
+				"services":     "area",
+			},
+		})
+	})
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// view request received but not found
 	router.NoRoute(func(c *gin.Context) {
@@ -125,20 +140,6 @@ func init() {
 // @name Authorization.
 func main() {
 	router := setupRouter()
-
-	// basic about.json route
-	router.GET("/about.json", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"client": map[string]string{
-				"host": "localhost",
-				"port": "3000",
-			},
-			"server": map[string]string{
-				"current_time": "2021-09-01T00:00:00Z",
-				"services":     "area",
-			},
-		})
-	})
 
 	// Listen and Server in 0.0.0.0:8000
 	appPort := os.Getenv("APP_PORT")
