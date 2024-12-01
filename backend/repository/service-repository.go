@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"gorm.io/gorm"
-
 	"area/schemas"
+
+	"gorm.io/gorm"
 )
 
 type ServiceRepository interface {

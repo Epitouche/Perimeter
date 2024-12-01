@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"gorm.io/gorm"
-
 	"area/schemas"
+
+	"gorm.io/gorm"
 )
 
 type ReactionRepository interface {
@@ -70,9 +70,13 @@ func (repo *reactionRepository) FindByName(actionName string) []schemas.Reaction
 	return actions
 }
 
-func (repo *reactionRepository) FindByServiceByName(serviceId uint64, actionName string) []schemas.Reaction {
+func (repo *reactionRepository) FindByServiceByName(
+	serviceId uint64,
+	actionName string,
+) []schemas.Reaction {
 	var actions []schemas.Reaction
-	err := repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceId, Name: actionName}).Find(&actions)
+	err := repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceId, Name: actionName}).
+		Find(&actions)
 	if err.Error != nil {
 		panic(err.Error)
 	}

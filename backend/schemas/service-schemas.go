@@ -13,8 +13,8 @@ const (
 // GithubToken represents the GithubToken entity in the database.
 type Service struct {
 	Id          uint64    `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`
-	Name        string    `binding:"required"               json:"name"`
-	Description string    `binding:"required"               json:"description"`
+	Name        string    `                                 json:"name"         binding:"required"`
+	Description string    `                                 json:"description"  binding:"required"`
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }

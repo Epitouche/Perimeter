@@ -3,10 +3,10 @@ package api
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"area/controller"
 	"area/schemas"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserApi struct {

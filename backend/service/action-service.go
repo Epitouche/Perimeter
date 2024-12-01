@@ -18,7 +18,10 @@ type actionService struct {
 	allAction      map[schemas.ServiceName][]schemas.Action
 }
 
-func NewActionService(repository repository.ActionRepository, serviceService ServiceService) ActionService {
+func NewActionService(
+	repository repository.ActionRepository,
+	serviceService ServiceService,
+) ActionService {
 	newService := actionService{
 		repository:     repository,
 		serviceService: serviceService,

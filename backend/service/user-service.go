@@ -39,7 +39,11 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 	// regular user
 	for _, user := range userWiththisUserName {
 		if database.DoPasswordsMatch(user.Password, newUser.Password) {
-			return service.serviceJWT.GenerateToken(strconv.FormatUint(user.Id, 10), user.Username, false), nil
+			return service.serviceJWT.GenerateToken(
+				strconv.FormatUint(user.Id, 10),
+				user.Username,
+				false,
+			), nil
 		}
 	}
 
@@ -47,7 +51,11 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 	for _, user := range userWiththisUserName {
 		if user.Email == newUser.Email {
 			if newUser.GithubId != 0 {
-				return service.serviceJWT.GenerateToken(strconv.FormatUint(user.Id, 10), user.Username, false), nil
+				return service.serviceJWT.GenerateToken(
+					strconv.FormatUint(user.Id, 10),
+					user.Username,
+					false,
+				), nil
 			}
 		}
 	}

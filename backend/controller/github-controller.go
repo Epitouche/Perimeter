@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gin-gonic/gin"
-
 	"area/schemas"
 	"area/service"
 	"area/tools"
+
+	"github.com/gin-gonic/gin"
 )
 
 type GithubTokenController interface {
@@ -22,14 +22,20 @@ type githubTokenController struct {
 	serviceUser service.UserService
 }
 
-func NewGithubTokenController(service service.GithubTokenService, serviceUser service.UserService) GithubTokenController {
+func NewGithubTokenController(
+	service service.GithubTokenService,
+	serviceUser service.UserService,
+) GithubTokenController {
 	return &githubTokenController{
 		service:     service,
 		serviceUser: serviceUser,
 	}
 }
 
-func (controller *githubTokenController) RedirectToGithub(ctx *gin.Context, path string) (string, error) {
+func (controller *githubTokenController) RedirectToGithub(
+	ctx *gin.Context,
+	path string,
+) (string, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
 		return "", fmt.Errorf("GITHUB_CLIENT_ID is not set")
@@ -58,7 +64,10 @@ func (controller *githubTokenController) RedirectToGithub(ctx *gin.Context, path
 	return authURL, nil
 }
 
-func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Context, path string) (string, error) {
+func (controller *githubTokenController) HandleGithubTokenCallback(
+	c *gin.Context,
+	path string,
+) (string, error) {
 	code := c.Query("code")
 	if code == "" {
 		return "", fmt.Errorf("missing code")
@@ -120,7 +129,9 @@ func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Contex
 	}
 }
 
-func (controller *githubTokenController) GetUserInfo(ctx *gin.Context) (userInfo schemas.GithubUserInfo, err error) {
+func (controller *githubTokenController) GetUserInfo(
+	ctx *gin.Context,
+) (userInfo schemas.GithubUserInfo, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 

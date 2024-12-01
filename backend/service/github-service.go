@@ -27,13 +27,18 @@ type githubTokenService struct {
 	repository repository.GithubTokenRepository
 }
 
-func NewGithubTokenService(githubTokenRepository repository.GithubTokenRepository) GithubTokenService {
+func NewGithubTokenService(
+	githubTokenRepository repository.GithubTokenRepository,
+) GithubTokenService {
 	return &githubTokenService{
 		repository: githubTokenRepository,
 	}
 }
 
-func (service *githubTokenService) AuthGetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error) {
+func (service *githubTokenService) AuthGetGithubAccessToken(
+	code string,
+	path string,
+) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
 		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_CLIENT_ID is not set")
@@ -81,7 +86,9 @@ func (service *githubTokenService) AuthGetGithubAccessToken(code string, path st
 	return result, nil
 }
 
-func (service *githubTokenService) SaveToken(token schemas.GithubToken) (tokenId uint64, err error) {
+func (service *githubTokenService) SaveToken(
+	token schemas.GithubToken,
+) (tokenId uint64, err error) {
 	tokens := service.repository.FindByAccessToken(token.AccessToken)
 	for _, t := range tokens {
 		if t.AccessToken == token.AccessToken {
