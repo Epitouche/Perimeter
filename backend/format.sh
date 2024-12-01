@@ -6,6 +6,7 @@
 go install mvdan.cc/gofumpt@latest
 gofumpt -w .
 
+# golines
 go install github.com/segmentio/golines@latest
 golines -w .
 
@@ -13,11 +14,11 @@ golines -w .
 
 # dedupimport
 go install github.com/nishanths/dedupimport@latest
-dedupimport  -l .
+dedupimport  -w .
 
 # gci
-go install github.com/daixiang0/gci@latest
-gci write .
+# go install github.com/daixiang0/gci@latest
+# gci write .
 
 # goimports
 go install golang.org/x/tools/cmd/goimports@latest

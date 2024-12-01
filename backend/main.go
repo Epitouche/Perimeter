@@ -4,6 +4,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"area/api"
 	"area/controller"
 	"area/database"
@@ -12,10 +16,6 @@ import (
 	"area/repository"
 	"area/schemas"
 	"area/service"
-
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func setupRouter() *gin.Engine {
