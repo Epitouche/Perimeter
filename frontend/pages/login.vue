@@ -4,6 +4,25 @@ const password = ref('')
 
 const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
 
+const loginError = ref<string | null>(null);
+
+const handleLogin = async () => {
+  try {
+    loginError.value = null;
+
+    const response = await $fetch('http://localhost:8080/api/v1/auth/login', {
+      method: 'POST',
+      body: {
+        username: username.value,
+        password: password.value,
+      },
+    });
+    console.log('Login successful:', response);
+  } catch (error: any) {
+    console.error('Login failed:', error);
+    loginError.value = error?.data?.message || 'Login failed. Please try again.';
+  }
+};
 </script>
 
 <template>

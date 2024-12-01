@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"gorm.io/gorm"
-
 	"area/schemas"
+
+	"gorm.io/gorm"
 )
 
 type ServiceRepository interface {
@@ -11,6 +11,7 @@ type ServiceRepository interface {
 	Update(service schemas.Service)
 	Delete(service schemas.Service)
 	FindAll() []schemas.Service
+	FindByName(name string) []schemas.Service
 }
 
 type serviceRepository struct {
@@ -52,9 +53,18 @@ func (repo *serviceRepository) Delete(service schemas.Service) {
 
 func (repo *serviceRepository) FindAll() []schemas.Service {
 	var service []schemas.Service
-	err := repo.db.Connection.Preload("UrlId").Find(&service)
+	err := repo.db.Connection.Find(&service)
 	if err.Error != nil {
 		panic(err.Error)
 	}
 	return service
+}
+
+func (repo *serviceRepository) FindByName(name string) []schemas.Service {
+	var services []schemas.Service
+	err := repo.db.Connection.Where(&schemas.Service{Name: name}).Find(&services)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return services
 }

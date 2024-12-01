@@ -15,7 +15,7 @@ type GithubTokenRepository interface {
 	FindById(id uint64) schemas.GithubToken
 }
 
-// Define a struct that embeds `*schemas.Database` and implements `GithubTokenRepository`
+// Define a struct that embeds `*schemas.Database` and implements `GithubTokenRepository`.
 type githubTokenRepository struct {
 	db *schemas.Database
 }
@@ -37,7 +37,6 @@ func (repo *githubTokenRepository) Save(token schemas.GithubToken) {
 	if err.Error != nil {
 		panic(err.Error)
 	}
-
 }
 
 func (repo *githubTokenRepository) Update(token schemas.GithubToken) {
