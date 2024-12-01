@@ -2,14 +2,14 @@ FROM node:20.12.2-alpine AS build
 
 WORKDIR /app
 
-COPY frontend/package.json ./
-COPY frontend/package-lock.json ./
+COPY ./package.json ./
+COPY ./package-lock.json ./
 
 RUN npm install
 
 FROM build AS run
 
-COPY frontend/ ./
+COPY ./ ./
 
 EXPOSE 8081
 

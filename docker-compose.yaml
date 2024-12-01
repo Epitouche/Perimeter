@@ -3,8 +3,9 @@ services:
   server:
     container_name: server
     build:
+      context: ./backend
       target: run
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env
     networks:
@@ -23,8 +24,9 @@ services:
   client_mobile:
     container_name: client_mobile
     build:
+      context: ./mobile
       target: build-apk
-      dockerfile: mobile/Dockerfile
+      dockerfile: Dockerfile
     volumes:
       - shared_apk:/app/public/apk
     networks:
@@ -33,8 +35,9 @@ services:
   client_web:
     container_name: client_web
     build:
+      context: ./frontend
       target: run
-      dockerfile: frontend/Dockerfile
+      dockerfile: Dockerfile
     environment:
       - PORT=8081
     ports:
