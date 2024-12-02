@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -19,19 +20,20 @@ import (
 )
 
 func setupRouter() *gin.Engine {
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		panic("APP_PORT is not set")
+		panic("BACKEND_PORT is not set")
 	}
 
-	docs.SwaggerInfo.Title = "SentryLink API"
-	docs.SwaggerInfo.Description = "SentryLink - Crawler API"
+	docs.SwaggerInfo.Title = "Area API"
+	docs.SwaggerInfo.Description = "Area - Automation API"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:" + appPort
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	// Ping test
 	router.GET("/ping", func(ctx *gin.Context) {
@@ -44,14 +46,16 @@ func setupRouter() *gin.Engine {
 	databaseConnection := database.Connection()
 
 	// Repositories
-	githubTokenRepository := repository.NewGithubTokenRepository(databaseConnection)
+	githubRepository := repository.NewGithubRepository(databaseConnection)
+	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
 
 	// Services
-	githubTokenService := service.NewGithubTokenService(githubTokenRepository)
+	githubService := service.NewGithubService(githubRepository)
+	gmailService := service.NewGmailService(gmailRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
 	serviceService := service.NewServiceService(serviceRepository)
@@ -59,7 +63,8 @@ func setupRouter() *gin.Engine {
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
 
 	// Controllers
-	githubTokenController := controller.NewGithubTokenController(githubTokenService, userService)
+	githubController := controller.NewGithubController(githubService, userService)
+	gmailController := controller.NewGmailController(gmailService, userService)
 	userController := controller.NewUserController(userService, jwtService)
 	serviceController := controller.NewServiceController(
 		serviceService,
@@ -71,7 +76,8 @@ func setupRouter() *gin.Engine {
 
 	userAPI := api.NewUserApi(userController)
 
-	githubAPI := api.NewGithubAPI(githubTokenController)
+	githubAPI := api.NewGithubAPI(githubController)
+	gmailAPI := api.NewGmailAPI(gmailController)
 
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
@@ -90,11 +96,11 @@ func setupRouter() *gin.Engine {
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				githubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				githubAPI.RedirectToService(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				githubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				githubAPI.HandleServiceCallback(c, github.BasePath()+"/auth/callback")
 			})
 
 			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
@@ -102,6 +108,24 @@ func setupRouter() *gin.Engine {
 				githubInfo.GET("/user", githubAPI.GetUserInfo)
 			}
 		}
+
+		// Gmail
+		gmail := apiRoutes.Group("/gmail")
+		{
+			gmail.GET("/auth", func(c *gin.Context) {
+				gmailAPI.RedirectToService(c, gmail.BasePath()+"/auth/callback")
+			})
+
+			gmail.GET("/auth/callback", func(c *gin.Context) {
+				gmailAPI.HandleServiceCallback(c, gmail.BasePath()+"/auth/callback")
+			})
+
+			gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
+			{
+				gmailInfo.GET("/user", gmailAPI.GetUserInfo)
+			}
+		}
+
 	}
 
 	// basic about.json route
@@ -134,9 +158,9 @@ func main() {
 	router := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8000
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		panic("APP_PORT is not set")
+		panic("BACKEND_PORT is not set")
 	}
 
 	err := router.Run(":" + appPort)
