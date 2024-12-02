@@ -11,6 +11,8 @@ FROM build AS run
 
 COPY ./ ./
 
+RUN npm run build
+
 EXPOSE 8081
 
-CMD ["npx", "nuxt", "dev"]
+CMD ["node", ".output/server/index.mjs"]

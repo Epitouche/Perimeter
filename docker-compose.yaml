@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      - GIN_MODE=release
     networks:
       - app-networks
     ports:
