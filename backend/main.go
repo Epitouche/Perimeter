@@ -25,8 +25,8 @@ func setupRouter() *gin.Engine {
 		panic("BACKEND_PORT is not set")
 	}
 
-	docs.SwaggerInfo.Title = "SentryLink API"
-	docs.SwaggerInfo.Description = "SentryLink - Crawler API"
+	docs.SwaggerInfo.Title = "Area API"
+	docs.SwaggerInfo.Description = "Area - Automation API"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:" + appPort
 	docs.SwaggerInfo.BasePath = "/api/v1"
