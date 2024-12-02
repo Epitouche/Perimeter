@@ -1,6 +1,9 @@
+name: area-dev
 services:
   server:
-    image: mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
+    build:
+      context: .devcontainer/backend
+      dockerfile: Dockerfile
     volumes:
       - .:/workspace:cached
         #  SSH keys
@@ -14,12 +17,12 @@ services:
       - .env
     command: sleep infinity
     ports:
-      - 8080:8080
+      - "0.0.0.0:8080:8080"
     depends_on:
-      postgres:
+      database:
         condition: service_healthy
     networks:
-      - app-networks
+      - app-networks-dev
 
   client_web:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
@@ -37,22 +40,22 @@ services:
       - NODE_ENV=development
       - PORT=8081
     ports:
-      - 8081:8081
+      - "0.0.0.0:8081:8081"
     networks:
-      - app-networks
+      - app-networks-dev
 
-  postgres:
+  database:
     image: postgres:17
-    container_name: postgres
+    container_name: database
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB-:area-database}
-      POSTGRES_USER: ${POSTGRES_USER:-admin}
-      DB_HOST: ${DB_HOST:-postgres}
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: area-database
+      POSTGRES_USER: admin
+      DB_HOST: postgres
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - database-data-dev:/var/lib/postgresql/data
     networks:
-      - app-networks
+      - app-networks-dev
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d area-database"]
       interval: 5s
@@ -64,23 +67,23 @@ services:
       context: ./pgadmin
     container_name: pgadmin
     ports:
-      - "8079:80"
+      - "0.0.0.0:8079:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: "user@domain.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_ENHANCED_CSFR: "False"
     networks:
-      - app-networks
+      - app-networks-dev
     depends_on:
-      postgres:
+      database:
         condition: service_healthy
 
 volumes:
-  db-data:
+  database-data-dev:
   zinit:
 # secrets:
 #   db-password:
 #     file: db/password.txt
 networks:
-  app-networks:
+  app-networks-dev:

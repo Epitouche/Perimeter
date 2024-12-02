@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 
@@ -20,7 +20,8 @@ type userController struct {
 }
 
 func NewUserController(userService service.UserService,
-	jWtService service.JWTService) UserController {
+	jWtService service.JWTService,
+) UserController {
 	return &userController{
 		userService: userService,
 		jWtService:  jWtService,
@@ -31,7 +32,7 @@ func (controller *userController) Login(ctx *gin.Context) (string, error) {
 	var credentials schemas.LoginCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
 
 	newUser := schemas.User{
@@ -41,7 +42,7 @@ func (controller *userController) Login(ctx *gin.Context) (string, error) {
 
 	token, err := controller.userService.Login(newUser)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't login user: %w", err)
 	}
 	return token, nil
 }
@@ -50,16 +51,16 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	var credentials schemas.RegisterCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
 	if len(credentials.Username) < 4 {
-		return "", errors.New("username must be at least 4 characters long")
+		return "", fmt.Errorf("username must be at least 4 characters long")
 	}
 	if len(credentials.Password) < 8 {
-		return "", errors.New("password must be at least 8 characters long")
+		return "", fmt.Errorf("password must be at least 8 characters long")
 	}
 	if len(credentials.Email) < 4 {
-		return "", errors.New("email must be at least 4 characters long")
+		return "", fmt.Errorf("email must be at least 4 characters long")
 	}
 
 	newUser := schemas.User{
@@ -69,7 +70,7 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	}
 	token, err := controller.userService.Register(newUser)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't register user: %w", err)
 	}
 	return token, nil
 }

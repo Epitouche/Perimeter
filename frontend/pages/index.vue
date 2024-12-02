@@ -1,13 +1,10 @@
+<script setup lang="ts">
+</script>
+
 <template>
-  <div>
-    Base
+  <div class="p-48">
+    <h1>Home page</h1>
   </div>
 </template>
 
-<script lang="ts" setup>
-
-</script>
-
-<style>
-
-</style>
+<style scoped></style>

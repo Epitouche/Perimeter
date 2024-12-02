@@ -46,14 +46,22 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+
     AREA {
         int id PK
         int user_id FK
         int action_id FK
         int reaction_id FK
-        string result
+        bool enable
         datetime created_at
         datetime updated_at
+    }
+
+    AREA_RESULT {
+        int id PK
+        int area_id FK
+        string result
+        datetime created_at
     }
 
     TOKEN {
@@ -74,4 +82,5 @@ erDiagram
     USER |o--|| TOKEN : "connection"
     TOKEN ||--|| USER : "link"
     TOKEN ||--|| SERVICE : "link"
+    AREA ||--o{ AREA_RESULT : "store result"
 ```
