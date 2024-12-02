@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+type ActionJson struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 // GithubToken represents the GithubToken entity in the database.
 type Action struct {
 	Id          uint64    `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`

@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+type ReactionJson struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 // GithubToken represents the GithubToken entity in the database.
 type Reaction struct {
 	Id          uint64    `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`

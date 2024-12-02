@@ -5,10 +5,16 @@ import "time"
 type ServiceName string
 
 const (
-	Spotify        ServiceName = "Spotify"
-	OpenWeatherMap ServiceName = "OpenWeatherMap"
-	Timer          ServiceName = "Timer"
+	Spotify        ServiceName = "spotify"
+	OpenWeatherMap ServiceName = "openWeatherMap"
+	Timer          ServiceName = "timer"
 )
+
+type ServiceJson struct {
+	Name     string         `json:"name"`
+	Action   []ActionJson   `json:"actions"`
+	Reaction []ReactionJson `json:"reactions"`
+}
 
 // GithubToken represents the GithubToken entity in the database.
 type Service struct {
