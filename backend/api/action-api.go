@@ -5,11 +5,11 @@ import (
 )
 
 type ActionApi struct {
-	actionController controller.ActionController
+	controller controller.ActionController
 }
 
-func NewActionApi(actionController controller.ActionController) *ActionApi {
+func NewActionApi(controller controller.ActionController) *ActionApi {
 	return &ActionApi{
-		actionController: actionController,
+		controller: controller,
 	}
 }
