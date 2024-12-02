@@ -46,14 +46,16 @@ func setupRouter() *gin.Engine {
 	databaseConnection := database.Connection()
 
 	// Repositories
-	githubTokenRepository := repository.NewGithubTokenRepository(databaseConnection)
+	githubRepository := repository.NewGithubRepository(databaseConnection)
+	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
 
 	// Services
-	githubTokenService := service.NewGithubTokenService(githubTokenRepository)
+	githubService := service.NewGithubService(githubRepository)
+	gmailService := service.NewGmailService(gmailRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
 	serviceService := service.NewServiceService(serviceRepository)
@@ -61,7 +63,8 @@ func setupRouter() *gin.Engine {
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
 
 	// Controllers
-	githubTokenController := controller.NewGithubTokenController(githubTokenService, userService)
+	githubController := controller.NewGithubController(githubService, userService)
+	gmailController := controller.NewGmailController(gmailService, userService)
 	userController := controller.NewUserController(userService, jwtService)
 	serviceController := controller.NewServiceController(
 		serviceService,
@@ -73,7 +76,8 @@ func setupRouter() *gin.Engine {
 
 	userAPI := api.NewUserApi(userController)
 
-	githubAPI := api.NewGithubAPI(githubTokenController)
+	githubAPI := api.NewGithubAPI(githubController)
+	gmailAPI := api.NewGmailAPI(gmailController)
 
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
@@ -92,11 +96,11 @@ func setupRouter() *gin.Engine {
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				githubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				githubAPI.RedirectToService(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				githubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				githubAPI.HandleServiceCallback(c, github.BasePath()+"/auth/callback")
 			})
 
 			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
@@ -106,21 +110,21 @@ func setupRouter() *gin.Engine {
 		}
 
 		// Gmail
-		// gmail := apiRoutes.Group("/gmail")
-		// {
-		// 	gmail.GET("/auth", func(c *gin.Context) {
-		// 		gmailAPI.RedirectToGithub(c, gmail.BasePath()+"/auth/callback")
-		// 	})
+		gmail := apiRoutes.Group("/gmail")
+		{
+			gmail.GET("/auth", func(c *gin.Context) {
+				gmailAPI.RedirectToService(c, gmail.BasePath()+"/auth/callback")
+			})
 
-		// 	gmail.GET("/auth/callback", func(c *gin.Context) {
-		// 		gmailAPI.HandleGithubTokenCallback(c, gmail.BasePath()+"/auth/callback")
-		// 	})
+			gmail.GET("/auth/callback", func(c *gin.Context) {
+				gmailAPI.HandleServiceCallback(c, gmail.BasePath()+"/auth/callback")
+			})
 
-		// 	gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
-		// 	{
-		// 		gmailInfo.GET("/user", gmailAPI.GetUserInfo)
-		// 	}
-		// }
+			gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
+			{
+				gmailInfo.GET("/user", gmailAPI.GetUserInfo)
+			}
+		}
 
 	}
 
