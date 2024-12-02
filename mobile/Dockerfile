@@ -2,13 +2,15 @@ FROM reactnativecommunity/react-native-android AS node-install
 
 WORKDIR /app
 
-COPY ./package.json /app
+COPY ./package.json ./package-lock.json /app/
 
 RUN apt-get update
 
 RUN apt-get install -y nodejs npm
 
-RUN npm install
+RUN npm install --legacy-peer-deps
+
+RUN yes | sdkmanager --install "ndk;26.1.10909125"
 
 
 FROM node-install AS java-install
@@ -26,7 +28,7 @@ COPY ./ /app
 
 WORKDIR /app/android
 
-RUN ./gradlew :app:assembleRelease
+RUN ./gradlew clean :app:assembleRelease --stacktrace
 
 
 FROM alpine:latest AS build-apk
