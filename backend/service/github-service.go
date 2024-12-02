@@ -49,9 +49,9 @@ func (service *githubTokenService) AuthGetGithubAccessToken(
 		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_SECRET is not set")
 	}
 
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("APP_PORT is not set")
+		return schemas.GitHubTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
 	}
 
 	redirectURI := "http://localhost:" + appPort + path

@@ -41,9 +41,9 @@ func (controller *githubTokenController) RedirectToGithub(
 		return "", fmt.Errorf("GITHUB_CLIENT_ID is not set")
 	}
 
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return "", fmt.Errorf("APP_PORT is not set")
+		return "", fmt.Errorf("BACKEND_PORT is not set")
 	}
 
 	// Generate the CSRF token
