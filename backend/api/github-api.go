@@ -3,23 +3,23 @@ package api
 import (
 	"net/http"
 
-	"area/controller"
-
 	"github.com/gin-gonic/gin"
+
+	"area/controller"
 )
 
 type GithubAPI struct {
-	githubTokenController controller.GithubTokenController
+	controller controller.GithubController
 }
 
-func NewGithubAPI(githubTokenController controller.GithubTokenController) *GithubAPI {
+func NewGithubAPI(controller controller.GithubController) *GithubAPI {
 	return &GithubAPI{
-		githubTokenController: githubTokenController,
+		controller: controller,
 	}
 }
 
-func (api *GithubAPI) RedirectToGithub(ctx *gin.Context, path string) {
-	authURL, err := api.githubTokenController.RedirectToGithub(ctx, path)
+func (api *GithubAPI) RedirectToService(ctx *gin.Context, path string) {
+	authURL, err := api.controller.RedirectToService(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
@@ -27,8 +27,8 @@ func (api *GithubAPI) RedirectToGithub(ctx *gin.Context, path string) {
 	}
 }
 
-func (api *GithubAPI) HandleGithubTokenCallback(ctx *gin.Context, path string) {
-	github_token, err := api.githubTokenController.HandleGithubTokenCallback(ctx, path)
+func (api *GithubAPI) HandleServiceCallback(ctx *gin.Context, path string) {
+	github_token, err := api.controller.HandleServiceCallback(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
@@ -37,7 +37,7 @@ func (api *GithubAPI) HandleGithubTokenCallback(ctx *gin.Context, path string) {
 }
 
 func (api *GithubAPI) GetUserInfo(ctx *gin.Context) {
-	usetInfo, err := api.githubTokenController.GetUserInfo(ctx)
+	usetInfo, err := api.controller.GetUserInfo(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
