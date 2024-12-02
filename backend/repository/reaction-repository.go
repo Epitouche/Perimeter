@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 
 	"area/schemas"
@@ -12,6 +14,7 @@ type ReactionRepository interface {
 	Delete(action schemas.Reaction)
 	FindAll() []schemas.Reaction
 	FindByName(actionName string) []schemas.Reaction
+	FindByServiceId(serviceId uint64) []schemas.Action
 	FindByServiceByName(serviceID uint64, actionName string) []schemas.Reaction
 }
 
@@ -66,6 +69,16 @@ func (repo *reactionRepository) FindByName(actionName string) []schemas.Reaction
 	err := repo.db.Connection.Where(&schemas.Reaction{Name: actionName}).Find(&actions)
 	if err.Error != nil {
 		panic(err.Error)
+	}
+	return actions
+}
+
+func (repo *reactionRepository) FindByServiceId(serviceId uint64) []schemas.Action {
+	var actions []schemas.Action
+	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
+		Find(&actions)
+	if err.Error != nil {
+		panic(fmt.Errorf("failed to find action by service id: %v", err.Error))
 	}
 	return actions
 }

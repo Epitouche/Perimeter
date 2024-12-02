@@ -83,7 +83,10 @@ func (service *githubTokenService) AuthGetGithubAccessToken(
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to decode response because %w", err)
+		return schemas.GitHubTokenResponse{}, fmt.Errorf(
+			"unable to decode response because %w",
+			err,
+		)
 	}
 
 	resp.Body.Close()
