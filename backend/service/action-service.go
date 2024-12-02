@@ -6,10 +6,8 @@ import (
 )
 
 type ActionService interface {
-	Save(newService schemas.Action) error
-	Update(newService schemas.Action) error
-	Delete(newService schemas.Action) error
 	FindAll() []schemas.Action
+	GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson)
 }
 
 type actionService struct {
@@ -90,21 +88,17 @@ func (service *actionService) InitialSaveAction() {
 	}
 }
 
-func (service *actionService) Save(newService schemas.Action) error {
-	service.repository.Save(newService)
-	return nil
-}
-
-func (service *actionService) Update(newService schemas.Action) error {
-	service.repository.Update(newService)
-	return nil
-}
-
-func (service *actionService) Delete(newService schemas.Action) error {
-	service.repository.Delete(newService)
-	return nil
-}
-
 func (service *actionService) FindAll() []schemas.Action {
 	return service.repository.FindAll()
+}
+
+func (service *actionService) GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson) {
+	allActionForService := service.repository.FindByServiceId(serviceId)
+	for _, oneAction := range allActionForService {
+		actionJson = append(actionJson, schemas.ActionJson{
+			Name:        oneAction.Name,
+			Description: oneAction.Description,
+		})
+	}
+	return actionJson
 }

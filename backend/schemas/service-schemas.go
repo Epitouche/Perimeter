@@ -11,7 +11,7 @@ const (
 )
 
 type ServiceJson struct {
-	Name     string         `json:"name"`
+	Name     ServiceName    `json:"name"`
 	Action   []ActionJson   `json:"actions"`
 	Reaction []ReactionJson `json:"reactions"`
 }

@@ -56,7 +56,7 @@ func (service *serviceService) GetAllServices() (allServicesJson []schemas.Servi
 	for _, oneService := range allServices {
 		println(oneService.Name)
 		allServicesJson = append(allServicesJson, schemas.ServiceJson{
-			Name: oneService.Name,
+			Name: schemas.ServiceName(oneService.Name),
 		})
 	}
 	return allServicesJson, nil
