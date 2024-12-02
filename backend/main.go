@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -69,9 +67,9 @@ func setupRouter() *gin.Engine {
 
 	userAPI := api.NewUserApi(userController)
 
-	GithubAPI := api.NewGithubAPI(githubTokenController)
+	githubAPI := api.NewGithubAPI(githubTokenController)
 
-	api.NewServiceApi(serviceController)
+	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
 
@@ -88,32 +86,22 @@ func setupRouter() *gin.Engine {
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				GithubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				githubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				GithubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				githubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
 
 			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
 			{
-				githubInfo.GET("/user", GithubAPI.GetUserInfo)
+				githubInfo.GET("/user", githubAPI.GetUserInfo)
 			}
 		}
 	}
 
 	// basic about.json route
-	router.GET("/about.json", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"client": map[string]string{
-				"host": ctx.ClientIP(),
-			},
-			"server": map[string]string{
-				"current_time": fmt.Sprintf("%d", time.Now().Unix()),
-				"services":     "area",
-			},
-		})
-	})
+	router.GET("/about.json", serviceAPI.AboutJson)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// view request received but not found
