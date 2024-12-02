@@ -11,17 +11,17 @@ import (
 )
 
 type ServiceApi struct {
-	serviceController controller.ServiceController
+	controller controller.ServiceController
 }
 
-func NewServiceApi(serviceController controller.ServiceController) *ServiceApi {
+func NewServiceApi(controller controller.ServiceController) *ServiceApi {
 	return &ServiceApi{
-		serviceController: serviceController,
+		controller: controller,
 	}
 }
 
 func (api *ServiceApi) AboutJson(ctx *gin.Context) {
-	allServices, err := api.serviceController.AboutJson(ctx)
+	allServices, err := api.controller.AboutJson(ctx)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

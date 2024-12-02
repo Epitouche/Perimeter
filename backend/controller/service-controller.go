@@ -39,7 +39,6 @@ func (controller *serviceController) AboutJson(
 			Action:   controller.serviceAction.GetAllServicesByServiceId(oneService.Id),
 			Reaction: controller.serviceReaction.GetAllServicesByServiceId(oneService.Id),
 		})
-		println(oneService.Id)
 	}
 	return allServicesJson, nil
 }
