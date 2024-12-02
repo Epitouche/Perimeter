@@ -3,10 +3,14 @@ const email = ref('')
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const signUpError = ref<string | null>(null);
+
+interface RegisterResponse {
+  token: string;
+  message?: string;
+}
 
 const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
-
-const signUpError = ref<string | null>(null);
 
 const handleSignUp = async () => {
   try {
@@ -17,7 +21,7 @@ const handleSignUp = async () => {
       return;
     }
 
-    const response = await $fetch('http://localhost:8080/api/v1/auth/register', {
+    const response = await $fetch<RegisterResponse>('http://localhost:8080/api/v1/auth/register', {
       method: 'POST',
       body: {
         email: email.value,
@@ -25,7 +29,13 @@ const handleSignUp = async () => {
         password: password.value,
       },
     });
+
+    if (response.token) {
+      localStorage.setItem('authToken', response.token);
+      console.log('Token stored in localStorage:', response.token);
+    }
     console.log('Sign up successful:', response);
+    navigateTo('/myareas')
   } catch (error: any) {
     console.error('Sign up failed:', error);
     signUpError.value = error?.data?.message || 'Sign up failed. Please try again.';
@@ -64,6 +74,8 @@ const handleSignUp = async () => {
             {{ signUpError }}
           </div>
           <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12">Sign up</UButton>
+          <p class="text-xl">Already an account? <ULink to="/login" class="hover:text-custom_color-text_link"><u>Login</u></ULink>
+          </p>
         </div>
       </div>
       <div class="min-w-[80%] max-w-[80%] pt-2">
