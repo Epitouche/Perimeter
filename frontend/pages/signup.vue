@@ -1,13 +1,77 @@
+<script setup lang="ts">
+const email = ref('')
+const username = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+
+const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
+
+const signUpError = ref<string | null>(null);
+
+const handleSignUp = async () => {
+  try {
+    signUpError.value = null;
+
+    if (password.value !== confirmPassword.value) {
+      signUpError.value = 'Passwords do not match.';
+      return;
+    }
+
+    const response = await $fetch('http://localhost:8080/api/v1/auth/register', {
+      method: 'POST',
+      body: {
+        email: email.value,
+        username: username.value,
+        password: password.value,
+      },
+    });
+    console.log('Sign up successful:', response);
+  } catch (error: any) {
+    console.error('Sign up failed:', error);
+    signUpError.value = error?.data?.message || 'Sign up failed. Please try again.';
+  }
+};
+</script>
+
 <template>
-  <div>
-    Sign up
+  <div class="flex justify-center items-center h-screen w-screen">
+    <UContainer :ui="{ padding: 'pt-8 pb-16 px-0', constrained: 'min-w-[30%] max-w-[80%]' }"
+      class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius">
+      <h1 class="text-custom_size_title font-custom_weight_connection_title pb-5">Sign up</h1>
+      <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
+        <div class="flex flex-col">
+          <h2 class="text-xl px-5">Email</h2>
+          <UInput v-model="email" :ui="{ placeholder: '!px-5 !py-3 font-light', size: { sm: 'text-5xl' } }" />
+        </div>
+        <div class="flex flex-col">
+          <h2 class="text-xl px-5">Username</h2>
+          <UInput v-model="username" :ui="{ placeholder: '!px-5 !py-3 font-light', size: { sm: 'text-5xl' } }" />
+        </div>
+        <div class="flex flex-col">
+          <h2 class="text-xl px-5">Password</h2>
+          <UInput type="password" v-model="password"
+            :ui="{ placeholder: '!px-5 !py-3 font-light', size: { sm: 'text-5xl' } }" />
+        </div>
+        <div class="flex flex-col">
+          <h2 class="text-xl px-5">Confirm Password</h2>
+          <UInput
+            type="password"
+            v-model="confirmPassword"
+            :ui="{ placeholder: '!px-5 !py-3 font-light', size: { sm: 'text-5xl' } }"/>
+        </div>
+        <div class="flex flex-col justify-center items-center min-w-full pt-4">
+          <div v-if="signUpError" class="text-red-500 text-xl mt-4">
+            {{ signUpError }}
+          </div>
+          <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12">Sign up</UButton>
+        </div>
+      </div>
+      <div class="min-w-[80%] max-w-[80%] pt-2">
+        <UDivider size="xs" label="or log in with" :ui="{ label: 'text-custom_color-text_other text-xl' }" />
+      </div>
+      <ConnectWithAppContainer :apps="apps" />
+    </UContainer>
   </div>
 </template>
 
-<script lang="ts" setup>
-
-</script>
-
-<style>
-
-</style>
+<style scoped></style>
