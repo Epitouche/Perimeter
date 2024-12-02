@@ -36,9 +36,9 @@ func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
 	path string,
 ) (string, error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return "", fmt.Errorf("GITHUB_CLIENT_ID is not set")
+		return "", fmt.Errorf("GMAIL_CLIENT_ID is not set")
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
@@ -57,10 +57,10 @@ func (controller *gmailController) RedirectToService(
 
 	// Construct the GitHub authorization URL
 	redirectURI := "http://localhost:" + appPort + path
-	authURL := "https://github.com/login/oauth/authorize" +
+	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
-		"&scope=repo" +
+		"&scope=https://mail.google.com/" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil

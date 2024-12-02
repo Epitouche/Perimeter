@@ -39,14 +39,14 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	code string,
 	path string,
 ) (schemas.GmailTokenResponse, error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("GITHUB_CLIENT_ID is not set")
+		return schemas.GmailTokenResponse{}, fmt.Errorf("GMAIL_CLIENT_ID is not set")
 	}
 
-	clientSecret := os.Getenv("GITHUB_SECRET")
+	clientSecret := os.Getenv("GMAIL_SECRET")
 	if clientSecret == "" {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("GITHUB_SECRET is not set")
+		return schemas.GmailTokenResponse{}, fmt.Errorf("GMAIL_SECRET is not set")
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
