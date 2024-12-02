@@ -92,7 +92,9 @@ func (service *actionService) FindAll() []schemas.Action {
 	return service.repository.FindAll()
 }
 
-func (service *actionService) GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson) {
+func (service *actionService) GetAllServicesByServiceId(
+	serviceId uint64,
+) (actionJson []schemas.ActionJson) {
 	allActionForService := service.repository.FindByServiceId(serviceId)
 	for _, oneAction := range allActionForService {
 		actionJson = append(actionJson, schemas.ActionJson{

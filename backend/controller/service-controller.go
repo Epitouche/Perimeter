@@ -12,23 +12,32 @@ type ServiceController interface {
 }
 
 type serviceController struct {
-	service       service.ServiceService
-	serviceAction service.ActionService
+	service         service.ServiceService
+	serviceAction   service.ActionService
+	serviceReaction service.ReactionService
 }
 
-func NewServiceController(service service.ServiceService, serviceAction service.ActionService) ServiceController {
+func NewServiceController(
+	service service.ServiceService,
+	serviceAction service.ActionService,
+	serviceReaction service.ReactionService,
+) ServiceController {
 	return &serviceController{
-		service:       service,
-		serviceAction: serviceAction,
+		service:         service,
+		serviceAction:   serviceAction,
+		serviceReaction: serviceReaction,
 	}
 }
 
-func (controller *serviceController) AboutJson(ctx *gin.Context) (allServicesJson []schemas.ServiceJson, err error) {
+func (controller *serviceController) AboutJson(
+	ctx *gin.Context,
+) (allServicesJson []schemas.ServiceJson, err error) {
 	allServices := controller.service.FindAll()
 	for _, oneService := range allServices {
 		allServicesJson = append(allServicesJson, schemas.ServiceJson{
-			Name:   schemas.ServiceName(oneService.Name),
-			Action: controller.serviceAction.GetAllServicesByServiceId(oneService.Id),
+			Name:     schemas.ServiceName(oneService.Name),
+			Action:   controller.serviceAction.GetAllServicesByServiceId(oneService.Id),
+			Reaction: controller.serviceReaction.GetAllServicesByServiceId(oneService.Id),
 		})
 		println(oneService.Id)
 	}
