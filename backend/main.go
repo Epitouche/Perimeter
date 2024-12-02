@@ -20,9 +20,9 @@ import (
 )
 
 func setupRouter() *gin.Engine {
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		panic("APP_PORT is not set")
+		panic("BACKEND_PORT is not set")
 	}
 
 	docs.SwaggerInfo.Title = "SentryLink API"
@@ -154,9 +154,9 @@ func main() {
 	router := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8000
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		panic("APP_PORT is not set")
+		panic("BACKEND_PORT is not set")
 	}
 
 	err := router.Run(":" + appPort)
