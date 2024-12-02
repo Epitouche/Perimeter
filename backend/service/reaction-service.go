@@ -6,10 +6,8 @@ import (
 )
 
 type ReactionService interface {
-	Save(newService schemas.Reaction) error
-	Update(newService schemas.Reaction) error
-	Delete(newService schemas.Reaction) error
 	FindAll() []schemas.Reaction
+	GetAllServicesByServiceId(serviceId uint64) (reactionJson []schemas.ReactionJson)
 }
 
 type reactionService struct {
@@ -90,21 +88,19 @@ func (service *reactionService) InitialSaveAction() {
 	}
 }
 
-func (service *reactionService) Save(newService schemas.Reaction) error {
-	service.repository.Save(newService)
-	return nil
-}
-
-func (service *reactionService) Update(newService schemas.Reaction) error {
-	service.repository.Update(newService)
-	return nil
-}
-
-func (service *reactionService) Delete(newService schemas.Reaction) error {
-	service.repository.Delete(newService)
-	return nil
-}
-
 func (service *reactionService) FindAll() []schemas.Reaction {
 	return service.repository.FindAll()
+}
+
+func (service *reactionService) GetAllServicesByServiceId(
+	serviceId uint64,
+) (reactionJson []schemas.ReactionJson) {
+	allRectionForService := service.repository.FindByServiceId(serviceId)
+	for _, oneReaction := range allRectionForService {
+		reactionJson = append(reactionJson, schemas.ReactionJson{
+			Name:        oneReaction.Name,
+			Description: oneReaction.Description,
+		})
+	}
+	return reactionJson
 }
