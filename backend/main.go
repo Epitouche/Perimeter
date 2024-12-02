@@ -61,15 +61,19 @@ func setupRouter() *gin.Engine {
 	// Controllers
 	githubTokenController := controller.NewGithubTokenController(githubTokenService, userService)
 	userController := controller.NewUserController(userService, jwtService)
-	serviceController := controller.NewServiceController(serviceService)
+	serviceController := controller.NewServiceController(
+		serviceService,
+		actionService,
+		reactionService,
+	)
 	actionController := controller.NewActionController(actionService)
 	reactionController := controller.NewReactionController(reactionService)
 
 	userAPI := api.NewUserApi(userController)
 
-	GithubAPI := api.NewGithubAPI(githubTokenController)
+	githubAPI := api.NewGithubAPI(githubTokenController)
 
-	api.NewServiceApi(serviceController)
+	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
 
@@ -86,19 +90,22 @@ func setupRouter() *gin.Engine {
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				GithubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				githubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				GithubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				githubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
 
 			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
 			{
-				githubInfo.GET("/user", GithubAPI.GetUserInfo)
+				githubInfo.GET("/user", githubAPI.GetUserInfo)
 			}
 		}
 	}
+
+	// basic about.json route
+	router.GET("/about.json", serviceAPI.AboutJson)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// view request received but not found
@@ -125,20 +132,6 @@ func init() {
 // @name Authorization.
 func main() {
 	router := setupRouter()
-
-	// basic about.json route
-	router.GET("/about.json", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"client": map[string]string{
-				"host": "localhost",
-				"port": "3000",
-			},
-			"server": map[string]string{
-				"current_time": "2021-09-01T00:00:00Z",
-				"services":     "area",
-			},
-		})
-	})
 
 	// Listen and Server in 0.0.0.0:8000
 	appPort := os.Getenv("APP_PORT")

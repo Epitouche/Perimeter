@@ -6,10 +6,8 @@ import (
 )
 
 type ServiceService interface {
-	Save(newService schemas.Service) error
-	Update(newService schemas.Service) error
-	Delete(newService schemas.Service) error
-	FindAll() []schemas.Service
+	FindAll() (allServices []schemas.Service)
+	GetAllServices() (allServicesJson []schemas.ServiceJson, err error)
 }
 
 type serviceService struct {
@@ -48,21 +46,18 @@ func (service *serviceService) InitialSaveService() {
 	}
 }
 
-func (service *serviceService) Save(newService schemas.Service) error {
-	service.repository.Save(newService)
-	return nil
-}
-
-func (service *serviceService) Update(newService schemas.Service) error {
-	service.repository.Update(newService)
-	return nil
-}
-
-func (service *serviceService) Delete(newService schemas.Service) error {
-	service.repository.Delete(newService)
-	return nil
-}
-
-func (service *serviceService) FindAll() []schemas.Service {
+func (service *serviceService) FindAll() (allServices []schemas.Service) {
 	return service.repository.FindAll()
+}
+
+func (service *serviceService) GetAllServices() (allServicesJson []schemas.ServiceJson, err error) {
+	allServicesJson = []schemas.ServiceJson{}
+	allServices := service.repository.FindAll()
+	for _, oneService := range allServices {
+		println(oneService.Name)
+		allServicesJson = append(allServicesJson, schemas.ServiceJson{
+			Name: schemas.ServiceName(oneService.Name),
+		})
+	}
+	return allServicesJson, nil
 }
