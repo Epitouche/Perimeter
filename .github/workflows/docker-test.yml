@@ -3,11 +3,21 @@ name: test docker
 on:
   pull_request:
     branches:
+      - frontend
+      - mobile
+      - backend
+      - documentation
+      - devops
       - dev
       - pre-prod
       - main
   push:
     branches:
+      - frontend
+      - mobile
+      - backend
+      - documentation
+      - devops
       - dev
       - pre-prod
       - main
@@ -25,7 +35,7 @@ jobs:
         run: docker compose down --volumes
 
       - name: Run build
-        run: docker compose build --no-cache
+        run: docker compose build
 
       - name: Run containers
         run: docker compose up -d
