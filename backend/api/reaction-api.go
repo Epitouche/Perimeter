@@ -5,11 +5,11 @@ import (
 )
 
 type ReactionApi struct {
-	reactionController controller.ReactionController
+	controller controller.ReactionController
 }
 
-func NewReactionApi(reactionController controller.ReactionController) *ReactionApi {
+func NewReactionApi(controller controller.ReactionController) *ReactionApi {
 	return &ReactionApi{
-		reactionController: reactionController,
+		controller: controller,
 	}
 }

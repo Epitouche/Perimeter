@@ -52,6 +52,7 @@ func setupRouter() *gin.Engine {
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
+	tokenRepository := repository.NewTokenRepository(databaseConnection)
 
 	// Services
 	githubService := service.NewGithubService(githubRepository)
@@ -61,6 +62,7 @@ func setupRouter() *gin.Engine {
 	serviceService := service.NewServiceService(serviceRepository)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
+	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
 	githubController := controller.NewGithubController(githubService, userService)
@@ -73,6 +75,7 @@ func setupRouter() *gin.Engine {
 	)
 	actionController := controller.NewActionController(actionService)
 	reactionController := controller.NewReactionController(reactionService)
+	tokenController := controller.NewTokenController(tokenService)
 
 	userAPI := api.NewUserApi(userController)
 
@@ -82,6 +85,7 @@ func setupRouter() *gin.Engine {
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
+	api.NewTokenApi(tokenController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{

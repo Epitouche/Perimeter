@@ -10,12 +10,12 @@ import (
 )
 
 type UserApi struct {
-	userController controller.UserController
+	controller controller.UserController
 }
 
-func NewUserApi(userController controller.UserController) *UserApi {
+func NewUserApi(controller controller.UserController) *UserApi {
 	return &UserApi{
-		userController: userController,
+		controller: controller,
 	}
 }
 
@@ -33,7 +33,7 @@ func NewUserApi(userController controller.UserController) *UserApi {
 // @Failure 401 {object} schemas.Response
 // @Router /auth/token [post].
 func (api *UserApi) Login(ctx *gin.Context) {
-	token, err := api.userController.Login(ctx)
+	token, err := api.controller.Login(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, &schemas.Response{
 			Message: err.Error(),
@@ -47,7 +47,7 @@ func (api *UserApi) Login(ctx *gin.Context) {
 }
 
 func (api *UserApi) Register(ctx *gin.Context) {
-	token, err := api.userController.Register(ctx)
+	token, err := api.controller.Register(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusConflict, &schemas.Response{
 			Message: err.Error(),
