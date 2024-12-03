@@ -15,12 +15,6 @@ import (
 type SpotifyService interface {
 	AuthGetServiceAccessToken(code string, path string) (schemas.SpotifyTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error)
-	// Token operations
-	SaveToken(token schemas.SpotifyToken) (tokenID uint64, err error)
-	Update(token schemas.SpotifyToken) error
-	Delete(token schemas.SpotifyToken) error
-	FindAll() []schemas.SpotifyToken
-	GetTokenById(id uint64) (schemas.SpotifyToken, error)
 }
 
 type spotifyService struct {
@@ -96,27 +90,6 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	return result, nil
 }
 
-func (service *spotifyService) SaveToken(
-	token schemas.SpotifyToken,
-) (tokenID uint64, err error) {
-	tokens := service.repository.FindByAccessToken(token.AccessToken)
-	for _, t := range tokens {
-		if t.AccessToken == token.AccessToken {
-			return t.Id, fmt.Errorf("token already exists")
-		}
-	}
-
-	service.repository.Save(token)
-	tokens = service.repository.FindByAccessToken(token.AccessToken)
-
-	for _, t := range tokens {
-		if t.AccessToken == token.AccessToken {
-			return t.Id, nil
-		}
-	}
-	return 0, fmt.Errorf("unable to save token")
-}
-
 func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
@@ -142,22 +115,4 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 
 	resp.Body.Close()
 	return result, nil
-}
-
-func (service *spotifyService) GetTokenById(id uint64) (schemas.SpotifyToken, error) {
-	return service.repository.FindById(id), nil
-}
-
-func (service *spotifyService) Update(token schemas.SpotifyToken) error {
-	service.repository.Update(token)
-	return nil
-}
-
-func (service *spotifyService) Delete(token schemas.SpotifyToken) error {
-	service.repository.Delete(token)
-	return nil
-}
-
-func (service *spotifyService) FindAll() []schemas.SpotifyToken {
-	return service.repository.FindAll()
 }
