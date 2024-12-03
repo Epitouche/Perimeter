@@ -53,13 +53,13 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
-	if len(credentials.Username) < 4 {
-		return "", fmt.Errorf("username must be at least 4 characters long")
+	if len(credentials.Username) >= 4 {
+		return "", fmt.Errorf("username must be at least 4 characters long" + credentials.Username)
 	}
-	if len(credentials.Password) < 8 {
+	if len(credentials.Password) >= 8 {
 		return "", fmt.Errorf("password must be at least 8 characters long")
 	}
-	if len(credentials.Email) < 4 {
+	if len(credentials.Email) >= 4 {
 		return "", fmt.Errorf("email must be at least 4 characters long")
 	}
 
