@@ -50,7 +50,7 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 	// Oauth2.0 user
 	for _, user := range userWiththisUserName {
 		if user.Email == newUser.Email {
-			if newUser.Id != 0 {
+			if newUser.TokenId != 0 {
 				return service.serviceJWT.GenerateToken(
 					strconv.FormatUint(user.Id, 10),
 					user.Username,
