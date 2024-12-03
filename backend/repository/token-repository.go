@@ -7,10 +7,12 @@ import (
 )
 
 type TokenRepository interface {
-	Save(service schemas.Token)
-	Update(service schemas.Token)
-	Delete(service schemas.Token)
+	Save(token schemas.Token)
+	Update(token schemas.Token)
+	Delete(token schemas.Token)
 	FindAll() []schemas.Token
+	FindByToken(token string) []schemas.Token
+	FindById(id uint64) schemas.Token
 }
 
 type tokenRepository struct {
@@ -29,32 +31,50 @@ func NewTokenRepository(conn *gorm.DB) TokenRepository {
 	}
 }
 
-func (repo *tokenRepository) Save(service schemas.Token) {
-	err := repo.db.Connection.Create(&service)
+func (repo *tokenRepository) Save(token schemas.Token) {
+	err := repo.db.Connection.Create(&token)
 	if err.Error != nil {
 		panic(err.Error)
 	}
 }
 
-func (repo *tokenRepository) Update(service schemas.Token) {
-	err := repo.db.Connection.Save(&service)
+func (repo *tokenRepository) Update(token schemas.Token) {
+	err := repo.db.Connection.Save(&token)
 	if err.Error != nil {
 		panic(err.Error)
 	}
 }
 
-func (repo *tokenRepository) Delete(service schemas.Token) {
-	err := repo.db.Connection.Delete(&service)
+func (repo *tokenRepository) Delete(token schemas.Token) {
+	err := repo.db.Connection.Delete(&token)
 	if err.Error != nil {
 		panic(err.Error)
 	}
 }
 
 func (repo *tokenRepository) FindAll() []schemas.Token {
-	var service []schemas.Token
-	err := repo.db.Connection.Find(&service)
+	var token []schemas.Token
+	err := repo.db.Connection.Find(&token)
 	if err.Error != nil {
 		panic(err.Error)
 	}
-	return service
+	return token
+}
+
+func (repo *tokenRepository) FindByToken(token string) []schemas.Token {
+	var tokens []schemas.Token
+	err := repo.db.Connection.Where(&schemas.Token{Token: token}).Find(&tokens)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return tokens
+}
+
+func (repo *tokenRepository) FindById(id uint64) schemas.Token {
+	var tokens schemas.Token
+	err := repo.db.Connection.Where(&schemas.Token{Id: id}).First(&tokens)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return tokens
 }

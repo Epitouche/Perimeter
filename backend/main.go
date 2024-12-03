@@ -48,6 +48,7 @@ func setupRouter() *gin.Engine {
 	// Repositories
 	githubRepository := repository.NewGithubRepository(databaseConnection)
 	gmailRepository := repository.NewGmailRepository(databaseConnection)
+	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
@@ -57,6 +58,7 @@ func setupRouter() *gin.Engine {
 	// Services
 	githubService := service.NewGithubService(githubRepository)
 	gmailService := service.NewGmailService(gmailRepository)
+	spotifyService := service.NewSpotifyService(spotifyRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
 	serviceService := service.NewServiceService(serviceRepository)
@@ -65,8 +67,9 @@ func setupRouter() *gin.Engine {
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
-	githubController := controller.NewGithubController(githubService, userService)
-	gmailController := controller.NewGmailController(gmailService, userService)
+	spotifyController := controller.NewSpotifyController(spotifyService, userService)
+	githubController := controller.NewGithubController(githubService, userService, tokenService)
+	gmailController := controller.NewGmailController(gmailService, userService, tokenService)
 	userController := controller.NewUserController(userService, jwtService)
 	serviceController := controller.NewServiceController(
 		serviceService,
@@ -81,6 +84,7 @@ func setupRouter() *gin.Engine {
 
 	githubAPI := api.NewGithubAPI(githubController)
 	gmailAPI := api.NewGmailAPI(gmailController)
+	spotifyAPI := api.NewSpotifyAPI(spotifyController)
 
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
@@ -130,6 +134,22 @@ func setupRouter() *gin.Engine {
 			}
 		}
 
+		// Spotify
+		spotify := apiRoutes.Group("/spotify")
+		{
+			spotify.GET("/auth", func(c *gin.Context) {
+				spotifyAPI.RedirectToService(c, spotify.BasePath()+"/auth/callback")
+			})
+
+			spotify.GET("/auth/callback", func(c *gin.Context) {
+				spotifyAPI.HandleServiceCallback(c, spotify.BasePath()+"/auth/callback")
+			})
+
+			spotifyInfo := spotify.Group("/info", middlewares.AuthorizeJWT())
+			{
+				spotifyInfo.GET("/user", spotifyAPI.GetUserInfo)
+			}
+		}
 	}
 
 	// basic about.json route

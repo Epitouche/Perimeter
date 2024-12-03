@@ -15,12 +15,6 @@ import (
 type GithubService interface {
 	AuthGetServiceAccessToken(code string, path string) (schemas.GitHubTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.GithubUserInfo, error)
-	// Token operations
-	SaveToken(token schemas.GithubToken) (tokenID uint64, err error)
-	Update(token schemas.GithubToken) error
-	Delete(token schemas.GithubToken) error
-	FindAll() []schemas.GithubToken
-	GetTokenById(id uint64) (schemas.GithubToken, error)
 }
 
 type githubService struct {
@@ -93,27 +87,6 @@ func (service *githubService) AuthGetServiceAccessToken(
 	return result, nil
 }
 
-func (service *githubService) SaveToken(
-	token schemas.GithubToken,
-) (tokenID uint64, err error) {
-	tokens := service.repository.FindByAccessToken(token.AccessToken)
-	for _, t := range tokens {
-		if t.AccessToken == token.AccessToken {
-			return t.Id, fmt.Errorf("token already exists")
-		}
-	}
-
-	service.repository.Save(token)
-	tokens = service.repository.FindByAccessToken(token.AccessToken)
-
-	for _, t := range tokens {
-		if t.AccessToken == token.AccessToken {
-			return t.Id, nil
-		}
-	}
-	return 0, fmt.Errorf("unable to save token")
-}
-
 func (service *githubService) GetUserInfo(accessToken string) (schemas.GithubUserInfo, error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
@@ -139,22 +112,4 @@ func (service *githubService) GetUserInfo(accessToken string) (schemas.GithubUse
 
 	resp.Body.Close()
 	return result, nil
-}
-
-func (service *githubService) GetTokenById(id uint64) (schemas.GithubToken, error) {
-	return service.repository.FindById(id), nil
-}
-
-func (service *githubService) Update(token schemas.GithubToken) error {
-	service.repository.Update(token)
-	return nil
-}
-
-func (service *githubService) Delete(token schemas.GithubToken) error {
-	service.repository.Delete(token)
-	return nil
-}
-
-func (service *githubService) FindAll() []schemas.GithubToken {
-	return service.repository.FindAll()
 }
