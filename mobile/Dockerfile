@@ -10,8 +10,6 @@ RUN apt-get install -y nodejs npm
 
 RUN npm install --legacy-peer-deps
 
-RUN yes | sdkmanager --install "ndk;26.1.10909125"
-
 
 FROM node-install AS java-install
 

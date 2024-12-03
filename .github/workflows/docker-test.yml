@@ -2,7 +2,15 @@ name: test docker
 
 on:
   pull_request:
+    branches:
+      - dev
+      - pre-prod
+      - main
   push:
+    branches:
+      - dev
+      - pre-prod
+      - main
 
 jobs:
   test-docker:
@@ -17,7 +25,7 @@ jobs:
         run: docker compose down --volumes
 
       - name: Run build
-        run: docker compose build
+        run: docker compose build --no-cache
 
       - name: Run containers
         run: docker compose up -d

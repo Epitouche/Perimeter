@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -32,6 +33,7 @@ func setupRouter() *gin.Engine {
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	// Ping test
 	router.GET("/ping", func(ctx *gin.Context) {
@@ -102,6 +104,24 @@ func setupRouter() *gin.Engine {
 				githubInfo.GET("/user", githubAPI.GetUserInfo)
 			}
 		}
+
+		// Gmail
+		// gmail := apiRoutes.Group("/gmail")
+		// {
+		// 	gmail.GET("/auth", func(c *gin.Context) {
+		// 		gmailAPI.RedirectToGithub(c, gmail.BasePath()+"/auth/callback")
+		// 	})
+
+		// 	gmail.GET("/auth/callback", func(c *gin.Context) {
+		// 		gmailAPI.HandleGithubTokenCallback(c, gmail.BasePath()+"/auth/callback")
+		// 	})
+
+		// 	gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
+		// 	{
+		// 		gmailInfo.GET("/user", gmailAPI.GetUserInfo)
+		// 	}
+		// }
+
 	}
 
 	// basic about.json route
