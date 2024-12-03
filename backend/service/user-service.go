@@ -65,7 +65,9 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 	return "", fmt.Errorf("invalid credentials")
 }
 
-func (service *userService) Register(newUser schemas.User) (JWTtoken string, userId uint64, err error) {
+func (service *userService) Register(
+	newUser schemas.User,
+) (JWTtoken string, userId uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
 		return "", 0, fmt.Errorf("email already in use")
@@ -80,7 +82,11 @@ func (service *userService) Register(newUser schemas.User) (JWTtoken string, use
 	}
 
 	service.repository.Save(newUser)
-	return service.serviceJWT.GenerateToken(fmt.Sprint(newUser.Id), newUser.Username, false), newUser.Id, nil
+	return service.serviceJWT.GenerateToken(
+		fmt.Sprint(newUser.Id),
+		newUser.Username,
+		false,
+	), newUser.Id, nil
 }
 
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {

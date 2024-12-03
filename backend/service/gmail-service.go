@@ -51,14 +51,14 @@ func (service *gmailService) AuthGetServiceAccessToken(
 
 	redirectURI := "http://localhost:" + appPort + path
 
-	// TODO
-	apiURL := "https://github.com/login/oauth/access_token"
+	apiURL := "https://oauth2.googleapis.com/token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
 	data.Set("client_secret", clientSecret)
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
+	data.Set("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
@@ -85,13 +85,17 @@ func (service *gmailService) AuthGetServiceAccessToken(
 		)
 	}
 
+	if (result.AccessToken == "") || (result.TokenType == "") {
+		return schemas.GmailTokenResponse{}, fmt.Errorf("access token not found in response")
+	}
+
 	resp.Body.Close()
 	return result, nil
 }
 
 func (service *gmailService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req, err := http.NewRequest("GET", "https://gmail.googleapis.com/gmail/v1/users/me/profile", nil)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to create request because %w", err)
 	}
