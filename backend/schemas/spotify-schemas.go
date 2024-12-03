@@ -8,6 +8,6 @@ type SpotifyTokenResponse struct {
 }
 
 type SpotifyUserInfo struct {
-	Login      string `json:"display_name"`
-	Email     string `json:"email"`
+	Login string `json:"display_name"`
+	Email string `json:"email"`
 }
