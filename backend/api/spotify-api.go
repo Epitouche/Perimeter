@@ -23,7 +23,7 @@ func (api *SpotifyAPI) RedirectToService(ctx *gin.Context, path string) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"spotify_authentication_url": authURL})
+		ctx.JSON(http.StatusOK, gin.H{"authentication_url": authURL})
 	}
 }
 
