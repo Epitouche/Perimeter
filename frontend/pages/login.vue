@@ -1,23 +1,34 @@
 <script setup lang="ts">
+
 const username = ref('')
 const password = ref('')
 
-const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
-
 const loginError = ref<string | null>(null);
+
+interface RegisterResponse {
+  token: string;
+  message?: string;
+}
+
+const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
 
 const handleLogin = async () => {
   try {
     loginError.value = null;
 
-    const response = await $fetch('http://localhost:8080/api/v1/auth/login', {
+    const response = await $fetch<RegisterResponse>('http://127.0.0.1:8080/api/v1/auth/login', {
       method: 'POST',
       body: {
         username: username.value,
         password: password.value,
       },
     });
+    if (response.token) {
+      localStorage.setItem('authToken', response.token);
+      console.log('Token stored in localStorage:', response.token);
+    }
     console.log('Login successful:', response);
+    navigateTo('/myareas')
   } catch (error: any) {
     console.error('Login failed:', error);
     loginError.value = error?.data?.message || 'Login failed. Please try again.';
@@ -28,7 +39,7 @@ const handleLogin = async () => {
 <template>
   <div class="flex justify-center items-center h-screen w-screen">
     <UContainer :ui="{ padding: 'pt-8 pb-16 px-0', constrained: 'min-w-[30%] max-w-[80%]' }"
-      class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius">
+      class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius">
       <h1 class="text-custom_size_title font-custom_weight_connection_title pb-5">Log in</h1>
       <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
         <div class="flex flex-col">
