@@ -23,16 +23,16 @@ func (api *SpotifyAPI) RedirectToService(ctx *gin.Context, path string) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"spotify_authentication_url": authURL})
+		ctx.JSON(http.StatusOK, gin.H{"authentication_url": authURL})
 	}
 }
 
 func (api *SpotifyAPI) HandleServiceCallback(ctx *gin.Context, path string) {
-	github_token, err := api.controller.HandleServiceCallback(ctx, path)
+	spotify_token, err := api.controller.HandleServiceCallback(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"access_token": github_token})
+		ctx.JSON(http.StatusOK, gin.H{"access_token": spotify_token})
 	}
 }
 

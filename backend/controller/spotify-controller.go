@@ -20,15 +20,18 @@ type SpotifyController interface {
 type spotifyController struct {
 	service     service.SpotifyService
 	serviceUser service.UserService
+	serviceToken service.TokenService
 }
 
 func NewSpotifyController(
 	service service.SpotifyService,
 	serviceUser service.UserService,
+	serviceToken service.TokenService,
 ) SpotifyController {
 	return &spotifyController{
 		service:     service,
 		serviceUser: serviceUser,
+		serviceToken: serviceToken,
 	}
 }
 
@@ -58,9 +61,9 @@ func (controller *spotifyController) RedirectToService(
 	// Construct the Spotify authorization URL
 	redirectURI := "http://localhost:" + appPort + path
 	authURL := "https://accounts.spotify.com/authorize" +
-		"?client_id=" + clientID +
-		"&response_type=code" +
-		"&scope=repo" +
+		"?response_type=code" +
+		"&client_id=" + clientID +
+		"&scope=user-read-private user-read-email" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil
@@ -90,14 +93,13 @@ func (controller *spotifyController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
-	newSpotifyToken := schemas.SpotifyToken{
-		AccessToken: spotifyTokenResponse.AccessToken,
-		Scope:       spotifyTokenResponse.Scope,
-		TokenType:   spotifyTokenResponse.TokenType,
+	newSpotifyToken := schemas.Token{
+		Token:  spotifyTokenResponse.AccessToken,
+		UserId: 1,
 	}
 
 	// Save the access token in the database
-	tokenId, err := controller.service.SaveToken(newSpotifyToken)
+	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
 	userAlreadExists := false
 	if err != nil {
 		if err.Error() == "token already exists" {
@@ -107,7 +109,7 @@ func (controller *spotifyController) HandleServiceCallback(
 		}
 	}
 
-	userInfo, err := controller.service.GetUserInfo(newSpotifyToken.AccessToken)
+	userInfo, err := controller.service.GetUserInfo(newSpotifyToken.Token)
 	if err != nil {
 		return "", fmt.Errorf("unable to get user info because %w", err)
 	}
@@ -144,12 +146,12 @@ func (controller *spotifyController) GetUserInfo(
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	token, err := controller.service.GetTokenById(user.Id)
+	token, err := controller.serviceToken.GetTokenById(user.Id)
 	if err != nil {
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	spotifyUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
+	spotifyUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
