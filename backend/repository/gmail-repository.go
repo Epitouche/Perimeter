@@ -6,8 +6,7 @@ import (
 	"area/schemas"
 )
 
-type GmailRepository interface {
-}
+type GmailRepository interface{}
 
 // Define a struct that embeds `*schemas.Database` and implements `GmailRepository`.
 type gmailRepository struct {

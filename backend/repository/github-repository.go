@@ -6,8 +6,7 @@ import (
 	"area/schemas"
 )
 
-type GithubRepository interface {
-}
+type GithubRepository interface{}
 
 // Define a struct that embeds `*schemas.Database` and implements `GithubRepository`.
 type githubRepository struct {
