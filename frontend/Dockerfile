@@ -1,4 +1,4 @@
-FROM node:20.12.2-alpine AS build
+FROM node:20-alpine AS dependencies
 
 WORKDIR /app
 
@@ -7,12 +7,18 @@ COPY ./package-lock.json ./
 
 RUN npm install
 
-FROM build AS run
+FROM dependencies AS build
 
 COPY ./ ./
 
 RUN npm run build
 
+FROM node:20-alpine AS run
+
+WORKDIR /app
+
 EXPOSE 8081
+
+COPY --from=build /app/.output ./.output
 
 CMD ["node", ".output/server/index.mjs"]
