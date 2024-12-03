@@ -1,6 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../App';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+
+type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
+
 
 const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
   return (
@@ -21,15 +27,14 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
   );
 };
 
-import { NavigationProp } from '@react-navigation/native';
-
-const AreasScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+const AreasScreen = ({ navigation, route }: { navigation: NavigationProp<any>, readonly route: any }) => {
   const areas = [
     { text: 'Upload every day', color: '#FF4D4D', icons: ['logo-github', 'time-outline'] },
     { text: 'Start Music!', color: '#4CAF50', icons: ['cloud-outline', 'logo-spotify'] },
     { text: 'Upload every day', color: '#9C27B0', icons: ['cloud-upload-outline', 'time-outline'] },
     { text: 'Stock photo!', color: '#2196F3', icons: ['mail-outline', 'logo-dropbox'] },
   ];
+  const { ip } = route.params?.ip || 'localhost';
 
   return (
     <View style={styles.container}>

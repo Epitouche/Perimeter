@@ -46,7 +46,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         if (response.ok) {
           const data = await response.json();
           console.log('Data:', data);
-          navigation.navigate('Home', {ip: ip});
+          navigation.navigate('AreaView', {ip: ip});
         } else {
           console.error('Error:', response.status);
         }
