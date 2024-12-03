@@ -32,6 +32,10 @@ func NewServiceService(repository repository.ServiceRepository) ServiceService {
 				Name:        schemas.Timer,
 				Description: "This service is a time service",
 			},
+			{
+				Name:        schemas.Gmail,
+				Description: "This service is a mail service",
+			},
 		},
 	}
 	newService.InitialSaveService()

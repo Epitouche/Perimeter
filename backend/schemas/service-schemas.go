@@ -8,6 +8,7 @@ const (
 	Spotify        ServiceName = "spotify"
 	OpenWeatherMap ServiceName = "openWeatherMap"
 	Timer          ServiceName = "timer"
+	Gmail          ServiceName = "gmail"
 )
 
 type ServiceJson struct {
