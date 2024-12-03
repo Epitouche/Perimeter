@@ -58,9 +58,9 @@ func (controller *spotifyController) RedirectToService(
 	// Construct the Spotify authorization URL
 	redirectURI := "http://localhost:" + appPort + path
 	authURL := "https://accounts.spotify.com/authorize" +
-		"?client_id=" + clientID +
-		"&response_type=code" +
-		"&scope=repo" +
+		"?response_type=code" +
+		"&client_id=" + clientID +
+		"&scope=user-read-private user-read-email" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil
