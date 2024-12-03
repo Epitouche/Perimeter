@@ -17,7 +17,6 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" /> {/* Native StatusBar */}
       <Text>Enter the IP address to ping:</Text>
       <TextInput
         style={styles.input}

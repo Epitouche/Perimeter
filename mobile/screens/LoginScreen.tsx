@@ -35,12 +35,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
     if (!hasError) {
       try {
-        const response = await fetch(`http://${ip}:8080/auth/login`, {
+        const response = await fetch(`http://${ip}:8080/api/v1/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({username, password}),
+          body: JSON.stringify({ username, password }),
         });
 
         if (response.ok) {
