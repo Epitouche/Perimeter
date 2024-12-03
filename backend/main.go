@@ -65,8 +65,8 @@ func setupRouter() *gin.Engine {
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
-	githubController := controller.NewGithubController(githubService, userService)
-	gmailController := controller.NewGmailController(gmailService, userService)
+	githubController := controller.NewGithubController(githubService, userService, tokenService)
+	gmailController := controller.NewGmailController(gmailService, userService, tokenService)
 	userController := controller.NewUserController(userService, jwtService)
 	serviceController := controller.NewServiceController(
 		serviceService,
