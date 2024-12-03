@@ -17,7 +17,6 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" /> {/* Native StatusBar */}
       <Text>Enter the IP address to ping:</Text>
       <TextInput
         style={styles.input}
@@ -26,7 +25,10 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         onChangeText={setIpAddress}
         keyboardType="numeric"
       />
-      <Button title="Connect" onPress={() => navigation.navigate('Login', { 'ip': ipAddress })} />
+      <Button
+        title="Connect"
+        onPress={() => navigation.navigate('Login', {ip: ipAddress})}
+      />
     </View>
   );
 };
