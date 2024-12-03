@@ -2,9 +2,11 @@ package schemas
 
 // GmailTokenResponse represents the response from Gmail when a token is requested.
 type GmailTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	Scope       string `json:"scope"`
-	TokenType   string `json:"token_type"`
+	AccessToken  string `json:"access_token"`
+	ExpiresIn    uint64 `json:"expires_in"`
+	Scope        string `json:"scope"`
+	TokenType    string `json:"token_type"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type GmailUserInfo struct {

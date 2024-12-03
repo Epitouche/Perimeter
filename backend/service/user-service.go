@@ -11,8 +11,10 @@ import (
 
 type UserService interface {
 	Login(user schemas.User) (JWTtoken string, err error)
-	Register(newUser schemas.User) (JWTtoken string, err error)
+	Register(newUser schemas.User) (JWTtoken string, userId uint64, err error)
 	GetUserInfo(token string) (userInfo schemas.User, err error)
+	UpdateUserInfo(newUser schemas.User) (err error)
+	GetUserById(userId uint64) schemas.User
 }
 
 type userService struct {
@@ -63,22 +65,28 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 	return "", fmt.Errorf("invalid credentials")
 }
 
-func (service *userService) Register(newUser schemas.User) (JWTtoken string, err error) {
+func (service *userService) Register(
+	newUser schemas.User,
+) (JWTtoken string, userId uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
-		return "", fmt.Errorf("email already in use")
+		return "", 0, fmt.Errorf("email already in use")
 	}
 
 	if newUser.Password != "" {
 		hashedPassword, err := database.HashPassword(newUser.Password)
 		if err != nil {
-			return "", fmt.Errorf("error while hashing the password")
+			return "", 0, fmt.Errorf("error while hashing the password")
 		}
 		newUser.Password = hashedPassword
 	}
 
 	service.repository.Save(newUser)
-	return service.serviceJWT.GenerateToken(fmt.Sprint(newUser.Id), newUser.Username, false), nil
+	return service.serviceJWT.GenerateToken(
+		fmt.Sprint(newUser.Id),
+		newUser.Username,
+		false,
+	), newUser.Id, nil
 }
 
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {
@@ -88,4 +96,13 @@ func (service *userService) GetUserInfo(token string) (userInfo schemas.User, er
 	}
 	userInfo = service.repository.FindById(userId)
 	return userInfo, nil
+}
+
+func (service *userService) UpdateUserInfo(newUser schemas.User) (err error) {
+	service.repository.Update(newUser)
+	return nil
+}
+
+func (service *userService) GetUserById(userId uint64) schemas.User {
+	return service.repository.FindById(userId)
 }
