@@ -1,3 +1,4 @@
 **/.vscode
 **/.env
 **/area-key.jks
+**/node_modules
