@@ -92,7 +92,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/me", nil)
 	if err != nil {
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to create request because %w", err)
 	}
