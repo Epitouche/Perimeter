@@ -118,7 +118,6 @@ func (controller *spotifyController) HandleServiceCallback(
 	newUser := schemas.User{
 		Username: userInfo.Login,
 		Email:    userInfo.Email,
-		GithubId: tokenId,
 	}
 
 	if userAlreadExists {
@@ -147,7 +146,7 @@ func (controller *spotifyController) GetUserInfo(
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	token, err := controller.service.GetTokenById(user.GithubId)
+	token, err := controller.service.GetTokenById(user.Id)
 	if err != nil {
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}

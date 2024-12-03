@@ -150,7 +150,7 @@ func (controller *gmailController) GetUserInfo(
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	token, err := controller.serviceToken.GetTokenById(user.GithubId)
+	token, err := controller.serviceToken.GetTokenById(user.Id)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}

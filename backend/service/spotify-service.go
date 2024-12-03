@@ -65,7 +65,10 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf(
+			"unable to create request because %w",
+			err,
+		)
 	}
 
 	req.URL.RawQuery = data.Encode()
