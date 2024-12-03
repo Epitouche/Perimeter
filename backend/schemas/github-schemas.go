@@ -1,21 +1,10 @@
 package schemas
 
-import "time"
-
 // GitHubTokenResponse represents the response from Github when a token is requested.
 type GitHubTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	Scope       string `json:"scope"`
 	TokenType   string `json:"token_type"`
-}
-
-// GithubToken represents the GithubToken entity in the database.
-type GithubToken struct {
-	Id          uint64    `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`
-	AccessToken string    `                                 json:"access_token"`
-	Scope       string    `                                 json:"scope"`
-	TokenType   string    `                                 json:"token_type"`
-	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"createdAt"`
 }
 
 type GithubUserInfo struct {
