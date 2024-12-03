@@ -17,6 +17,13 @@ jobs:
     name: update_dev_base_branch
     runs-on: self-hosted
     steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
       - name: Checkout GH repository
         uses: actions/checkout@v4
         with:

@@ -18,6 +18,13 @@ jobs:
     name: push_to_mirror
     runs-on: self-hosted
     steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
       - name: Checkout GH repository
         uses: actions/checkout@v4
         with:
