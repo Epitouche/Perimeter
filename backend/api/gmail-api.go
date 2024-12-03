@@ -8,17 +8,17 @@ import (
 	"area/controller"
 )
 
-type GithubAPI struct {
-	controller controller.GithubController
+type GmailAPI struct {
+	controller controller.GmailController
 }
 
-func NewGithubAPI(controller controller.GithubController) *GithubAPI {
-	return &GithubAPI{
+func NewGmailAPI(controller controller.GmailController) *GmailAPI {
+	return &GmailAPI{
 		controller: controller,
 	}
 }
 
-func (api *GithubAPI) RedirectToService(ctx *gin.Context, path string) {
+func (api *GmailAPI) RedirectToService(ctx *gin.Context, path string) {
 	authURL, err := api.controller.RedirectToService(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -27,7 +27,7 @@ func (api *GithubAPI) RedirectToService(ctx *gin.Context, path string) {
 	}
 }
 
-func (api *GithubAPI) HandleServiceCallback(ctx *gin.Context, path string) {
+func (api *GmailAPI) HandleServiceCallback(ctx *gin.Context, path string) {
 	github_token, err := api.controller.HandleServiceCallback(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -36,7 +36,7 @@ func (api *GithubAPI) HandleServiceCallback(ctx *gin.Context, path string) {
 	}
 }
 
-func (api *GithubAPI) GetUserInfo(ctx *gin.Context) {
+func (api *GmailAPI) GetUserInfo(ctx *gin.Context) {
 	usetInfo, err := api.controller.GetUserInfo(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

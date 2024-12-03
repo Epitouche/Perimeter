@@ -18,6 +18,7 @@ erDiagram
     USER {
         int id PK
         string email
+        string username
         string password
         id token_auth_service FK
         datetime created_at

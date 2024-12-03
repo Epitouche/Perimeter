@@ -11,34 +11,34 @@ import (
 	"area/tools"
 )
 
-type GithubController interface {
+type GmailController interface {
 	RedirectToService(ctx *gin.Context, path string) (string, error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
-	GetUserInfo(ctx *gin.Context) (userInfo schemas.GithubUserInfo, err error)
+	GetUserInfo(ctx *gin.Context) (userInfo schemas.GmailUserInfo, err error)
 }
 
-type githubController struct {
-	service     service.GithubService
+type gmailController struct {
+	service     service.GmailService
 	serviceUser service.UserService
 }
 
-func NewGithubController(
-	service service.GithubService,
+func NewGmailController(
+	service service.GmailService,
 	serviceUser service.UserService,
-) GithubController {
-	return &githubController{
+) GmailController {
+	return &gmailController{
 		service:     service,
 		serviceUser: serviceUser,
 	}
 }
 
-func (controller *githubController) RedirectToService(
+func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
 	path string,
 ) (string, error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return "", fmt.Errorf("GITHUB_CLIENT_ID is not set")
+		return "", fmt.Errorf("GMAIL_CLIENT_ID is not set")
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
@@ -57,16 +57,16 @@ func (controller *githubController) RedirectToService(
 
 	// Construct the GitHub authorization URL
 	redirectURI := "http://localhost:" + appPort + path
-	authURL := "https://github.com/login/oauth/authorize" +
+	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
-		"&scope=repo" +
+		"&scope=https://mail.google.com/" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil
 }
 
-func (controller *githubController) HandleServiceCallback(
+func (controller *gmailController) HandleServiceCallback(
 	ctx *gin.Context,
 	path string,
 ) (string, error) {
@@ -90,14 +90,14 @@ func (controller *githubController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
-	newGithubToken := schemas.GithubToken{
+	newGmailToken := schemas.GmailToken{
 		AccessToken: githubTokenResponse.AccessToken,
 		Scope:       githubTokenResponse.Scope,
 		TokenType:   githubTokenResponse.TokenType,
 	}
 
 	// Save the access token in the database
-	tokenId, err := controller.service.SaveToken(newGithubToken)
+	tokenId, err := controller.service.SaveToken(newGmailToken)
 	userAlreadExists := false
 	if err != nil {
 		if err.Error() == "token already exists" {
@@ -107,7 +107,7 @@ func (controller *githubController) HandleServiceCallback(
 		}
 	}
 
-	userInfo, err := controller.service.GetUserInfo(newGithubToken.AccessToken)
+	userInfo, err := controller.service.GetUserInfo(newGmailToken.AccessToken)
 	if err != nil {
 		return "", fmt.Errorf("unable to get user info because %w", err)
 	}
@@ -133,25 +133,25 @@ func (controller *githubController) HandleServiceCallback(
 	}
 }
 
-func (controller *githubController) GetUserInfo(
+func (controller *gmailController) GetUserInfo(
 	ctx *gin.Context,
-) (userInfo schemas.GithubUserInfo, err error) {
+) (userInfo schemas.GmailUserInfo, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	token, err := controller.service.GetTokenById(user.GithubId)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get token because %w", err)
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
 	githubUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	return githubUserInfo, nil
