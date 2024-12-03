@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -12,16 +11,12 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
   return (
     <View style={styles.navbarContainer}>
       <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.navButton}>
-        <Ionicons name="home-outline" size={24} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Add')} style={styles.navButton}>
-        <Ionicons name="add-circle-outline" size={24} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('History')} style={styles.navButton}>
-        <Ionicons name="time-outline" size={24} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.navButton}>
-        <Ionicons name="person-outline" size={24} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -44,9 +39,6 @@ const AreasScreen = ({ navigation, route }: { navigation: NavigationProp<any>, r
           <View key={index} style={[styles.areaBox, { backgroundColor: area.color }]}>
             <Text style={styles.areaText}>{area.text}</Text>
             <View style={styles.iconsContainer}>
-              {area.icons.map((icon, idx) => (
-                <Ionicons key={idx} name={icon as any} size={24} color="white" style={styles.areaIcon} />
-              ))}
             </View>
           </View>
         ))}
