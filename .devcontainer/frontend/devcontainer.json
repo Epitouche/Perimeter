@@ -4,7 +4,7 @@
 	"name": "Frontend",
 	"dockerComposeFile": "../../docker-compose.dev.yaml",
 	"service": "client_web",
-	// "shutdownAction": "none",
+	"shutdownAction": "stopCompose",
 	"workspaceFolder": "/workspace/frontend",
 
 	"postCreateCommand": "sudo chown node -R /home/node/.zinit && sudo chown node -R /home/node/.zsh_history && sudo chown node -R /home/node/.ssh && npm install",

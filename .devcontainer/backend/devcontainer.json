@@ -4,7 +4,7 @@
 	"name": "Backend",
 	"dockerComposeFile": "../../docker-compose.dev.yaml",
 	"service": "server",
-	// "shutdownAction": "none",
+	"shutdownAction": "stopCompose",
 	"workspaceFolder": "/workspace/backend",
 	"postCreateCommand": "sudo chown vscode -R /home/vscode/.zinit && sudo chown vscode -R /home/vscode/.zsh_history && sudo chown vscode -R /home/vscode/.ssh && go mod download",
 	"postStartCommand": "air main.go",
