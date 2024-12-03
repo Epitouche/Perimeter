@@ -6,9 +6,9 @@ import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 
 export type RootStackParamList = {
-  Home: undefined;
-  Login: undefined;
-  SignUp: undefined;
+  Home: { ip: string };
+  Login: { ip: string };
+  SignUp: { ip: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
