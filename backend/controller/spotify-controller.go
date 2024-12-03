@@ -117,7 +117,7 @@ func (controller *spotifyController) HandleServiceCallback(
 	newUser := schemas.User{
 		Username: userInfo.Login,
 		Email:    userInfo.Email,
-		TokenId: tokenId,
+		TokenId:  tokenId,
 	}
 
 	if userAlreadExists {

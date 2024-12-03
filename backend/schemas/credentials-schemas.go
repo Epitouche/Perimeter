@@ -1,14 +1,14 @@
 package schemas
 
 type LoginCredentials struct {
-	Username string `form:"username"`
-	Password string `form:"password"`
+	Username string `form:"username" json:"username"`
+	Password string `form:"password" json:"password"`
 }
 
 type RegisterCredentials struct {
-	Email    string `form:"email"`
-	Username string `form:"username"`
-	Password string `form:"password"`
+	Email    string `form:"email" json:"email"`
+	Username string `form:"username" json:"username"`
+	Password string `form:"password" json:"password"`
 }
 
 type JWT struct {
