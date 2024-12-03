@@ -18,17 +18,20 @@ type GmailController interface {
 }
 
 type gmailController struct {
-	service     service.GmailService
-	serviceUser service.UserService
+	service      service.GmailService
+	serviceUser  service.UserService
+	serviceToken service.TokenService
 }
 
 func NewGmailController(
 	service service.GmailService,
 	serviceUser service.UserService,
+	serviceToken service.TokenService,
 ) GmailController {
 	return &gmailController{
-		service:     service,
-		serviceUser: serviceUser,
+		service:      service,
+		serviceUser:  serviceUser,
+		serviceToken: serviceToken,
 	}
 }
 
@@ -90,47 +93,50 @@ func (controller *gmailController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
-	newGmailToken := schemas.GmailToken{
-		AccessToken: githubTokenResponse.AccessToken,
-		Scope:       githubTokenResponse.Scope,
-		TokenType:   githubTokenResponse.TokenType,
-	}
+	githubTokenResponse.Scope = "https://mail.google.com/"
 
-	// Save the access token in the database
-	tokenId, err := controller.service.SaveToken(newGmailToken)
-	userAlreadExists := false
-	if err != nil {
-		if err.Error() == "token already exists" {
-			userAlreadExists = true
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
+	// newGmailToken := schemas.GmailToken{
+	// 	AccessToken: githubTokenResponse.AccessToken,
+	// 	Scope:       githubTokenResponse.Scope,
+	// 	TokenType:   githubTokenResponse.TokenType,
+	// }
 
-	userInfo, err := controller.service.GetUserInfo(newGmailToken.AccessToken)
-	if err != nil {
-		return "", fmt.Errorf("unable to get user info because %w", err)
-	}
+	// // Save the access token in the database
+	// tokenId, err := controller.service.SaveToken(newGmailToken)
+	// userAlreadExists := false
+	// if err != nil {
+	// 	if err.Error() == "token already exists" {
+	// 		userAlreadExists = true
+	// 	} else {
+	// 		return "", fmt.Errorf("unable to save token because %w", err)
+	// 	}
+	// }
 
-	newUser := schemas.User{
-		Username: userInfo.Login,
-		Email:    userInfo.Email,
-		GithubId: tokenId,
-	}
+	// userInfo, err := controller.service.GetUserInfo(newGmailToken.AccessToken)
+	// if err != nil {
+	// 	return "", fmt.Errorf("unable to get user info because %w", err)
+	// }
 
-	if userAlreadExists {
-		token, err := controller.serviceUser.Login(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to login user because %w", err)
-		}
-		return token, nil
-	} else {
-		token, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		return token, nil
-	}
+	// newUser := schemas.User{
+	// 	Username: userInfo.Login,
+	// 	Email:    userInfo.Email,
+	// 	GithubId: tokenId,
+	// }
+
+	// if userAlreadExists {
+	// 	token, err := controller.serviceUser.Login(newUser)
+	// 	if err != nil {
+	// 		return "", fmt.Errorf("unable to login user because %w", err)
+	// 	}
+	// 	return token, nil
+	// } else {
+	// 	token, err := controller.serviceUser.Register(newUser)
+	// 	if err != nil {
+	// 		return "", fmt.Errorf("unable to register user because %w", err)
+	// 	}
+	// 	return token, nil
+	// }
+	return "", nil
 }
 
 func (controller *gmailController) GetUserInfo(
@@ -144,12 +150,12 @@ func (controller *gmailController) GetUserInfo(
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	token, err := controller.service.GetTokenById(user.GithubId)
+	token, err := controller.serviceToken.GetTokenById(user.GithubId)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	githubUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
+	githubUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}

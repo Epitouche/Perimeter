@@ -16,11 +16,6 @@ type GmailService interface {
 	AuthGetServiceAccessToken(code string, path string) (schemas.GmailTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.GmailUserInfo, error)
 	// Token operations
-	SaveToken(token schemas.GmailToken) (tokenID uint64, err error)
-	Update(token schemas.GmailToken) error
-	Delete(token schemas.GmailToken) error
-	FindAll() []schemas.GmailToken
-	GetTokenById(id uint64) (schemas.GmailToken, error)
 }
 
 type gmailService struct {
@@ -93,27 +88,6 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	return result, nil
 }
 
-func (service *gmailService) SaveToken(
-	token schemas.GmailToken,
-) (tokenID uint64, err error) {
-	tokens := service.repository.FindByAccessToken(token.AccessToken)
-	for _, t := range tokens {
-		if t.AccessToken == token.AccessToken {
-			return t.Id, fmt.Errorf("token already exists")
-		}
-	}
-
-	service.repository.Save(token)
-	tokens = service.repository.FindByAccessToken(token.AccessToken)
-
-	for _, t := range tokens {
-		if t.AccessToken == token.AccessToken {
-			return t.Id, nil
-		}
-	}
-	return 0, fmt.Errorf("unable to save token")
-}
-
 func (service *gmailService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
@@ -139,22 +113,4 @@ func (service *gmailService) GetUserInfo(accessToken string) (schemas.GmailUserI
 
 	resp.Body.Close()
 	return result, nil
-}
-
-func (service *gmailService) GetTokenById(id uint64) (schemas.GmailToken, error) {
-	return service.repository.FindById(id), nil
-}
-
-func (service *gmailService) Update(token schemas.GmailToken) error {
-	service.repository.Update(token)
-	return nil
-}
-
-func (service *gmailService) Delete(token schemas.GmailToken) error {
-	service.repository.Delete(token)
-	return nil
-}
-
-func (service *gmailService) FindAll() []schemas.GmailToken {
-	return service.repository.FindAll()
 }

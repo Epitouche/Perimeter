@@ -18,17 +18,20 @@ type GithubController interface {
 }
 
 type githubController struct {
-	service     service.GithubService
-	serviceUser service.UserService
+	service      service.GithubService
+	serviceUser  service.UserService
+	serviceToken service.TokenService
 }
 
 func NewGithubController(
 	service service.GithubService,
 	serviceUser service.UserService,
+	serviceToken service.TokenService,
 ) GithubController {
 	return &githubController{
-		service:     service,
-		serviceUser: serviceUser,
+		service:      service,
+		serviceUser:  serviceUser,
+		serviceToken: serviceToken,
 	}
 }
 
@@ -90,47 +93,50 @@ func (controller *githubController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
-	newGithubToken := schemas.GithubToken{
-		AccessToken: githubTokenResponse.AccessToken,
-		Scope:       githubTokenResponse.Scope,
-		TokenType:   githubTokenResponse.TokenType,
-	}
+	// TODO: Save the access token in the database
+	githubTokenResponse.Scope = "repo"
+	// newGithubToken := schemas.Token{
+	// 	AccessToken: githubTokenResponse.AccessToken,
+	// 	Scope:       githubTokenResponse.Scope,
+	// 	TokenType:   githubTokenResponse.TokenType,
+	// }
 
-	// Save the access token in the database
-	tokenId, err := controller.service.SaveToken(newGithubToken)
-	userAlreadExists := false
-	if err != nil {
-		if err.Error() == "token already exists" {
-			userAlreadExists = true
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
+	// // Save the access token in the database
+	// tokenId, err := controller.service.SaveToken(newGithubToken)
+	// userAlreadExists := false
+	// if err != nil {
+	// 	if err.Error() == "token already exists" {
+	// 		userAlreadExists = true
+	// 	} else {
+	// 		return "", fmt.Errorf("unable to save token because %w", err)
+	// 	}
+	// }
 
-	userInfo, err := controller.service.GetUserInfo(newGithubToken.AccessToken)
-	if err != nil {
-		return "", fmt.Errorf("unable to get user info because %w", err)
-	}
+	// userInfo, err := controller.service.GetUserInfo(newGithubToken.AccessToken)
+	// if err != nil {
+	// 	return "", fmt.Errorf("unable to get user info because %w", err)
+	// }
 
-	newUser := schemas.User{
-		Username: userInfo.Login,
-		Email:    userInfo.Email,
-		GithubId: tokenId,
-	}
+	// newUser := schemas.User{
+	// 	Username: userInfo.Login,
+	// 	Email:    userInfo.Email,
+	// 	GithubId: tokenId,
+	// }
 
-	if userAlreadExists {
-		token, err := controller.serviceUser.Login(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to login user because %w", err)
-		}
-		return token, nil
-	} else {
-		token, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		return token, nil
-	}
+	// if userAlreadExists {
+	// 	token, err := controller.serviceUser.Login(newUser)
+	// 	if err != nil {
+	// 		return "", fmt.Errorf("unable to login user because %w", err)
+	// 	}
+	// 	return token, nil
+	// } else {
+	// 	token, err := controller.serviceUser.Register(newUser)
+	// 	if err != nil {
+	// 		return "", fmt.Errorf("unable to register user because %w", err)
+	// 	}
+	// 	return token, nil
+	// }
+	return githubTokenResponse.AccessToken, nil
 }
 
 func (controller *githubController) GetUserInfo(
@@ -144,12 +150,12 @@ func (controller *githubController) GetUserInfo(
 		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	token, err := controller.service.GetTokenById(user.GithubId)
+	token, err := controller.serviceToken.GetTokenById(user.GithubId)
 	if err != nil {
 		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	githubUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
+	githubUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
 		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
 	}
