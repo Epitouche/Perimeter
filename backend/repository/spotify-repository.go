@@ -6,8 +6,7 @@ import (
 	"area/schemas"
 )
 
-type SpotifyRepository interface {
-}
+type SpotifyRepository interface{}
 
 // Define a struct that embeds `*schemas.Database` and implements `SpotifyRepository`.
 type spotifyRepository struct {

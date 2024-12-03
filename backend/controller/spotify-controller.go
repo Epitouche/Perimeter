@@ -18,8 +18,8 @@ type SpotifyController interface {
 }
 
 type spotifyController struct {
-	service     service.SpotifyService
-	serviceUser service.UserService
+	service      service.SpotifyService
+	serviceUser  service.UserService
 	serviceToken service.TokenService
 }
 
@@ -29,8 +29,8 @@ func NewSpotifyController(
 	serviceToken service.TokenService,
 ) SpotifyController {
 	return &spotifyController{
-		service:     service,
-		serviceUser: serviceUser,
+		service:      service,
+		serviceUser:  serviceUser,
 		serviceToken: serviceToken,
 	}
 }
