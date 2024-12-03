@@ -46,7 +46,6 @@ services:
 
   database:
     image: postgres:17
-    container_name: database
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: area-database
@@ -65,7 +64,6 @@ services:
   pgadmin:
     build:
       context: ./pgadmin
-    container_name: pgadmin
     ports:
       - "0.0.0.0:8079:80"
     environment:
