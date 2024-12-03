@@ -67,8 +67,8 @@ func setupRouter() *gin.Engine {
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
-	spotifyController := controller.NewSpotifyController(spotifyService, userService, tokenService)
-	githubController := controller.NewGithubController(githubService, userService, tokenService)
+	spotifyController := controller.NewSpotifyController(spotifyService, userService, tokenService, serviceService)
+	githubController := controller.NewGithubController(githubService, userService, tokenService, serviceService)
 	gmailController := controller.NewGmailController(gmailService, userService, tokenService)
 	userController := controller.NewUserController(userService, jwtService)
 	serviceController := controller.NewServiceController(

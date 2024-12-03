@@ -7,6 +7,7 @@ import (
 
 type ServiceService interface {
 	FindAll() (allServices []schemas.Service)
+	FindByName(serviceName schemas.ServiceName) schemas.Service
 	GetAllServices() (allServicesJson []schemas.ServiceJson, err error)
 }
 
@@ -20,15 +21,15 @@ func NewServiceService(repository repository.ServiceRepository) ServiceService {
 		repository: repository,
 		allService: []schemas.Service{
 			{
-				Name:        string(schemas.Spotify),
+				Name:        schemas.Spotify,
 				Description: "This service is a music service",
 			},
 			{
-				Name:        string(schemas.OpenWeatherMap),
+				Name:        schemas.OpenWeatherMap,
 				Description: "This service is a weather service",
 			},
 			{
-				Name:        string(schemas.Timer),
+				Name:        schemas.Timer,
 				Description: "This service is a time service",
 			},
 		},
@@ -39,7 +40,7 @@ func NewServiceService(repository repository.ServiceRepository) ServiceService {
 
 func (service *serviceService) InitialSaveService() {
 	for _, oneService := range service.allService {
-		serviceByName := service.repository.FindByName(oneService.Name)
+		serviceByName := service.repository.FindAllByName(oneService.Name)
 		if len(serviceByName) == 0 {
 			service.repository.Save(oneService)
 		}
@@ -51,7 +52,6 @@ func (service *serviceService) FindAll() (allServices []schemas.Service) {
 }
 
 func (service *serviceService) GetAllServices() (allServicesJson []schemas.ServiceJson, err error) {
-	allServicesJson = []schemas.ServiceJson{}
 	allServices := service.repository.FindAll()
 	for _, oneService := range allServices {
 		println(oneService.Name)
@@ -60,4 +60,8 @@ func (service *serviceService) GetAllServices() (allServicesJson []schemas.Servi
 		})
 	}
 	return allServicesJson, nil
+}
+
+func (service *serviceService) FindByName(serviceName schemas.ServiceName) schemas.Service {
+	return service.repository.FindByName(serviceName)
 }

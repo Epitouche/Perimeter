@@ -68,9 +68,10 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 		Email:    credentials.Email,
 		Password: credentials.Password,
 	}
-	token, err := controller.userService.Register(newUser)
+	token, newUserId, err := controller.userService.Register(newUser)
 	if err != nil {
 		return "", fmt.Errorf("can't register user: %w", err)
 	}
+	print(newUserId)
 	return token, nil
 }

@@ -18,20 +18,23 @@ type SpotifyController interface {
 }
 
 type spotifyController struct {
-	service      service.SpotifyService
-	serviceUser  service.UserService
-	serviceToken service.TokenService
+	service        service.SpotifyService
+	serviceUser    service.UserService
+	serviceToken   service.TokenService
+	serviceService service.ServiceService
 }
 
 func NewSpotifyController(
 	service service.SpotifyService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
+	serviceService service.ServiceService,
 ) SpotifyController {
 	return &spotifyController{
-		service:      service,
-		serviceUser:  serviceUser,
-		serviceToken: serviceToken,
+		service:        service,
+		serviceUser:    serviceUser,
+		serviceToken:   serviceToken,
+		serviceService: serviceService,
 	}
 }
 
@@ -93,23 +96,7 @@ func (controller *spotifyController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
-	newSpotifyToken := schemas.Token{
-		Token:  spotifyTokenResponse.AccessToken,
-		UserId: 1,
-	}
-
-	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
-	userAlreadExists := false
-	if err != nil {
-		if err.Error() == "token already exists" {
-			userAlreadExists = true
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
-
-	userInfo, err := controller.service.GetUserInfo(newSpotifyToken.Token)
+	userInfo, err := controller.service.GetUserInfo(spotifyTokenResponse.AccessToken)
 	if err != nil {
 		return "", fmt.Errorf("unable to get user info because %w", err)
 	}
@@ -117,22 +104,40 @@ func (controller *spotifyController) HandleServiceCallback(
 	newUser := schemas.User{
 		Username: userInfo.Login,
 		Email:    userInfo.Email,
-		TokenId:  tokenId,
 	}
 
-	if userAlreadExists {
-		token, err := controller.serviceUser.Login(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to login user because %w", err)
-		}
-		return token, nil
-	} else {
-		token, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
+	token, err := controller.serviceUser.Login(newUser)
+	if err == nil {
 		return token, nil
 	}
+
+	token, newUserId, err := controller.serviceUser.Register(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to register user because %w", err)
+	}
+
+	spotifyService := controller.serviceService.FindByName(schemas.Spotify)
+	savedUser := controller.serviceUser.GetUserById(newUserId)
+
+	newSpotifyToken := schemas.Token{
+		Token:   spotifyTokenResponse.AccessToken,
+		Service: spotifyService,
+		User:    savedUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
+	if err != nil {
+		if err.Error() == "token already exists" {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	savedUser.TokenId = tokenId
+
+	controller.serviceUser.UpdateUserInfo(savedUser)
+	return token, nil
 }
 
 func (controller *spotifyController) GetUserInfo(
