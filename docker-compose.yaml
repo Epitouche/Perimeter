@@ -27,6 +27,8 @@ services:
       context: ./mobile
       target: build-apk
       dockerfile: Dockerfile
+    env_file:
+      - .env
     volumes:
       - shared_apk:/app/public/apk
     networks:

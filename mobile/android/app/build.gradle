@@ -71,14 +71,14 @@ def enableProguardInReleaseBuilds = false
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
-import io.github.cdimascio.dotenv.Dotenv
+// import io.github.cdimascio.dotenv.Dotenv
 
 // Load the .env file
-def dotenv = Dotenv.load()
+// def dotenv = Dotenv.load()
 
 // Access the variables from the .env file
-def keystorePasswordEnv = dotenv["KEYSTORE_PASSWORD"]
-def keyPasswordEnv = dotenv["KEY_PASSWORD"]
+def keystorePasswordEnv = System.getenv("KEYSTORE_PASSWORD")
+def keyPasswordEnv = System.getenv("KEY_PASSWORD")
 
 android {
     ndkVersion rootProject.ext.ndkVersion
