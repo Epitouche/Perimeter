@@ -3,7 +3,15 @@ run-name: mirroring
 
 on:
   push:
+    branches:
+      - dev
+      - pre-prod
+      - main
   pull_request:
+    branches:
+      - dev
+      - pre-prod
+      - main
 
 jobs:
   push_to_mirror:
