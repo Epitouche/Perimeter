@@ -4,8 +4,7 @@ import (
 	"area/service"
 )
 
-type TokenController interface {
-}
+type TokenController interface{}
 
 type tokenController struct {
 	service service.TokenService
