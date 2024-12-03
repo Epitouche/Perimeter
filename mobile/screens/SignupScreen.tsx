@@ -1,28 +1,20 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../App';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../App';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-const SignupScreen: React.FC<Props> = ({navigation, route}) => {
+const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState({username: '', password: '', email: ''});
+  const [errors, setErrors] = useState({ username: '', password: '', email: '' });
   const ip = route.params?.ip || 'localhost';
 
   const handleSignup = async () => {
-    
     let hasError = false;
-    const newErrors = {username: '', password: '', email: ''};
+    const newErrors = { username: '', password: '', email: '' };
 
     if (!username) {
       newErrors.username = 'Username is required';
@@ -42,37 +34,31 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
 
     if (!hasError) {
       try {
-        console.log('IP:', ip);
-        console.log("body:", JSON.stringify({Email: email, Username: username, Password: password}))
-        if (!ip) {
-          console.log('Please enter an IP address');
-          return;
-        }
-        const response = await fetch(`http://${ip}:8080/api/v1/auth/register`, {
+        const response = await fetch(`http://${ip}:8080/auth/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({email, username, password}),
+          body: JSON.stringify({ username, password, email }),
         });
 
         if (response.ok) {
           const data = await response.json();
           console.log('Data:', data);
-          navigation.navigate('Login', {ip: ip});
+          navigation.navigate('Login', { 'ip': ip });
         } else {
           console.error('Error:', response.status);
         }
       } catch (error) {
         console.error('Error', error);
       }
-    }
-  };
+    };
+  }
 
   const switchToLogin = () => {
     console.log('Switch to login');
-    navigation.navigate('Login', {ip: ip});
-  };
+    navigation.navigate('Login', { 'ip': ip });
+  }
 
   return (
     <View style={styles.container}>
@@ -83,22 +69,18 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
-        onChangeText={text => setUsername(text)}
+        onChangeText={(text) => setUsername(text)}
       />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
+      {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
       <TextInput
         style={styles.input}
         placeholder="Enter email"
         placeholderTextColor="#aaa"
         value={email}
-        onChangeText={text => setEmail(text)}
+        onChangeText={(text) => setEmail(text)}
       />
-      {errors.email ? (
-        <Text style={styles.errorText}>{errors.email}</Text>
-      ) : null}
+      {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
       <TextInput
         style={styles.input}
@@ -106,11 +88,9 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         placeholderTextColor="#aaa"
         secureTextEntry
         value={password}
-        onChangeText={text => setPassword(text)}
+        onChangeText={(text) => setPassword(text)}
       />
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
-      ) : null}
+      {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
       <TouchableOpacity style={styles.registerButton} onPress={handleSignup}>
         <Text style={styles.signupButtonText}>Sign up</Text>
@@ -131,15 +111,15 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
 
       <View style={styles.socialIconsContainer}>
         <Image
-          source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
+          source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
           style={styles.socialIcon}
         />
         <Image
-          source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
+          source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
           style={styles.socialIcon}
         />
         <Image
-          source={{uri: 'https://img.icons8.com/color/48/facebook.png'}}
+          source={{ uri: 'https://img.icons8.com/color/48/facebook.png' }}
           style={styles.socialIcon}
         />
       </View>
