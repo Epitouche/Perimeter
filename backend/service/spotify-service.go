@@ -39,14 +39,14 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	code string,
 	path string,
 ) (schemas.SpotifyTokenResponse, error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	if clientID == "" {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("GITHUB_CLIENT_ID is not set")
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf("SPOTIFY_CLIENT_ID is not set")
 	}
 
-	clientSecret := os.Getenv("GITHUB_SECRET")
+	clientSecret := os.Getenv("SPOTIFY_SECRET")
 	if clientSecret == "" {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("GITHUB_SECRET is not set")
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf("SPOTIFY_SECRET is not set")
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
@@ -56,13 +56,12 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 	redirectURI := "http://localhost:" + appPort + path
 
-	apiURL := "https://github.com/login/oauth/access_token"
+	apiURL := "https://accounts.spotify.com/api/token"
 
 	data := url.Values{}
-	data.Set("client_id", clientID)
-	data.Set("client_secret", clientSecret)
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
+	data.Set("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
@@ -70,7 +69,8 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	}
 
 	req.URL.RawQuery = data.Encode()
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.SetBasicAuth(clientID, clientSecret)
 
 	client := &http.Client{
 		Timeout: time.Second * 30, // Adjust the timeout as needed
