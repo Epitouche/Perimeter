@@ -1,9 +1,13 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'guest',
+});
 const email = ref('')
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const signUpError = ref<string | null>(null);
+const token = useCookie('token')
 
 interface RegisterResponse {
   token: string;
@@ -31,7 +35,7 @@ const handleSignUp = async () => {
     });
 
     if (response.token) {
-      localStorage.setItem('authToken', response.token);
+      token.value = response.token;
       console.log('Token stored in localStorage:', response.token);
     }
     console.log('Sign up successful:', response);
