@@ -95,7 +95,11 @@ func (service *gmailService) AuthGetServiceAccessToken(
 
 func (service *gmailService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://gmail.googleapis.com/gmail/v1/users/me/profile", nil)
+	req, err := http.NewRequest(
+		"GET",
+		"https://gmail.googleapis.com/gmail/v1/users/me/profile",
+		nil,
+	)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to create request because %w", err)
 	}
