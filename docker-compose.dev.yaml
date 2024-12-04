@@ -59,6 +59,7 @@ services:
       - app-networks-dev
 
   server:
+    container_name: server
     build:
       context: .devcontainer/backend
       dockerfile: Dockerfile
