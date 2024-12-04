@@ -59,10 +59,10 @@ services:
       - app-networks-dev
 
   server:
-    container_name: server
     build:
       context: .devcontainer/backend
       dockerfile: Dockerfile
+    container_name: server
     depends_on:
       database:
         condition: service_healthy
