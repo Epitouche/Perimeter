@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -190,10 +191,72 @@ func init() {
 	// }
 }
 
+type ActionService struct {
+	Service string
+	Action  string
+}
+
+func timerAction(c chan ActionService, active *bool, hour int, minute int, response ActionService) {
+	var dt time.Time
+	for *active {
+		dt = time.Now().Local()
+		if dt.Hour() == hour && dt.Minute() == minute {
+			println("current time is ", dt.String())
+			c <- response // send sum to c
+		}
+		time.Sleep(30 * time.Second)
+	}
+}
+
+func handleAction(mychannel chan ActionService, active *bool) {
+	for {
+		x := <-mychannel
+		if x.Service == "Timer" {
+			println(x.Action)
+			*active = true
+		} else {
+			println("Unknown service")
+		}
+	}
+}
+
 // @securityDefinitions.apiKey bearerAuth
 // @in header
 // @name Authorization.
 func main() {
+	allChannel := make([]chan ActionService, 2)
+	allChannel[0] = make(chan ActionService)
+	allChannel[1] = make(chan ActionService)
+	newChannel := make(chan ActionService)
+	allChannel = append(allChannel, newChannel)
+
+	dt := time.Now().Local()
+	hour := dt.Hour()
+	minute := dt.Minute() + 1
+	if minute > 59 {
+		hour = hour + 1
+		minute = 0
+	}
+
+	active := true
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
+		Service: "Timer",
+		Action:  "say Hello",
+	})
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
+		Service: "Timer",
+		Action:  "say Bolo",
+	})
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
+		Service: "Timer",
+		Action:  "say Toto",
+	})
+
+	go handleAction(allChannel[0], &active)
+
 	router := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8000
