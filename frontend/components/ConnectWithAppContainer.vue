@@ -1,12 +1,44 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import auth from '~/middleware/auth';
 
 const props = defineProps<{
   apps: string[]
 }>();
 
+interface OAuthLink {
+  authentication_url: string;
+}
+
+const authApiCall = async (label: string) => {
+  try {
+    const response = await $fetch<OAuthLink>('/api/auth', {
+      method: 'POST',
+      body: {
+        label: label,
+      },
+    });
+    navigateTo(response.authentication_url, { external: true})
+    console.log(response.authentication_url)
+    return response;
+  } catch (err: any) {
+    console.log(err.message);
+    throw err;
+  }
+};
+
 const handleClick = (label: string) => {
-  console.log("app icon clicked");
+  if (label == 'i-logos-spotify-icon') {
+    console.log('Spotify icon clicked');
+    const spotifyApiLink = 'http://server:8080/api/v1/spotify/auth/';
+    authApiCall(spotifyApiLink);
+  } else if (label === 'i-logos-google-icon') {
+    console.log('Google icon clicked');
+    const gmailApiLink = 'http://server:8080/api/v1/gmail/auth/';
+    authApiCall(gmailApiLink);
+  } else {
+    console.log(`${label} unknown icon clicked`);
+  }
 };
 
 </script>

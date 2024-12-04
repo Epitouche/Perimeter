@@ -14,7 +14,7 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
+const apps = ref<string[]>(['i-logos-spotify-icon', 'i-logos-google-icon']);
 
 const handleSignUp = async () => {
   try {
@@ -25,7 +25,7 @@ const handleSignUp = async () => {
       return;
     }
 
-    const response = await $fetch<RegisterResponse>('http://localhost:8080/api/v1/auth/register', {
+    const response = await $fetch<RegisterResponse>('/api/register', {
       method: 'POST',
       body: {
         email: email.value,
@@ -39,12 +39,13 @@ const handleSignUp = async () => {
       console.log('Token stored in localStorage:', response.token);
     }
     console.log('Sign up successful:', response);
-    navigateTo('/myareas')
+    navigateTo('/myareas');
   } catch (error: any) {
     console.error('Sign up failed:', error);
     signUpError.value = error?.data?.message || 'Sign up failed. Please try again.';
   }
 };
+
 </script>
 
 <template>
@@ -83,9 +84,9 @@ const handleSignUp = async () => {
         </div>
       </div>
       <div class="min-w-[80%] max-w-[80%] pt-2">
-        <UDivider size="xs" label="or log in with" :ui="{ label: 'text-custom_color-text_other text-xl' }" />
+        <UDivider size="xs" label="or sign up with" :ui="{ label: 'text-custom_color-text_other text-xl' }" />
       </div>
-      <ConnectWithAppContainer :apps="apps" />
+      <ConnectWithAppContainer :apps="apps"/>
     </UContainer>
   </div>
 </template>
