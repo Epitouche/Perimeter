@@ -8,7 +8,7 @@ import (
 type Area struct {
 	Id         uint64    `gorm:"primaryKey;autoIncrement"            json:"id,omitempty"`
 	UserId     uint64    `                                           json:"-"` // Foreign key for User
-	User       User      `gorm:"foreignKey:UserId;references:Id"     json:"user_id,omitempty"  binding:"required"`
+	User       User      `gorm:"foreignKey:UserId;references:Id"     json:"user_id,omitempty"     binding:"required"`
 	ActionId   uint64    `                                           json:"-"` // Foreign key for Action
 	Action     Action    `gorm:"foreignKey:ActionId;references:Id"   json:"action_id,omitempty"   binding:"required"`
 	ReactionId uint64    `                                           json:"-"` // Foreign key for Reaction
