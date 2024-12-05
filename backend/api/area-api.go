@@ -19,7 +19,7 @@ func NewAreAPI(controller controller.AreaController) *AreaApi {
 func (api *AreaApi) CreateArea(ctx *gin.Context) {
 	response, err := api.controller.CreateArea(ctx)
 	if err != nil {
-		ctx.JSON(500, "status: error")
+		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(200, response)
