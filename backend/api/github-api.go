@@ -19,13 +19,14 @@ func NewGithubAPI(controller controller.GithubController) *GithubAPI {
 	}
 }
 
+// RedirectToService godoc
 // @Summary give url to authenticate with github
 // @Description give url to authenticate with github
 // @Tags github route
 // @Accept json
 // @Produce json
 // @Success 200 {string} Bearer token
-// @Error 500 {object} schemas.Response
+// @Failure 500 {object} schemas.Response
 // @Router /github/auth [get]
 func (api *GithubAPI) RedirectToService(ctx *gin.Context, path string) {
 	authURL, err := api.controller.RedirectToService(ctx, path)
@@ -38,6 +39,15 @@ func (api *GithubAPI) RedirectToService(ctx *gin.Context, path string) {
 	}
 }
 
+// HandleServiceCallback godoc
+// @Summary give url to authenticate with github
+// @Description give url to authenticate with github
+// @Tags github route
+// @Accept json
+// @Produce json
+// @Success 200 {string} Bearer token
+// @Failure 500 {object} schemas.Response
+// @Router /github/auth [get]
 func (api *GithubAPI) HandleServiceCallback(ctx *gin.Context, path string) {
 	github_token, err := api.controller.HandleServiceCallback(ctx, path)
 	if err != nil {

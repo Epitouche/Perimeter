@@ -74,6 +74,12 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
                     }
                 }
             }
@@ -120,6 +126,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
                     }
                 }
             }
@@ -143,12 +155,26 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorRespose"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "schemas.ErrorRespose": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas.JWT": {
             "type": "object",
             "properties": {

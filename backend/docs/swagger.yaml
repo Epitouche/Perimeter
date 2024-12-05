@@ -1,5 +1,10 @@
 basePath: /api/v1
 definitions:
+  schemas.ErrorRespose:
+    properties:
+      error:
+        type: string
+    type: object
   schemas.JWT:
     properties:
       token:
@@ -53,6 +58,10 @@ paths:
           description: OK
           schema:
             type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
       summary: give url to authenticate with github
       tags:
       - github route
@@ -83,6 +92,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
       summary: give url to authenticate with spotify
       tags:
       - spotify route
@@ -98,6 +111,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give user info of spotify
       tags:
       - spotify route
