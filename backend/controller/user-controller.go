@@ -12,19 +12,22 @@ import (
 type UserController interface {
 	Login(ctx *gin.Context) (string, error)
 	Register(ctx *gin.Context) (string, error)
+	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
 type userController struct {
-	userService service.UserService
-	jWtService  service.JWTService
+	userService  service.UserService
+	jWtService   service.JWTService
+	tokenService service.TokenService
 }
 
 func NewUserController(userService service.UserService,
-	jWtService service.JWTService,
+	jWtService service.JWTService, tokenService service.TokenService,
 ) UserController {
 	return &userController{
-		userService: userService,
-		jWtService:  jWtService,
+		userService:  userService,
+		jWtService:   jWtService,
+		tokenService: tokenService,
 	}
 }
 
@@ -74,4 +77,30 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	}
 	print(newUserId)
 	return token, nil
+}
+
+func (controller *userController) GetUserInfo(
+	ctx *gin.Context,
+) (userInfo schemas.UserCredentials, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := controller.userService.GetUserInfo(tokenString)
+	if err != nil {
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	token, err := controller.tokenService.GetTokenById(user.Id)
+	if err != nil {
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
+	}
+
+	spotifyUserInfo, err := controller.userService.GetUserInfo(token.Token)
+	if err != nil {
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	userInfo.Email = spotifyUserInfo.Email
+	userInfo.Username = spotifyUserInfo.Username
+	return userInfo, nil
 }

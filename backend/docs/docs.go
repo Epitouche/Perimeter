@@ -57,6 +57,17 @@ const docTemplate = `{
                     "Github"
                 ],
                 "summary": "give url to authenticate with github",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -75,6 +86,11 @@ const docTemplate = `{
         },
         "/github/info/user": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "give user info of github",
                 "consumes": [
                     "application/json"
@@ -91,6 +107,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     },
                     "500": {
@@ -144,6 +166,17 @@ const docTemplate = `{
                     "Gmail"
                 ],
                 "summary": "give url to authenticate with gmail",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -162,6 +195,11 @@ const docTemplate = `{
         },
         "/gmail/info/user": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "give user info of gmail",
                 "consumes": [
                     "application/json"
@@ -178,6 +216,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     },
                     "500": {
@@ -283,6 +327,11 @@ const docTemplate = `{
         },
         "/spotify/info/user": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "give user info of spotify",
                 "consumes": [
                     "application/json"
@@ -299,6 +348,52 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorRespose"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorRespose"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info/user": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     },
                     "500": {
