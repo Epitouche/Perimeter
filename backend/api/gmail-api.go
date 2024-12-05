@@ -27,14 +27,15 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 }
 
 // HandleServiceCallback godoc
-// @Summary give url to authenticate with gmail
-// @Description give url to authenticate with gmail
-// @Tags Gmail
-// @Accept json
-// @Produce json
-// @Success 200 {object} schemas.AuthenticationUrl
-// @Failure 500 {object} schemas.ErrorRespose
-// @Router /gmail/auth [get]
+//
+//	@Summary		give url to authenticate with gmail
+//	@Description	give url to authenticate with gmail
+//	@Tags			Gmail
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	schemas.AuthenticationUrl
+//	@Failure		500	{object}	schemas.ErrorRespose
+//	@Router			/gmail/auth [get]
 func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
@@ -47,14 +48,16 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 }
 
 // HandleServiceCallback godoc
-// @Summary give url to authenticate with gmail
-// @Description give url to authenticate with gmail
-// @Tags Gmail
-// @Accept json
-// @Produce json
-// @Success 200 {object} schemas.JWT
-// @Failure 500 {object} schemas.ErrorRespose
-// @Router /gmail/auth/callback [post]
+//
+//	@Summary		give url to authenticate with gmail
+//	@Description	give url to authenticate with gmail
+//	@Tags			Gmail
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Success		200		{object}	schemas.JWT
+//	@Failure		500		{object}	schemas.ErrorRespose
+//	@Router			/gmail/auth/callback [post]
 func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		gmail_token, err := api.controller.HandleServiceCallback(
@@ -70,14 +73,18 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 }
 
 // GetUserInfo godoc
-// @Summary give user info of gmail
-// @Description give user info of gmail
-// @Tags Gmail
-// @Accept json
-// @Produce json
-// @Success 200 {object} schemas.UserCredentials
-// @Failure 500 {object} schemas.ErrorRespose
-// @Router /gmail/info/user [get]
+//
+//	@Summary		give user info of gmail
+//	@Description	give user info of gmail
+//	@Tags			Gmail
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Param			Authorization	header		string	true	"Bearer token"
+//	@Success		200				{object}	schemas.UserCredentials
+//	@Failure		401				{object}	schemas.ErrorRespose
+//	@Failure		500				{object}	schemas.ErrorRespose
+//	@Router			/gmail/info/user [get]
 func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
