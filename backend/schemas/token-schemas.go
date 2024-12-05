@@ -11,6 +11,7 @@ type Token struct {
 	Service      Service   `gorm:"foreignKey:ServiceId;references:Id" json:"service_id"`
 	Token        string    `                                          json:"token"`
 	RefreshToken string    `                                          json:"refresh_token"`
+	ExpireAt     time.Time `                                          json:"expireAt"`
 	CreatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP"          json:"createdAt"`
 	UpdateAt     time.Time `gorm:"default:CURRENT_TIMESTAMP"          json:"updateAt"`
 }
