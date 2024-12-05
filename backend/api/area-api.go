@@ -16,6 +16,11 @@ func NewAreAPI(controller controller.AreaController) *AreaApi {
 	}
 }
 
-func (api *AreaApi) GetArea(ctx *gin.Context) {
-	ctx.JSON(200, "status: success")
+func (api *AreaApi) CreateArea(ctx *gin.Context) {
+	response, err := api.controller.CreateArea(ctx)
+	if err != nil {
+		ctx.JSON(500, "status: error")
+		return
+	}
+	ctx.JSON(200, response)
 }

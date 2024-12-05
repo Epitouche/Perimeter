@@ -177,8 +177,8 @@ func setupRouter() *gin.Engine {
 		area := apiRoutes.Group("/area")
 		{
 			area.POST("/", func(c *gin.Context) {
-				areaAPI.GetArea(c)
-			})	
+				areaAPI.CreateArea(c)
+			})
 		}
 	}
 
