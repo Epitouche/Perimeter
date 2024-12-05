@@ -59,7 +59,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("can't get user info: %w", err)
 	}
-	var newArea = schemas.Area{
+	newArea := schemas.Area{
 		UserId:         result.UserId,
 		User:           user,
 		ActionOption:   result.ActionOption,

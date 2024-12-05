@@ -4,8 +4,7 @@ import (
 	"area/service"
 )
 
-type TimerController interface {
-}
+type TimerController interface{}
 
 type timerController struct {
 	service service.TimerService

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event);
 
-  const response = await fetch(body.label);
+  const response = await fetch(body.link);
   if (!response.ok) {
     throw new Error(`API Error: ${response.statusText}`);
   }

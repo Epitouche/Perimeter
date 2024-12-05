@@ -20,7 +20,10 @@ type serviceService struct {
 	allServiceSchemas []schemas.Service
 }
 
-func NewServiceService(repository repository.ServiceRepository, timerService TimerService) ServiceService {
+func NewServiceService(
+	repository repository.ServiceRepository,
+	timerService TimerService,
+) ServiceService {
 	newService := serviceService{
 		repository: repository,
 		allServiceSchemas: []schemas.Service{

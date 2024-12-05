@@ -21,9 +21,22 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
+            
+            <!-- Default Launcher Configuration -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Redirect Link Configuration -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="${appAuthRedirectScheme}"
+                    android:host="www.example.com"
+                    android:pathPrefix="/oauthredirect" />
             </intent-filter>
         </activity>
 
