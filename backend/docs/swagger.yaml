@@ -203,15 +203,10 @@ paths:
       summary: give user info of spotify
       tags:
       - Spotify
-  /user/register:
+  /user/login:
     post:
       description: Authenticates a user and provides a JWT to Authorize API calls
       parameters:
-      - description: Email
-        in: formData
-        name: email
-        required: true
-        type: string
       - description: Username
         in: formData
         name: username
@@ -236,10 +231,15 @@ paths:
       summary: Provides a JSON Web Token
       tags:
       - User
-  /user/token:
+  /user/register:
     post:
       description: Authenticates a user and provides a JWT to Authorize API calls
       parameters:
+      - description: Email
+        in: formData
+        name: email
+        required: true
+        type: string
       - description: Username
         in: formData
         name: username
