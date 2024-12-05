@@ -1,6 +1,5 @@
 <template>
   <div>
-    <NavigationBar />
     Services
   </div>
 </template>

@@ -1,16 +1,15 @@
+<script setup lang="ts">
+definePageMeta({
+  layout: 'nonavbar',
+  middleware: 'auth'
+});
+
+</script>
+
 <template>
   <div>
-    <NavigationBar />
     Workflow
   </div>
 </template>
 
-<script lang="ts" setup>
-definePageMeta({
-  middleware: 'auth',
-});
-</script>
-
-<style>
-
-</style>
+<style scoped></style>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'guest',
+  layout: 'nonavbar',
+  middleware: 'guest'
 });
+
 const email = ref('')
 const username = ref('')
 const password = ref('')

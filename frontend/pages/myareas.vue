@@ -6,7 +6,6 @@ definePageMeta({
 
 <template>
   <div>
-    <NavigationBar />
     My Areas
   </div>
 </template>

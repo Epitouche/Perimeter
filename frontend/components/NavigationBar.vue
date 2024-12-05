@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <div class="flex items-center p-[1.5em] bg-custom_color-bg_section">
+  <div class="navbar flex items-center p-[1.5em] bg-custom_color-bg_section">
     <div class="flex items-center gap-[1em] grow-[0.95]">
       <img src="../public/PerimeterIcon.png" alt="perimeter-icon" class="h-[4em] w-[4em]" />
       <span class="font-black text-[2em]">Perimeter</span>
@@ -72,6 +72,11 @@
 </template>
 
 <style>
+.navbar {
+  width: 100%;
+  position: fixed;
+  z-index: 1000;
+}
 
 .nav-link {
   color: black;
