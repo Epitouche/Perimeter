@@ -7,10 +7,11 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
+  const delay = props.timeout || 1000;
   setTimeout(() => {
     loading.value = false;
     navigateTo('/myareas');
-  }, 1000);
+  }, delay);
 });
 </script>
 

@@ -1,9 +1,3 @@
-<template>
-  <div>
-    <LoadingScreen />
-  </div>
-</template>
-
 <script setup lang="ts">
 
 const route = useRoute();
@@ -20,3 +14,9 @@ onMounted(async () => {
   }
 });
 </script>
+
+<template>
+  <div>
+    <LoadingScreen :timeout="5000"/>
+  </div>
+</template>
