@@ -66,7 +66,7 @@ func (controller *gmailController) RedirectToService(
 	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
-		"&scope=https://mail.google.com/" +
+		"&scope=https://mail.google.com/ profile email" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil
