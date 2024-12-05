@@ -32,8 +32,8 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 // @Tags Github
 // @Accept json
 // @Produce json
-// @Success 200 {string} Bearer token
-// @Failure 500 {object} schemas.Response
+// @Success 200 {object} schemas.AuthenticationUrl
+// @Failure 500 {object} schemas.ErrorRespose
 // @Router /github/auth [get]
 func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
@@ -43,7 +43,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"authentication_url": authURL})
+			ctx.JSON(http.StatusOK, &schemas.AuthenticationUrl{Url: authURL})
 		}
 	})
 }
@@ -54,7 +54,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Tags Github
 // @Accept json
 // @Produce json
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.JWT
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /github/auth/callback [get]
 func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
@@ -68,7 +68,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"access_token": github_token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: github_token})
 		}
 	})
 }

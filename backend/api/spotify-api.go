@@ -35,7 +35,7 @@ func NewSpotifyAPI(
 // @Tags Spotify
 // @Accept json
 // @Produce json
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.AuthenticationUrl
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /spotify/auth [get]
 func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
@@ -46,7 +46,7 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"authentication_url": authURL})
+			ctx.JSON(http.StatusOK, schemas.AuthenticationUrl{Url: authURL})
 		}
 	})
 }
@@ -58,7 +58,7 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Param payload body schemas.CodeCredentials true "Callback Payload"
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.JWT
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /spotify/auth/callback [post]
 func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
@@ -72,7 +72,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"access_token": spotify_token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
 		}
 	})
 }

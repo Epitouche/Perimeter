@@ -32,13 +32,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.AuthenticationUrl"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     }
                 }
@@ -61,7 +61,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "500": {
@@ -119,13 +119,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.AuthenticationUrl"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     }
                 }
@@ -148,7 +148,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "500": {
@@ -229,7 +229,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.AuthenticationUrl"
                         }
                     },
                     "500": {
@@ -269,7 +269,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "500": {
@@ -403,13 +403,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "schemas.AuthenticationUrl": {
+            "type": "object",
+            "properties": {
+                "authentication_url": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas.CodeCredentials": {
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "string"
-                },
-                "state": {
                     "type": "string"
                 }
             }

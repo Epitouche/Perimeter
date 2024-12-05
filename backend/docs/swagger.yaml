@@ -1,9 +1,12 @@
 definitions:
+  schemas.AuthenticationUrl:
+    properties:
+      authentication_url:
+        type: string
+    type: object
   schemas.CodeCredentials:
     properties:
       code:
-        type: string
-      state:
         type: string
     type: object
   schemas.ErrorRespose:
@@ -35,11 +38,11 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with github
       tags:
       - Github
@@ -54,7 +57,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -92,11 +95,11 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with gmail
       tags:
       - Gmail
@@ -111,7 +114,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -164,7 +167,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
@@ -190,7 +193,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
