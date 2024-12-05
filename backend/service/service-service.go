@@ -13,12 +13,15 @@ type ServiceService interface {
 }
 
 type serviceService struct {
-	repository repository.ServiceRepository
-	allService []interface{}
+	repository        repository.ServiceRepository
+	allService        []interface{}
 	allServiceSchemas []schemas.Service
 }
 
-func NewServiceService(repository repository.ServiceRepository, timerService TimerService) ServiceService {
+func NewServiceService(
+	repository repository.ServiceRepository,
+	timerService TimerService,
+) ServiceService {
 	newService := serviceService{
 		repository: repository,
 		allServiceSchemas: []schemas.Service{
@@ -39,7 +42,7 @@ func NewServiceService(repository repository.ServiceRepository, timerService Tim
 				Description: "This service is a mail service",
 			},
 		},
-		allService: []interface{}{ timerService },
+		allService: []interface{}{timerService},
 	}
 	newService.InitialSaveService()
 	return &newService

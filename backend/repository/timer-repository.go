@@ -1,13 +1,9 @@
 package repository
 
+type TimerRepository interface{}
 
-type TimerRepository interface {
-}
-
-type timerRepository struct {
-}
+type timerRepository struct{}
 
 func NewTimerRepository() TimerRepository {
-	return &timerRepository{
-	}
+	return &timerRepository{}
 }

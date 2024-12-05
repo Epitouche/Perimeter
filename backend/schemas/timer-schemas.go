@@ -3,13 +3,13 @@ package schemas
 type TimerAction string
 
 const (
-	SpecificTime        TimerAction = "SpecificTime"
+	SpecificTime TimerAction = "SpecificTime"
 )
 
 type TimerReaction string
 
 const (
-	GiveTime		TimerReaction = "GiveTime"
+	GiveTime TimerReaction = "GiveTime"
 )
 
 type TimerActionSpecificHour struct {
@@ -17,5 +17,4 @@ type TimerActionSpecificHour struct {
 	Minute uint8 `json:"minute"`
 }
 
-type TimerReactionGiveTime struct {
-}
+type TimerReactionGiveTime struct{}
