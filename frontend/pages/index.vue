@@ -1,9 +1,16 @@
-<template>
-  <div>
-    <LoadingScreen />
-  </div>
-</template>
-
 <script setup lang="ts">
 import LoadingScreen from '@/components/LoadingScreen.vue';
+
+definePageMeta({
+  middleware: 'auth',
+});
+
+const isLoading = ref(true);
+
 </script>
+
+<template>
+  <div>
+    <LoadingScreen v-if="isLoading" :timeout="500" />
+  </div>
+</template>
