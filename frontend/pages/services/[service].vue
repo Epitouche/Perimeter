@@ -25,20 +25,16 @@ async function connectToService() {
 
   try {
     console.log(`Connecting to service with code=${code} and state=${state}...`);
-
-    const url = new URL(`http://server:8080/api/v1/${route.params.service}/auth/callback`);
-    url.searchParams.append('code', code as string);
-    url.searchParams.append('state', state as string);
-    console.log(`Sending to ${url}`)
-
     const response = await $fetch<ApiResponse>('/api/auth/service/connection', {
-      method: 'GET',
+      method: 'POST',
       body: {
-        link: url,
+        service: route.params.service,
+        code: code as string,
+        state: state as string,
       },
     });
     new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
-    console.log("Token : ", response);
+    console.log("Service connected  : ", response);
 
   } catch (error:any) {
     showError(`Failed to connect to service: ${error.message}`);

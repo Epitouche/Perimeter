@@ -14,7 +14,7 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
+const apps = ref<string[]>(['i-logos-spotify-icon', 'i-logos-google-icon']);
 
 const handleLogin = async () => {
   try {
