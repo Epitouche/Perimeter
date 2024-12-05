@@ -8,10 +8,12 @@ import (
 )
 
 type TimerService interface {
-	TimerActionSpecificHour(c chan string, hour int, minute int)
-	TimerReactionGiveTime()
+	TimerActionSpecificHour(c chan string, option string)
+	TimerReactionGiveTime(option string)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
+	FindActionbyName(name string) func(c chan string, option string)
+	FindReactionbyName(name string) func(option string)
 }
 
 type timerService struct {
@@ -24,15 +26,33 @@ func NewTimerService(repository repository.TimerRepository) TimerService {
 	}
 }
 
-func (service *timerService) TimerActionSpecificHour(c chan string, hour int, minute int) {
+func (service *timerService) FindActionbyName(name string) func(c chan string, option string) {
+	switch name {
+	case string(schemas.SpecificTime):
+		return service.TimerActionSpecificHour
+	default:
+		return nil
+	}
+}
+
+func (service *timerService) FindReactionbyName(name string) func(option string) {
+	switch name {
+	case string(schemas.GiveTime):
+		return service.TimerReactionGiveTime
+	default:
+		return nil
+	}
+}
+
+func (service *timerService) TimerActionSpecificHour(c chan string, option string) {
 	dt := time.Now().Local()
-	if dt.Hour() == hour && dt.Minute() == minute {
+	if dt.Hour() == 0 && dt.Minute() == 1 {
 		println("current time is ", dt.String())
 		c <- "ok"
 	}
 }
 
-func (service *timerService) TimerReactionGiveTime() {
+func (service *timerService) TimerReactionGiveTime(option string) {
 	println("give time")
 }
 

@@ -9,11 +9,13 @@ import (
 )
 
 type AreaRepository interface {
+	SaveArea(action schemas.Area) (areaID uint64, err error)
 	Save(action schemas.Area)
 	Update(action schemas.Area)
 	Delete(action schemas.Area)
 	FindAll() []schemas.Area
 	FindByUserId(userId uint64) []schemas.Area
+	FindById(id uint64) (schemas.Area, error)
 }
 
 type areaRepository struct {
@@ -30,6 +32,15 @@ func NewAreaRepository(conn *gorm.DB) AreaRepository {
 			Connection: conn,
 		},
 	}
+}
+
+func (repo *areaRepository) SaveArea(action schemas.Area) (areaID uint64, err error) {
+	repo.Save(action)
+	result := repo.db.Connection.Last(&action)
+	if result.Error != nil {
+		return 0, fmt.Errorf("failed to save area: %v", err.Error())
+	}
+	return action.Id, nil
 }
 
 func (repo *areaRepository) Save(action schemas.Area) {
@@ -70,4 +81,15 @@ func (repo *areaRepository) FindByUserId(userId uint64) []schemas.Area {
 		panic(fmt.Errorf("failed to find action by service id: %v", err.Error))
 	}
 	return actions
+}
+
+func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
+	var action schemas.Area
+	err := repo.db.Connection.Where("id = ?", id).
+		Find(&action)
+	if err.Error != nil {
+		println(err.Error)
+		return schemas.Area{}, fmt.Errorf("failed to find action by id: %v", err.Error)
+	}
+	return action, nil
 }
