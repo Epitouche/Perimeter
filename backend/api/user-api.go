@@ -22,6 +22,7 @@ func NewUserApi(controller controller.UserController) *UserApi {
 // Login godoc
 // @Summary Provides a JSON Web Token
 // @Description Authenticates a user and provides a JWT to Authorize API calls
+// @Tags User
 // @ID Authentication
 // @Consume application/x-www-form-urlencoded
 // @Produce json
