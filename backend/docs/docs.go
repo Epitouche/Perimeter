@@ -102,6 +102,15 @@ const docTemplate = `{
                     "Github"
                 ],
                 "summary": "give user info of github",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -211,6 +220,15 @@ const docTemplate = `{
                     "Gmail"
                 ],
                 "summary": "give user info of gmail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -343,6 +361,15 @@ const docTemplate = `{
                     "Spotify"
                 ],
                 "summary": "give user info of spotify",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -383,6 +410,15 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "give user info of user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

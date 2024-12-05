@@ -87,9 +87,10 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Success		200	{object}	schemas.UserCredentials
-//	@Failure		401	{object}	schemas.ErrorRespose
-//	@Failure		500	{object}	schemas.ErrorRespose
+//	@Param			Authorization	header		string	true	"Bearer token"
+//	@Success		200				{object}	schemas.UserCredentials
+//	@Failure		401				{object}	schemas.ErrorRespose
+//	@Failure		500				{object}	schemas.ErrorRespose
 //	@Router			/spotify/info/user [get]
 func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {

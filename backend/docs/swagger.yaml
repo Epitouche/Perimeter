@@ -84,6 +84,12 @@ paths:
       consumes:
       - application/json
       description: give user info of github
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -154,6 +160,12 @@ paths:
       consumes:
       - application/json
       description: give user info of gmail
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -239,6 +251,12 @@ paths:
       consumes:
       - application/json
       description: give user info of spotify
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -264,6 +282,12 @@ paths:
       consumes:
       - application/json
       description: give user info of user
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:

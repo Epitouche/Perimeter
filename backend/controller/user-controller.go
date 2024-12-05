@@ -90,17 +90,7 @@ func (controller *userController) GetUserInfo(
 		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	token, err := controller.tokenService.GetTokenById(user.Id)
-	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
-	}
-
-	spotifyUserInfo, err := controller.userService.GetUserInfo(token.Token)
-	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
-	}
-
-	userInfo.Email = spotifyUserInfo.Email
-	userInfo.Username = spotifyUserInfo.Username
+	userInfo.Email = user.Email
+	userInfo.Username = user.Username
 	return userInfo, nil
 }
