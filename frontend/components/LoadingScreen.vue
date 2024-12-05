@@ -1,21 +1,22 @@
 <script setup lang="ts">
-
-const loading = ref(true);
+import { ref, onMounted, defineProps } from 'vue';
 
 const props = defineProps<{
-  timeout?: number;
+  timeout: number;
 }>();
+
+const timedOut = ref(false);
 
 onMounted(() => {
   setTimeout(() => {
-    loading.value = false;
-    navigateTo('/myareas');
-  }, 1000);
+    timedOut.value = true;
+    navigateTo('/myareas')
+  }, props.timeout);
 });
 </script>
 
 <template>
-  <div v-if="loading" class="loading-screen">
+  <div v-if="!timedOut" class="loading-screen">
     <div class="loader"></div>
     <p>Chargement...</p>
   </div>
