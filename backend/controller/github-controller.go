@@ -14,7 +14,7 @@ import (
 type GithubController interface {
 	RedirectToService(ctx *gin.Context, path string) (string, error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
-	GetUserInfo(ctx *gin.Context) (userInfo schemas.GithubUserInfo, err error)
+	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
 type githubController struct {
@@ -145,24 +145,27 @@ func (controller *githubController) HandleServiceCallback(
 
 func (controller *githubController) GetUserInfo(
 	ctx *gin.Context,
-) (userInfo schemas.GithubUserInfo, err error) {
+) (userInfo schemas.UserCredentials, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	token, err := controller.serviceToken.GetTokenById(user.TokenId)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get token because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
 	githubUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	return githubUserInfo, nil
+	userInfo.Email = githubUserInfo.Email
+	userInfo.Username = githubUserInfo.Login
+
+	return userInfo, nil
 }

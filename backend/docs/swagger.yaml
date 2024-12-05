@@ -24,6 +24,13 @@ definitions:
       message:
         type: string
     type: object
+  schemas.UserCredentials:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -76,7 +83,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
         "500":
           description: Internal Server Error
           schema:
@@ -133,7 +140,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
         "500":
           description: Internal Server Error
           schema:
@@ -212,7 +219,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
         "500":
           description: Internal Server Error
           schema:

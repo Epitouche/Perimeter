@@ -90,7 +90,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.UserCredentials"
                         }
                     },
                     "500": {
@@ -177,7 +177,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.UserCredentials"
                         }
                     },
                     "500": {
@@ -298,7 +298,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.UserCredentials"
                         }
                     },
                     "500": {
@@ -439,6 +439,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.UserCredentials": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

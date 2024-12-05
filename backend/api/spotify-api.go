@@ -83,7 +83,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // @Tags Spotify
 // @Accept json
 // @Produce json
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.UserCredentials
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /spotify/info/user [get]
 func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
@@ -94,7 +94,7 @@ func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"user_info": gin.H{"name": usetInfo.Login, "email": usetInfo.Email}})
+			ctx.JSON(http.StatusOK, usetInfo)
 		}
 	})
 }

@@ -79,18 +79,18 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // @Tags Github
 // @Accept json
 // @Produce json
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.UserCredentials
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /github/info/user [get]
 func (api *GithubAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
-		usetInfo, err := api.controller.GetUserInfo(ctx)
+		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"user_info": gin.H{"id": usetInfo.Id, "name": usetInfo.Name, "login": usetInfo.Login, "email": usetInfo.Email, "avatar_url": usetInfo.AvatarUrl, "html_url": usetInfo.HtmlUrl, "type": usetInfo.Type}})
+			ctx.JSON(http.StatusOK, userInfo)
 		}
 	})
 }
