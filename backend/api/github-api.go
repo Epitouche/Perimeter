@@ -29,7 +29,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 // RedirectToService godoc
 // @Summary give url to authenticate with github
 // @Description give url to authenticate with github
-// @Tags github route
+// @Tags Github
 // @Accept json
 // @Produce json
 // @Success 200 {string} Bearer token
@@ -51,7 +51,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // HandleServiceCallback godoc
 // @Summary give url to authenticate with github
 // @Description give url to authenticate with github
-// @Tags github route
+// @Tags Github
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
@@ -76,7 +76,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // GetUserInfo godoc
 // @Summary give user info of github
 // @Description give user info of github
-// @Tags github route
+// @Tags Github
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response

@@ -1,4 +1,3 @@
-basePath: /api/v1
 definitions:
   schemas.ErrorRespose:
     properties:
@@ -17,7 +16,6 @@ definitions:
     type: object
 info:
   contact: {}
-  title: Area API
 paths:
   /github/auth:
     get:
@@ -37,7 +35,7 @@ paths:
             $ref: '#/definitions/schemas.Response'
       summary: give url to authenticate with github
       tags:
-      - github route
+      - Github
   /github/auth/callback:
     get:
       consumes:
@@ -56,7 +54,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with github
       tags:
-      - github route
+      - Github
   /github/info/user:
     get:
       consumes:
@@ -75,7 +73,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give user info of github
       tags:
-      - github route
+      - Github
   /gmail/auth:
     get:
       consumes:
@@ -94,7 +92,7 @@ paths:
             $ref: '#/definitions/schemas.Response'
       summary: give url to authenticate with gmail
       tags:
-      - gmail route
+      - Gmail
   /gmail/auth/callback:
     get:
       consumes:
@@ -113,7 +111,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with gmail
       tags:
-      - gmail route
+      - Gmail
   /gmail/info/user:
     get:
       consumes:
@@ -132,7 +130,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give user info of gmail
       tags:
-      - gmail route
+      - Gmail
   /ping:
     get:
       consumes:
@@ -166,7 +164,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with spotify
       tags:
-      - spotify route
+      - Spotify
   /spotify/auth/callback:
     get:
       consumes:
@@ -185,7 +183,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with spotify
       tags:
-      - spotify route
+      - Spotify
   /spotify/info/user:
     get:
       consumes:
@@ -204,7 +202,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorRespose'
       summary: give user info of spotify
       tags:
-      - spotify route
+      - Spotify
   /user/register:
     post:
       description: Authenticates a user and provides a JWT to Authorize API calls

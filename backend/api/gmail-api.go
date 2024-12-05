@@ -28,10 +28,10 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 // HandleServiceCallback godoc
 // @Summary give url to authenticate with gmail
 // @Description give url to authenticate with gmail
-// @Tags gmail route
+// @Tags Gmail
 // @Accept json
 // @Produce json
-// @Success 200 {string} Bearer token
+// @Success 200 {string} schemas.Response
 // @Failure 500 {object} schemas.Response
 // @Router /gmail/auth [get]
 func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
@@ -48,7 +48,7 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // HandleServiceCallback godoc
 // @Summary give url to authenticate with gmail
 // @Description give url to authenticate with gmail
-// @Tags gmail route
+// @Tags Gmail
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
@@ -71,7 +71,7 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // GetUserInfo godoc
 // @Summary give user info of gmail
 // @Description give user info of gmail
-// @Tags gmail route
+// @Tags Gmail
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response

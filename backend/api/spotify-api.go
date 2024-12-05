@@ -32,7 +32,7 @@ func NewSpotifyAPI(
 // RedirectToService godoc
 // @Summary give url to authenticate with spotify
 // @Description give url to authenticate with spotify
-// @Tags spotify route
+// @Tags Spotify
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
@@ -54,7 +54,7 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // HandleServiceCallback godoc
 // @Summary give url to authenticate with spotify
 // @Description give url to authenticate with spotify
-// @Tags spotify route
+// @Tags Spotify
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
@@ -79,7 +79,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // GetUserInfo godoc
 // @Summary give user info of spotify
 // @Description give user info of spotify
-// @Tags spotify route
+// @Tags Spotify
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response

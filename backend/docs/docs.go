@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "github route"
+                    "Github"
                 ],
                 "summary": "give url to authenticate with github",
                 "responses": {
@@ -54,7 +54,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "github route"
+                    "Github"
                 ],
                 "summary": "give url to authenticate with github",
                 "responses": {
@@ -83,7 +83,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "github route"
+                    "Github"
                 ],
                 "summary": "give user info of github",
                 "responses": {
@@ -112,7 +112,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "gmail route"
+                    "Gmail"
                 ],
                 "summary": "give url to authenticate with gmail",
                 "responses": {
@@ -141,7 +141,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "gmail route"
+                    "Gmail"
                 ],
                 "summary": "give url to authenticate with gmail",
                 "responses": {
@@ -170,7 +170,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "gmail route"
+                    "Gmail"
                 ],
                 "summary": "give user info of gmail",
                 "responses": {
@@ -222,7 +222,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "spotify route"
+                    "Spotify"
                 ],
                 "summary": "give url to authenticate with spotify",
                 "responses": {
@@ -251,7 +251,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "spotify route"
+                    "Spotify"
                 ],
                 "summary": "give url to authenticate with spotify",
                 "responses": {
@@ -280,7 +280,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "spotify route"
+                    "Spotify"
                 ],
                 "summary": "give user info of spotify",
                 "responses": {
@@ -430,9 +430,9 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Area API",
+	Title:            "",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

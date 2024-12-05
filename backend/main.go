@@ -33,8 +33,6 @@ func ping(router *gin.RouterGroup) {
 	})
 }
 
-// @BasePath /api/v1
-// @title Area API
 func setupRouter() *gin.Engine {
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {

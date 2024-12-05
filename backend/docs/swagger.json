@@ -1,10 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Area API",
         "contact": {}
     },
-    "basePath": "/api/v1",
     "paths": {
         "/github/auth": {
             "get": {
@@ -16,7 +14,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "github route"
+                    "Github"
                 ],
                 "summary": "give url to authenticate with github",
                 "responses": {
@@ -45,7 +43,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "github route"
+                    "Github"
                 ],
                 "summary": "give url to authenticate with github",
                 "responses": {
@@ -74,7 +72,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "github route"
+                    "Github"
                 ],
                 "summary": "give user info of github",
                 "responses": {
@@ -103,7 +101,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "gmail route"
+                    "Gmail"
                 ],
                 "summary": "give url to authenticate with gmail",
                 "responses": {
@@ -132,7 +130,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "gmail route"
+                    "Gmail"
                 ],
                 "summary": "give url to authenticate with gmail",
                 "responses": {
@@ -161,7 +159,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "gmail route"
+                    "Gmail"
                 ],
                 "summary": "give user info of gmail",
                 "responses": {
@@ -213,7 +211,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "spotify route"
+                    "Spotify"
                 ],
                 "summary": "give url to authenticate with spotify",
                 "responses": {
@@ -242,7 +240,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "spotify route"
+                    "Spotify"
                 ],
                 "summary": "give url to authenticate with spotify",
                 "responses": {
@@ -271,7 +269,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "spotify route"
+                    "Spotify"
                 ],
                 "summary": "give user info of spotify",
                 "responses": {
