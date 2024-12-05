@@ -13,7 +13,6 @@ import (
 	"area/controller"
 	"area/database"
 	"area/docs"
-	"area/middlewares"
 	"area/repository"
 	"area/schemas"
 	"area/service"
@@ -107,9 +106,6 @@ func setupRouter() *gin.Engine {
 
 	userAPI := api.NewUserApi(userController)
 
-	githubAPI := api.NewGithubAPI(githubController)
-	gmailAPI := api.NewGmailAPI(gmailController)
-
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
@@ -125,43 +121,11 @@ func setupRouter() *gin.Engine {
 			auth.POST("/login", userAPI.Login)
 			auth.POST("/register", userAPI.Register)
 		}
-
-		// Github
-		github := apiRoutes.Group("/github")
-		{
-			github.GET("/auth", func(c *gin.Context) {
-				githubAPI.RedirectToService(c, github.BasePath()+"/auth/callback")
-			})
-
-			github.GET("/auth/callback", func(c *gin.Context) {
-				githubAPI.HandleServiceCallback(c, github.BasePath()+"/auth/callback")
-			})
-
-			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
-			{
-				githubInfo.GET("/user", githubAPI.GetUserInfo)
-			}
-		}
-
-		// Gmail
-		gmail := apiRoutes.Group("/gmail")
-		{
-			gmail.GET("/auth", func(c *gin.Context) {
-				gmailAPI.RedirectToService(c, gmail.BasePath()+"/auth/callback")
-			})
-
-			gmail.GET("/auth/callback", func(c *gin.Context) {
-				gmailAPI.HandleServiceCallback(c, gmail.BasePath()+"/auth/callback")
-			})
-
-			gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
-			{
-				gmailInfo.GET("/user", gmailAPI.GetUserInfo)
-			}
-		}
-
 	}
+
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
+	api.NewGmailAPI(gmailController, apiRoutes)
+	api.NewGithubAPI(githubController, apiRoutes)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)

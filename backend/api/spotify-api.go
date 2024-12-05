@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"area/controller"
+	"area/middlewares"
 	"area/schemas"
 )
 
@@ -23,7 +24,8 @@ func NewSpotifyAPI(
 	}
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
-	api.GetUserInfo(apiRoutes)
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }
 
