@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
-import auth from '~/middleware/auth';
 
 const props = defineProps<{
   apps: string[]
@@ -12,10 +10,10 @@ interface OAuthLink {
 
 const authApiCall = async (label: string) => {
   try {
-    const response = await $fetch<OAuthLink>('/api/auth', {
+    const response = await $fetch<OAuthLink>('/api/auth/service/redirect', {
       method: 'POST',
       body: {
-        label: label,
+        link: label,
       },
     });
     navigateTo(response.authentication_url, { external: true})
