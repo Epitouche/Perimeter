@@ -21,9 +21,5 @@ func NewAreaController(service service.AreaService) AreaController {
 }
 
 func (controller *areaController) CreateArea(ctx *gin.Context) (string, error) {
-	if ctx == nil {
-		return "", nil
-	}
-	return "status: success", nil
-	// return controller.service.CreateArea()
+	return controller.service.CreateArea(ctx)
 }

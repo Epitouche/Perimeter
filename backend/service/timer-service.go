@@ -42,7 +42,7 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
 			Service:     schemas.Service{Name: schemas.Timer},
-			Option:      "SpecificTime",
+			Option:      "{hour: 0, minute: 0}",
 		},
 	}
 }
@@ -53,7 +53,7 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 			Name:        string(schemas.GiveTime),
 			Description: "This reaction is a give time reaction",
 			Service:     schemas.Service{Name: schemas.Timer},
-			Option:      "GiveTime",
+			Option:      "{}",
 		},
 	}
 }
