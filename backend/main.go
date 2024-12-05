@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -55,6 +54,7 @@ func setupRouter() *gin.Engine {
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
+	areaRepository := repository.NewAreaRepository(databaseConnection)
 	tokenRepository := repository.NewTokenRepository(databaseConnection)
 
 	// Services
@@ -64,9 +64,10 @@ func setupRouter() *gin.Engine {
 	timerService := service.NewTimerService(timerRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
-	serviceService := service.NewServiceService(serviceRepository)
-	actionService := service.NewActionService(actionRepository, serviceService, timerService)
+	serviceService := service.NewServiceService(serviceRepository, timerService)
+	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
+	areaService := service.NewAreaService(areaRepository, serviceService)
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
@@ -96,6 +97,7 @@ func setupRouter() *gin.Engine {
 	)
 	actionController := controller.NewActionController(actionService)
 	reactionController := controller.NewReactionController(reactionService)
+	areaController := controller.NewAreaController(areaService)
 	tokenController := controller.NewTokenController(tokenService)
 
 	userAPI := api.NewUserApi(userController)
@@ -107,6 +109,7 @@ func setupRouter() *gin.Engine {
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
+	areaAPI := api.NewAreAPI(areaController)
 	api.NewTokenApi(tokenController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
@@ -168,6 +171,15 @@ func setupRouter() *gin.Engine {
 				spotifyInfo.GET("/user", spotifyAPI.GetUserInfo)
 			}
 		}
+
+		// Area
+		// TODO middleware for area
+		area := apiRoutes.Group("/area")
+		{
+			area.POST("/", func(c *gin.Context) {
+				areaAPI.GetArea(c)
+			})	
+		}
 	}
 
 	// basic about.json route
@@ -193,72 +205,10 @@ func init() {
 	// }
 }
 
-type ActionService struct {
-	Service string
-	Action  string
-}
-
-func timerAction(c chan ActionService, active *bool, hour int, minute int, response ActionService) {
-	var dt time.Time
-	for *active {
-		dt = time.Now().Local()
-		if dt.Hour() == hour && dt.Minute() == minute {
-			println("current time is ", dt.String())
-			c <- response // send sum to c
-		}
-		time.Sleep(30 * time.Second)
-	}
-}
-
-func handleAction(mychannel chan ActionService, active *bool) {
-	for {
-		x := <-mychannel
-		if x.Service == "Timer" {
-			println(x.Action)
-			*active = true
-		} else {
-			println("Unknown service")
-		}
-	}
-}
-
 // @securityDefinitions.apiKey bearerAuth
 // @in header
 // @name Authorization.
 func main() {
-	allChannel := make([]chan ActionService, 2)
-	allChannel[0] = make(chan ActionService)
-	allChannel[1] = make(chan ActionService)
-	newChannel := make(chan ActionService)
-	allChannel = append(allChannel, newChannel)
-
-	dt := time.Now().Local()
-	hour := dt.Hour()
-	minute := dt.Minute() + 1
-	if minute > 59 {
-		hour = hour + 1
-		minute = 0
-	}
-
-	active := true
-
-	go timerAction(allChannel[0], &active, hour, minute, ActionService{
-		Service: "Timer",
-		Action:  "say Hello",
-	})
-
-	go timerAction(allChannel[0], &active, hour, minute, ActionService{
-		Service: "Timer",
-		Action:  "say Bolo",
-	})
-
-	go timerAction(allChannel[0], &active, hour, minute, ActionService{
-		Service: "Timer",
-		Action:  "say Toto",
-	})
-
-	go handleAction(allChannel[0], &active)
-
 	router := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8000

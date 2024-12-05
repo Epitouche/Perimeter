@@ -1,31 +1,37 @@
 package service
 
 import (
+	"fmt"
+
 	"area/repository"
 	"area/schemas"
 )
 
 type ActionService interface {
 	FindAll() []schemas.Action
+	SaveAllAction()
 	GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson)
+}
+
+type ServiceAction interface {
+	GetServiceActionInfo() []schemas.Action
 }
 
 type actionService struct {
 	repository     repository.ActionRepository
 	serviceService ServiceService
-	serviceTimer   TimerService
 }
 
 func NewActionService(
 	repository repository.ActionRepository,
 	serviceService ServiceService,
-	serviceTimer TimerService,
 ) ActionService {
-	return &actionService{
+	newActionService := &actionService{
 		repository:     repository,
 		serviceService: serviceService,
-		serviceTimer:   serviceTimer,
 	}
+	newActionService.SaveAllAction()
+	return newActionService
 }
 
 func (service *actionService) FindAll() []schemas.Action {
@@ -43,4 +49,17 @@ func (service *actionService) GetAllServicesByServiceId(
 		})
 	}
 	return actionJson
+}
+
+func (service *actionService) SaveAllAction() {
+	for _, services := range service.serviceService.GetServices() {
+		if serviceAction, ok := services.(ServiceAction); ok {
+			actions := serviceAction.GetServiceActionInfo()
+			for _, action := range actions {
+				service.repository.Save(action)
+			}
+		} else {
+			fmt.Println("Service is not ServiceAction")
+		}
+	}
 }

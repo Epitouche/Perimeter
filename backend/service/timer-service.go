@@ -4,10 +4,14 @@ import (
 	"time"
 
 	"area/repository"
+	"area/schemas"
 )
 
 type TimerService interface {
-	timerActionSpecificHour(c chan string, hour int, minute int)
+	TimerActionSpecificHour(c chan string, hour int, minute int)
+	TimerReactionGiveTime()
+	GetServiceActionInfo() []schemas.Action
+	GetServiceReactionInfo() []schemas.Reaction
 }
 
 type timerService struct {
@@ -20,10 +24,36 @@ func NewTimerService(repository repository.TimerRepository) TimerService {
 	}
 }
 
-func (service *timerService) timerActionSpecificHour(c chan string, hour int, minute int) {
+func (service *timerService) TimerActionSpecificHour(c chan string, hour int, minute int) {
 	dt := time.Now().Local()
 	if dt.Hour() == hour && dt.Minute() == minute {
 		println("current time is ", dt.String())
-		c <- "ok" // send sum to c
+		c <- "ok"
+	}
+}
+
+func (service *timerService) TimerReactionGiveTime() {
+	println("give time")
+}
+
+func (service *timerService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{
+		{
+			Name:        string(schemas.SpecificTime),
+			Description: "This action is a specific time action",
+			Service:     schemas.Service{Name: schemas.Timer},
+			Option:      "SpecificTime",
+		},
+	}
+}
+
+func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.GiveTime),
+			Description: "This reaction is a give time reaction",
+			Service:     schemas.Service{Name: schemas.Timer},
+			Option:      "GiveTime",
+		},
 	}
 }
