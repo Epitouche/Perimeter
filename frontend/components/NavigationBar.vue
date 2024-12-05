@@ -1,10 +1,6 @@
 <script lang="ts" setup>
   import { ref } from "vue";
 
-  definePageMeta({
-    middleware: 'auth',
-  });
-
   const menuOpen = ref(false);
 
   function toggleMenu() {
