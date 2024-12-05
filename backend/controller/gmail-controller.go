@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -18,20 +19,23 @@ type GmailController interface {
 }
 
 type gmailController struct {
-	service      service.GmailService
-	serviceUser  service.UserService
-	serviceToken service.TokenService
+	service        service.GmailService
+	serviceUser    service.UserService
+	serviceToken   service.TokenService
+	serviceService service.ServiceService
 }
 
 func NewGmailController(
 	service service.GmailService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
+	serviceService service.ServiceService,
 ) GmailController {
 	return &gmailController{
-		service:      service,
-		serviceUser:  serviceUser,
-		serviceToken: serviceToken,
+		service:        service,
+		serviceUser:    serviceUser,
+		serviceToken:   serviceToken,
+		serviceService: serviceService,
 	}
 }
 
@@ -63,7 +67,7 @@ func (controller *gmailController) RedirectToService(
 	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
-		"&scope=https://mail.google.com/" +
+		"&scope=https://mail.google.com/ profile email" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil
@@ -88,55 +92,55 @@ func (controller *gmailController) HandleServiceCallback(
 		return "", fmt.Errorf("invalid CSRF token")
 	}
 
-	githubTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
+	gmailTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
-	githubTokenResponse.Scope = "https://mail.google.com/"
+	userInfo, err := controller.service.GetUserInfo(gmailTokenResponse.AccessToken)
+	if err != nil {
+		return "", fmt.Errorf("unable to get user info because %w", err)
+	}
 
-	// newGmailToken := schemas.GmailToken{
-	// 	AccessToken: githubTokenResponse.AccessToken,
-	// 	Scope:       githubTokenResponse.Scope,
-	// 	TokenType:   githubTokenResponse.TokenType,
-	// }
+	newUser := schemas.User{
+		Username: userInfo.Login,
+		Email:    userInfo.Email,
+	}
 
-	// // Save the access token in the database
-	// tokenId, err := controller.service.SaveToken(newGmailToken)
-	// userAlreadExists := false
-	// if err != nil {
-	// 	if err.Error() == "token already exists" {
-	// 		userAlreadExists = true
-	// 	} else {
-	// 		return "", fmt.Errorf("unable to save token because %w", err)
-	// 	}
-	// }
+	token, err := controller.serviceUser.Login(newUser)
+	if err == nil {
+		return token, nil
+	}
 
-	// userInfo, err := controller.service.GetUserInfo(newGmailToken.AccessToken)
-	// if err != nil {
-	// 	return "", fmt.Errorf("unable to get user info because %w", err)
-	// }
+	token, newUserId, err := controller.serviceUser.Register(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to register user because %w", err)
+	}
 
-	// newUser := schemas.User{
-	// 	Username: userInfo.Login,
-	// 	Email:    userInfo.Email,
-	// 	GithubId: tokenId,
-	// }
+	gmailService := controller.serviceService.FindByName(schemas.OpenWeatherMap)
+	savedUser := controller.serviceUser.GetUserById(newUserId)
 
-	// if userAlreadExists {
-	// 	token, err := controller.serviceUser.Login(newUser)
-	// 	if err != nil {
-	// 		return "", fmt.Errorf("unable to login user because %w", err)
-	// 	}
-	// 	return token, nil
-	// } else {
-	// 	token, err := controller.serviceUser.Register(newUser)
-	// 	if err != nil {
-	// 		return "", fmt.Errorf("unable to register user because %w", err)
-	// 	}
-	// 	return token, nil
-	// }
-	return "", nil
+	newSpotifyToken := schemas.Token{
+		Token:        gmailTokenResponse.AccessToken,
+		RefreshToken: gmailTokenResponse.RefreshToken,
+		ExpireAt:     time.Now().Add(time.Duration(gmailTokenResponse.ExpiresIn) * time.Second),
+		Service:      gmailService,
+		User:         savedUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
+	if err != nil {
+		if err.Error() == "token already exists" {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	savedUser.TokenId = tokenId
+
+	controller.serviceUser.UpdateUserInfo(savedUser)
+	return token, nil
 }
 
 func (controller *gmailController) GetUserInfo(

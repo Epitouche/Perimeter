@@ -14,7 +14,7 @@ import (
 
 type GmailService interface {
 	AuthGetServiceAccessToken(code string, path string) (schemas.GmailTokenResponse, error)
-	GetUserInfo(accessToken string) (schemas.GmailUserInfo, error)
+	GetUserInfo(accessToken string) (result schemas.GmailUserInfo, err error)
 	// Token operations
 }
 
@@ -51,13 +51,14 @@ func (service *gmailService) AuthGetServiceAccessToken(
 
 	redirectURI := "http://localhost:" + appPort + path
 
-	apiURL := "https://github.com/login/oauth/access_token"
+	apiURL := "https://oauth2.googleapis.com/token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
 	data.Set("client_secret", clientSecret)
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
+	data.Set("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
@@ -84,15 +85,23 @@ func (service *gmailService) AuthGetServiceAccessToken(
 		)
 	}
 
+	if (result.AccessToken == "") || (result.TokenType == "") {
+		return schemas.GmailTokenResponse{}, fmt.Errorf("access token not found in response")
+	}
+
 	resp.Body.Close()
 	return result, nil
 }
 
-func (service *gmailService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
+func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req, err := http.NewRequest(
+		"GET",
+		"https://gmail.googleapis.com/gmail/v1/users/me/profile",
+		nil,
+	)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.GmailProfile{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	// Add the Authorization header
@@ -102,15 +111,60 @@ func (service *gmailService) GetUserInfo(accessToken string) (schemas.GmailUserI
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.GmailProfile{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	result := schemas.GmailUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to decode response because %w", err)
+		return schemas.GmailProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
 	resp.Body.Close()
+	return result, nil
+}
+
+func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err error) {
+	// Create a new HTTP request
+	req, err := http.NewRequest(
+		"GET",
+		"https://people.googleapis.com/v1/people/me?personFields=names",
+		nil,
+	)
+	if err != nil {
+		return schemas.GoogleProfile{}, fmt.Errorf("unable to create request because %w", err)
+	}
+
+	// Add the Authorization header
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return schemas.GoogleProfile{}, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return schemas.GoogleProfile{}, fmt.Errorf("unable to decode response because %w", err)
+	}
+	resp.Body.Close()
+	return result, nil
+}
+
+func (service *gmailService) GetUserInfo(
+	accessToken string,
+) (result schemas.GmailUserInfo, err error) {
+	gmailProfile, err := GetUserGmailProfile(accessToken)
+	if err != nil {
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get gmail profile because %w", err)
+	}
+	googleProfile, err := GetUserGoogleProfile(accessToken)
+	if err != nil {
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get google profile because %w", err)
+	}
+	result.Email = gmailProfile.EmailAddress
+	result.Login = googleProfile.Names[0].DisplayName
+
 	return result, nil
 }

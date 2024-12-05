@@ -18,20 +18,23 @@ type GithubController interface {
 }
 
 type githubController struct {
-	service      service.GithubService
-	serviceUser  service.UserService
-	serviceToken service.TokenService
+	service        service.GithubService
+	serviceUser    service.UserService
+	serviceToken   service.TokenService
+	serviceService service.ServiceService
 }
 
 func NewGithubController(
 	service service.GithubService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
+	serviceService service.ServiceService,
 ) GithubController {
 	return &githubController{
-		service:      service,
-		serviceUser:  serviceUser,
-		serviceToken: serviceToken,
+		service:        service,
+		serviceUser:    serviceUser,
+		serviceToken:   serviceToken,
+		serviceService: serviceService,
 	}
 }
 
@@ -93,10 +96,13 @@ func (controller *githubController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
+	spotifyService := controller.serviceService.FindByName(schemas.Spotify)
+
 	// TODO: Save the access token in the database
 	newGithubToken := schemas.Token{
-		Token:  githubTokenResponse.AccessToken,
-		UserId: 1,
+		Token:   githubTokenResponse.AccessToken,
+		Service: spotifyService,
+		UserId:  1,
 	}
 
 	// Save the access token in the database
@@ -128,10 +134,11 @@ func (controller *githubController) HandleServiceCallback(
 		}
 		return token, nil
 	} else {
-		token, err := controller.serviceUser.Register(newUser)
+		token, newUserId, err := controller.serviceUser.Register(newUser)
 		if err != nil {
 			return "", fmt.Errorf("unable to register user because %w", err)
 		}
+		print(newUserId)
 		return token, nil
 	}
 }

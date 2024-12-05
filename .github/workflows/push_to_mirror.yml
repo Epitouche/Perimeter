@@ -3,13 +3,28 @@ run-name: mirroring
 
 on:
   push:
+    branches:
+      - dev
+      - pre-prod
+      - main
   pull_request:
+    branches:
+      - dev
+      - pre-prod
+      - main
 
 jobs:
   push_to_mirror:
     name: push_to_mirror
     runs-on: self-hosted
     steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
       - name: Checkout GH repository
         uses: actions/checkout@v4
         with:

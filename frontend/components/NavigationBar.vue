@@ -1,11 +1,20 @@
 <script lang="ts" setup>
   import { ref } from "vue";
 
+  definePageMeta({
+    middleware: 'auth',
+  });
+
   const menuOpen = ref(false);
 
   function toggleMenu() {
     menuOpen.value = !menuOpen.value;
   }
+
+  const clearTokenAndLogout = () => {
+    const tokenCookie = useCookie('token');
+    tokenCookie.value = null;
+  };
 </script>
 
 <template>
@@ -25,7 +34,7 @@
             <NuxtLink to="/myareas" class="nav-link">My Areas</NuxtLink>
           </li>
           <li>
-            <NuxtLink to="/services" class="nav-link">My Services</NuxtLink>
+            <NuxtLink to="/myservices" class="nav-link">My Services</NuxtLink>
           </li>
         </ul>
       </nav>
@@ -41,9 +50,19 @@
 
         <NuxtLink to="/settings" class="nav-link">Settings</NuxtLink>
 
-        <UButton class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button">
+        <UButton
+          class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
+          @click="clearTokenAndLogout"
+        >
           <svg class="w-[1em] h-[1em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M28 16H8m12-8l8 8l-8 8m-9 4H3V4h8"/>
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M28 16H8m12-8l8 8l-8 8m-9 4H3V4h8"
+            />
           </svg>
           <NuxtLink to="/login">Logout</NuxtLink>
         </UButton>

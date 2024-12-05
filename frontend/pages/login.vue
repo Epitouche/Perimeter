@@ -1,8 +1,12 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'guest',
+});
 
 const username = ref('')
 const password = ref('')
 
+const token = useCookie('token')
 const loginError = ref<string | null>(null);
 
 interface RegisterResponse {
@@ -13,27 +17,33 @@ interface RegisterResponse {
 const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
 
 const handleLogin = async () => {
+  if (!username.value || !password.value) {
+    loginError.value = 'Please enter username and password.';
+    return;
+  }
   try {
     loginError.value = null;
 
-    const response = await $fetch<RegisterResponse>('http://127.0.0.1:8080/api/v1/auth/login', {
+    const response = await $fetch<RegisterResponse>('/api/login', {
       method: 'POST',
       body: {
         username: username.value,
         password: password.value,
       },
     });
+
     if (response.token) {
-      localStorage.setItem('authToken', response.token);
+      token.value = response.token;
       console.log('Token stored in localStorage:', response.token);
     }
     console.log('Login successful:', response);
-    navigateTo('/myareas')
+    navigateTo('/myareas');
   } catch (error: any) {
     console.error('Login failed:', error);
     loginError.value = error?.data?.message || 'Login failed. Please try again.';
   }
 };
+
 </script>
 
 <template>

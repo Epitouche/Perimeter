@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import LoadingScreen from '@/components/LoadingScreen.vue';
+
+definePageMeta({
+  middleware: 'auth',
+});
+
+const isLoading = ref(true);
+
 </script>
 
 <template>
-  <div class="p-48">
-    <h1>Home page</h1>
+  <div>
+    <LoadingScreen v-if="isLoading" :timeout="500" />
   </div>
 </template>
-
-<style scoped></style>
