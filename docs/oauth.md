@@ -1,8 +1,8 @@
-# Backend Documentation
+# Oauth Documentation
 
 ## Table of Contents
 
-- [Backend Documentation](#backend-documentation)
+- [Oauth Documentation](#oauth-documentation)
   - [Table of Contents](#table-of-contents)
   - [Main Document](#main-document)
   - [View](#view)
