@@ -1,6 +1,5 @@
+basePath: /api/v1
 definitions:
-  api.LinkApi:
-    type: object
   schemas.JWT:
     properties:
       token:
@@ -13,6 +12,7 @@ definitions:
     type: object
 info:
   contact: {}
+  title: Area API
 paths:
   /auth/token:
     post:
@@ -41,41 +41,26 @@ paths:
           schema:
             $ref: '#/definitions/schemas.Response'
       summary: Provides a JSON Web Token
-  /videos:
+  /github/auth:
     get:
       consumes:
       - application/json
-      description: Get all the existing videos
+      description: give url to authenticate with github
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/api.LinkApi'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      summary: List existing videos
+            type: string
+      summary: give url to authenticate with github
       tags:
-      - videos
-      - list
-    post:
+      - github route
+  /ping:
+    get:
       consumes:
       - application/json
-      description: Create a new video
-      parameters:
-      - description: Create video
-        in: body
-        name: video
-        required: true
-        schema:
-          $ref: '#/definitions/api.LinkApi'
+      description: do ping to check if the server is running
       produces:
       - application/json
       responses:
@@ -83,31 +68,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      summary: Create new videos
+      summary: ping example
       tags:
-      - videos
-      - create
-  /videos/{id}:
-    delete:
+      - ping route
+  /spotify/auth:
+    get:
       consumes:
       - application/json
-      description: Delete a single video
-      parameters:
-      - description: Video ID
-        in: path
-        name: id
-        required: true
-        type: integer
+      description: give url to authenticate with spotify
       produces:
       - application/json
       responses:
@@ -115,36 +83,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      - bearerAuth: []
-      summary: Remove videos
+      summary: give url to authenticate with spotify
       tags:
-      - videos
-    put:
+      - spotify route
+  /spotify/auth/callback:
+    get:
       consumes:
       - application/json
-      description: Update a single video
-      parameters:
-      - description: Video ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Update video
-        in: body
-        name: video
-        required: true
-        schema:
-          $ref: '#/definitions/api.LinkApi'
+      description: give user info of spotify
       produces:
       - application/json
       responses:
@@ -152,23 +98,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      - bearerAuth: []
-      summary: Update videos
+      summary: give user info of spotify
       tags:
-      - videos
+      - spotify route
 securityDefinitions:
   bearerAuth:
     in: header
-    name: Authorization
+    name: Authorization.
     type: apiKey
 swagger: "2.0"
