@@ -17,6 +17,10 @@ interface RegisterResponse {
 const apps = ref<string[]>(['i-logos-spotify-icon', 'i-logos-google-icon']);
 
 const handleLogin = async () => {
+  if (!username.value || !password.value) {
+    loginError.value = 'Please enter username and password.';
+    return;
+  }
   try {
     loginError.value = null;
 
