@@ -166,10 +166,21 @@ paths:
       tags:
       - Spotify
   /spotify/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with spotify
+      parameters:
+      - description: Code
+        in: formData
+        name: code
+        required: true
+        type: string
+      - description: State
+        in: formData
+        name: state
+        required: true
+        type: string
       produces:
       - application/json
       responses:
