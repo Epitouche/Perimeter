@@ -34,11 +34,13 @@ func (service *areaService) FindAll() []schemas.Area {
 }
 
 func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
-	var result schemas.Area
+	var result schemas.AreaMessage
 	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
-	service.repository.Save(result)
+
+	// TODO
+	// service.repository.Save(result)
 	return "Area created successfully", nil
 }
