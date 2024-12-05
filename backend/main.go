@@ -112,25 +112,15 @@ func setupRouter() *gin.Engine {
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
-	areaAPI := api.NewAreAPI(areaController)
 	api.NewTokenApi(tokenController)
-
-	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
-	{
-		area := apiRoutes.Group("/area")
-		{
-			area.POST("/", func(c *gin.Context) {
-				areaAPI.CreateArea(c)
-			})
-		}
-
-	}
+	
 	ping(apiRoutes)
 	api.NewUserApi(userController, apiRoutes)
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
 	api.NewGithubAPI(githubController, apiRoutes)
-
+	api.NewAreAPI(areaController, apiRoutes)
+	
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)
 
