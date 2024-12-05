@@ -19,6 +19,23 @@ import (
 	"area/service"
 )
 
+// @Summary ping example
+// @Description do ping to check if the server is running
+// @Tags ping route
+// @Accept json
+// @Produce json
+// @Success 200 {object} schemas.Response
+// @Router /ping [get]
+func ping(router *gin.RouterGroup) {
+	router.GET("/ping", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, &schemas.Response{
+			Message: "pong",
+		})
+	})
+}
+
+// @BasePath /api/v1
+// @title Area API
 func setupRouter() *gin.Engine {
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
@@ -34,13 +51,6 @@ func setupRouter() *gin.Engine {
 
 	router := gin.Default()
 	router.Use(cors.Default())
-
-	// Ping test
-	router.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, &schemas.Response{
-			Message: "pong",
-		})
-	})
 
 	// Database connection
 	databaseConnection := database.Connection()
@@ -104,7 +114,6 @@ func setupRouter() *gin.Engine {
 
 	githubAPI := api.NewGithubAPI(githubController)
 	gmailAPI := api.NewGmailAPI(gmailController)
-	spotifyAPI := api.NewSpotifyAPI(spotifyController)
 
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
@@ -114,6 +123,8 @@ func setupRouter() *gin.Engine {
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
+		ping(apiRoutes)
+
 		// User Auth
 		auth := apiRoutes.Group("/auth")
 		{
@@ -155,32 +166,16 @@ func setupRouter() *gin.Engine {
 			}
 		}
 
-		// Spotify
-		spotify := apiRoutes.Group("/spotify")
-		{
-			spotify.GET("/auth", func(c *gin.Context) {
-				spotifyAPI.RedirectToService(c, spotify.BasePath()+"/auth/callback")
-			})
-
-			spotify.GET("/auth/callback", func(c *gin.Context) {
-				spotifyAPI.HandleServiceCallback(c, spotify.BasePath()+"/auth/callback")
-			})
-
-			spotifyInfo := spotify.Group("/info", middlewares.AuthorizeJWT())
-			{
-				spotifyInfo.GET("/user", spotifyAPI.GetUserInfo)
-			}
-		}
-
-		// Area
-		// TODO middleware for area
+		// TODO middleware for jwt
 		area := apiRoutes.Group("/area")
 		{
 			area.POST("/", func(c *gin.Context) {
 				areaAPI.CreateArea(c)
 			})
 		}
+
 	}
+	api.NewSpotifyAPI(spotifyController, apiRoutes)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)
