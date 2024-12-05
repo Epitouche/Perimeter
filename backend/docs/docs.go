@@ -45,7 +45,7 @@ const docTemplate = `{
             }
         },
         "/github/auth/callback": {
-            "get": {
+            "post": {
                 "description": "give url to authenticate with github",
                 "consumes": [
                     "application/json"
@@ -132,7 +132,7 @@ const docTemplate = `{
             }
         },
         "/gmail/auth/callback": {
-            "get": {
+            "post": {
                 "description": "give url to authenticate with gmail",
                 "consumes": [
                     "application/json"

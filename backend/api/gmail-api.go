@@ -54,9 +54,9 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Produce json
 // @Success 200 {object} schemas.JWT
 // @Failure 500 {object} schemas.ErrorRespose
-// @Router /gmail/auth/callback [get]
+// @Router /gmail/auth/callback [post]
 func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
+	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		gmail_token, err := api.controller.HandleServiceCallback(
 			ctx,
 			apiRoutes.BasePath()+"/auth/callback",

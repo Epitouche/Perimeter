@@ -54,7 +54,7 @@ paths:
       tags:
       - Github
   /github/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with github
@@ -111,7 +111,7 @@ paths:
       tags:
       - Gmail
   /gmail/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with gmail

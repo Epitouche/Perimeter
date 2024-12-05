@@ -56,9 +56,9 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Produce json
 // @Success 200 {object} schemas.JWT
 // @Failure 500 {object} schemas.ErrorRespose
-// @Router /github/auth/callback [get]
+// @Router /github/auth/callback [post]
 func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
+	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		github_token, err := api.controller.HandleServiceCallback(
 			ctx,
 			apiRoutes.BasePath()+"/auth/callback",

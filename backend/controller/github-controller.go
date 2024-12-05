@@ -76,20 +76,25 @@ func (controller *githubController) HandleServiceCallback(
 	ctx *gin.Context,
 	path string,
 ) (string, error) {
-	code := ctx.Query("code")
+	var credentials schemas.CodeCredentials
+	err := ctx.ShouldBind(&credentials)
+	if err != nil {
+		return "", fmt.Errorf("can't bind credentials: %w", err)
+	}
+	code := credentials.Code
 	if code == "" {
 		return "", fmt.Errorf("missing code")
 	}
 
-	state := ctx.Query("state")
-	latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
-	if err != nil {
-		return "", fmt.Errorf("missing CSRF token")
-	}
+	// state := credentials.State
+	// latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
+	// if err != nil {
+	// 	return "", fmt.Errorf("missing CSRF token")
+	// }
 
-	if state != latestCSRFToken {
-		return "", fmt.Errorf("invalid CSRF token")
-	}
+	// if state != latestCSRFToken {
+	// 	return "", fmt.Errorf("invalid CSRF token")
+	// }
 
 	githubTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {
