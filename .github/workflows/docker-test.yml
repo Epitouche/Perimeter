@@ -50,7 +50,7 @@ jobs:
         run: docker compose build
 
       - name: Run containers
-        run: docker compose up -d || docker compose logs
+        run: docker compose up -d || docker compose logs && exit 1
 
       - name: Stop containers
         run: docker compose down --volumes
