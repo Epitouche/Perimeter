@@ -310,7 +310,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/register": {
+        "/user/login": {
             "post": {
                 "description": "Authenticates a user and provides a JWT to Authorize API calls",
                 "produces": [
@@ -321,13 +321,6 @@ const docTemplate = `{
                 ],
                 "summary": "Provides a JSON Web Token",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Email",
-                        "name": "email",
-                        "in": "formData",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Username",
@@ -359,7 +352,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/token": {
+        "/user/register": {
             "post": {
                 "description": "Authenticates a user and provides a JWT to Authorize API calls",
                 "produces": [
@@ -370,6 +363,13 @@ const docTemplate = `{
                 ],
                 "summary": "Provides a JSON Web Token",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Username",
