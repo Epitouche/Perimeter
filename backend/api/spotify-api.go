@@ -57,11 +57,13 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Tags Spotify
 // @Accept json
 // @Produce json
+// @Param code formData string true "Code"
+// @Param state formData string true "State"
 // @Success 200 {object} schemas.Response
 // @Failure 500 {object} schemas.ErrorRespose
-// @Router /spotify/auth/callback [get]
+// @Router /spotify/auth/callback [post]
 func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
+	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		spotify_token, err := api.controller.HandleServiceCallback(
 			ctx,
 			apiRoutes.BasePath()+"/auth/callback",

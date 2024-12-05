@@ -242,7 +242,7 @@ const docTemplate = `{
             }
         },
         "/spotify/auth/callback": {
-            "get": {
+            "post": {
                 "description": "give url to authenticate with spotify",
                 "consumes": [
                     "application/json"
@@ -254,6 +254,22 @@ const docTemplate = `{
                     "Spotify"
                 ],
                 "summary": "give url to authenticate with spotify",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code",
+                        "name": "code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "State",
+                        "name": "state",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
