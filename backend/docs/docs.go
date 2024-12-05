@@ -256,18 +256,13 @@ const docTemplate = `{
                 "summary": "give url to authenticate with spotify",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Code",
-                        "name": "code",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "State",
-                        "name": "state",
-                        "in": "formData",
-                        "required": true
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
                     }
                 ],
                 "responses": {
@@ -408,6 +403,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "schemas.CodeCredentials": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas.ErrorRespose": {
             "type": "object",
             "properties": {

@@ -1,4 +1,11 @@
 definitions:
+  schemas.CodeCredentials:
+    properties:
+      code:
+        type: string
+      state:
+        type: string
+    type: object
   schemas.ErrorRespose:
     properties:
       error:
@@ -171,16 +178,12 @@ paths:
       - application/json
       description: give url to authenticate with spotify
       parameters:
-      - description: Code
-        in: formData
-        name: code
+      - description: Callback Payload
+        in: body
+        name: payload
         required: true
-        type: string
-      - description: State
-        in: formData
-        name: state
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
       produces:
       - application/json
       responses:
