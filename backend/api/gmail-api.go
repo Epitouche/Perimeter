@@ -37,10 +37,10 @@ func (api *GmailAPI) HandleServiceCallback(ctx *gin.Context, path string) {
 }
 
 func (api *GmailAPI) GetUserInfo(ctx *gin.Context) {
-	usetInfo, err := api.controller.GetUserInfo(ctx)
+	userInfo, err := api.controller.GetUserInfo(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"user_info": gin.H{"id": usetInfo.Id, "name": usetInfo.Name, "login": usetInfo.Login, "email": usetInfo.Email, "avatar_url": usetInfo.AvatarUrl, "html_url": usetInfo.HtmlUrl, "type": usetInfo.Type}})
+		ctx.JSON(http.StatusOK, gin.H{"user_info": gin.H{"login": userInfo.Login, "email": userInfo.Email}})
 	}
 }

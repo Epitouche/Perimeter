@@ -4,12 +4,12 @@ import (
 	"area/controller"
 )
 
-type Areapi struct {
+type AreaApi struct {
 	controller controller.AreaController
 }
 
-func NewAreapi(controller controller.AreaController) *Areapi {
-	return &Areapi{
+func NewAreapi(controller controller.AreaController) *AreaApi {
+	return &AreaApi{
 		controller: controller,
 	}
 }

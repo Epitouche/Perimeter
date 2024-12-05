@@ -62,7 +62,7 @@ func (controller *spotifyController) RedirectToService(
 	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the Spotify authorization URL
-	redirectURI := "http://localhost:" + appPort + path
+	redirectURI := "http://localhost:8081/services/spotify"
 	authURL := "https://accounts.spotify.com/authorize" +
 		"?response_type=code" +
 		"&client_id=" + clientID +
