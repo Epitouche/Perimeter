@@ -20,6 +20,11 @@ const handleSignUp = async () => {
   try {
     signUpError.value = null;
 
+    if (!email.value || !username.value || !password.value || !confirmPassword.value) {
+      signUpError.value = 'Please fill out all fields.';
+      return;
+    }
+
     if (password.value !== confirmPassword.value) {
       signUpError.value = 'Passwords do not match.';
       return;
@@ -69,24 +74,23 @@ const handleSignUp = async () => {
         </div>
         <div class="flex flex-col">
           <h2 class="text-xl px-5">Confirm Password</h2>
-          <UInput
-            type="password"
-            v-model="confirmPassword"
-            :ui="{ placeholder: '!px-5 !py-3 font-light', size: { sm: 'text-5xl' } }"/>
+          <UInput type="password" v-model="confirmPassword"
+            :ui="{ placeholder: '!px-5 !py-3 font-light', size: { sm: 'text-5xl' } }" />
         </div>
         <div class="flex flex-col justify-center items-center min-w-full pt-4">
-          <div v-if="signUpError" class="text-red-500 text-xl mt-4">
+          <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
           <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12">Sign up</UButton>
-          <p class="text-xl">Already an account? <ULink to="/login" class="hover:text-custom_color-text_link"><u>Login</u></ULink>
+          <p class="text-xl">Already signed up? <ULink to="/login" class="hover:text-custom_color-text_link">
+              <u>Login</u></ULink>
           </p>
         </div>
       </div>
       <div class="min-w-[80%] max-w-[80%] pt-2">
         <UDivider size="xs" label="or sign up with" :ui="{ label: 'text-custom_color-text_other text-xl' }" />
       </div>
-      <ConnectWithAppContainer :apps="apps"/>
+      <ConnectWithAppContainer :apps="apps" />
     </UContainer>
   </div>
 </template>
