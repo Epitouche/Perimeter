@@ -11,6 +11,7 @@ type ServiceService interface {
 	GetAllServices() (allServicesJson []schemas.ServiceJson, err error)
 	GetServices() []interface{}
 	FindActionbyName(name string) func(c chan string, option string)
+	FindReactionbyName(name string) func(option string)
 }
 
 type serviceService struct {
@@ -79,11 +80,18 @@ func (service *serviceService) GetServices() []interface{} {
 }
 
 func (service *serviceService) FindActionbyName(name string) func(c chan string, option string) {
-	// println(name)
 	for _, service := range service.allService {
 		if timerService, ok := service.(TimerService); ok {
-			// println("timer service")
 			return timerService.FindActionbyName(name)
+		}
+	}
+	return nil
+}
+
+func (service *serviceService) FindReactionbyName(name string) func(option string) {
+	for _, service := range service.allService {
+		if timerService, ok := service.(TimerService); ok {
+			return timerService.FindReactionbyName(name)
 		}
 	}
 	return nil

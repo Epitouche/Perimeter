@@ -46,7 +46,7 @@ func (service *timerService) FindReactionbyName(name string) func(option string)
 
 func (service *timerService) TimerActionSpecificHour(c chan string, option string) {
 	dt := time.Now().Local()
-	if dt.Hour() == 19 && dt.Minute() == 15 {
+	if dt.Hour() == 19 && dt.Minute() == 25 {
 		println("current time is ", dt.String())
 		c <- "response" // send sum to c
 	}

@@ -119,12 +119,11 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			if err != nil {
 				return
 			}
+			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
 			if area.Enable {
 				resultAction := <-channelArea
-				// do reaction
-				println("go routine reaction")
+				reaction(area.ReactionOption)
 				println(resultAction)
-
 			}
 		}
 	}(areaStartValue, channelArea)
