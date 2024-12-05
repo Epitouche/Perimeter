@@ -33,7 +33,7 @@ func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup
 // @Param password formData string true "Password"
 // @Success 200 {object} schemas.JWT
 // @Failure 401 {object} schemas.ErrorRespose
-// @Router /user/token [post].
+// @Router /user/login [post].
 func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/login", func(ctx *gin.Context) {
 		token, err := api.controller.Login(ctx)
