@@ -40,7 +40,7 @@ jobs:
 
       - name: Set up mobile key
         run: |
-          curl 'https://cdn.discordapp.com/attachments/1307991394203336735/1313483837032103946/area-key.jks?ex=6752efa6&is=67519e26&hm=9a8a1b1677aa00f8fb1d99c9cae016c7f05babb5f1831d6690fd2fcb5b5bed5c&' -O area-key.jks
+          wget 'https://cdn.discordapp.com/attachments/1307991394203336735/1313483837032103946/area-key.jks?ex=6752efa6&is=67519e26&hm=9a8a1b1677aa00f8fb1d99c9cae016c7f05babb5f1831d6690fd2fcb5b5bed5c&' -O area-key.jks
           mv area-key.jks mobile/key/area-key.jks
 
       - name: Stop any running containers & remove volumes
