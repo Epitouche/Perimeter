@@ -14,8 +14,8 @@ type ServiceService interface {
 }
 
 type serviceService struct {
-	repository repository.ServiceRepository
-	allService []interface{}
+	repository        repository.ServiceRepository
+	allService        []interface{}
 	allServiceSchemas []schemas.Service
 }
 
@@ -40,7 +40,7 @@ func NewServiceService(repository repository.ServiceRepository, timerService Tim
 				Description: "This service is a mail service",
 			},
 		},
-		allService: []interface{}{ timerService },
+		allService: []interface{}{timerService},
 	}
 	newService.InitialSaveService()
 	return &newService
@@ -79,8 +79,10 @@ func (service *serviceService) GetServices() []interface{} {
 }
 
 func (service *serviceService) FindActionbyName(name string) func(c chan string, option string) {
+	// println(name)
 	for _, service := range service.allService {
 		if timerService, ok := service.(TimerService); ok {
+			// println("timer service")
 			return timerService.FindActionbyName(name)
 		}
 	}

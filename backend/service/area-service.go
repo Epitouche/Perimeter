@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -64,9 +63,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		UserId:         result.UserId,
 		User:           user,
 		ActionOption:   result.ActionOption,
-		ActionId:       result.ActionId,
 		ReactionOption: result.ReactionOption,
-		ReactionId:     result.ReactionId,
 		Enable:         true,
 		Action:         service.actionService.FindById(result.ActionId),
 		Reaction:       service.reactionService.FindById(result.ReactionId),
@@ -89,30 +86,24 @@ func (service *areaService) AreaExist(id uint64) bool {
 }
 
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
-
 	channelArea := make(chan string)
-	// action
 	println("go routine action")
 	go func(areaStartValue schemas.Area, channelArea chan string) {
-		// check if the area is in the databse
+		// get the action with the id
 		for service.AreaExist(areaStartValue.Id) {
-			// check if the area is enable in the databse
-			// println(areaStartValue.Id)
 			area, err := service.repository.FindById(areaStartValue.Id)
-			// println(area.Enable)
 			if err != nil {
 				println("error")
 				return
 			}
+			// println(area.Action.Name)
+			action := service.serviceService.FindActionbyName(area.Action.Name)
+			if action == nil {
+				println("action not found")
+				return
+			}
 			if area.Enable {
-				// println("check time")
-				dt := time.Now().Local()
-				if dt.Hour() == 18 && dt.Minute() == 18 {
-					println("current time is ", dt.String())
-					channelArea <- "response" // send sum to c
-				}
-				// println("sleep")
-				time.Sleep(10 * time.Second)
+				action(channelArea, area.ActionOption)
 			}
 		}
 		println("clear")

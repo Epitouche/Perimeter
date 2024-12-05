@@ -84,12 +84,17 @@ func (repo *areaRepository) FindByUserId(userId uint64) []schemas.Area {
 }
 
 func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
-	var action schemas.Area
-	err := repo.db.Connection.Where("id = ?", id).
-		Find(&action)
+	var area schemas.Area
+	err := repo.db.Connection.Where(&schemas.Area{Id: id}).First(&area)
+	var actionResult schemas.Action
+	repo.db.Connection.Where(&schemas.Action{Id: area.ActionId}).First(&actionResult)
+	area.Action = actionResult
+	var reactionResult schemas.Reaction
+	repo.db.Connection.Where(&schemas.Reaction{Id: area.ReactionId}).First(&reactionResult)
+	area.Reaction = reactionResult
 	if err.Error != nil {
 		println(err.Error)
 		return schemas.Area{}, fmt.Errorf("failed to find action by id: %v", err.Error)
 	}
-	return action, nil
+	return area, nil
 }
