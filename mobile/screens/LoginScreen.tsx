@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import {authorize} from 'react-native-app-auth';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 
@@ -17,6 +18,29 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
   const ip = route.params?.ip || 'localhost';
+
+  const spotifyAuthConfig = {
+    clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
+    clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
+    redirectUrl: 'com.area:/oauthredirect',
+    scopes: ['user-read-private', 'user-read-email'],
+    serviceConfiguration: {
+      authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+      tokenEndpoint: 'https://accounts.spotify.com/api/token',
+    },
+  };
+
+  const handleSpotifyLogin = async () => {
+    try {
+      console.log('Spotify Auth Config:', spotifyAuthConfig);
+      const authState = await authorize(spotifyAuthConfig);
+      console.log('Spotify Auth State:', authState);
+      alert('Logged into Spotify successfully!');
+    } catch (error) {
+      console.error('Spotify Login Error:', error);
+      alert('Failed to log in to Spotify.');
+    }
+  };
 
   const handleLogin = async () => {
     let hasError = false;
@@ -40,7 +64,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({username, password}),
         });
 
         if (response.ok) {
@@ -118,10 +142,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
           style={styles.socialIcon}
         />
-        <Image
-          source={{uri: 'https://img.icons8.com/color/48/facebook.png'}}
-          style={styles.socialIcon}
-        />
+        <TouchableOpacity onPress={handleSpotifyLogin}>
+          <Image
+            source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
+            style={styles.socialIcon}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
