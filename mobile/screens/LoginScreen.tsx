@@ -22,7 +22,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const spotifyAuthConfig = {
     clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
     clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-    redirectUrl: 'com.area://`oauthredirect',
+    redirectUrl: 'com.area://oauthredirect',
     scopes: ['user-read-private', 'user-read-email'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://accounts.spotify.com/authorize',
@@ -32,13 +32,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
   const handleSpotifyLogin = async () => {
     try {
-      console.log('Spotify Auth Config:', spotifyAuthConfig);
       const authState = await authorize(spotifyAuthConfig);
       console.log('Spotify Auth State:', authState);
-      alert('Logged into Spotify successfully!');
+      console.log('Logged into Spotify successfully!');
     } catch (error) {
       console.error('Spotify Login Error:', error);
-      alert('Failed to log in to Spotify.');
+      console.log('Failed to log in to Spotify.');
     }
   };
 
