@@ -57,8 +57,7 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Tags Spotify
 // @Accept json
 // @Produce json
-// @Param code formData string true "Code"
-// @Param state formData string true "State"
+// @Param payload body schemas.CodeCredentials true "Callback Payload"
 // @Success 200 {object} schemas.Response
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /spotify/auth/callback [post]
