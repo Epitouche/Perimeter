@@ -13,7 +13,10 @@ type SpotifyAPI struct {
 	controller controller.SpotifyController
 }
 
-func NewSpotifyAPI(controller controller.SpotifyController, apiRoutes *gin.RouterGroup) *SpotifyAPI {
+func NewSpotifyAPI(
+	controller controller.SpotifyController,
+	apiRoutes *gin.RouterGroup,
+) *SpotifyAPI {
 	apiRoutes = apiRoutes.Group("/spotify")
 	api := SpotifyAPI{
 		controller: controller,
@@ -57,7 +60,10 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Router /spotify/auth/callback [get]
 func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
-		spotify_token, err := api.controller.HandleServiceCallback(ctx, apiRoutes.BasePath()+"/auth/callback")
+		spotify_token, err := api.controller.HandleServiceCallback(
+			ctx,
+			apiRoutes.BasePath()+"/auth/callback",
+		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
 				Error: err.Error(),
