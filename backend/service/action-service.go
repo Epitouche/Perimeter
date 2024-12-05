@@ -1,91 +1,38 @@
 package service
 
 import (
+	"fmt"
+
 	"area/repository"
 	"area/schemas"
 )
 
 type ActionService interface {
 	FindAll() []schemas.Action
+	SaveAllAction()
+	FindById(actionId uint64) schemas.Action
 	GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson)
+}
+
+type ServiceAction interface {
+	GetServiceActionInfo() []schemas.Action
 }
 
 type actionService struct {
 	repository     repository.ActionRepository
 	serviceService ServiceService
-	allAction      map[schemas.ServiceName][]schemas.Action
 }
 
 func NewActionService(
 	repository repository.ActionRepository,
 	serviceService ServiceService,
 ) ActionService {
-	newService := actionService{
+	newActionService := &actionService{
 		repository:     repository,
 		serviceService: serviceService,
-		allAction: map[schemas.ServiceName][]schemas.Action{
-			schemas.Spotify: {
-				{
-					Name:        "action1",
-					Description: "do something",
-				},
-				{
-					Name:        "action2",
-					Description: "do something",
-				},
-				{
-					Name:        "action3",
-					Description: "do something",
-				},
-			},
-			schemas.OpenWeatherMap: {
-				{
-					Name:        "action1",
-					Description: "do something",
-				},
-				{
-					Name:        "action2",
-					Description: "do something",
-				},
-				{
-					Name:        "action3",
-					Description: "do something",
-				},
-			},
-			schemas.Timer: {
-				{
-					Name:        "action1",
-					Description: "do something",
-				},
-				{
-					Name:        "action2",
-					Description: "do something",
-				},
-				{
-					Name:        "action3",
-					Description: "do something",
-				},
-			},
-		},
 	}
-	newService.InitialSaveAction()
-	return &newService
-}
-
-func (service *actionService) InitialSaveAction() {
-	allService := service.serviceService.FindAll()
-	// Find all service and save action
-	for _, oneService := range allService {
-		// Find all action by service name
-		for _, oneAction := range service.allAction[schemas.ServiceName(oneService.Name)] {
-			existingActions := service.repository.FindByServiceByName(oneService.Id, oneAction.Name)
-
-			if len(existingActions) == 0 {
-				oneAction.Service = oneService
-				service.repository.Save(oneAction)
-			}
-		}
-	}
+	newActionService.SaveAllAction()
+	return newActionService
 }
 
 func (service *actionService) FindAll() []schemas.Action {
@@ -103,4 +50,21 @@ func (service *actionService) GetAllServicesByServiceId(
 		})
 	}
 	return actionJson
+}
+
+func (service *actionService) SaveAllAction() {
+	for _, services := range service.serviceService.GetServices() {
+		if serviceAction, ok := services.(ServiceAction); ok {
+			actions := serviceAction.GetServiceActionInfo()
+			for _, action := range actions {
+				service.repository.Save(action)
+			}
+		} else {
+			fmt.Println("Service is not ServiceAction")
+		}
+	}
+}
+
+func (service *actionService) FindById(actionId uint64) schemas.Action {
+	return service.repository.FindById(actionId)
 }

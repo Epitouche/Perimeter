@@ -4,7 +4,8 @@ import (
 	"area/service"
 )
 
-type ActionController interface{}
+type ActionController interface {
+}
 
 type actionController struct {
 	service service.ActionService

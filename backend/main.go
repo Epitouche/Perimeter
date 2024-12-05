@@ -57,21 +57,25 @@ func setupRouter() *gin.Engine {
 	githubRepository := repository.NewGithubRepository(databaseConnection)
 	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
+	timerRepository := repository.NewTimerRepository()
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
+	areaRepository := repository.NewAreaRepository(databaseConnection)
 	tokenRepository := repository.NewTokenRepository(databaseConnection)
 
 	// Services
 	githubService := service.NewGithubService(githubRepository)
 	gmailService := service.NewGmailService(gmailRepository)
 	spotifyService := service.NewSpotifyService(spotifyRepository)
+	timerService := service.NewTimerService(timerRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
-	serviceService := service.NewServiceService(serviceRepository)
+	serviceService := service.NewServiceService(serviceRepository, timerService)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
+	areaService := service.NewAreaService(areaRepository, serviceService, actionService, reactionService, userService)
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
@@ -101,6 +105,7 @@ func setupRouter() *gin.Engine {
 	)
 	actionController := controller.NewActionController(actionService)
 	reactionController := controller.NewReactionController(reactionService)
+	areaController := controller.NewAreaController(areaService)
 	tokenController := controller.NewTokenController(tokenService)
 
 	// API routes
@@ -108,13 +113,14 @@ func setupRouter() *gin.Engine {
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
 	api.NewTokenApi(tokenController)
-
+	
 	ping(apiRoutes)
 	api.NewUserApi(userController, apiRoutes)
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
 	api.NewGithubAPI(githubController, apiRoutes)
-
+	api.NewAreAPI(areaController, apiRoutes)
+	
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)
 

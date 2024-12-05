@@ -7,85 +7,30 @@ import (
 
 type ReactionService interface {
 	FindAll() []schemas.Reaction
+	SaveAllReaction()
+	FindById(reactionId uint64) schemas.Reaction
 	GetAllServicesByServiceId(serviceId uint64) (reactionJson []schemas.ReactionJson)
+}
+
+type ServiceReaction interface {
+	GetServiceReactionInfo() []schemas.Reaction
 }
 
 type reactionService struct {
 	repository     repository.ReactionRepository
 	serviceService ServiceService
-	allAction      map[schemas.ServiceName][]schemas.Reaction
 }
 
 func NewReactionService(
 	repository repository.ReactionRepository,
 	serviceService ServiceService,
 ) ReactionService {
-	newService := reactionService{
+	newService := &reactionService{
 		repository:     repository,
 		serviceService: serviceService,
-		allAction: map[schemas.ServiceName][]schemas.Reaction{
-			schemas.Spotify: {
-				{
-					Name:        "action1",
-					Description: "do something",
-				},
-				{
-					Name:        "action2",
-					Description: "do something",
-				},
-				{
-					Name:        "action3",
-					Description: "do something",
-				},
-			},
-			schemas.OpenWeatherMap: {
-				{
-					Name:        "action1",
-					Description: "do something",
-				},
-				{
-					Name:        "action2",
-					Description: "do something",
-				},
-				{
-					Name:        "action3",
-					Description: "do something",
-				},
-			},
-			schemas.Timer: {
-				{
-					Name:        "action1",
-					Description: "do something",
-				},
-				{
-					Name:        "action2",
-					Description: "do something",
-				},
-				{
-					Name:        "action3",
-					Description: "do something",
-				},
-			},
-		},
 	}
-	newService.InitialSaveAction()
-	return &newService
-}
-
-func (service *reactionService) InitialSaveAction() {
-	allService := service.serviceService.FindAll()
-	// Find all service and save action
-	for _, oneService := range allService {
-		// Find all action by service name
-		for _, oneAction := range service.allAction[schemas.ServiceName(oneService.Name)] {
-			existingActions := service.repository.FindByServiceByName(oneService.Id, oneAction.Name)
-
-			if len(existingActions) == 0 {
-				oneAction.Service = oneService
-				service.repository.Save(oneAction)
-			}
-		}
-	}
+	newService.SaveAllReaction()
+	return newService
 }
 
 func (service *reactionService) FindAll() []schemas.Reaction {
@@ -103,4 +48,21 @@ func (service *reactionService) GetAllServicesByServiceId(
 		})
 	}
 	return reactionJson
+}
+
+func (service *reactionService) SaveAllReaction() {
+	for _, services := range service.serviceService.GetServices() {
+		if serviceReaction, ok := services.(ServiceReaction); ok {
+			reactions := serviceReaction.GetServiceReactionInfo()
+			for _, reaction := range reactions {
+				service.repository.Save(reaction)
+			}
+		} else {
+			println("ServiceReaction interface not implemented")
+		}
+	}
+}
+
+func (service *reactionService) FindById(reactionId uint64) schemas.Reaction {
+	return service.repository.FindById(reactionId)
 }
