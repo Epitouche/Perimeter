@@ -13,7 +13,6 @@ import (
 	"area/controller"
 	"area/database"
 	"area/docs"
-	"area/middlewares"
 	"area/repository"
 	"area/schemas"
 	"area/service"
@@ -34,13 +33,14 @@ func ping(router *gin.RouterGroup) {
 	})
 }
 
-// @BasePath /api/v1
-// @title Area API
 func setupRouter() *gin.Engine {
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
 		panic("BACKEND_PORT is not set")
 	}
+
+	router := gin.Default()
+	router.Use(cors.Default())
 
 	docs.SwaggerInfo.Title = "Area API"
 	docs.SwaggerInfo.Description = "Area - Automation API"
@@ -48,9 +48,7 @@ func setupRouter() *gin.Engine {
 	docs.SwaggerInfo.Host = "localhost:" + appPort
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http"}
-
-	router := gin.Default()
-	router.Use(cors.Default())
+	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 
 	// Database connection
 	databaseConnection := database.Connection()
@@ -110,11 +108,7 @@ func setupRouter() *gin.Engine {
 	areaController := controller.NewAreaController(areaService)
 	tokenController := controller.NewTokenController(tokenService)
 
-	userAPI := api.NewUserApi(userController)
-
-	githubAPI := api.NewGithubAPI(githubController)
-	gmailAPI := api.NewGmailAPI(gmailController)
-
+	// API routes
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
@@ -123,50 +117,6 @@ func setupRouter() *gin.Engine {
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
-		ping(apiRoutes)
-
-		// User Auth
-		auth := apiRoutes.Group("/auth")
-		{
-			auth.POST("/login", userAPI.Login)
-			auth.POST("/register", userAPI.Register)
-		}
-
-		// Github
-		github := apiRoutes.Group("/github")
-		{
-			github.GET("/auth", func(c *gin.Context) {
-				githubAPI.RedirectToService(c, github.BasePath()+"/auth/callback")
-			})
-
-			github.GET("/auth/callback", func(c *gin.Context) {
-				githubAPI.HandleServiceCallback(c, github.BasePath()+"/auth/callback")
-			})
-
-			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
-			{
-				githubInfo.GET("/user", githubAPI.GetUserInfo)
-			}
-		}
-
-		// Gmail
-		gmail := apiRoutes.Group("/gmail")
-		{
-			gmail.GET("/auth", func(c *gin.Context) {
-				gmailAPI.RedirectToService(c, gmail.BasePath()+"/auth/callback")
-			})
-
-			gmail.GET("/auth/callback", func(c *gin.Context) {
-				gmailAPI.HandleServiceCallback(c, gmail.BasePath()+"/auth/callback")
-			})
-
-			gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
-			{
-				gmailInfo.GET("/user", gmailAPI.GetUserInfo)
-			}
-		}
-
-		// TODO middleware for jwt
 		area := apiRoutes.Group("/area")
 		{
 			area.POST("/", func(c *gin.Context) {
@@ -175,7 +125,11 @@ func setupRouter() *gin.Engine {
 		}
 
 	}
+	ping(apiRoutes)
+	api.NewUserApi(userController, apiRoutes)
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
+	api.NewGmailAPI(gmailController, apiRoutes)
+	api.NewGithubAPI(githubController, apiRoutes)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)

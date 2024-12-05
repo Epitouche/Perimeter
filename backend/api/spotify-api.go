@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"area/controller"
+	"area/middlewares"
 	"area/schemas"
 )
 
@@ -23,18 +24,19 @@ func NewSpotifyAPI(
 	}
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
-	api.GetUserInfo(apiRoutes)
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }
 
-// RedirectToServiceSpotify godoc
+// RedirectToService godoc
 // @Summary give url to authenticate with spotify
 // @Description give url to authenticate with spotify
-// @Tags spotify route
+// @Tags Spotify
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Error 500 {object} schemas.Response
+// @Failure 500 {object} schemas.ErrorRespose
 // @Router /spotify/auth [get]
 func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
@@ -49,14 +51,14 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	})
 }
 
-// HandleServiceCallbackSpotify godoc
+// HandleServiceCallback godoc
 // @Summary give url to authenticate with spotify
 // @Description give url to authenticate with spotify
-// @Tags spotify route
+// @Tags Spotify
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Error 500 {object} schemas.ErrorRespose
+// @Failure 500 {object} schemas.ErrorRespose
 // @Router /spotify/auth/callback [get]
 func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
@@ -74,15 +76,15 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	})
 }
 
-// GetUserInfoSpotify godoc
+// GetUserInfo godoc
 // @Summary give user info of spotify
 // @Description give user info of spotify
-// @Tags spotify route
+// @Tags Spotify
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Error 500 {object} schemas.ErrorRespose
-// @Router /spotify/auth/callback [get]
+// @Failure 500 {object} schemas.ErrorRespose
+// @Router /spotify/info/user [get]
 func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)
