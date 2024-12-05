@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"area/controller"
+	"area/schemas"
 )
 
 type ServiceApi struct {
@@ -24,7 +25,9 @@ func (api *ServiceApi) AboutJson(ctx *gin.Context) {
 	allServices, err := api.controller.AboutJson(ctx)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+			Error: err.Error(),
+		})
 	} else {
 		ctx.JSON(http.StatusOK, gin.H{
 			"client": map[string]string{

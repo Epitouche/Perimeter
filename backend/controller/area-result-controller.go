@@ -10,7 +10,7 @@ type areaResultController struct {
 	service service.AreaResultService
 }
 
-func NewAreaResultController(service service.AreaResultService) AreaController {
+func NewAreaResultController(service service.AreaResultService) AreaResultController {
 	return &areaResultController{
 		service: service,
 	}
