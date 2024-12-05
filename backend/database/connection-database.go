@@ -40,8 +40,8 @@ func Connection() *gorm.DB {
 	}
 	println("Connection to database established")
 
-	if os.Getenv("GIN_MODE") != "release" {
-		conn = conn.Debug() // Enable debugging
-	}
+	// if os.Getenv("GIN_MODE") != "release" {
+	// 	conn = conn.Debug() // Enable debugging
+	// }
 	return conn
 }
