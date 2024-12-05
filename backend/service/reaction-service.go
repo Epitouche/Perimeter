@@ -8,6 +8,7 @@ import (
 type ReactionService interface {
 	FindAll() []schemas.Reaction
 	SaveAllReaction()
+	FindById(reactionId uint64) schemas.Reaction
 	GetAllServicesByServiceId(serviceId uint64) (reactionJson []schemas.ReactionJson)
 }
 
@@ -60,4 +61,8 @@ func (service *reactionService) SaveAllReaction() {
 			println("ServiceReaction interface not implemented")
 		}
 	}
+}
+
+func (service *reactionService) FindById(reactionId uint64) schemas.Reaction {
+	return service.repository.FindById(reactionId)
 }

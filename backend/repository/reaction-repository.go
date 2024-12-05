@@ -16,6 +16,7 @@ type ReactionRepository interface {
 	FindByName(actionName string) []schemas.Reaction
 	FindByServiceId(serviceId uint64) []schemas.Action
 	FindByServiceByName(serviceID uint64, actionName string) []schemas.Reaction
+	FindById(actionId uint64) schemas.Reaction
 }
 
 type reactionRepository struct {
@@ -94,4 +95,13 @@ func (repo *reactionRepository) FindByServiceByName(
 		panic(err.Error)
 	}
 	return actions
+}
+
+func (repo *reactionRepository) FindById(actionId uint64) schemas.Reaction {
+	var action schemas.Reaction
+	err := repo.db.Connection.Where(&schemas.Reaction{Id: actionId}).First(&action)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return action
 }

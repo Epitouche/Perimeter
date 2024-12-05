@@ -10,6 +10,7 @@ import (
 type ActionService interface {
 	FindAll() []schemas.Action
 	SaveAllAction()
+	FindById(actionId uint64) schemas.Action
 	GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson)
 }
 
@@ -62,4 +63,8 @@ func (service *actionService) SaveAllAction() {
 			fmt.Println("Service is not ServiceAction")
 		}
 	}
+}
+
+func (service *actionService) FindById(actionId uint64) schemas.Action {
+	return service.repository.FindById(actionId)
 }
