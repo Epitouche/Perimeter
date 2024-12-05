@@ -72,7 +72,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"access_token": spotify_token})
+			ctx.JSON(http.StatusOK, gin.H{"token": spotify_token})
 		}
 	})
 }
