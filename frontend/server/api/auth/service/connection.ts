@@ -29,12 +29,12 @@ export default defineEventHandler(async (event) => {
       }),
     });
     console.log(response);
-    //if (!response.ok) {
-    //  throw createError({
-    //    statusCode: response.status,
-    //    message: `API Error: ${response.statusText}`,
-    //  });
-    //}
+    if (!response.ok) {
+      throw createError({
+        statusCode: response.status,
+        message: `CUSTOM API Error: ${response.statusText}`,
+      });
+    }
 
     const data: OAuthToken = await response.json();
     if (!data.token) {

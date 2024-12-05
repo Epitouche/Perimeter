@@ -7,7 +7,6 @@ defineProps<{
   }[];
 }>();
 
-
 const handleClick = (name: string) => {
   console.log(`${name} clicked`);
 };
@@ -19,15 +18,19 @@ const handleClick = (name: string) => {
       v-for="(app, index) in apps"
       :key="index"
       :icon="app.icon"
-      variant="ghost"
-      class="flex flex-col items-center justify-center w-[15rem] h-[15rem] rounded-lg transition-transform hover:scale-105"
+      class="app_button flex flex-col items-center justify-center w-[15rem] h-[15rem] rounded-lg transition-transform hover:scale-105"
       :style="{ backgroundColor: app.color }"
       @click="handleClick(app.name)"
     >
-      <span class="text-white text-4xl font-bold mb-2">{{ app.name }}</span>
+      <span class="text-3xl text-white font-bold mt-auto">{{ app.name }}</span>
     </UButton>
   </UContainer>
 </template>
 
 <style scoped>
+:deep(.app_button span) {
+  height: 6rem;
+  width: 6rem;
+  color: white;
+}
 </style>

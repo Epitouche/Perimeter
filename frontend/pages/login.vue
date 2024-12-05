@@ -6,7 +6,7 @@ definePageMeta({
 const username = ref('')
 const password = ref('')
 
-const token = useCookie('token')
+const token = useCookie('token');
 const loginError = ref<string | null>(null);
 
 interface RegisterResponse {

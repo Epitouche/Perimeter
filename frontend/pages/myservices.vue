@@ -20,7 +20,7 @@ const apps = [
   {
     name: 'Time',
     color: '#BB00FF',
-    icon: 'i-logos-dropbox-icon',
+    icon: 'i-ic-outline-timelapse',
     apiLink: 'http://server:8080/api/v1/dropbox/auth/',
   },
 ];
@@ -35,14 +35,4 @@ const apps = [
 </template>
 
 <style scoped>
-.services-page {
-  padding: 2rem;
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
-
-h1 {
-  margin-bottom: 1rem;
-  font-size: 2rem;
-}
 </style>

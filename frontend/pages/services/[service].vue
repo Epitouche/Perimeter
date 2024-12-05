@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute, navigateTo } from 'nuxt/app';
 
 interface ApiResponse {
     token: string;
@@ -24,7 +22,6 @@ async function connectToService() {
   }
 
   try {
-    console.log(`Connecting to service with code=${code} and state=${state}...`);
     const response = await $fetch<ApiResponse>('/api/auth/service/connection', {
       method: 'POST',
       body: {
@@ -48,27 +45,22 @@ function showError(message: string) {
   console.error(message);
 
   setTimeout(() => {
-    navigateTo('/error');
+    navigateTo('/login');
   }, 3000);
 }
 
 </script>
 
 <template>
-  <div>
-    <div v-if="isLoading">Loading...</div>
+  <div class="flex flex-col items-center justify-center">
+    <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
 
-    <div v-if="errorMessage" class="error">
+    <div v-if="errorMessage" class="text-red-600 font-bold mt-2 text-lg text-center">
       {{ errorMessage }}
     </div>
   </div>
 </template>
 
-<style>
-.error {
-  color: red;
-  font-weight: bold;
-  margin-top: 10px;
-}
+<style scoped>
 </style>
 
