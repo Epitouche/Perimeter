@@ -124,7 +124,6 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 }
 
 func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err error) {
-
 	// Create a new HTTP request
 	req, err := http.NewRequest(
 		"GET",
@@ -153,8 +152,9 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 	return result, nil
 }
 
-func (service *gmailService) GetUserInfo(accessToken string) (result schemas.GmailUserInfo, err error) {
-
+func (service *gmailService) GetUserInfo(
+	accessToken string,
+) (result schemas.GmailUserInfo, err error) {
 	gmailProfile, err := GetUserGmailProfile(accessToken)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get gmail profile because %w", err)

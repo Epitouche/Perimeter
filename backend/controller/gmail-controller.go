@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -120,9 +121,11 @@ func (controller *gmailController) HandleServiceCallback(
 	savedUser := controller.serviceUser.GetUserById(newUserId)
 
 	newSpotifyToken := schemas.Token{
-		Token:   gmailTokenResponse.AccessToken,
-		Service: gmailService,
-		User:    savedUser,
+		Token:        gmailTokenResponse.AccessToken,
+		RefreshToken: gmailTokenResponse.RefreshToken,
+		ExpireAt:     time.Now().Add(time.Duration(gmailTokenResponse.ExpiresIn) * time.Second),
+		Service:      gmailService,
+		User:         savedUser,
 	}
 
 	// Save the access token in the database
