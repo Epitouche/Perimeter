@@ -11,6 +11,7 @@ definePageMeta({
   <h1>
     Connected services for Actions
   </h1>
+  <UButton to="/workflow">Back</UButton>
   <NuxtLink :to="{ name: 'workflow-actions-service', params: { service: 1 } }"> ServiceName Actions </NuxtLink>
 </template>
 

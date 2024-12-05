@@ -2,6 +2,11 @@ export default defineAppConfig({
     ui: {
         strategy: 'override',
         button: {
+            color: {
+                black: {
+                    solid: 'disabled:opacity-100 disabled:bg-white disabled:text-black aria-disabled:opacity-100 aria-disabled:bg-white aria-disabled:text-black hover:none'
+                }
+            },
             default: {
                 color: 'black',
             },

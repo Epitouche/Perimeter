@@ -78,7 +78,7 @@ const handleLogin = async () => {
       </div>
       <ConnectWithAppContainer :apps="apps" />
     </UContainer>
-  </div>
+  </div>label
 </template>
 
 <style scoped></style>
