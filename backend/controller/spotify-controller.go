@@ -86,15 +86,15 @@ func (controller *spotifyController) HandleServiceCallback(
 		return "", fmt.Errorf("missing code")
 	}
 
-	state := credentials.State
-	latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
-	if err != nil {
-		return "", fmt.Errorf("missing CSRF token")
-	}
+	// state := credentials.State
+	// latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
+	// if err != nil {
+	// 	return "", fmt.Errorf("missing CSRF token")
+	// }
 
-	if state != latestCSRFToken {
-		return "", fmt.Errorf("invalid CSRF token")
-	}
+	// if state != latestCSRFToken {
+	// 	return "", fmt.Errorf("invalid CSRF token")
+	// }
 
 	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {

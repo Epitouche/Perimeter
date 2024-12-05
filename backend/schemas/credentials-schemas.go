@@ -16,6 +16,6 @@ type JWT struct {
 }
 
 type CodeCredentials struct {
-	Code  string `form:"code"  json:"code"`
-	State string `form:"state" json:"state"`
+	Code string `form:"code"  json:"code"`
+	// State string `form:"state" json:"state"`
 }
