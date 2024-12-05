@@ -55,14 +55,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/videos": {
+        "/github/auth": {
             "get": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Get all the existing videos",
+                "description": "give url to authenticate with github",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,35 +65,22 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "videos",
-                    "list"
+                    "github route"
                 ],
-                "summary": "List existing videos",
+                "summary": "give url to authenticate with github",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/api.LinkApi"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "type": "string"
                         }
                     }
                 }
-            },
-            "post": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Create a new video",
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "do ping to check if the server is running",
                 "consumes": [
                     "application/json"
                 ],
@@ -106,36 +88,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "videos",
-                    "create"
+                    "ping route"
                 ],
-                "summary": "Create new videos",
-                "parameters": [
-                    {
-                        "description": "Create video",
-                        "name": "video",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.LinkApi"
-                        }
-                    }
-                ],
+                "summary": "ping example",
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
                         }
@@ -143,17 +101,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/videos/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Update a single video",
+        "/spotify/auth": {
+            "get": {
+                "description": "give url to authenticate with spotify",
                 "consumes": [
                     "application/json"
                 ],
@@ -161,58 +111,22 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "videos"
+                    "spotify route"
                 ],
-                "summary": "Update videos",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Video ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Update video",
-                        "name": "video",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.LinkApi"
-                        }
-                    }
-                ],
+                "summary": "give url to authenticate with spotify",
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
                         }
                     }
                 }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Delete a single video",
+            }
+        },
+        "/spotify/auth/callback": {
+            "get": {
+                "description": "give user info of spotify",
                 "consumes": [
                     "application/json"
                 ],
@@ -220,33 +134,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "videos"
+                    "spotify route"
                 ],
-                "summary": "Remove videos",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Video ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "give user info of spotify",
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
                         }
@@ -256,9 +149,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.LinkApi": {
-            "type": "object"
-        },
         "schemas.JWT": {
             "type": "object",
             "properties": {
@@ -279,7 +169,7 @@ const docTemplate = `{
     "securityDefinitions": {
         "bearerAuth": {
             "type": "apiKey",
-            "name": "Authorization",
+            "name": "Authorization.",
             "in": "header"
         }
     }
@@ -289,9 +179,9 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "Area API",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
