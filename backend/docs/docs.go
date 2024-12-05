@@ -32,20 +32,20 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.AuthenticationUrl"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     }
                 }
             }
         },
         "/github/auth/callback": {
-            "get": {
+            "post": {
                 "description": "give url to authenticate with github",
                 "consumes": [
                     "application/json"
@@ -61,7 +61,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "500": {
@@ -90,7 +90,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.UserCredentials"
                         }
                     },
                     "500": {
@@ -119,20 +119,20 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.AuthenticationUrl"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.ErrorRespose"
                         }
                     }
                 }
             }
         },
         "/gmail/auth/callback": {
-            "get": {
+            "post": {
                 "description": "give url to authenticate with gmail",
                 "consumes": [
                     "application/json"
@@ -148,7 +148,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "500": {
@@ -177,7 +177,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.UserCredentials"
                         }
                     },
                     "500": {
@@ -229,7 +229,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.AuthenticationUrl"
                         }
                     },
                     "500": {
@@ -269,7 +269,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "500": {
@@ -298,7 +298,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "$ref": "#/definitions/schemas.UserCredentials"
                         }
                     },
                     "500": {
@@ -403,13 +403,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "schemas.AuthenticationUrl": {
+            "type": "object",
+            "properties": {
+                "authentication_url": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas.CodeCredentials": {
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "string"
-                },
-                "state": {
                     "type": "string"
                 }
             }
@@ -434,6 +439,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.UserCredentials": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

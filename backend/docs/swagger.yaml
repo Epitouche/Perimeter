@@ -1,9 +1,12 @@
 definitions:
+  schemas.AuthenticationUrl:
+    properties:
+      authentication_url:
+        type: string
+    type: object
   schemas.CodeCredentials:
     properties:
       code:
-        type: string
-      state:
         type: string
     type: object
   schemas.ErrorRespose:
@@ -21,6 +24,13 @@ definitions:
       message:
         type: string
     type: object
+  schemas.UserCredentials:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -35,16 +45,16 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with github
       tags:
       - Github
   /github/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with github
@@ -54,7 +64,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -73,7 +83,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
         "500":
           description: Internal Server Error
           schema:
@@ -92,16 +102,16 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with gmail
       tags:
       - Gmail
   /gmail/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with gmail
@@ -111,7 +121,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -130,7 +140,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
         "500":
           description: Internal Server Error
           schema:
@@ -164,7 +174,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
@@ -190,7 +200,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -209,7 +219,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
         "500":
           description: Internal Server Error
           schema:

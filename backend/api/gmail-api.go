@@ -7,6 +7,7 @@ import (
 
 	"area/controller"
 	"area/middlewares"
+	"area/schemas"
 )
 
 type GmailAPI struct {
@@ -31,16 +32,16 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 // @Tags Gmail
 // @Accept json
 // @Produce json
-// @Success 200 {string} schemas.Response
-// @Failure 500 {object} schemas.Response
+// @Success 200 {object} schemas.AuthenticationUrl
+// @Failure 500 {object} schemas.ErrorRespose
 // @Router /gmail/auth [get]
 func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, schemas.ErrorRespose{Error: err.Error()})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"authentication_url": authURL})
+			ctx.JSON(http.StatusOK, schemas.AuthenticationUrl{Url: authURL})
 		}
 	})
 }
@@ -51,19 +52,19 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Tags Gmail
 // @Accept json
 // @Produce json
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.JWT
 // @Failure 500 {object} schemas.ErrorRespose
-// @Router /gmail/auth/callback [get]
+// @Router /gmail/auth/callback [post]
 func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
+	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		gmail_token, err := api.controller.HandleServiceCallback(
 			ctx,
 			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{Error: err.Error()})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"access_token": gmail_token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: gmail_token})
 		}
 	})
 }
@@ -74,16 +75,16 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // @Tags Gmail
 // @Accept json
 // @Produce json
-// @Success 200 {object} schemas.Response
+// @Success 200 {object} schemas.UserCredentials
 // @Failure 500 {object} schemas.ErrorRespose
 // @Router /gmail/info/user [get]
 func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{Error: err.Error()})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"user_info": gin.H{"login": userInfo.Login, "email": userInfo.Email}})
+			ctx.JSON(http.StatusOK, userInfo)
 		}
 	})
 }
