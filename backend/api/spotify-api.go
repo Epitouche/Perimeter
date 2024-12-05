@@ -76,7 +76,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	})
 }
 
-// GetUserInfoSpotify godoc
+// GetUserInfo godoc
 // @Summary give user info of spotify
 // @Description give user info of spotify
 // @Tags spotify route
@@ -84,7 +84,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // @Produce json
 // @Success 200 {object} schemas.Response
 // @Failure 500 {object} schemas.ErrorRespose
-// @Router /spotify/auth/callback [get]
+// @Router /spotify/info/user [get]
 func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)

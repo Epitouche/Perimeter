@@ -54,12 +54,15 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Tags github route
 // @Accept json
 // @Produce json
-// @Success 200 {string} Bearer token
-// @Failure 500 {object} schemas.Response
-// @Router /github/auth [get]
+// @Success 200 {object} schemas.Response
+// @Failure 500 {object} schemas.ErrorRespose
+// @Router /github/auth/callback [get]
 func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
-		github_token, err := api.controller.HandleServiceCallback(ctx, apiRoutes.BasePath()+"/auth/callback")
+		github_token, err := api.controller.HandleServiceCallback(
+			ctx,
+			apiRoutes.BasePath()+"/auth/callback",
+		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
 				Error: err.Error(),
@@ -70,6 +73,15 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	})
 }
 
+// GetUserInfo godoc
+// @Summary give user info of github
+// @Description give user info of github
+// @Tags github route
+// @Accept json
+// @Produce json
+// @Success 200 {object} schemas.Response
+// @Failure 500 {object} schemas.ErrorRespose
+// @Router /github/info/user [get]
 func (api *GithubAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)

@@ -41,15 +41,16 @@ func setupRouter() *gin.Engine {
 		panic("BACKEND_PORT is not set")
 	}
 
+	router := gin.Default()
+	router.Use(cors.Default())
+
 	docs.SwaggerInfo.Title = "Area API"
 	docs.SwaggerInfo.Description = "Area - Automation API"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:" + appPort
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http"}
-
-	router := gin.Default()
-	router.Use(cors.Default())
+	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 
 	// Database connection
 	databaseConnection := database.Connection()
@@ -104,25 +105,14 @@ func setupRouter() *gin.Engine {
 	reactionController := controller.NewReactionController(reactionService)
 	tokenController := controller.NewTokenController(tokenService)
 
-	userAPI := api.NewUserApi(userController)
-
+	// API routes
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
 	api.NewTokenApi(tokenController)
 
-	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
-	{
-		ping(apiRoutes)
-
-		// User Auth
-		auth := apiRoutes.Group("/auth")
-		{
-			auth.POST("/login", userAPI.Login)
-			auth.POST("/register", userAPI.Register)
-		}
-	}
-
+	ping(apiRoutes)
+	api.NewUserApi(userController, apiRoutes)
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
 	api.NewGithubAPI(githubController, apiRoutes)

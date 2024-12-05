@@ -19,35 +19,6 @@ info:
   contact: {}
   title: Area API
 paths:
-  /auth/token:
-    post:
-      description: Authenticates a user and provides a JWT to Authorize API calls
-      operationId: Authentication
-      parameters:
-      - description: Username
-        in: formData
-        name: username
-        required: true
-        type: string
-      - description: Password
-        in: formData
-        name: password
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemas.JWT'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
-      summary: Provides a JSON Web Token
-      tags:
-      - User
   /github/auth:
     get:
       consumes:
@@ -67,6 +38,101 @@ paths:
       summary: give url to authenticate with github
       tags:
       - github route
+  /github/auth/callback:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with github
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with github
+      tags:
+      - github route
+  /github/info/user:
+    get:
+      consumes:
+      - application/json
+      description: give user info of github
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give user info of github
+      tags:
+      - github route
+  /gmail/auth:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with gmail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      summary: give url to authenticate with gmail
+      tags:
+      - gmail route
+  /gmail/auth/callback:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with gmail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with gmail
+      tags:
+      - gmail route
+  /gmail/info/user:
+    get:
+      consumes:
+      - application/json
+      description: give user info of gmail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give user info of gmail
+      tags:
+      - gmail route
   /ping:
     get:
       consumes:
@@ -105,6 +171,25 @@ paths:
     get:
       consumes:
       - application/json
+      description: give url to authenticate with spotify
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with spotify
+      tags:
+      - spotify route
+  /spotify/info/user:
+    get:
+      consumes:
+      - application/json
       description: give user info of spotify
       produces:
       - application/json
@@ -120,6 +205,67 @@ paths:
       summary: give user info of spotify
       tags:
       - spotify route
+  /user/register:
+    post:
+      description: Authenticates a user and provides a JWT to Authorize API calls
+      parameters:
+      - description: Email
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: Provides a JSON Web Token
+      tags:
+      - User
+  /user/token:
+    post:
+      description: Authenticates a user and provides a JWT to Authorize API calls
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: Provides a JSON Web Token
+      tags:
+      - User
 securityDefinitions:
   bearerAuth:
     in: header
