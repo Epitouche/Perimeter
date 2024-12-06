@@ -141,7 +141,10 @@ func (controller *spotifyController) HandleServiceCallback(
 
 	savedUser.TokenId = tokenId
 
-	controller.serviceUser.UpdateUserInfo(savedUser)
+	err = controller.serviceUser.UpdateUserInfo(savedUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to update user info because %w", err)
+	}
 	return token, nil
 }
 
