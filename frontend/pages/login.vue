@@ -35,16 +35,25 @@ const handleLogin = async () => {
 
     if (response.token) {
       token.value = response.token;
-      console.log('Token stored in localStorage:', response.token);
     }
     console.log('Login successful:', response);
     navigateTo('/myareas');
-  } catch (error: any) {
-    console.error('Login failed:', error);
-    loginError.value = error?.data?.message || 'Login failed. Please try again.';
+  } catch (error) {
+    if (error && typeof error === 'object' && 'data' in error) {
+      const typedError = error as { status?: number; data?: { message?: string } };
+      if (typedError.status === 401) {
+        loginError.value = 'Login failed. Please try again.';
+      } 
+      console.error('Login error:', typedError);
+    } else if (error instanceof Error) {
+      loginError.value = error.message || 'An unknown error occurred.';
+      console.error('Login failed:', error.message);
+    } else {
+      loginError.value = 'An unknown error occurred.';
+      console.error('Unexpected error:', error);
+    }
   }
 };
-
 </script>
 
 <template>
