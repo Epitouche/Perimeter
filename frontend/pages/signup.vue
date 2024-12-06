@@ -47,8 +47,11 @@ const handleSignUp = async () => {
     navigateTo('/myareas');
   } catch (error) {
     if (error && typeof error === 'object' && 'data' in error) {
-      const typedError = error as { data?: { message?: string } };
-      signUpError.value = typedError.data?.message || 'Sign up failed. Please try again.';
+      const typedError = error as { status?: number; data?: { message?: string } };
+
+      if (typedError.status === 409) {
+        signUpError.value = 'Password must be at least 8 characters long';
+      } 
       console.error('Sign up failed:', typedError.data);
     } else if (error instanceof Error) {
       signUpError.value = error.message || 'An unknown error occurred.';

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 definePageMeta({
   middleware: 'auth',
 });
@@ -27,10 +26,12 @@ const apps = [
 </script>
 
 <template>
-  <NavigationBar />
-  <div class="services-page py-8 text-center font-sans">
-    <h1 class="mb-4 text-3xl font-bold">My Services</h1>
-    <ServiceList :apps="apps" />
+  <div>
+    <NavigationBar />
+    <div class="py-8 text-center font-sans">
+      <h1 class="mb-4 text-3xl font-bold">My Services</h1>
+      <ServiceList :apps="apps" />
+    </div>
   </div>
 </template>
 
