@@ -111,7 +111,7 @@ func (controller *spotifyController) HandleServiceCallback(
 		Email:    userInfo.Email,
 	}
 
-	token, err := controller.serviceUser.Login(newUser)
+	token, _, err := controller.serviceUser.Login(newUser)
 	if err == nil {
 		return token, nil
 	}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
+import { AppContext } from '../context/AppContext';
+
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
@@ -16,7 +18,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '', email: '' });
-  const ip = route.params?.ip || 'localhost';
+  const { ipAddress, setIpAddress } = useContext(AppContext);
 
   const handleSignup = async () => {
     let hasError = false;
@@ -45,7 +47,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           return;
         }
 
-        const response = await fetch(`http://${ip}:8080/api/v1/auth/register`, {
+        const response = await fetch(`http://${ipAddress}:8080/api/v1/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -56,7 +58,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         if (response.ok) {
           const data = await response.json();
           console.log('Data:', data);
-          navigation.navigate('Login', { 'ip': ip });
+          navigation.navigate('Login');
         } else {
           console.error('Error:', response.status, " | " , response.statusText);
         }
@@ -68,7 +70,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const switchToLogin = () => {
     console.log('Switch to login');
-    navigation.navigate('Login', { 'ip': ip });
+    navigation.navigate('Login');
   }
 
   return (

@@ -30,7 +30,7 @@ func (api *ServiceApi) AboutJson(ctx *gin.Context) {
 	allServices, err := api.controller.AboutJson(ctx)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+		ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 			Error: err.Error(),
 		})
 	} else {

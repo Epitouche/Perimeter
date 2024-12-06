@@ -133,7 +133,7 @@ func (controller *githubController) HandleServiceCallback(
 	}
 
 	if userAlreadExists {
-		token, err := controller.serviceUser.Login(newUser)
+		token, _, err := controller.serviceUser.Login(newUser)
 		if err != nil {
 			return "", fmt.Errorf("unable to login user because %w", err)
 		}
