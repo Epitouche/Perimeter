@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET} from '@env';
 import {
   View,
   Text,
@@ -20,8 +21,8 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const ip = route.params?.ip || 'localhost';
 
   const spotifyAuthConfig = {
-    clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
-    clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
+    clientId: SPOTIFY_CLIENT_ID, // Replace with env variable
+    clientSecret: SPOTIFY_CLIENT_SECRET, // Replace with env variable
     redirectUrl: 'com.area://oauthredirect',
     scopes: ['user-read-private', 'user-read-email'],
     serviceConfiguration: {
