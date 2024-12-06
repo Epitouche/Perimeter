@@ -36,13 +36,13 @@ func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup
 //	@Param			username	formData	string	true	"Username"
 //	@Param			password	formData	string	true	"Password"
 //	@Success		200			{object}	schemas.JWT
-//	@Failure		401			{object}	schemas.ErrorRespose
+//	@Failure		401			{object}	schemas.ErrorResponse
 //	@Router			/user/login [post].
 func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/login", func(ctx *gin.Context) {
 		token, err := api.controller.Login(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusUnauthorized, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusUnauthorized, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 			return
@@ -64,13 +64,13 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 //	@Param			username	formData	string	true	"Username"
 //	@Param			password	formData	string	true	"Password"
 //	@Success		200			{object}	schemas.JWT
-//	@Failure		401			{object}	schemas.ErrorRespose
+//	@Failure		401			{object}	schemas.ErrorResponse
 //	@Router			/user/register [post].
 func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/register", func(ctx *gin.Context) {
 		token, err := api.controller.Register(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusConflict, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusConflict, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 			return
@@ -91,14 +91,14 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 //	@Security		Bearer
 //	@Param			Authorization	header		string	true	"Bearer token"
 //	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorRespose
-//	@Failure		500				{object}	schemas.ErrorRespose
+//	@Failure		401				{object}	schemas.ErrorResponse
+//	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/user/info/user [get]
 func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 		} else {

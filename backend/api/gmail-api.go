@@ -34,13 +34,13 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	schemas.AuthenticationUrl
-//	@Failure		500	{object}	schemas.ErrorRespose
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth [get]
 func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, schemas.ErrorRespose{Error: err.Error()})
+			ctx.JSON(http.StatusInternalServerError, schemas.ErrorResponse{Error: err.Error()})
 		} else {
 			ctx.JSON(http.StatusOK, schemas.AuthenticationUrl{Url: authURL})
 		}
@@ -56,7 +56,7 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Produce		json
 //	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
 //	@Success		200		{object}	schemas.JWT
-//	@Failure		500		{object}	schemas.ErrorRespose
+//	@Failure		500		{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback [post]
 func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
@@ -65,7 +65,7 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{Error: err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
 			ctx.JSON(http.StatusOK, &schemas.JWT{Token: gmail_token})
 		}
@@ -82,14 +82,14 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Security		Bearer
 //	@Param			Authorization	header		string	true	"Bearer token"
 //	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorRespose
-//	@Failure		500				{object}	schemas.ErrorRespose
+//	@Failure		401				{object}	schemas.ErrorResponse
+//	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/gmail/info/user [get]
 func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{Error: err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
 			ctx.JSON(http.StatusOK, userInfo)
 		}
