@@ -32,8 +32,8 @@ async function connectToService() {
         state: state as string,
       },
     });
-    console.log("Testing answer API")
     new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
+    console.log("Testing answer API")
     console.log("Service token is  : ", response.token);
     token.value = response.token;
     navigateTo('/');
