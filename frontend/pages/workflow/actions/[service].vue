@@ -22,6 +22,9 @@ const fetchActions = async () => {
       },
     });
     console.log('actions', actions.value);
+    actions.value.forEach((action: any) => {
+      modifiedOptions[action.id] = JSON.parse(action.option || '{}');
+    });
   } catch (error) {
     console.error('Error fetching actions:', error);
   }
@@ -37,11 +40,35 @@ const openConfig = (actionId: number) => {
 };
 
 const parseOption = (option: string) => {
+  console.log('option', option);
   try {
     return JSON.parse(option);
   } catch (err) {
     console.error('Invalid JSON format for option:', option, err);
     return {};
+  }
+};
+
+const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>({});
+const saveOptions = async (actionId: number) => {
+  try {
+    const payload = {
+      token: token.value,
+      service: serviceId,
+      actionId: actionId,
+      options: modifiedOptions[actionId],
+    };
+
+    const response = await $fetch('/api/workflow/actions/save', {
+      method: 'POST',
+      body: payload,
+    });
+
+    console.log('Options saved successfully:', response);
+    alert('Options saved successfully!');
+  } catch (err) {
+    console.error('Error saving options:', err);
+    alert('Failed to save options. Please try again.');
   }
 };
 
@@ -62,11 +89,11 @@ const parseOption = (option: string) => {
         </button>
         <div v-if="configIsOpen[action.id]" class="config-panel">
           <div>
-            <h3>Options:</h3>
-            <!-- <div>{{ action.option }}</div> -->
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
-              <strong>{{ key }}:</strong> {{ value }}
+              <strong>{{ key }}:</strong>
+              <input v-model="modifiedOptions[action.id][key]" type="text" />
             </div>
+            <button @click="saveOptions(action.id)" class="save-button">Save</button>
           </div>
         </div>
       </div>
