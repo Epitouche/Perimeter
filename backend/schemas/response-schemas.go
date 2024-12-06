@@ -4,6 +4,6 @@ type Response struct {
 	Message string `json:"message"`
 }
 
-type ErrorRespose struct {
+type ErrorResponse struct {
 	Error string `json:"error"`
 }

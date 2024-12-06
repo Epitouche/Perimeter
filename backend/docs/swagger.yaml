@@ -6,7 +6,7 @@ definitions:
       state:
         type: string
     type: object
-  schemas.ErrorRespose:
+  schemas. ErrorResponse:
     properties:
       error:
         type: string
@@ -58,7 +58,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give url to authenticate with github
       tags:
       - Github
@@ -77,7 +77,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give user info of github
       tags:
       - Github
@@ -115,7 +115,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give url to authenticate with gmail
       tags:
       - Gmail
@@ -134,7 +134,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give user info of gmail
       tags:
       - Gmail
@@ -168,7 +168,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give url to authenticate with spotify
       tags:
       - Spotify
@@ -194,7 +194,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give url to authenticate with spotify
       tags:
       - Spotify
@@ -213,7 +213,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: give user info of spotify
       tags:
       - Spotify
@@ -246,7 +246,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: Provides a JSON Web Token
       tags:
       - User
@@ -274,7 +274,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas. ErrorResponse'
       summary: Provides a JSON Web Token
       tags:
       - User
