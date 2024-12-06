@@ -18,20 +18,25 @@ type SpotifyService interface {
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	SpotifyReactionPlayMusic(option string, idArea uint64)
+	GetServiceActionInfo() []schemas.Action
+	GetServiceReactionInfo() []schemas.Reaction
 }
 
 type spotifyService struct {
 	repository        repository.SpotifyRepository
 	serviceRepository repository.ServiceRepository
+	areaRepository    repository.AreaRepository
 }
 
 func NewSpotifyService(
 	githubTokenRepository repository.SpotifyRepository,
 	serviceRepository repository.ServiceRepository,
+	areaRepository repository.AreaRepository,
 ) SpotifyService {
 	return &spotifyService{
 		repository:        githubTokenRepository,
 		serviceRepository: serviceRepository,
+		areaRepository:    areaRepository,
 	}
 }
 
@@ -153,4 +158,26 @@ func (service *spotifyService) FindReactionbyName(name string) func(option strin
 }
 
 func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("error", err)
+		return
+	}
+	fmt.Printf("area: %+v\n", area)
+}
+
+func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{}
+}
+
+func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name: string(schemas.PlayMusic),
+			Description: "This reaction will play music",
+			Service: service.serviceRepository.FindByName(schemas.Spotify),
+			Option: "{}",
+		},
+	}
 }

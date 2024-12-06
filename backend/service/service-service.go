@@ -25,6 +25,7 @@ type serviceService struct {
 func NewServiceService(
 	repository repository.ServiceRepository,
 	timerService TimerService,
+	spotifyService SpotifyService,
 ) ServiceService {
 	newService := serviceService{
 		repository: repository,
@@ -46,7 +47,7 @@ func NewServiceService(
 				Description: "This service is a mail service",
 			},
 		},
-		allService: []interface{}{timerService},
+		allService: []interface{}{timerService, spotifyService},
 	}
 	newService.InitialSaveService()
 	return &newService
@@ -91,6 +92,9 @@ func (service *serviceService) FindActionbyName(
 		if timerService, ok := service.(TimerService); ok {
 			return timerService.FindActionbyName(name)
 		}
+		if spotifyService, ok := service.(SpotifyService); ok {
+			return spotifyService.FindActionbyName(name)
+		}
 	}
 	return nil
 }
@@ -99,6 +103,9 @@ func (service *serviceService) FindReactionbyName(name string) func(option strin
 	for _, service := range service.allService {
 		if timerService, ok := service.(TimerService); ok {
 			return timerService.FindReactionbyName(name)
+		}
+		if spotifyService, ok := service.(SpotifyService); ok {
+			return spotifyService.FindReactionbyName(name)
 		}
 	}
 	return nil
