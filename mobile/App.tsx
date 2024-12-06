@@ -8,6 +8,7 @@ import AreaView from './screens/AreaView';
 import ServicesScreen from './screens/ServiceScreen';
 import AuthRedirectScreen from './screens/authRedirect';
 import AppProvider from './context/AppContext';
+import WorkflowScreen from './screens/Workflow';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   AreaView: undefined;
   ServicesScreen: undefined;
   authRedirect: {code: string};
+  WorkflowScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -42,6 +44,7 @@ const App: React.FC = () => {
           <Stack.Screen name="AreaView" component={AreaView} />
           <Stack.Screen name="ServicesScreen" component={ServicesScreen} />
           <Stack.Screen name="authRedirect" component={AuthRedirectScreen} />
+          <Stack.Screen name="WorkflowScreen" component={WorkflowScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

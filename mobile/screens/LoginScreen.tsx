@@ -22,7 +22,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [errors, setErrors] = useState({username: '', password: ''});
   const { ipAddress } = useContext(AppContext);
 
-  const handleUrl = (event) => {
+  const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
       const url = new URL(event.url).searchParams
