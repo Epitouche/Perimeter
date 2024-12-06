@@ -8,7 +8,7 @@ definePageMeta({
 const showNavBar = ref(true);
 const showCancelButton = ref(false);
 const reactionButtonisDisabled = ref(true);
-const showAddButton = ref(false);
+const showCreateButton = ref(false);
 
 const onActionSelected = () => {
   showNavBar.value = false;
@@ -17,7 +17,7 @@ const onActionSelected = () => {
 };
 
 const onReactionSelected = () => {
-  showAddButton.value = true;
+  showCreateButton.value = true;
 };
 
 const setWorkflowPageDefault = () => {
@@ -29,21 +29,26 @@ const setWorkflowPageDefault = () => {
 </script>
 
 <template>
-  <div v-if="showNavBar">
-    <NavigationBar />
-  </div>
-  <div v-if="showCancelButton">
-    <UButton @click="setWorkflowPageDefault">Cancel</UButton>
-  </div>
-  <div class="flex flex-col justify-center items-center gap-10 pt-10">
-    <h1 class="text-custom_size_title font-custom_weight_title pb-5">Workflow</h1>
-    <div class="flex flex-col justify-center items-center w-[28%]">
-      <ReActionButton title="Action" link="/workflow/actions" :is-disabled="false" />
-      <div :class="['bg-black min-w-4 min-h-28', reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100']"></div>
-      <ReActionButton title="Reaction" link="/workflow/reactions" :is-disabled="reactionButtonisDisabled" />
+  <div>
+    <div v-if="showNavBar" class="pb-10">
+      <NavigationBar />
     </div>
-    <div v-if="showAddButton">
-      <UButton>Add</UButton>
+    <div v-if="showCancelButton" class="pt-24 pl-28">
+      <UButton
+        class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
+        @click="setWorkflowPageDefault">Cancel</UButton>
+    </div>
+
+    <div class="flex flex-col justify-center items-center gap-10 ">
+      <h1 class="text-custom_size_title font-custom_weight_title pb-5">Workflow</h1>
+      <div class="flex flex-col justify-center items-center w-[28%]">
+        <ReActionButton title="Action" link="/workflow/actions" :is-disabled="false" />
+        <div :class="['bg-black min-w-4 min-h-28', reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100']" />
+        <ReActionButton title="Reaction" link="/workflow/reactions" :is-disabled="reactionButtonisDisabled" />
+      </div>
+      <div v-if="showCreateButton">
+        <UButton>Create</UButton>
+      </div>
     </div>
   </div>
 </template>

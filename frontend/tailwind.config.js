@@ -41,7 +41,7 @@ module.exports = {
         custom_border_radius: '3.125rem'
       },
       borderWidth: {
-        custom_border_width: '0.125rem'
+        custom_border_width: '0.2rem'
       },
     },
   },

@@ -42,7 +42,7 @@ const handleClick = (label: string) => {
 </script>
 
 <template>
-  <UContainer :ui="{ padding: 'px-0' }" class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-between">
+  <UContainer :ui="{ padding: 'px-0' }" class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly">
     <UButton variant="ghost" v-for="(app, index) in apps" :key="index" @click="handleClick(app)" :icon="app" class="app_button basis-1/3 flex justify-center" />
   </UContainer>
 </template>
