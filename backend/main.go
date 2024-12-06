@@ -18,13 +18,15 @@ import (
 	"area/service"
 )
 
-// @Summary ping example
-// @Description do ping to check if the server is running
-// @Tags ping route
-// @Accept json
-// @Produce json
-// @Success 200 {object} schemas.Response
-// @Router /ping [get]
+// ping godoc
+//
+//	@Summary		ping example
+//	@Description	do ping to check if the server is running
+//	@Tags			ping route
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	schemas.Response
+//	@Router			/ping [get]
 func ping(router *gin.RouterGroup) {
 	router.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, &schemas.Response{
@@ -103,7 +105,7 @@ func setupRouter() *gin.Engine {
 		tokenService,
 		serviceService,
 	)
-	userController := controller.NewUserController(userService, jwtService)
+	userController := controller.NewUserController(userService, jwtService, tokenService)
 	serviceController := controller.NewServiceController(
 		serviceService,
 		actionService,
@@ -150,9 +152,9 @@ func init() {
 	// }
 }
 
-// @securityDefinitions.apiKey bearerAuth
-// @in header
-// @name Authorization.
+// @securityDefinitions.apiKey	bearerAuth
+// @in							header
+// @name						Authorization.
 func main() {
 	router := setupRouter()
 

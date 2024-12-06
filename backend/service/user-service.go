@@ -10,7 +10,7 @@ import (
 )
 
 type UserService interface {
-	Login(user schemas.User) (JWTtoken string, err error)
+	Login(user schemas.User) (JWTtoken string, userId uint64, err error)
 	Register(newUser schemas.User) (JWTtoken string, userId uint64, err error)
 	GetUserInfo(token string) (userInfo schemas.User, err error)
 	UpdateUserInfo(newUser schemas.User) (err error)
@@ -33,10 +33,12 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 	}
 }
 
-func (service *userService) Login(newUser schemas.User) (JWTtoken string, err error) {
+func (service *userService) Login(
+	newUser schemas.User,
+) (JWTtoken string, userId uint64, err error) {
 	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
 	if len(userWiththisUserName) == 0 {
-		return "", fmt.Errorf("invalid credentials")
+		return "", 0, fmt.Errorf("invalid credentials")
 	}
 	// regular user
 	for _, user := range userWiththisUserName {
@@ -45,7 +47,7 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 				strconv.FormatUint(user.Id, 10),
 				user.Username,
 				false,
-			), nil
+			), user.Id, nil
 		}
 	}
 
@@ -57,12 +59,12 @@ func (service *userService) Login(newUser schemas.User) (JWTtoken string, err er
 					strconv.FormatUint(user.Id, 10),
 					user.Username,
 					false,
-				), nil
+				), user.Id, nil
 			}
 		}
 	}
 
-	return "", fmt.Errorf("invalid credentials")
+	return "", 0, fmt.Errorf("invalid credentials")
 }
 
 func (service *userService) Register(
@@ -70,7 +72,7 @@ func (service *userService) Register(
 ) (JWTtoken string, userId uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
-		return "", 0, fmt.Errorf("email already in use")
+		return service.Login(newUser)
 	}
 
 	if newUser.Password != "" {

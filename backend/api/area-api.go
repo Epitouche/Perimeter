@@ -24,14 +24,15 @@ func NewAreAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup)
 }
 
 // CreateArea godoc
-// @Summary create area
-// @Description create area
-// @Tags Area
-// @Accept json
-// @Produce json
-// @Success 200 {object} schemas.Response
-// @Failure 500 {object} schemas. ErrorResponse
-// @Router /area/ [post]
+//
+//	@Summary		create area
+//	@Description	create area
+//	@Tags			Area
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	schemas.Response
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/area/ [post]
 func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/", func(ctx *gin.Context) {
 		response, err := api.controller.CreateArea(ctx)
