@@ -39,7 +39,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 		} else {
@@ -55,7 +55,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Failure 500 {object} schemas.ErrorRespose
+// @Failure 500 {object} schemas. ErrorResponse
 // @Router /github/auth/callback [get]
 func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
@@ -64,7 +64,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 		} else {
@@ -80,13 +80,13 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Failure 500 {object} schemas.ErrorRespose
+// @Failure 500 {object} schemas. ErrorResponse
 // @Router /github/info/user [get]
 func (api *GithubAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 		} else {

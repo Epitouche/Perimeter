@@ -52,7 +52,7 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Failure 500 {object} schemas.ErrorRespose
+// @Failure 500 {object} schemas. ErrorResponse
 // @Router /gmail/auth/callback [get]
 func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth/callback", func(ctx *gin.Context) {
@@ -75,7 +75,7 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} schemas.Response
-// @Failure 500 {object} schemas.ErrorRespose
+// @Failure 500 {object} schemas. ErrorResponse
 // @Router /gmail/info/user [get]
 func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
