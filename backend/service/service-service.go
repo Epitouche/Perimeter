@@ -84,7 +84,9 @@ func (service *serviceService) GetServices() []interface{} {
 	return service.allService
 }
 
-func (service *serviceService) FindActionbyName(name string) func(c chan string, option string, idArea uint64) {
+func (service *serviceService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
 	for _, service := range service.allService {
 		if timerService, ok := service.(TimerService); ok {
 			return timerService.FindActionbyName(name)

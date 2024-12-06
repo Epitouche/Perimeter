@@ -26,7 +26,8 @@ type spotifyService struct {
 }
 
 func NewSpotifyService(
-	githubTokenRepository repository.SpotifyRepository, serviceRepository repository.ServiceRepository,
+	githubTokenRepository repository.SpotifyRepository,
+	serviceRepository repository.ServiceRepository,
 ) SpotifyService {
 	return &spotifyService{
 		repository:        githubTokenRepository,
@@ -122,7 +123,9 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 	return result, nil
 }
 
-func (service *spotifyService) FindActionbyName(name string) func(c chan string, option string, idArea uint64) {
+func (service *spotifyService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
 	switch name {
 	default:
 		return nil
@@ -139,5 +142,4 @@ func (service *spotifyService) FindReactionbyName(name string) func(option strin
 }
 
 func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
-
 }

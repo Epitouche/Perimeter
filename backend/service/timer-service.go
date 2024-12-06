@@ -31,7 +31,9 @@ func NewTimerService(
 	}
 }
 
-func (service *timerService) FindActionbyName(name string) func(c chan string, option string, idArea uint64) {
+func (service *timerService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
 	switch name {
 	case string(schemas.SpecificTime):
 		return service.TimerActionSpecificHour

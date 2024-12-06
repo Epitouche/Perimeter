@@ -2,9 +2,6 @@ package schemas
 
 type SpotifyAction string
 
-const (
-)
-
 type SpotifyReaction string
 
 const (
