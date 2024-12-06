@@ -3,38 +3,42 @@ run-name: mirroring
 
 on:
   push:
-    branches:
-      - dev
-      - pre-prod
-      - main
   pull_request:
-    branches:
-      - dev
-      - pre-prod
-      - main
 
 jobs:
   push_to_mirror:
-    name: push_to_mirror
+    name: Push to Mirror
     runs-on: self-hosted
     steps:
-      - name: 'Cleanup build folder'
+      - name: Cleanup build folder
         run: |
           ls -la ./
           rm -rf ./* || true
           rm -rf ./.??* || true
           ls -la ./
 
-      - name: Checkout GH repository
+      - name: Checkout GitHub repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - run: mkdir -p ~/.ssh
-      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      - run: chmod 600 ~/.ssh/id_rsa
-      - run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+      - name: Configure SSH for pushing to the mirror
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
-      - run: git remote set-url mirror ${{ vars.MIRROR_URL }}
-      - run: git remote -v
-      - run: git push mirror --all --force
+      - name: Set mirror remote if not existing
+        run: |
+          if ! git remote | grep -q "^mirror$"; then
+            git remote add mirror ${{ vars.MIRROR_URL }}
+          else
+            git remote set-url mirror ${{ vars.MIRROR_URL }}
+          fi
+
+      - name: Show remotes
+        run: git remote -v
+
+      - name: Push to mirror
+        run: git push mirror --all --force
