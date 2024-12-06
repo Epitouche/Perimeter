@@ -71,7 +71,7 @@ func setupRouter() *gin.Engine {
 	githubService := service.NewGithubService(githubRepository)
 	gmailService := service.NewGmailService(gmailRepository)
 	spotifyService := service.NewSpotifyService(spotifyRepository)
-	timerService := service.NewTimerService(timerRepository)
+	timerService := service.NewTimerService(timerRepository, serviceRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
 	serviceService := service.NewServiceService(serviceRepository, timerService)
@@ -117,12 +117,12 @@ func setupRouter() *gin.Engine {
 	tokenController := controller.NewTokenController(tokenService)
 
 	// API routes
-	serviceAPI := api.NewServiceApi(serviceController)
-	api.NewActionApi(actionController)
-	api.NewReactionApi(reactionController)
+	api.NewActionApi(actionController, apiRoutes)
+	api.NewReactionApi(reactionController, apiRoutes)
 	api.NewTokenApi(tokenController)
 
 	ping(apiRoutes)
+	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)
 	api.NewUserApi(userController, apiRoutes)
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
