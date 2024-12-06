@@ -13,11 +13,25 @@ import (
 	"area/controller"
 	"area/database"
 	"area/docs"
-	"area/middlewares"
 	"area/repository"
 	"area/schemas"
 	"area/service"
 )
+
+// @Summary ping example
+// @Description do ping to check if the server is running
+// @Tags ping route
+// @Accept json
+// @Produce json
+// @Success 200 {object} schemas.Response
+// @Router /ping [get]
+func ping(router *gin.RouterGroup) {
+	router.GET("/ping", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, &schemas.Response{
+			Message: "pong",
+		})
+	})
+}
 
 func setupRouter() *gin.Engine {
 	appPort := os.Getenv("BACKEND_PORT")
@@ -25,22 +39,16 @@ func setupRouter() *gin.Engine {
 		panic("BACKEND_PORT is not set")
 	}
 
+	router := gin.Default()
+	router.Use(cors.Default())
+
 	docs.SwaggerInfo.Title = "Area API"
 	docs.SwaggerInfo.Description = "Area - Automation API"
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:" + appPort
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http"}
-
-	router := gin.Default()
-	router.Use(cors.Default())
-
-	// Ping test
-	router.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, &schemas.Response{
-			Message: "pong",
-		})
-	})
+	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 
 	// Database connection
 	databaseConnection := database.Connection()
@@ -49,21 +57,31 @@ func setupRouter() *gin.Engine {
 	githubRepository := repository.NewGithubRepository(databaseConnection)
 	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
+	timerRepository := repository.NewTimerRepository()
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
+	areaRepository := repository.NewAreaRepository(databaseConnection)
 	tokenRepository := repository.NewTokenRepository(databaseConnection)
 
 	// Services
 	githubService := service.NewGithubService(githubRepository)
 	gmailService := service.NewGmailService(gmailRepository)
 	spotifyService := service.NewSpotifyService(spotifyRepository)
+	timerService := service.NewTimerService(timerRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
-	serviceService := service.NewServiceService(serviceRepository)
+	serviceService := service.NewServiceService(serviceRepository, timerService)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
+	areaService := service.NewAreaService(
+		areaRepository,
+		serviceService,
+		actionService,
+		reactionService,
+		userService,
+	)
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers
@@ -93,79 +111,21 @@ func setupRouter() *gin.Engine {
 	)
 	actionController := controller.NewActionController(actionService)
 	reactionController := controller.NewReactionController(reactionService)
+	areaController := controller.NewAreaController(areaService)
 	tokenController := controller.NewTokenController(tokenService)
 
-	userAPI := api.NewUserApi(userController)
-
-	githubAPI := api.NewGithubAPI(githubController)
-	gmailAPI := api.NewGmailAPI(gmailController)
-	spotifyAPI := api.NewSpotifyAPI(spotifyController)
-
+	// API routes
 	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
 	api.NewTokenApi(tokenController)
 
-	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
-	{
-		// User Auth
-		auth := apiRoutes.Group("/auth")
-		{
-			auth.POST("/login", userAPI.Login)
-			auth.POST("/register", userAPI.Register)
-		}
-
-		// Github
-		github := apiRoutes.Group("/github")
-		{
-			github.GET("/auth", func(c *gin.Context) {
-				githubAPI.RedirectToService(c, github.BasePath()+"/auth/callback")
-			})
-
-			github.GET("/auth/callback", func(c *gin.Context) {
-				githubAPI.HandleServiceCallback(c, github.BasePath()+"/auth/callback")
-			})
-
-			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
-			{
-				githubInfo.GET("/user", githubAPI.GetUserInfo)
-			}
-		}
-
-		// Gmail
-		gmail := apiRoutes.Group("/gmail")
-		{
-			gmail.GET("/auth", func(c *gin.Context) {
-				gmailAPI.RedirectToService(c, gmail.BasePath()+"/auth/callback")
-			})
-
-			gmail.GET("/auth/callback", func(c *gin.Context) {
-				gmailAPI.HandleServiceCallback(c, gmail.BasePath()+"/auth/callback")
-			})
-
-			gmailInfo := gmail.Group("/info", middlewares.AuthorizeJWT())
-			{
-				gmailInfo.GET("/user", gmailAPI.GetUserInfo)
-			}
-		}
-
-		// Spotify
-		spotify := apiRoutes.Group("/spotify")
-		{
-			spotify.GET("/auth", func(c *gin.Context) {
-				spotifyAPI.RedirectToService(c, spotify.BasePath()+"/auth/callback")
-			})
-
-			spotify.GET("/auth/callback", func(c *gin.Context) {
-				spotifyAPI.HandleServiceCallback(c, spotify.BasePath()+"/auth/callback")
-			})
-
-			spotifyInfo := spotify.Group("/info", middlewares.AuthorizeJWT())
-			{
-				spotifyInfo.GET("/user", spotifyAPI.GetUserInfo)
-			}
-		}
-	}
+	ping(apiRoutes)
+	api.NewUserApi(userController, apiRoutes)
+	api.NewSpotifyAPI(spotifyController, apiRoutes)
+	api.NewGmailAPI(gmailController, apiRoutes)
+	api.NewGithubAPI(githubController, apiRoutes)
+	api.NewAreAPI(areaController, apiRoutes)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)

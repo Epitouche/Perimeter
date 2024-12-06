@@ -15,6 +15,7 @@ type ActionRepository interface {
 	FindAll() []schemas.Action
 	FindByName(actionName string) []schemas.Action
 	FindByServiceId(serviceId uint64) []schemas.Action
+	FindById(actionId uint64) schemas.Action
 	FindByServiceByName(serviceId uint64, actionName string) []schemas.Action
 }
 
@@ -94,4 +95,13 @@ func (repo *actionRepository) FindByServiceByName(
 		panic(err.Error)
 	}
 	return actions
+}
+
+func (repo *actionRepository) FindById(actionId uint64) schemas.Action {
+	var action schemas.Action
+	err := repo.db.Connection.Where(&schemas.Action{Id: actionId}).First(&action)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return action
 }

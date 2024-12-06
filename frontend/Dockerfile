@@ -7,18 +7,19 @@ COPY ./package-lock.json ./
 
 RUN npm install
 
-FROM dependencies AS build
+FROM dependencies AS run
 
 COPY ./ ./
 
 RUN npm run build
 
-FROM node:20-alpine AS run
+# FROM node:20-alpine AS run
 
-WORKDIR /app
+# WORKDIR /app
 
 EXPOSE 8081
 
-COPY --from=build /app/.output ./.output
+# COPY --from=build /app/.output ./
 
-CMD ["node", ".output/server/index.mjs"]
+# CMD ["node", "./server/index.mjs"]
+CMD ["npx", "nuxt", "dev"]

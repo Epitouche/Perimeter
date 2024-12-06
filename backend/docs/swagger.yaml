@@ -1,5 +1,15 @@
 definitions:
-  api.LinkApi:
+  schemas.CodeCredentials:
+    properties:
+      code:
+        type: string
+      state:
+        type: string
+    type: object
+  schemas.ErrorRespose:
+    properties:
+      error:
+        type: string
     type: object
   schemas.JWT:
     properties:
@@ -14,10 +24,202 @@ definitions:
 info:
   contact: {}
 paths:
-  /auth/token:
+  /github/auth:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with github
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      summary: give url to authenticate with github
+      tags:
+      - Github
+  /github/auth/callback:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with github
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with github
+      tags:
+      - Github
+  /github/info/user:
+    get:
+      consumes:
+      - application/json
+      description: give user info of github
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give user info of github
+      tags:
+      - Github
+  /gmail/auth:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with gmail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      summary: give url to authenticate with gmail
+      tags:
+      - Gmail
+  /gmail/auth/callback:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with gmail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with gmail
+      tags:
+      - Gmail
+  /gmail/info/user:
+    get:
+      consumes:
+      - application/json
+      description: give user info of gmail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give user info of gmail
+      tags:
+      - Gmail
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping to check if the server is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      summary: ping example
+      tags:
+      - ping route
+  /spotify/auth:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with spotify
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with spotify
+      tags:
+      - Spotify
+  /spotify/auth/callback:
+    post:
+      consumes:
+      - application/json
+      description: give url to authenticate with spotify
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give url to authenticate with spotify
+      tags:
+      - Spotify
+  /spotify/info/user:
+    get:
+      consumes:
+      - application/json
+      description: give user info of spotify
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: give user info of spotify
+      tags:
+      - Spotify
+  /user/login:
     post:
       description: Authenticates a user and provides a JWT to Authorize API calls
-      operationId: Authentication
       parameters:
       - description: Username
         in: formData
@@ -39,136 +241,46 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: Provides a JSON Web Token
-  /videos:
-    get:
-      consumes:
-      - application/json
-      description: Get all the existing videos
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/api.LinkApi'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      summary: List existing videos
       tags:
-      - videos
-      - list
+      - User
+  /user/register:
     post:
-      consumes:
-      - application/json
-      description: Create a new video
+      description: Authenticates a user and provides a JWT to Authorize API calls
       parameters:
-      - description: Create video
-        in: body
-        name: video
+      - description: Email
+        in: formData
+        name: email
         required: true
-        schema:
-          $ref: '#/definitions/api.LinkApi'
+        type: string
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      summary: Create new videos
+            $ref: '#/definitions/schemas.ErrorRespose'
+      summary: Provides a JSON Web Token
       tags:
-      - videos
-      - create
-  /videos/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a single video
-      parameters:
-      - description: Video ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      - bearerAuth: []
-      summary: Remove videos
-      tags:
-      - videos
-    put:
-      consumes:
-      - application/json
-      description: Update a single video
-      parameters:
-      - description: Video ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Update video
-        in: body
-        name: video
-        required: true
-        schema:
-          $ref: '#/definitions/api.LinkApi'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/schemas.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.Response'
-      security:
-      - bearerAuth: []
-      - bearerAuth: []
-      summary: Update videos
-      tags:
-      - videos
+      - User
 securityDefinitions:
   bearerAuth:
     in: header
-    name: Authorization
+    name: Authorization.
     type: apiKey
 swagger: "2.0"
