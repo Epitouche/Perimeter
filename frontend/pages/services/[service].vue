@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute, navigateTo } from 'nuxt/app';
 
 interface ApiResponse {
-    token: string;
+    token?: string;
 }
 
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+const token = useCookie('token');
 
 onMounted(() => {
   connectToService();
@@ -24,22 +23,20 @@ async function connectToService() {
   }
 
   try {
-    console.log(`Connecting to service with code=${code} and state=${state}...`);
-
-    const url = new URL(`http://server:8080/api/v1/${route.params.service}/auth/callback`);
-    url.searchParams.append('code', code as string);
-    url.searchParams.append('state', state as string);
-    console.log(`Sending to ${url}`)
-
+    console.log("Testing API")
     const response = await $fetch<ApiResponse>('/api/auth/service/connection', {
-      method: 'GET',
+      method: 'POST',
       body: {
-        link: url,
+        service: route.params.service,
+        code: code as string,
+        state: state as string,
       },
     });
     new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
-    console.log("Token : ", response);
-
+    console.log("Testing answer API")
+    console.log("Service token is  : ", response.token);
+    token.value = response.token;
+    navigateTo('/');
   } catch (error:any) {
     showError(`Failed to connect to service: ${error.message}`);
   } finally {
@@ -52,27 +49,22 @@ function showError(message: string) {
   console.error(message);
 
   setTimeout(() => {
-    navigateTo('/error');
+    navigateTo('/login');
   }, 3000);
 }
 
 </script>
 
 <template>
-  <div>
-    <div v-if="isLoading">Loading...</div>
+  <div class="flex flex-col items-center justify-center">
+    <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
 
-    <div v-if="errorMessage" class="error">
+    <div v-if="errorMessage" class="text-red-600 font-bold mt-2 text-lg text-center">
       {{ errorMessage }}
     </div>
   </div>
 </template>
 
-<style>
-.error {
-  color: red;
-  font-weight: bold;
-  margin-top: 10px;
-}
+<style scoped>
 </style>
 

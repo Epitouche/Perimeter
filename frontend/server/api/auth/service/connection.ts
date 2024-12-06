@@ -1,26 +1,23 @@
 export default defineEventHandler(async (event) => {
-  interface OAuthToken {
-    token: string;
+  const params = await readBody(event);
+  if (!params.code || !params.service) {
+    throw createError({
+      statusCode: 400,
+      message: 'Missing parameters: code, state, or service',
+    });
   }
 
-  const body = await readBody(event);
-  console.log(`Link is : ${body.link}`)
-
+  console.log("Before POST fetch");
   try {
-    console.log(`Link is : ${body.link}`)
-    const response = await fetch(body.link);
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
-    }
-    
-    const data: OAuthToken = await response.json();
-    
-    if (!data.token) {
-      throw new Error('Token unavailable');
-    }
-    return data;
+    const response = await $fetch(`http://server:8080/api/v1/${params.service}/auth/callback`, {
+      method: 'POST',
+      body: {
+        code: params.code,
+      },
+    });
+    console.log(response);
+    return response;
   } catch(error) {
-    throw new Error(`${error}`)
+    console.log("Error is :", error);
   }
-
 });
