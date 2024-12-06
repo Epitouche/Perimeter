@@ -1,6 +1,9 @@
 package service
 
 import (
+	"encoding/json"
+	"fmt"
+	"net/http"
 	"time"
 
 	"area/repository"
@@ -49,11 +52,70 @@ func (service *timerService) FindReactionbyName(name string) func(option string)
 	}
 }
 
+type TimerActionSpecificHour struct {
+	Hour   int `json:"hour"`
+	Minute int `json:"minute"`
+}
+
+type TimeAPISTRUCT struct {
+	Year         int    `json:"year"`
+	Month        int    `json:"month"`
+	Day          int    `json:"day"`
+	Hour         int    `json:"hour"`
+	Minute       int    `json:"minute"`
+	Seconds      int    `json:"seconds"`
+	MilliSeconds int    `json:"milliSeconds"`
+	DateTime     string `json:"dateTime"`
+	Date         string `json:"date"`
+	Time         string `json:"time"`
+	TimeZone     string `json:"timeZone"`
+	DayOfWeek    string `json:"dayOfWeek"`
+	DstActive    bool   `json:"dstActive"`
+}
+
+func getActualTime() (TimeAPISTRUCT, error) {
+	apiURL := "https://www.timeapi.io/api/time/current/zone" +
+		"&timeZone=Europe/Paris"
+
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return TimeAPISTRUCT{}, fmt.Errorf("error create request")
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return TimeAPISTRUCT{}, fmt.Errorf("error do request")
+	}
+
+	var result TimeAPISTRUCT
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return TimeAPISTRUCT{}, fmt.Errorf("error decode")
+	}
+
+	resp.Body.Close()
+	return result, nil
+}
+
 func (service *timerService) TimerActionSpecificHour(c chan string, option string) {
-	dt := time.Now().Local()
-	if dt.Hour() == 19 && dt.Minute() == 25 {
-		println("current time is ", dt.String())
-		c <- "response" // send sum to c
+	println("option" + option)
+
+	optionJson := TimerActionSpecificHour{}
+
+	err := json.Unmarshal([]byte(option), &optionJson)
+	if err != nil {
+		println("error unmarshal")
+	}
+
+	actualTimeApi, err := getActualTime()
+	if err == nil {
+		println("error get actual time")
+		if actualTimeApi.Hour == optionJson.Hour && actualTimeApi.Minute == optionJson.Minute {
+			println("current time is ", actualTimeApi.Time)
+			c <- "response" // send sum to c
+		}
+	} else {
+		println("error get actual time" + err.Error())
 	}
 	time.Sleep(15 * time.Second)
 }
