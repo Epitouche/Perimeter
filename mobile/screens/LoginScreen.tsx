@@ -20,7 +20,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
-  const { ipAddress, setIpAddress } = useContext(AppContext);
+  const { ipAddress } = useContext(AppContext);
 
   const handleUrl = (event) => {
     console.log('Redirect URL:', event.url);

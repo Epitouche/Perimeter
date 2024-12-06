@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, setIpAddress} = useContext(AppContext);
+  const {ipAddress, setToken} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -25,6 +25,31 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
 
     return () => clearTimeout(timer);
   }, [navigation]);
+
+  async function oauthCallback(code: string) {
+    const response = await fetch(`gttp://${ipAddress}/spotify/auth/callback`, // change it to be modular with route name (change spotify with something else...)
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      }
+    ) 
+    const data = await response.json()
+    if (data.error) {
+      console.error(data.error)
+      navigation.goBack();
+    }
+    setToken(data.token)
+    navigation.navigate("AreaView")
+    console.log("data: ", data)
+  }
+
+  if (code) {
+    console.log("previous page: ", navigation.getParent())
+    oauthCallback(code)
+  }
 
   if (isLoading) {
     return (
