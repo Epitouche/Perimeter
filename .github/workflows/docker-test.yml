@@ -38,9 +38,6 @@ jobs:
       - name: Set up environment
         run: cp .env.example .env
 
-      - name: Set up mobile key
-        run: echo '${{ secrets.KEY_JKS }}' > mobile/key/area-key.jks
-
       - name: Stop any running containers & remove volumes
         run: docker compose down --volumes
 
