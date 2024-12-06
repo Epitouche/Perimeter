@@ -103,6 +103,11 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		)
 	}
 
+	if result.AccessToken == "" {
+		fmt.Printf("Token exchange failed. Response body: %v\n", resp.Body)
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf("invalid access token")
+	}
+
 	resp.Body.Close()
 	return result, nil
 }
@@ -117,11 +122,30 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 	// Add the Authorization header
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
+	println("accessToken", accessToken)
+
 	// Make the request using the default HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	if resp.StatusCode != 200 {
+		errorResponse := schemas.SpotifyErrorResponse{}
+		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
+		if err != nil {
+			return schemas.SpotifyUserInfo{}, fmt.Errorf(
+				"unable to decode error response because %w",
+				err,
+			)
+		}
+		resp.Body.Close()
+		return schemas.SpotifyUserInfo{}, fmt.Errorf(
+			"unable to get user info because %v %v",
+			errorResponse.Error.Status,
+			errorResponse.Error.Message,
+		)
 	}
 
 	result := schemas.SpotifyUserInfo{}
