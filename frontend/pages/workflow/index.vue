@@ -1,8 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'nonavbar',
-  // middleware: 'auth'
-  middleware: 'guest' // temporary
+  middleware: 'auth'
 });
 
 const showNavBar = ref(true);
@@ -46,8 +45,8 @@ const setWorkflowPageDefault = () => {
         <div :class="['bg-black min-w-4 min-h-28', reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100']" />
         <ReActionButton title="Reaction" link="/workflow/reactions" :is-disabled="reactionButtonisDisabled" />
       </div>
-      <div v-if="showCreateButton">
-        <UButton>Create</UButton>
+      <div v-if="showCreateButton" class="pt-10">
+        <UButton class="text-5xl font-bold px-8 py-4">Create</UButton>
       </div>
     </div>
   </div>

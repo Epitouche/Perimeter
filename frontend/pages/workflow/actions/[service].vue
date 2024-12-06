@@ -1,8 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'nonavbar',
-  // middleware: 'auth'
-  middleware: 'guest' // temporary
+  middleware: 'auth'
 });
 
 const route = useRoute();
