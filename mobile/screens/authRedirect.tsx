@@ -21,13 +21,13 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
     const timer = setTimeout(() => {
       setIsLoading(false);
       navigation.goBack();
-    }, 3000);
+    }, 60000);
 
     return () => clearTimeout(timer);
   }, [navigation]);
 
   async function oauthCallback(code: string) {
-    const response = await fetch(`gttp://${ipAddress}/spotify/auth/callback`, // change it to be modular with route name (change spotify with something else...)
+    const response = await fetch(`http://${ipAddress}:8080/api/v1/spotify/auth/callback`, // change it to be modular with route name (change spotify with something else...)
       {
         method: 'POST',
         headers: {
@@ -36,18 +36,19 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
         body: JSON.stringify({ code }),
       }
     ) 
+    console.log("response: ", response)
     const data = await response.json()
     if (data.error) {
       console.error(data.error)
       navigation.goBack();
+    } else {
+      setToken(data.token)
+      console.log("data: ", data)
+      navigation.navigate("AreaView")
     }
-    setToken(data.token)
-    navigation.navigate("AreaView")
-    console.log("data: ", data)
   }
 
   if (code) {
-    console.log("previous page: ", navigation.getParent())
     oauthCallback(code)
   }
 
