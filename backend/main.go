@@ -118,7 +118,7 @@ func setupRouter() *gin.Engine {
 
 	// API routes
 	api.NewActionApi(actionController, apiRoutes)
-	api.NewReactionApi(reactionController)
+	api.NewReactionApi(reactionController, apiRoutes)
 	api.NewTokenApi(tokenController)
 
 	ping(apiRoutes)
