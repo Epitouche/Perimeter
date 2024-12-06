@@ -3,15 +3,8 @@ run-name: mirroring
 
 on:
   push:
-    branches:
-      - dev
-      - pre-prod
-      - main
   pull_request:
-    branches:
-      - dev
-      - pre-prod
-      - main
+
 
 jobs:
   push_to_mirror:
@@ -30,11 +23,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: mkdir -p ~/.ssh
-      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      - run: chmod 600 ~/.ssh/id_rsa
-      - run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-
-      - run: git remote set-url mirror ${{ vars.MIRROR_URL }}
-      - run: git remote -v
-      - run: git push mirror --all --force
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ vars.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.SSH_PRIVATE_KEY }}
