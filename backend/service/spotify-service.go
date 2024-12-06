@@ -26,17 +26,20 @@ type spotifyService struct {
 	repository        repository.SpotifyRepository
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
+	tokenRepository   repository.TokenRepository
 }
 
 func NewSpotifyService(
 	githubTokenRepository repository.SpotifyRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
+	tokenRepository repository.TokenRepository,
 ) SpotifyService {
 	return &spotifyService{
 		repository:        githubTokenRepository,
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
+		tokenRepository:   tokenRepository,
 	}
 }
 
@@ -165,6 +168,8 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 		return
 	}
 	fmt.Printf("area: %+v\n", area)
+	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
+	fmt.Printf("token: %+v\n", token)
 }
 
 func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
@@ -174,10 +179,10 @@ func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 	return []schemas.Reaction{
 		{
-			Name: string(schemas.PlayMusic),
+			Name:        string(schemas.PlayMusic),
 			Description: "This reaction will play music",
-			Service: service.serviceRepository.FindByName(schemas.Spotify),
-			Option: "{}",
+			Service:     service.serviceRepository.FindByName(schemas.Spotify),
+			Option:      "{}",
 		},
 	}
 }
