@@ -33,7 +33,9 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 	}
 }
 
-func (service *userService) Login(newUser schemas.User) (JWTtoken string, userId uint64, err error) {
+func (service *userService) Login(
+	newUser schemas.User,
+) (JWTtoken string, userId uint64, err error) {
 	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
 	if len(userWiththisUserName) == 0 {
 		return "", 0, fmt.Errorf("invalid credentials")
