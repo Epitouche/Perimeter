@@ -13,3 +13,8 @@ type User struct {
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
+
+type UserCredentials struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}

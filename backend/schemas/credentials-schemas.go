@@ -11,6 +11,10 @@ type RegisterCredentials struct {
 	Password string `form:"password" json:"password"`
 }
 
+type AuthenticationUrl struct {
+	Url string `json:"authentication_url"`
+}
+
 type JWT struct {
 	Token string `json:"token"`
 }

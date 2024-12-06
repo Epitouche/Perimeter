@@ -15,7 +15,7 @@ import (
 type GmailController interface {
 	RedirectToService(ctx *gin.Context, path string) (string, error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
-	GetUserInfo(ctx *gin.Context) (userInfo schemas.GmailUserInfo, err error)
+	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
 type gmailController struct {
@@ -77,20 +77,25 @@ func (controller *gmailController) HandleServiceCallback(
 	ctx *gin.Context,
 	path string,
 ) (string, error) {
-	code := ctx.Query("code")
+	var credentials schemas.CodeCredentials
+	err := ctx.ShouldBind(&credentials)
+	if err != nil {
+		return "", fmt.Errorf("can't bind credentials: %w", err)
+	}
+	code := credentials.Code
 	if code == "" {
 		return "", fmt.Errorf("missing code")
 	}
 
-	state := ctx.Query("state")
-	latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
-	if err != nil {
-		return "", fmt.Errorf("missing CSRF token")
-	}
+	// state := credentials.State
+	// latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
+	// if err != nil {
+	// 	return "", fmt.Errorf("missing CSRF token")
+	// }
 
-	if state != latestCSRFToken {
-		return "", fmt.Errorf("invalid CSRF token")
-	}
+	// if state != latestCSRFToken {
+	// 	return "", fmt.Errorf("invalid CSRF token")
+	// }
 
 	gmailTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {
@@ -107,7 +112,7 @@ func (controller *gmailController) HandleServiceCallback(
 		Email:    userInfo.Email,
 	}
 
-	token, err := controller.serviceUser.Login(newUser)
+	token, _, err := controller.serviceUser.Login(newUser)
 	if err == nil {
 		return token, nil
 	}
@@ -139,30 +144,35 @@ func (controller *gmailController) HandleServiceCallback(
 
 	savedUser.TokenId = tokenId
 
-	controller.serviceUser.UpdateUserInfo(savedUser)
+	err = controller.serviceUser.UpdateUserInfo(savedUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to update user info because %w", err)
+	}
 	return token, nil
 }
 
 func (controller *gmailController) GetUserInfo(
 	ctx *gin.Context,
-) (userInfo schemas.GmailUserInfo, err error) {
+) (userInfo schemas.UserCredentials, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	token, err := controller.serviceToken.GetTokenById(user.Id)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get token because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	githubUserInfo, err := controller.service.GetUserInfo(token.Token)
+	gmailUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	return githubUserInfo, nil
+	userInfo.Email = gmailUserInfo.Email
+	userInfo.Username = gmailUserInfo.Login
+	return userInfo, nil
 }
