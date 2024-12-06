@@ -17,12 +17,17 @@ type TimerService interface {
 }
 
 type timerService struct {
-	repository repository.TimerRepository
+	repository        repository.TimerRepository
+	serviceRepository repository.ServiceRepository
 }
 
-func NewTimerService(repository repository.TimerRepository) TimerService {
+func NewTimerService(
+	repository repository.TimerRepository,
+	serviceRepository repository.ServiceRepository,
+) TimerService {
 	return &timerService{
-		repository: repository,
+		repository:        repository,
+		serviceRepository: serviceRepository,
 	}
 }
 
@@ -62,7 +67,7 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 		{
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
-			Service:     schemas.Service{Name: schemas.Timer},
+			Service:     service.serviceRepository.FindByName(schemas.Timer),
 			Option:      "{hour: 0, minute: 0}",
 		},
 	}
@@ -73,7 +78,7 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 		{
 			Name:        string(schemas.GiveTime),
 			Description: "This reaction is a give time reaction",
-			Service:     schemas.Service{Name: schemas.Timer},
+			Service:     service.serviceRepository.FindByName(schemas.Timer),
 			Option:      "{}",
 		},
 	}

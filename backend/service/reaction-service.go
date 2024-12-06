@@ -9,6 +9,7 @@ type ReactionService interface {
 	FindAll() []schemas.Reaction
 	SaveAllReaction()
 	FindById(reactionId uint64) schemas.Reaction
+	GetReactionsInfo(id uint64) (response []schemas.Reaction, err error)
 	GetAllServicesByServiceId(serviceId uint64) (reactionJson []schemas.ReactionJson)
 }
 
@@ -55,7 +56,10 @@ func (service *reactionService) SaveAllReaction() {
 		if serviceReaction, ok := services.(ServiceReaction); ok {
 			reactions := serviceReaction.GetServiceReactionInfo()
 			for _, reaction := range reactions {
-				service.repository.Save(reaction)
+				reactionByName := service.repository.FindByName(reaction.Name)
+				if len(reactionByName) == 0 {
+					service.repository.Save(reaction)
+				}
 			}
 		} else {
 			println("ServiceReaction interface not implemented")
@@ -65,4 +69,10 @@ func (service *reactionService) SaveAllReaction() {
 
 func (service *reactionService) FindById(reactionId uint64) schemas.Reaction {
 	return service.repository.FindById(reactionId)
+}
+
+func (service *reactionService) GetReactionsInfo(
+	id uint64,
+) (response []schemas.Reaction, err error) {
+	return service.repository.FindByServiceId(id), nil
 }
