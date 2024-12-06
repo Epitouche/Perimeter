@@ -11,10 +11,12 @@ const serviceId = route.params.service;
 </script>
 
 <template>
-  <h1>
-    Service Actions Page
-  </h1>
-  <p>You are viewing service with ID: {{ serviceId }}</p>
+  <div>
+    <h1>
+      Service Actions Page
+    </h1>
+    <p>You are viewing service with ID: {{ serviceId }}</p>
+  </div>
 </template>
 
 <style scoped></style>

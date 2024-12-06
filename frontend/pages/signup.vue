@@ -85,7 +85,8 @@ const handleSignUp = async () => {
           </div>
           <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12">Sign up</UButton>
           <p class="text-xl">Already signed up? <ULink to="/login" class="hover:text-custom_color-text_link">
-              <u>Login</u></ULink>
+              <u>Login</u>
+            </ULink>
           </p>
         </div>
       </div>

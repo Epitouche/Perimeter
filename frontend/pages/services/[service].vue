@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 interface ApiResponse {
-    token?: string;
+  token?: string;
 }
 
 const isLoading = ref(true);
@@ -32,11 +32,11 @@ async function connectToService() {
       },
     });
     new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
-    console.log("Service connected  : ", response);
+      console.log("Service connected  : ", response);
     console.log("Service token is  : ", response.token);
     token.value = response.token;
     navigateTo('/');
-  } catch (error:any) {
+  } catch (error: any) {
     showError(`Failed to connect to service: ${error.message}`);
   } finally {
     isLoading.value = false;
@@ -64,6 +64,4 @@ function showError(message: string) {
   </div>
 </template>
 
-<style scoped>
-</style>
-
+<style scoped></style>
