@@ -11,8 +11,8 @@ type ServiceService interface {
 	GetAllServices() (allServicesJson []schemas.ServiceJson, err error)
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
-	FindActionbyName(name string) func(c chan string, option string)
-	FindReactionbyName(name string) func(option string)
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
 	FindServiceByName(name string) schemas.Service
 }
 
@@ -84,7 +84,7 @@ func (service *serviceService) GetServices() []interface{} {
 	return service.allService
 }
 
-func (service *serviceService) FindActionbyName(name string) func(c chan string, option string) {
+func (service *serviceService) FindActionbyName(name string) func(c chan string, option string, idArea uint64) {
 	for _, service := range service.allService {
 		if timerService, ok := service.(TimerService); ok {
 			return timerService.FindActionbyName(name)
@@ -93,7 +93,7 @@ func (service *serviceService) FindActionbyName(name string) func(c chan string,
 	return nil
 }
 
-func (service *serviceService) FindReactionbyName(name string) func(option string) {
+func (service *serviceService) FindReactionbyName(name string) func(option string, idArea uint64) {
 	for _, service := range service.allService {
 		if timerService, ok := service.(TimerService); ok {
 			return timerService.FindReactionbyName(name)

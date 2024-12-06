@@ -8,12 +8,12 @@ import (
 )
 
 type TimerService interface {
-	TimerActionSpecificHour(c chan string, option string)
-	TimerReactionGiveTime(option string)
+	TimerActionSpecificHour(c chan string, option string, idArea uint64)
+	TimerReactionGiveTime(option string, idArea uint64)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string)
-	FindReactionbyName(name string) func(option string)
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
 }
 
 type timerService struct {
@@ -31,7 +31,7 @@ func NewTimerService(
 	}
 }
 
-func (service *timerService) FindActionbyName(name string) func(c chan string, option string) {
+func (service *timerService) FindActionbyName(name string) func(c chan string, option string, idArea uint64) {
 	switch name {
 	case string(schemas.SpecificTime):
 		return service.TimerActionSpecificHour
@@ -40,7 +40,7 @@ func (service *timerService) FindActionbyName(name string) func(c chan string, o
 	}
 }
 
-func (service *timerService) FindReactionbyName(name string) func(option string) {
+func (service *timerService) FindReactionbyName(name string) func(option string, idArea uint64) {
 	switch name {
 	case string(schemas.GiveTime):
 		return service.TimerReactionGiveTime
@@ -49,7 +49,7 @@ func (service *timerService) FindReactionbyName(name string) func(option string)
 	}
 }
 
-func (service *timerService) TimerActionSpecificHour(c chan string, option string) {
+func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
 	dt := time.Now().Local()
 	if dt.Hour() == 19 && dt.Minute() == 25 {
 		println("current time is ", dt.String())
@@ -58,7 +58,7 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 	time.Sleep(15 * time.Second)
 }
 
-func (service *timerService) TimerReactionGiveTime(option string) {
+func (service *timerService) TimerReactionGiveTime(option string, idArea uint64) {
 	println("give time")
 }
 
