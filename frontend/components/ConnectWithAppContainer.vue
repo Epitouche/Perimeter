@@ -16,14 +16,19 @@ const authApiCall = async (label: string) => {
         link: label,
       },
     });
-    navigateTo(response.authentication_url, { external: true})
-    console.log(response.authentication_url)
+    navigateTo(response.authentication_url, { external: true });
+    console.log(response.authentication_url);
     return response;
-  } catch (err: any) {
-    console.log(err.message);
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    } else {
+      console.error('Unexpected error:', err);
+    }
     throw err;
   }
 };
+
 
 const handleClick = (label: string) => {
   if (label == 'i-logos-spotify-icon') {
