@@ -117,7 +117,7 @@ func setupRouter() *gin.Engine {
 	tokenController := controller.NewTokenController(tokenService)
 
 	// API routes
-	api.NewActionApi(actionController)
+	api.NewActionApi(actionController, apiRoutes)
 	api.NewReactionApi(reactionController)
 	api.NewTokenApi(tokenController)
 

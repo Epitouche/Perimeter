@@ -11,6 +11,7 @@ type ActionService interface {
 	FindAll() []schemas.Action
 	SaveAllAction()
 	FindById(actionId uint64) schemas.Action
+	GetActionsInfo(id uint64) (response []schemas.Action, err error)
 	GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson)
 }
 
@@ -70,4 +71,8 @@ func (service *actionService) SaveAllAction() {
 
 func (service *actionService) FindById(actionId uint64) schemas.Action {
 	return service.repository.FindById(actionId)
+}
+
+func (service *actionService) GetActionsInfo(id uint64) (response []schemas.Action, err error) {
+	return service.repository.FindByServiceId(id), nil
 }
