@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 
+	"area/schemas"
 	"area/service"
 )
 
@@ -14,6 +15,13 @@ import (
 func AuthorizeJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
+		if len(authHeader) <= len("Bearer ") {
+			ctx.JSON(http.StatusUnauthorized, schemas.ErrorRespose{
+				Error: "No token provided",
+			})
+			return
+
+		}
 		tokenString := authHeader[len("Bearer "):]
 
 		token, err := service.NewJWTService().ValidateToken(tokenString)
@@ -29,7 +37,10 @@ func AuthorizeJWT() gin.HandlerFunc {
 			log.Println("Claims[ExpiresAt]: ", claims["exp"])
 		} else {
 			log.Println(err)
-			ctx.AbortWithStatus(http.StatusUnauthorized)
+			ctx.JSON(http.StatusUnauthorized, schemas.ErrorRespose{
+				Error: "Invalid token",
+			})
+			return
 		}
 	}
 }
