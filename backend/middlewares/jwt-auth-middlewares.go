@@ -16,7 +16,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if len(authHeader) <= len("Bearer ") {
-			ctx.JSON(http.StatusUnauthorized, schemas.ErrorRespose{
+			ctx.JSON(http.StatusUnauthorized, schemas.ErrorResponse{
 				Error: "No token provided",
 			})
 			return
@@ -37,7 +37,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 			log.Println("Claims[ExpiresAt]: ", claims["exp"])
 		} else {
 			log.Println(err)
-			ctx.JSON(http.StatusUnauthorized, schemas.ErrorRespose{
+			ctx.JSON(http.StatusUnauthorized, schemas.ErrorResponse{
 				Error: "Invalid token",
 			})
 			return

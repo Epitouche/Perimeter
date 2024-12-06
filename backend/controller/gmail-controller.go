@@ -63,7 +63,7 @@ func (controller *gmailController) RedirectToService(
 	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:" + appPort + path
+	redirectURI := "http://localhost:8081/services/gmail"
 	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
@@ -112,7 +112,7 @@ func (controller *gmailController) HandleServiceCallback(
 		Email:    userInfo.Email,
 	}
 
-	token, err := controller.serviceUser.Login(newUser)
+	token, _, err := controller.serviceUser.Login(newUser)
 	if err == nil {
 		return token, nil
 	}
@@ -144,7 +144,10 @@ func (controller *gmailController) HandleServiceCallback(
 
 	savedUser.TokenId = tokenId
 
-	controller.serviceUser.UpdateUserInfo(savedUser)
+	err = controller.serviceUser.UpdateUserInfo(savedUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to update user info because %w", err)
+	}
 	return token, nil
 }
 
