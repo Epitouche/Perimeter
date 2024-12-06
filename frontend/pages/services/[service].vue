@@ -23,22 +23,28 @@ async function connectToService() {
   }
 
   try {
-    console.log("Testing API")
-    const response = await $fetch<ApiResponse>('/api/auth/service/connection', {
-      method: 'POST',
-      body: {
-        service: route.params.service,
-        code: code as string,
-        state: state as string,
-      },
-    });
-    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
-    console.log("Testing answer API")
-    console.log("Service token is  : ", response.token);
+    const response = await Promise.race([
+      $fetch<ApiResponse>('/api/auth/service/connection', {
+        method: 'POST',
+        body: {
+          service: route.params.service,
+          code: code as string,
+          state: state as string,
+        },
+      }),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
+    ]);
+
+    console.log("Service token is:", response.token);
     token.value = response.token;
     navigateTo('/');
-  } catch (error: any) {
-    showError(`Failed to connect to service: ${error.message}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      showError(`Failed to connect to service: ${error.message}`);
+    } else {
+      showError('Failed to connect to service: An unknown error occurred.');
+      console.error('Unexpected error:', error);
+    }
   } finally {
     isLoading.value = false;
   }

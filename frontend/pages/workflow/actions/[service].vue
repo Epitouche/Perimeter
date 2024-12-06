@@ -41,7 +41,7 @@ const parseOption = (option: string) => {
     return JSON.parse(option);
   } catch (err) {
     console.error('Invalid JSON format for option:', option, err);
-    return {}; // Return an empty object to avoid breaking the UI
+    return {};
   }
 };
 

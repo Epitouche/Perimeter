@@ -40,12 +40,20 @@ const handleLogin = async () => {
     }
     console.log('Login successful:', response);
     navigateTo('/myareas');
-  } catch (error: any) {
-    console.error('Login failed:', error);
-    loginError.value = error?.data?.message || 'Login failed. Please try again.';
+  } catch (error) {
+    if (error && typeof error === 'object' && 'data' in error) {
+      const typedError = error as { data?: { message?: string } };
+      loginError.value = typedError.data?.message || 'Login failed. Please try again.';
+      console.error('Login failed:', typedError.data);
+    } else if (error instanceof Error) {
+      loginError.value = error.message || 'An unknown error occurred.';
+      console.error('Login failed:', error.message);
+    } else {
+      loginError.value = 'An unknown error occurred.';
+      console.error('Unexpected error:', error);
+    }
   }
 };
-
 </script>
 
 <template>
