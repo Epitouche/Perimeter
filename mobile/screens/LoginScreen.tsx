@@ -20,12 +20,13 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
-  const { ipAddress } = useContext(AppContext);
+  const { ipAddress, setToken } = useContext(AppContext);
 
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
       const url = new URL(event.url).searchParams
+      const token = url.get('token')
       const code = url.get('code')
       const error = url.get('error')
 
@@ -33,6 +34,9 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         console.log('Received auth code:', code);
       } else if (error) {
         console.error('OAuth error:', error);
+      } else if (token) {
+        console.log('Received token:', token);
+        setToken(token);
       }
     }
   }
@@ -86,7 +90,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Data:', data);
+          setToken(data.token);
           navigation.navigate('AreaView');
         } else {
           console.error('Error:', response.status);

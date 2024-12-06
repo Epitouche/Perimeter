@@ -68,7 +68,7 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
 			Service:     service.serviceRepository.FindByName(schemas.Timer),
-			Option:      "{hour: 0, minute: 0}",
+			Option:      "{\"hour\": 0, \"minute\": 0}",
 		},
 	}
 }
