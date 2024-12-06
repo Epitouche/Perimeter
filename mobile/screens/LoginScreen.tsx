@@ -76,7 +76,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
     if (!hasError) {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/auth/login`, {
+        const response = await fetch(`http://${ipAddress}:8080/api/v1/user/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -39,6 +39,7 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
     console.log("response: ", response)
     const data = await response.json()
     if (data.error) {
+      alert("NOPE")
       console.error(data.error)
       navigation.goBack();
     } else {
