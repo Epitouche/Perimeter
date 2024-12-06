@@ -45,11 +45,21 @@ const handleSignUp = async () => {
     }
     console.log('Sign up successful:', response);
     navigateTo('/myareas');
-  } catch (error: any) {
-    console.error('Sign up failed:', error);
-    signUpError.value = error?.data?.message || 'Sign up failed. Please try again.';
+  } catch (error) {
+    if (error && typeof error === 'object' && 'data' in error) {
+      const typedError = error as { data?: { message?: string } };
+      signUpError.value = typedError.data?.message || 'Sign up failed. Please try again.';
+      console.error('Sign up failed:', typedError.data);
+    } else if (error instanceof Error) {
+      signUpError.value = error.message || 'An unknown error occurred.';
+      console.error('Sign up failed:', error.message);
+    } else {
+      signUpError.value = 'An unknown error occurred.';
+      console.error('Unexpected error:', error);
+    }
   }
 };
+
 
 </script>
 
