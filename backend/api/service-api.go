@@ -16,7 +16,10 @@ type ServiceApi struct {
 	controller controller.ServiceController
 }
 
-func NewServiceApi(controller controller.ServiceController, apiRoutes *gin.RouterGroup) *ServiceApi {
+func NewServiceApi(
+	controller controller.ServiceController,
+	apiRoutes *gin.RouterGroup,
+) *ServiceApi {
 	apiRoutes = apiRoutes.Group("/service")
 	api := ServiceApi{
 		controller: controller,

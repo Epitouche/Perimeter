@@ -21,7 +21,10 @@ type timerService struct {
 	serviceRepository repository.ServiceRepository
 }
 
-func NewTimerService(repository repository.TimerRepository, serviceRepository repository.ServiceRepository) TimerService {
+func NewTimerService(
+	repository repository.TimerRepository,
+	serviceRepository repository.ServiceRepository,
+) TimerService {
 	return &timerService{
 		repository:        repository,
 		serviceRepository: serviceRepository,
