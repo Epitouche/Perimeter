@@ -55,7 +55,10 @@ func (service *reactionService) SaveAllReaction() {
 		if serviceReaction, ok := services.(ServiceReaction); ok {
 			reactions := serviceReaction.GetServiceReactionInfo()
 			for _, reaction := range reactions {
-				service.repository.Save(reaction)
+				reactionByName := service.repository.FindByName(reaction.Name)
+				if len(reactionByName) == 0 {
+					service.repository.Save(reaction)
+				}
 			}
 		} else {
 			println("ServiceReaction interface not implemented")

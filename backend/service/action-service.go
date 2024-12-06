@@ -57,7 +57,10 @@ func (service *actionService) SaveAllAction() {
 		if serviceAction, ok := services.(ServiceAction); ok {
 			actions := serviceAction.GetServiceActionInfo()
 			for _, action := range actions {
-				service.repository.Save(action)
+				actionByName := service.repository.FindByName(action.Name)
+				if len(actionByName) == 0 {
+					service.repository.Save(action)
+				}
 			}
 		} else {
 			fmt.Println("Service is not ServiceAction")
