@@ -4,11 +4,11 @@ on:
   pull_request:
     branches:
       - dev
-      - devops
+      - devops*
   push:
     branches:
       - dev
-      - devops
+      - devops*
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
