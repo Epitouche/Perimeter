@@ -72,7 +72,8 @@ func (service *userService) Register(
 ) (JWTtoken string, userId uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
-		return service.Login(newUser)
+		// return service.Login(newUser)
+		return "", 0, fmt.Errorf("email already exists")
 	}
 
 	if newUser.Password != "" {

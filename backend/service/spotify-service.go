@@ -54,9 +54,13 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
 	}
 
-	redirectURI := "http://localhost:" + appPort + path
+	redirectURI := "http://localhost:8081/services/spotify"
 
 	apiURL := "https://accounts.spotify.com/api/token"
+
+	// println("redirectURI", redirectURI)
+	// println("apiURL", apiURL)
+	// println("code", code)
 
 	data := url.Values{}
 	data.Set("code", code)
@@ -82,6 +86,13 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	if err != nil {
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
 	}
+
+	// println("resp")
+	// fmt.Printf("%+v\n", resp)
+	// println("resp.header")
+	// fmt.Printf("%+v\n", resp.Header)
+	// println("resp.Body")
+	// fmt.Printf("%+v\n", resp.Body)
 
 	var result schemas.SpotifyTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
