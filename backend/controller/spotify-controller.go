@@ -97,6 +97,8 @@ func (controller *spotifyController) HandleServiceCallback(
 	// }
 
 	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
+	println("spotifyTokenResponse")
+	println(spotifyTokenResponse.AccessToken)
 	if err != nil {
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
