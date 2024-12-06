@@ -9,7 +9,7 @@ definitions:
       code:
         type: string
     type: object
-  schemas.ErrorRespose:
+  schemas.ErrorResponse:
     properties:
       error:
         type: string
@@ -34,6 +34,25 @@ definitions:
 info:
   contact: {}
 paths:
+  /area/:
+    post:
+      consumes:
+      - application/json
+      description: create area
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: create area
+      tags:
+      - Area
   /github/auth:
     get:
       consumes:
@@ -49,7 +68,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with github
       tags:
       - Github
@@ -75,7 +94,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with github
       tags:
       - Github
@@ -100,11 +119,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
       summary: give user info of github
@@ -125,7 +144,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with gmail
       tags:
       - Gmail
@@ -151,7 +170,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with gmail
       tags:
       - Gmail
@@ -176,11 +195,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
       summary: give user info of gmail
@@ -216,7 +235,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with spotify
       tags:
       - Spotify
@@ -242,7 +261,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with spotify
       tags:
       - Spotify
@@ -267,11 +286,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
       summary: give user info of spotify
@@ -298,11 +317,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
       summary: give user info of user
@@ -332,7 +351,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token
       tags:
       - User
@@ -365,7 +384,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/schemas.ErrorRespose'
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token
       tags:
       - User
