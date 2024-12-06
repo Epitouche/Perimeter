@@ -63,7 +63,7 @@ func (controller *gmailController) RedirectToService(
 	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:8081/services/gmail"
+	redirectURI := "http://client_web:8081/services/gmail"
 	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
