@@ -43,7 +43,7 @@ func (controller *userController) Login(ctx *gin.Context) (string, error) {
 		Password: credentials.Password,
 	}
 
-	token, err := controller.userService.Login(newUser)
+	token, _, err := controller.userService.Login(newUser)
 	if err != nil {
 		return "", fmt.Errorf("can't login user: %w", err)
 	}
