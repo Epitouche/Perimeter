@@ -9,6 +9,7 @@ import (
 
 type ServiceController interface {
 	AboutJson(ctx *gin.Context) (allService []schemas.ServiceJson, err error)
+	GetServicesInfo() (response []schemas.Service, err error)
 }
 
 type serviceController struct {
@@ -41,4 +42,8 @@ func (controller *serviceController) AboutJson(
 		})
 	}
 	return allServicesJson, nil
+}
+
+func (controller *serviceController) GetServicesInfo() (response []schemas.Service, err error) {
+	return controller.service.GetServicesInfo()
 }
