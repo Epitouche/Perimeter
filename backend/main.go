@@ -117,12 +117,12 @@ func setupRouter() *gin.Engine {
 	tokenController := controller.NewTokenController(tokenService)
 
 	// API routes
-	serviceAPI := api.NewServiceApi(serviceController)
 	api.NewActionApi(actionController)
 	api.NewReactionApi(reactionController)
 	api.NewTokenApi(tokenController)
-
+	
 	ping(apiRoutes)
+	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)
 	api.NewUserApi(userController, apiRoutes)
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)

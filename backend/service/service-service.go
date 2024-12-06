@@ -10,6 +10,7 @@ type ServiceService interface {
 	FindByName(serviceName schemas.ServiceName) schemas.Service
 	GetAllServices() (allServicesJson []schemas.ServiceJson, err error)
 	GetServices() []interface{}
+	GetServicesInfo() (allService []schemas.Service , err error)
 	FindActionbyName(name string) func(c chan string, option string)
 	FindReactionbyName(name string) func(option string)
 }
@@ -98,4 +99,8 @@ func (service *serviceService) FindReactionbyName(name string) func(option strin
 		}
 	}
 	return nil
+}
+
+func (service *serviceService) GetServicesInfo() (allService []schemas.Service, err error) {
+	return service.repository.FindAll(), nil
 }
