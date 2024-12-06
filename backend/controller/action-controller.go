@@ -19,6 +19,8 @@ func NewActionController(service service.ActionService) ActionController {
 	}
 }
 
-func (controller *actionController) GetActionsInfo(id uint64) (response []schemas.Action, err error) {
+func (controller *actionController) GetActionsInfo(
+	id uint64,
+) (response []schemas.Action, err error) {
 	return controller.service.GetActionsInfo(id)
 }

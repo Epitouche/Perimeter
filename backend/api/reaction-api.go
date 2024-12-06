@@ -15,7 +15,10 @@ type ReactionApi struct {
 	controller controller.ReactionController
 }
 
-func NewReactionApi(controller controller.ReactionController, apiRoutes *gin.RouterGroup) *ReactionApi {
+func NewReactionApi(
+	controller controller.ReactionController,
+	apiRoutes *gin.RouterGroup,
+) *ReactionApi {
 	apiRoutes = apiRoutes.Group("/reaction", middlewares.AuthorizeJWT())
 	api := ReactionApi{
 		controller: controller,

@@ -19,6 +19,8 @@ func NewReactionController(service service.ReactionService) ReactionController {
 	}
 }
 
-func (controller *reactionController) GetReactionsInfo(id uint64) (response []schemas.Reaction, err error) {
+func (controller *reactionController) GetReactionsInfo(
+	id uint64,
+) (response []schemas.Reaction, err error) {
 	return controller.service.GetReactionsInfo(id)
 }

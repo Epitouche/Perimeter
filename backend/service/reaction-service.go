@@ -71,6 +71,8 @@ func (service *reactionService) FindById(reactionId uint64) schemas.Reaction {
 	return service.repository.FindById(reactionId)
 }
 
-func (service *reactionService) GetReactionsInfo(id uint64) (response []schemas.Reaction, err error) {
+func (service *reactionService) GetReactionsInfo(
+	id uint64,
+) (response []schemas.Reaction, err error) {
 	return service.repository.FindByServiceId(id), nil
 }
