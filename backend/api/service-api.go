@@ -50,7 +50,7 @@ func (api *ServiceApi) GetServicesInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		response, err := api.controller.GetServicesInfo()
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorRespose{
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 			return
