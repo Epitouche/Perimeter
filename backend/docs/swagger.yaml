@@ -1,4 +1,14 @@
 definitions:
+  schemas.AuthenticationUrl:
+    properties:
+      authentication_url:
+        type: string
+    type: object
+  schemas.CodeCredentials:
+    properties:
+      code:
+        type: string
+    type: object
   schemas.ErrorRespose:
     properties:
       error:
@@ -12,6 +22,13 @@ definitions:
   schemas.Response:
     properties:
       message:
+        type: string
+    type: object
+  schemas.UserCredentials:
+    properties:
+      email:
+        type: string
+      username:
         type: string
     type: object
 info:
@@ -28,26 +45,33 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with github
       tags:
       - Github
   /github/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with github
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -60,17 +84,29 @@ paths:
       consumes:
       - application/json
       description: give user info of github
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorRespose'
+      security:
+      - Bearer: []
       summary: give user info of github
       tags:
       - Github
@@ -85,26 +121,33 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.ErrorRespose'
       summary: give url to authenticate with gmail
       tags:
       - Gmail
   /gmail/auth/callback:
-    get:
+    post:
       consumes:
       - application/json
       description: give url to authenticate with gmail
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -117,17 +160,29 @@ paths:
       consumes:
       - application/json
       description: give user info of gmail
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorRespose'
+      security:
+      - Bearer: []
       summary: give user info of gmail
       tags:
       - Gmail
@@ -157,7 +212,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.AuthenticationUrl'
         "500":
           description: Internal Server Error
           schema:
@@ -171,23 +226,19 @@ paths:
       - application/json
       description: give url to authenticate with spotify
       parameters:
-      - description: Code
-        in: formData
-        name: code
+      - description: Callback Payload
+        in: body
+        name: payload
         required: true
-        type: string
-      - description: State
-        in: formData
-        name: state
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.JWT'
         "500":
           description: Internal Server Error
           schema:
@@ -200,29 +251,67 @@ paths:
       consumes:
       - application/json
       description: give user info of spotify
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorRespose'
+      security:
+      - Bearer: []
       summary: give user info of spotify
       tags:
       - Spotify
-  /user/register:
+  /user/info/user:
+    get:
+      consumes:
+      - application/json
+      description: give user info of user
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorRespose'
+      security:
+      - Bearer: []
+      summary: give user info of user
+      tags:
+      - User
+  /user/login:
     post:
       description: Authenticates a user and provides a JWT to Authorize API calls
       parameters:
-      - description: Email
-        in: formData
-        name: email
-        required: true
-        type: string
       - description: Username
         in: formData
         name: username
@@ -247,10 +336,15 @@ paths:
       summary: Provides a JSON Web Token
       tags:
       - User
-  /user/token:
+  /user/register:
     post:
       description: Authenticates a user and provides a JWT to Authorize API calls
       parameters:
+      - description: Email
+        in: formData
+        name: email
+        required: true
+        type: string
       - description: Username
         in: formData
         name: username

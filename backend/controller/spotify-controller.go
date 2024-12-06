@@ -14,7 +14,7 @@ import (
 type SpotifyController interface {
 	RedirectToService(ctx *gin.Context, path string) (string, error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
-	GetUserInfo(ctx *gin.Context) (userInfo schemas.SpotifyUserInfo, err error)
+	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
 type spotifyController struct {
@@ -86,15 +86,15 @@ func (controller *spotifyController) HandleServiceCallback(
 		return "", fmt.Errorf("missing code")
 	}
 
-	state := credentials.State
-	latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
-	if err != nil {
-		return "", fmt.Errorf("missing CSRF token")
-	}
+	// state := credentials.State
+	// latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
+	// if err != nil {
+	// 	return "", fmt.Errorf("missing CSRF token")
+	// }
 
-	if state != latestCSRFToken {
-		return "", fmt.Errorf("invalid CSRF token")
-	}
+	// if state != latestCSRFToken {
+	// 	return "", fmt.Errorf("invalid CSRF token")
+	// }
 
 	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {
@@ -147,24 +147,26 @@ func (controller *spotifyController) HandleServiceCallback(
 
 func (controller *spotifyController) GetUserInfo(
 	ctx *gin.Context,
-) (userInfo schemas.SpotifyUserInfo, err error) {
+) (userInfo schemas.UserCredentials, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	token, err := controller.serviceToken.GetTokenById(user.Id)
 	if err != nil {
-		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get token because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
 	}
 
 	spotifyUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
-		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	return spotifyUserInfo, nil
+	userInfo.Email = spotifyUserInfo.Email
+	userInfo.Username = spotifyUserInfo.Login
+	return userInfo, nil
 }
