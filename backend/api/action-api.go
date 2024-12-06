@@ -25,6 +25,18 @@ func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterG
 	return &api
 }
 
+// GetActionsInfo godoc
+//
+//	@Summary		get action info
+//	@Description	get action info of service id
+//	@Tags			Action
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Param			Authorization	header		string	true	"Bearer token"
+//	@Success		200				{object}	schemas.Response
+//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Router			/action/info/{id} [get]
 func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
