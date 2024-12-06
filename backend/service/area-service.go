@@ -79,10 +79,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 
 func (service *areaService) AreaExist(id uint64) bool {
 	_, err := service.repository.FindById(id)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
