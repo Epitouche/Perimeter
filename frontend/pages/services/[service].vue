@@ -23,6 +23,7 @@ async function connectToService() {
   }
 
   try {
+    console.log("Testing API")
     const response = await $fetch<ApiResponse>('/api/auth/service/connection', {
       method: 'POST',
       body: {
@@ -32,7 +33,7 @@ async function connectToService() {
       },
     });
     new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
-    console.log("Service connected  : ", response);
+    console.log("Testing answer API")
     console.log("Service token is  : ", response.token);
     token.value = response.token;
     navigateTo('/');

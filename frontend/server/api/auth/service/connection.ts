@@ -7,11 +7,17 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const response = await $fetch(`http://server:8080/api/v1/${params.service}/auth/callback`, {
-    method: 'POST',
-    body: {
-      code: params.code,
-    },
-  });
-  return response;
+  console.log("Before POST fetch");
+  try {
+    const response = await $fetch(`http://server:8080/api/v1/${params.service}/auth/callback`, {
+      method: 'POST',
+      body: {
+        code: params.code,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch(error) {
+    console.log("Error is :", error);
+  }
 });
