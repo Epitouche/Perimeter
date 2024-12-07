@@ -139,11 +139,10 @@ func (controller *githubController) HandleServiceCallback(
 		}
 		return token, nil
 	} else {
-		token, newUserId, err := controller.serviceUser.Register(newUser)
+		token, _, err := controller.serviceUser.Register(newUser)
 		if err != nil {
 			return "", fmt.Errorf("unable to register user because %w", err)
 		}
-		print(newUserId)
 		return token, nil
 	}
 }

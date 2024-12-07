@@ -16,6 +16,7 @@ async function connectToService() {
   const route = useRoute();
   const code = route.query['code'];
   const state = route.query['state'];
+  const tokenCookie = useCookie('token');
 
   if (!code || !state) {
     showError('Missing parameters: code or state');
@@ -30,6 +31,7 @@ async function connectToService() {
           service: route.params.service,
           code: code as string,
           state: state as string,
+          authorization: tokenCookie.value ? `Bearer ${tokenCookie.value}` : "",
         },
       }),
       new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
@@ -73,4 +75,3 @@ function showError(message: string) {
 
 <style scoped>
 </style>
-
