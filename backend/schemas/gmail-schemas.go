@@ -1,5 +1,15 @@
 package schemas
 
+type GmailAction string
+
+const ()
+
+type GmailReaction string
+
+const (
+	SendMail GmailReaction = "SendMail"
+)
+
 // GmailTokenResponse represents the response from Gmail when a token is requested.
 type GmailTokenResponse struct {
 	AccessToken  string `json:"access_token"`

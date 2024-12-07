@@ -25,6 +25,7 @@ type serviceService struct {
 	repository        repository.ServiceRepository
 	spotifyService    SpotifyService
 	timerService      TimerService
+	gmailService      GmailService
 	allService        []interface{}
 	allServiceSchemas []schemas.Service
 }
@@ -33,11 +34,13 @@ func NewServiceService(
 	repository repository.ServiceRepository,
 	timerService TimerService,
 	spotifyService SpotifyService,
+	gmailService GmailService,
 ) ServiceService {
 	newService := serviceService{
 		repository:     repository,
 		spotifyService: spotifyService,
 		timerService:   timerService,
+		gmailService:   gmailService,
 		allServiceSchemas: []schemas.Service{
 			{
 				Name:        schemas.Spotify,
@@ -56,7 +59,7 @@ func NewServiceService(
 				Description: "This service is a mail service",
 			},
 		},
-		allService: []interface{}{spotifyService, timerService},
+		allService: []interface{}{spotifyService, timerService, gmailService},
 	}
 	newService.InitialSaveService()
 	return &newService
