@@ -36,13 +36,21 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 func (service *userService) Login(
 	newUser schemas.User,
 ) (JWTtoken string, userId uint64, err error) {
+	println("login")
+	println(newUser.Username)
 	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
+	for _, user := range userWiththisUserName {
+		println("user", user.Id)
+	}
 	if len(userWiththisUserName) == 0 {
 		return "", 0, fmt.Errorf("invalid credentials")
 	}
 	// regular user
+	println("user")
 	for _, user := range userWiththisUserName {
+		println("user", user.Id)
 		if database.DoPasswordsMatch(user.Password, newUser.Password) {
+			println("user found")
 			return service.serviceJWT.GenerateToken(
 				strconv.FormatUint(user.Id, 10),
 				user.Username,
@@ -53,8 +61,10 @@ func (service *userService) Login(
 
 	// Oauth2.0 user
 	for _, user := range userWiththisUserName {
+		println("user", user.Id)
 		if user.Email == newUser.Email {
-			if newUser.TokenId != 0 {
+			if user.TokenId != 0 {
+				println("oauth user found")
 				return service.serviceJWT.GenerateToken(
 					strconv.FormatUint(user.Id, 10),
 					user.Username,
@@ -63,8 +73,9 @@ func (service *userService) Login(
 			}
 		}
 	}
+	println("user not found")
 
-	return "", 0, fmt.Errorf("invalid credentials")
+	return "", 0, fmt.Errorf("user not found")
 }
 
 func (service *userService) Register(
@@ -86,11 +97,12 @@ func (service *userService) Register(
 	}
 
 	service.repository.Save(newUser)
+
 	return service.serviceJWT.GenerateToken(
 		fmt.Sprint(newUser.Id),
 		newUser.Username,
 		false,
-	), newUser.Id, nil
+	), service.repository.FindByUserName(newUser.Username)[0].Id, nil
 }
 
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {

@@ -66,7 +66,7 @@ func (controller *spotifyController) RedirectToService(
 	authURL := "https://accounts.spotify.com/authorize" +
 		"?response_type=code" +
 		"&client_id=" + clientID +
-		"&scope=user-read-private user-read-email" +
+		"&scope=user-read-private user-read-email user-modify-playback-state" +
 		"&redirect_uri=" + redirectURI +
 		"&state=" + state
 	return authURL, nil
@@ -103,13 +103,15 @@ func (controller *spotifyController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 
+	println("handleServiceCallback SPOTIFY")
 	userInfo, err := controller.service.GetUserInfo(spotifyTokenResponse.AccessToken)
 	if err != nil {
+		println("handleServiceCallback SPOTIFY ", err.Error())
 		return "", fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	newUser := schemas.User{
-		Username: userInfo.Login,
+		Username: userInfo.DisplayName,
 		Email:    userInfo.Email,
 	}
 
@@ -172,6 +174,6 @@ func (controller *spotifyController) GetUserInfo(
 	}
 
 	userInfo.Email = spotifyUserInfo.Email
-	userInfo.Username = spotifyUserInfo.Login
+	userInfo.Username = spotifyUserInfo.DisplayName
 	return userInfo, nil
 }

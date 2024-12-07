@@ -32,6 +32,7 @@ func NewUserController(userService service.UserService,
 }
 
 func (controller *userController) Login(ctx *gin.Context) (string, error) {
+	println("login controller")
 	var credentials schemas.LoginCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
