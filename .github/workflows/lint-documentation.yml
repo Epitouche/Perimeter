@@ -1,30 +1,24 @@
-name: format backend
+name: lint documentation
+
 on:
   pull_request:
     branches:
       - dev
-      - backend
-      - backend-feature/**
+      - documentation
+      - documentation-feature/**
   push:
     branches:
       - dev
-      - backend
-      - backend-feature/**
-
-defaults:
-  run:
-    working-directory: ./backend
+      - documentation
+      - documentation-feature/**
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
   contents: write
 
-env:
-  GO_VERSION: stable
-
 jobs:
-  run-backend-formatter:
-    name: Run Backend formatter
+  run-documentation-linter:
+    name: Run Frontend linter
     runs-on: self-hosted
 
     steps:
@@ -38,12 +32,16 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: ${{ env.GO_VERSION }}
+          node-version: 20
 
-      - name: format backend
-        run: ./format.sh
+      - name: Install markdownlint-cli
+        run: npm install markdownlint
+
+      - name: Run Linter
+        run: npx markdownlint --disable "MD013"  --fix ./docs --fix README.md
 
       - name: Check for modified files
         id: git-check

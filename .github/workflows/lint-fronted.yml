@@ -4,11 +4,13 @@ on:
   pull_request:
     branches:
       - dev
-      - frontend*
+      - frontend
+      - frontend-feature/**
   push:
     branches:
       - dev
-      - frontend*
+      - frontend
+      - frontend-feature/**
 
 defaults:
   run:

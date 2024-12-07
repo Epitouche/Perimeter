@@ -5,10 +5,12 @@ on:
     branches:
       - dev
       - frontend
+      - frontend-feature/**
   push:
     branches:
       - dev
       - frontend
+      - frontend-feature/**
 
 defaults:
   run:

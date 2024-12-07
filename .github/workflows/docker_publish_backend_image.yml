@@ -3,9 +3,16 @@ name: Create and publish a backend Docker image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
+  pull_request:
+    branches:
+      - backend
+      - backend-feature/**
+      - dev
+      - pre-prod
   push:
     branches:
       - backend
+      - backend-feature/**
       - dev
       - pre-prod
 
@@ -26,7 +33,7 @@ jobs:
       id-token: write
       #
     steps:
-      - name: 'Cleanup build folder'
+      - name: "Cleanup build folder"
         run: |
           ls -la ./
           rm -rf ./* || true

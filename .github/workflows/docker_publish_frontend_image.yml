@@ -3,9 +3,16 @@ name: Create and publish a frontend Docker image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
+  pull_request:
+    branches:
+      - frontend
+      - frontend-feature/**
+      - dev
+      - pre-prod
   push:
     branches:
       - frontend
+      - frontend-feature/**
       - dev
       - pre-prod
 
