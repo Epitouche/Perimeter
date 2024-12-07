@@ -60,7 +60,6 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		return "", fmt.Errorf("can't get user info: %w", err)
 	}
 	newArea := schemas.Area{
-		UserId:         result.UserId,
 		User:           user,
 		ActionOption:   result.ActionOption,
 		ReactionOption: result.ReactionOption,
