@@ -96,11 +96,12 @@ func (service *userService) Register(
 	}
 
 	service.repository.Save(newUser)
+
 	return service.serviceJWT.GenerateToken(
 		fmt.Sprint(newUser.Id),
 		newUser.Username,
 		false,
-	), newUser.Id, nil
+	), service.repository.FindByUserName(newUser.Username)[0].Id, nil
 }
 
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {
