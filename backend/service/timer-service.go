@@ -17,11 +17,15 @@ type TimerService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
+	GetActionsName() []string
+	GetReactionsName() []string
 }
 
 type timerService struct {
 	repository        repository.TimerRepository
 	serviceRepository repository.ServiceRepository
+	actionsName       []string
+	reactionsName     []string
 }
 
 func NewTimerService(
@@ -109,6 +113,7 @@ func (service *timerService) TimerReactionGiveTime(option string, idArea uint64)
 }
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
+	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
 	return []schemas.Action{
 		{
 			Name:        string(schemas.SpecificTime),
@@ -120,6 +125,7 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.GiveTime),
@@ -128,4 +134,12 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 			Option:      "{}",
 		},
 	}
+}
+
+func (service *timerService) GetActionsName() []string {
+	return service.actionsName
+}
+
+func (service *timerService) GetReactionsName() []string {
+	return service.reactionsName
 }

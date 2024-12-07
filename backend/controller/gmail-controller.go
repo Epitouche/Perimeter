@@ -122,10 +122,12 @@ func (controller *gmailController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to register user because %w", err)
 	}
 
-	gmailService := controller.serviceService.FindByName(schemas.OpenWeatherMap)
+	gmailService := controller.serviceService.FindByName(schemas.Gmail)
 	savedUser := controller.serviceUser.GetUserById(newUserId)
 
-	newSpotifyToken := schemas.Token{
+	fmt.Printf("savedUser %v\n", savedUser)
+
+	newGmailToken := schemas.Token{
 		Token:        gmailTokenResponse.AccessToken,
 		RefreshToken: gmailTokenResponse.RefreshToken,
 		ExpireAt:     time.Now().Add(time.Duration(gmailTokenResponse.ExpiresIn) * time.Second),
@@ -134,7 +136,7 @@ func (controller *gmailController) HandleServiceCallback(
 	}
 
 	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
+	tokenId, err := controller.serviceToken.SaveToken(newGmailToken)
 	if err != nil {
 		if err.Error() == "token already exists" {
 		} else {
