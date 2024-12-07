@@ -70,7 +70,12 @@ func setupRouter() *gin.Engine {
 	// Services
 	githubService := service.NewGithubService(githubRepository)
 	gmailService := service.NewGmailService(gmailRepository)
-	spotifyService := service.NewSpotifyService(spotifyRepository, serviceRepository, areaRepository, tokenRepository)
+	spotifyService := service.NewSpotifyService(
+		spotifyRepository,
+		serviceRepository,
+		areaRepository,
+		tokenRepository,
+	)
 	timerService := service.NewTimerService(timerRepository, serviceRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
