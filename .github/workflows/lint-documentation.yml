@@ -38,10 +38,10 @@ jobs:
           node-version: 20
 
       - name: Install markdownlint-cli
-        run: npm install markdownlint
+        run: npm install -g markdownlint-cli
 
       - name: Run Linter
-        run: npx run markdownlint --disable "MD013"  --fix ./docs --fix README.md
+        run: markdownlint --disable "MD013"  --fix ./docs --fix README.md
 
       - name: Check for modified files
         id: git-check
