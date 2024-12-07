@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -20,6 +21,8 @@ type SpotifyService interface {
 	SpotifyReactionPlayMusic(option string, idArea uint64)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
+	GetActionsName() []string
+	GetReactionsName() []string
 }
 
 type spotifyService struct {
@@ -27,6 +30,8 @@ type spotifyService struct {
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
+	actionsName       []string
+	reactionsName     []string
 }
 
 func NewSpotifyService(
@@ -161,22 +166,55 @@ func (service *spotifyService) FindReactionbyName(name string) func(option strin
 }
 
 func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
-	// Find the area
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
-		fmt.Println("error", err)
+		fmt.Println("Error finding area:", err)
 		return
 	}
-	fmt.Printf("area: %+v\n", area)
+
 	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
-	fmt.Printf("token: %+v\n", token)
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return
+	}
+
+	apiURL := "https://api.spotify.com/v1/me/player/play"
+
+	body := `{
+		"context_uri": "spotify:album:5ht7ItJgpBH7W6vJ5BqpPr",
+		"offset": {
+			"position": 5
+		},
+		"position_ms": 0
+	}`
+
+	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer([]byte(body)))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("Response Status:", resp.Status)
 }
 
 func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
+	// service.actionsName = append(service.actionsName, )
 	return []schemas.Action{}
 }
 
 func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.PlayMusic),
@@ -185,4 +223,12 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 			Option:      "{}",
 		},
 	}
+}
+
+func (service *spotifyService) GetActionsName() []string {
+	return service.actionsName
+}
+
+func (service *spotifyService) GetReactionsName() []string {
+	return service.reactionsName
 }

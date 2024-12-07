@@ -16,8 +16,15 @@ type ServiceService interface {
 	FindServiceByName(name string) schemas.Service
 }
 
+type ServiceInterface interface {
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
+}
+
 type serviceService struct {
 	repository        repository.ServiceRepository
+	spotifyService    SpotifyService
+	timerService      TimerService
 	allService        []interface{}
 	allServiceSchemas []schemas.Service
 }
@@ -28,7 +35,9 @@ func NewServiceService(
 	spotifyService SpotifyService,
 ) ServiceService {
 	newService := serviceService{
-		repository: repository,
+		repository:     repository,
+		spotifyService: spotifyService,
+		timerService:   timerService,
 		allServiceSchemas: []schemas.Service{
 			{
 				Name:        schemas.Spotify,
@@ -47,7 +56,7 @@ func NewServiceService(
 				Description: "This service is a mail service",
 			},
 		},
-		allService: []interface{}{timerService, spotifyService},
+		allService: []interface{}{spotifyService, timerService},
 	}
 	newService.InitialSaveService()
 	return &newService
@@ -89,11 +98,8 @@ func (service *serviceService) FindActionbyName(
 	name string,
 ) func(c chan string, option string, idArea uint64) {
 	for _, service := range service.allService {
-		if timerService, ok := service.(TimerService); ok {
-			return timerService.FindActionbyName(name)
-		}
-		if spotifyService, ok := service.(SpotifyService); ok {
-			return spotifyService.FindActionbyName(name)
+		if service.(ServiceInterface).FindActionbyName(name) != nil {
+			return service.(ServiceInterface).FindActionbyName(name)
 		}
 	}
 	return nil
@@ -101,11 +107,8 @@ func (service *serviceService) FindActionbyName(
 
 func (service *serviceService) FindReactionbyName(name string) func(option string, idArea uint64) {
 	for _, service := range service.allService {
-		if timerService, ok := service.(TimerService); ok {
-			return timerService.FindReactionbyName(name)
-		}
-		if spotifyService, ok := service.(SpotifyService); ok {
-			return spotifyService.FindReactionbyName(name)
+		if service.(ServiceInterface).FindReactionbyName(name) != nil {
+			return service.(ServiceInterface).FindReactionbyName(name)
 		}
 	}
 	return nil
