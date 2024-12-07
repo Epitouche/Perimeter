@@ -5,7 +5,6 @@ import (
 )
 
 type AreaMessage struct {
-	UserId         uint64 `json:"-"` // Foreign key for User
 	ActionOption   string `json:"action_option"   binding:"required"`
 	ActionId       uint64 `json:"action_id"` // Foreign key for Action
 	ReactionOption string `json:"reaction_option" binding:"required"`
