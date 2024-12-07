@@ -55,17 +55,21 @@ func (service *timerService) FindReactionbyName(name string) func(option string,
 }
 
 func getActualTime() (schemas.TimeAPISTRUCT, error) {
-	apiURL := "https://www.timeapi.io/api/time/current/zone" +
-		"&timeZone=Europe/Paris"
+	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error create request")
 	}
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error do request")
+	}
+
+	if resp.StatusCode != 200 {
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error status code %d", resp.StatusCode)
 	}
 
 	var result schemas.TimeAPISTRUCT
@@ -85,12 +89,12 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 
 	err := json.Unmarshal([]byte(option), &optionJson)
 	if err != nil {
-		println("error unmarshal")
+		println("error unmarshal option: " + err.Error())
+		return
 	}
 
 	actualTimeApi, err := getActualTime()
 	if err == nil {
-		println("error get actual time")
 		if actualTimeApi.Hour == optionJson.Hour && actualTimeApi.Minute == optionJson.Minute {
 			println("current time is ", actualTimeApi.Time)
 			c <- "response" // send sum to c
