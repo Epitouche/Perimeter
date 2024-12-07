@@ -46,10 +46,10 @@ func NewServiceService(
 				Name:        schemas.Spotify,
 				Description: "This service is a music service",
 			},
-			{
-				Name:        schemas.OpenWeatherMap,
-				Description: "This service is a weather service",
-			},
+			// {
+			// 	Name:        schemas.OpenWeatherMap,
+			// 	Description: "This service is a weather service",
+			// },
 			{
 				Name:        schemas.Timer,
 				Description: "This service is a time service",

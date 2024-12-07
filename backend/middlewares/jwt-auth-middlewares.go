@@ -19,6 +19,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, schemas.ErrorResponse{
 				Error: "No token provided",
 			})
+			ctx.Abort()
 			return
 
 		}
@@ -40,6 +41,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, schemas.ErrorResponse{
 				Error: "Invalid token",
 			})
+			ctx.Abort()
 			return
 		}
 	}

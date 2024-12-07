@@ -49,6 +49,19 @@ func (api *ServiceApi) AboutJson(ctx *gin.Context) {
 	}
 }
 
+// GetServicesInfo godoc
+//
+//	@Summary		get service info
+//	@Description	get service info of service id
+//	@Tags			Service
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Security		bearerAuth
+//	@Success		200	{object}	[]schemas.Service
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/service/info/ [get]
 func (api *ServiceApi) GetServicesInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		response, err := api.controller.GetServicesInfo()
