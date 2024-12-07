@@ -109,7 +109,13 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 }
 
 func (service *timerService) TimerReactionGiveTime(option string, idArea uint64) {
-	println("give time")
+	actualTimeApi, err := getActualTime()
+	if err != nil {
+		println("error get actual time" + err.Error())
+	} else {
+		response := "current time is " + actualTimeApi.Time
+		println(response)
+	}
 }
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
