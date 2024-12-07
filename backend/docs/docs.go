@@ -113,6 +113,14 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "create area",
                 "consumes": [
                     "application/json"
@@ -124,6 +132,17 @@ const docTemplate = `{
                     "Area"
                 ],
                 "summary": "create area",
+                "parameters": [
+                    {
+                        "description": "Area Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.AreaMessage"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -859,6 +878,29 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "$ref": "#/definitions/schemas.User"
+                }
+            }
+        },
+        "schemas.AreaMessage": {
+            "type": "object",
+            "required": [
+                "action_option",
+                "reaction_option"
+            ],
+            "properties": {
+                "action_id": {
+                    "description": "Foreign key for Action",
+                    "type": "integer"
+                },
+                "action_option": {
+                    "type": "string"
+                },
+                "reaction_id": {
+                    "description": "Foreign key for Reaction",
+                    "type": "integer"
+                },
+                "reaction_option": {
+                    "type": "string"
                 }
             }
         },
