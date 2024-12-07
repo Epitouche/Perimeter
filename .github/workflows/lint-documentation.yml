@@ -41,7 +41,7 @@ jobs:
         run: npm install markdownlint
 
       - name: Run Linter
-        run: npx markdownlint --disable "MD013"  --fix ./docs --fix README.md
+        run: npx run markdownlint --disable "MD013"  --fix ./docs --fix README.md
 
       - name: Check for modified files
         id: git-check
