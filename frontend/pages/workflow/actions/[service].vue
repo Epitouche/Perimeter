@@ -5,11 +5,15 @@ definePageMeta({
 });
 
 const route = useRoute();
+const router = useRouter();
 const serviceId = route.params.service;
 const token = useCookie('token');
 
 const actions = ref<any>(null);
 const error = ref<string | null>(null);
+
+const configIsOpen = ref<{ [key: number]: boolean }>({});
+const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>({});
 
 const fetchActions = async () => {
   try {
@@ -21,12 +25,15 @@ const fetchActions = async () => {
         service: serviceId,
       },
     });
-    console.log('actions', actions.value);
+
     actions.value.forEach((action: any) => {
       modifiedOptions[action.id] = JSON.parse(action.option || '{}');
     });
-  } catch (error) {
-    console.error('Error fetching actions:', error);
+
+    console.log('actions', actions.value);
+  } catch (err) {
+    error.value = 'Failed to load actions';
+    console.error('Error fetching actions:', err);
   }
 };
 
@@ -34,13 +41,11 @@ onMounted(() => {
   fetchActions();
 });
 
-const configIsOpen = ref<{ [key: number]: boolean }>({});
 const openConfig = (actionId: number) => {
   configIsOpen.value[actionId] = !configIsOpen.value[actionId] || false;
 };
 
 const parseOption = (option: string) => {
-  console.log('option', option);
   try {
     return JSON.parse(option);
   } catch (err) {
@@ -49,29 +54,15 @@ const parseOption = (option: string) => {
   }
 };
 
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>({});
-const saveOptions = async (actionId: number) => {
-  try {
-    const payload = {
-      token: token.value,
-      service: serviceId,
-      actionId: actionId,
-      options: modifiedOptions[actionId],
-    };
-
-    const response = await $fetch('/api/workflow/actions/save', {
-      method: 'POST',
-      body: payload,
-    });
-
-    console.log('Options saved successfully:', response);
-    alert('Options saved successfully!');
-  } catch (err) {
-    console.error('Error saving options:', err);
-    alert('Failed to save options. Please try again.');
-  }
+const saveOptions = (actionId: number) => {
+  router.push({
+  name: 'workflow',
+  query: {
+    actionId: actionId.toString(),
+    actionOptions: JSON.stringify(modifiedOptions[actionId]),
+  },
+});
 };
-
 </script>
 
 <template>
@@ -83,17 +74,17 @@ const saveOptions = async (actionId: number) => {
       <div>Error: {{ error }}</div>
     </div>
     <div v-else-if="actions">
-      <div v-for="action in actions" :key="action.id" class="mb-4">
+      <div v-for="action in actions" :key="action.id">
         <button @click="openConfig(action.id)">
           {{ action.name }}
         </button>
-        <div v-if="configIsOpen[action.id]" class="config-panel">
+        <div v-if="configIsOpen[action.id]">
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" type="text" />
+              <input v-model="modifiedOptions[action.id][key]" type="text">
             </div>
-            <button @click="saveOptions(action.id)" class="save-button">Save</button>
+            <button @click="saveOptions(action.id)">Save</button>
           </div>
         </div>
       </div>
