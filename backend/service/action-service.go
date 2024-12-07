@@ -33,6 +33,7 @@ func NewActionService(
 		serviceService: serviceService,
 	}
 	newActionService.SaveAllAction()
+
 	return newActionService
 }
 
@@ -50,6 +51,7 @@ func (service *actionService) GetAllServicesByServiceId(
 			Description: oneAction.Description,
 		})
 	}
+
 	return actionJSON
 }
 

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -66,9 +65,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 	req.URL.RawQuery = data.Encode()
 	req.Header.Set("Accept", "application/json")
 
-	client := &http.Client{
-		Timeout: time.Second * 30, // Adjust the timeout as needed
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to make request because %w", err)

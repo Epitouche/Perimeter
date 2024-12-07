@@ -100,7 +100,7 @@ func (controller *gmailController) HandleServiceCallback(
 	authHeader := ctx.GetHeader("Authorization")
 	newUser := schemas.User{}
 	gmailToken := schemas.Token{}
-	bearerToken := ""
+	var bearerToken string
 
 	gmailTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {

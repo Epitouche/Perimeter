@@ -22,6 +22,7 @@ func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterG
 	}
 	apiRoutes = apiRoutes.Group("/info")
 	api.GetActionsInfo(apiRoutes)
+
 	return &api
 }
 
@@ -46,6 +47,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
+
 			return
 		}
 		response, err := api.controller.GetActionsInfo(idInt)
@@ -53,6 +55,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
+
 			return
 		}
 		ctx.JSON(http.StatusOK, response)

@@ -100,9 +100,9 @@ func (controller *spotifyController) HandleServiceCallback(
 	authHeader := ctx.GetHeader("Authorization")
 	newUser := schemas.User{}
 	spotifyToken := schemas.Token{}
-	bearerToken := ""
+	var bearerToken string
 
-	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
+	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code)
 	if err != nil {
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}

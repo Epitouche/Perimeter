@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+
+	"area/schemas"
 )
 
 type JWTService interface {
@@ -48,7 +50,7 @@ func (jwtSrv *jwtService) GenerateToken(userID string, username string, admin bo
 		username,
 		admin,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * schemas.BearerTokenDuration).Unix(),
 			Issuer:    jwtSrv.issuer,
 			IssuedAt:  time.Now().Unix(),
 			Id:        userID,

@@ -16,6 +16,8 @@ const (
 	EmailMinimumLength    = 4
 	UsernameMinimumLength = 4
 	PasswordMinimumLength = 8
+	BearerTokenDuration   = 72
+	CSRFTokenLength       = 16
 )
 
 // Errors Messages.

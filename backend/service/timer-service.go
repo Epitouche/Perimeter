@@ -72,7 +72,7 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 		return schemas.TimeApiResponse{}, schemas.ErrDoRequest
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return schemas.TimeApiResponse{}, fmt.Errorf("error status code %d", resp.StatusCode)
 	}
 
