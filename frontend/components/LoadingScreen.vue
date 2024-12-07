@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const props = defineProps<{
   timeout: number;
 }>();
@@ -9,7 +8,7 @@ const timedOut = ref(false);
 onMounted(() => {
   setTimeout(() => {
     timedOut.value = true;
-    navigateTo('/myareas')
+    navigateTo("/myareas");
   }, props.timeout);
 });
 </script>

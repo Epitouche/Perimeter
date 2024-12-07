@@ -1,11 +1,9 @@
 <script setup lang="ts">
-
 definePageMeta({
-  middleware: 'auth',
+  middleware: "auth",
 });
 
 const isLoading = ref(true);
-
 </script>
 
 <template>
