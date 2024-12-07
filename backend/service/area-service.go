@@ -15,6 +15,7 @@ type AreaService interface {
 	CreateArea(ctx *gin.Context) (string, error)
 	InitArea(areaStartValue schemas.Area)
 	AreaExist(id uint64) bool
+	GetUserAreas(ctx *gin.Context) ([]schemas.Area, error)
 }
 
 type areaService struct {
@@ -123,4 +124,16 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			}
 		}
 	}(areaStartValue, channelArea)
+}
+
+func (service *areaService) GetUserAreas(ctx *gin.Context) ([]schemas.Area, error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := service.serviceUser.GetUserInfo(tokenString)
+	if err != nil {
+		return nil, fmt.Errorf("can't get user info: %w", err)
+	}
+	areas := service.repository.FindByUserId(user.Id)
+	return areas, nil
 }
