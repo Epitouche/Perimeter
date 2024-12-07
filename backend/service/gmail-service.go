@@ -1,8 +1,11 @@
 package service
 
 import (
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -15,18 +18,36 @@ import (
 type GmailService interface {
 	AuthGetServiceAccessToken(code string, path string) (schemas.GmailTokenResponse, error)
 	GetUserInfo(accessToken string) (result schemas.GmailUserInfo, err error)
+	GetServiceActionInfo() []schemas.Action
+	GetServiceReactionInfo() []schemas.Reaction
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
+	GetActionsName() []string
+	GetReactionsName() []string
+	GmailReactionSendMail(option string, idArea uint64)
 	// Token operations
 }
 
 type gmailService struct {
-	repository repository.GmailRepository
+	repository        repository.GmailRepository
+	serviceRepository repository.ServiceRepository
+	areaRepository    repository.AreaRepository
+	tokenRepository   repository.TokenRepository
+	actionName        []string
+	reactionName      []string
 }
 
 func NewGmailService(
 	githubTokenRepository repository.GmailRepository,
+	serviceRepository repository.ServiceRepository,
+	areaRepository repository.AreaRepository,
+	tokenRepository repository.TokenRepository,
 ) GmailService {
 	return &gmailService{
-		repository: githubTokenRepository,
+		repository:        githubTokenRepository,
+		serviceRepository: serviceRepository,
+		areaRepository:    areaRepository,
+		tokenRepository:   tokenRepository,
 	}
 }
 
@@ -167,4 +188,113 @@ func (service *gmailService) GetUserInfo(
 	result.Login = googleProfile.Names[0].DisplayName
 
 	return result, nil
+}
+
+func (service *gmailService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{}
+}
+
+func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SendMail),
+			Description: "Send an email",
+			Service:     service.serviceRepository.FindByName(schemas.Gmail),
+			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+		},
+	}
+}
+
+func (service *gmailService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *gmailService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	switch name {
+	case string(schemas.SendMail):
+		println("SendMail")
+		return service.GmailReactionSendMail
+	default:
+		return nil
+	}
+}
+
+func (service *gmailService) GetActionsName() []string {
+	return service.actionName
+}
+
+func (service *gmailService) GetReactionsName() []string {
+	return service.reactionName
+}
+
+func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
+	optionJson := schemas.GmailReactionSendMailOption{}
+
+	err := json.Unmarshal([]byte(option), &optionJson)
+	if err != nil {
+		println("error unmarshal option: " + err.Error())
+		return
+	}
+
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
+	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return
+	}
+
+	// TODO check if the email is valid or not
+	// TODO check if the subject is valid or not
+	// TODO check if the body is valid or not
+
+	apiURL := "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
+
+	email := []byte("From: me@example.com\r\n" +
+		"To: " + optionJson.To + "\r\n" +
+		"Subject: " + optionJson.Subject + "\r\n" +
+		"Content-Type: text/html; charset=utf-8\r\n\r\n" +
+		optionJson.Body +
+		"\r\n")
+
+	raw := base64.URLEncoding.EncodeToString(email)
+
+	body := fmt.Sprintf(`{"raw": "%s"}`, raw)
+
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer([]byte(body)))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return
+	}
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		respBody, _ := io.ReadAll(resp.Body)
+		fmt.Printf(
+			"Failed to send email. Status: %s, Response: %s\n",
+			resp.Status,
+			string(respBody),
+		)
+		return
+	}
+
+	fmt.Println("Email sent successfully!")
 }
