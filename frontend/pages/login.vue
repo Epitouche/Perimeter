@@ -87,8 +87,8 @@ const handleLogin = async () => {
         <div class="flex flex-col">
           <h2 class="text-xl px-5">Password</h2>
           <UInput
-            type="password"
             v-model="password"
+            type="password"
             :ui="{
               placeholder: '!px-5 !py-3 font-light',
               size: { sm: 'text-5xl' },
@@ -104,7 +104,7 @@ const handleLogin = async () => {
           <div v-if="loginError" class="text-red-500 text-xl pb-1">
             {{ loginError }}
           </div>
-          <UButton @click="handleLogin" class="text-center text-[2.5rem] px-12"
+          <UButton class="text-center text-[2.5rem] px-12" @click="handleLogin"
             >Log in</UButton
           >
           <p class="text-xl">

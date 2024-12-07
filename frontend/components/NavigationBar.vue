@@ -22,7 +22,7 @@ const clearTokenAndLogout = () => {
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         class="h-[4em] w-[4em]"
-      />
+      >
       <span class="font-black text-[2em]">Perimeter</span>
     </div>
 
@@ -46,7 +46,7 @@ const clearTokenAndLogout = () => {
       <button
         class="h-[4em] w-[4em] bg-gray-300 rounded-full border-custom_border_width border-black cursor-pointer"
         @click="toggleMenu"
-      ></button>
+      />
       <div
         v-if="menuOpen"
         class="absolute top-full mt-4 right-0 p-4 rounded shadow-md flex flex-col gap-4 min-w-[200px] z-[1000] bg-custom_color-bg_section"
@@ -55,7 +55,7 @@ const clearTokenAndLogout = () => {
           <span class="font-[400] text-[1em]">Username</span>
           <div
             class="h-[3em] w-[3em] bg-gray-300 rounded-full border-custom_border_width border-black"
-          ></div>
+          />
         </div>
 
         <NuxtLink to="/settings" class="nav-link">Settings</NuxtLink>

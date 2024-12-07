@@ -110,8 +110,8 @@ const handleSignUp = async () => {
         <div class="flex flex-col">
           <h2 class="text-xl px-5">Password</h2>
           <UInput
-            type="password"
             v-model="password"
+            type="password"
             :ui="{
               placeholder: '!px-5 !py-3 font-light',
               size: { sm: 'text-5xl' },
@@ -121,8 +121,8 @@ const handleSignUp = async () => {
         <div class="flex flex-col">
           <h2 class="text-xl px-5">Confirm Password</h2>
           <UInput
-            type="password"
             v-model="confirmPassword"
+            type="password"
             :ui="{
               placeholder: '!px-5 !py-3 font-light',
               size: { sm: 'text-5xl' },
@@ -133,7 +133,7 @@ const handleSignUp = async () => {
           <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
-          <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12"
+          <UButton class="text-center text-[2.5rem] px-12" @click="handleSignUp"
             >Sign up</UButton
           >
           <p class="text-xl">
