@@ -6,11 +6,13 @@ on:
       - dev
       - backend
       - backend-feature/**
+      - devops-feature/**
   push:
     branches:
       - dev
       - backend
       - backend-feature/**
+      - devops-feature/**
 
 env:
   GO_VERSION: stable
@@ -42,7 +44,5 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      # need database
-
-      # - name: Run tests
-      #   run: go test ./...
+      - name: Run tests
+        run: set -a && source ../.env && go test ./... -v && set +a
