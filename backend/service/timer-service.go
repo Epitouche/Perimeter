@@ -83,8 +83,6 @@ func getActualTime() (schemas.TimeAPISTRUCT, error) {
 }
 
 func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
-	println("option" + option)
-
 	optionJson := schemas.TimerActionSpecificHour{}
 
 	err := json.Unmarshal([]byte(option), &optionJson)
@@ -94,15 +92,16 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 	}
 
 	actualTimeApi, err := getActualTime()
-	if err == nil {
-		if actualTimeApi.Hour == optionJson.Hour && actualTimeApi.Minute == optionJson.Minute {
-			println("current time is ", actualTimeApi.Time)
-			c <- "response" // send sum to c
-		}
-	} else {
+	if err != nil {
 		println("error get actual time" + err.Error())
+	} else {
+		if actualTimeApi.Hour == optionJson.Hour && actualTimeApi.Minute == optionJson.Minute {
+			response := "current time is " + actualTimeApi.Time
+			println(response)
+			c <- response
+		}
 	}
-	time.Sleep(15 * time.Second)
+	time.Sleep(time.Minute)
 }
 
 func (service *timerService) TimerReactionGiveTime(option string, idArea uint64) {
