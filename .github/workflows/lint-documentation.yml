@@ -43,12 +43,10 @@ jobs:
       - name: Run Linter
         run: markdownlint --disable "MD013"  --fix ./docs --fix README.md
 
-      - name: Check for modified files
-        id: git-check
-        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
-
-      - name: Push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        if: steps.git-check.outputs.modified == 'true'
-        with:
-          commit_message: Automated Change
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "bot@github.com"
+          git add . || echo "No changes to commit"
+          git commit -m "Fix markdownlint issues" || echo "No changes to commit"
+          git push || echo "No changes to commit"
