@@ -32,7 +32,6 @@ func NewUserController(userService service.UserService,
 }
 
 func (controller *userController) Login(ctx *gin.Context) (string, error) {
-	println("login controller")
 	var credentials schemas.LoginCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
@@ -75,11 +74,10 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 		Email:    credentials.Email,
 		Password: credentials.Password,
 	}
-	token, newUserId, err := controller.userService.Register(newUser)
+	token, _, err := controller.userService.Register(newUser)
 	if err != nil {
 		return "", fmt.Errorf("can't register user: %w", err)
 	}
-	print(newUserId)
 	return token, nil
 }
 
