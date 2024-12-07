@@ -134,9 +134,6 @@ func (service *areaService) GetUserAreas(ctx *gin.Context) ([]schemas.Area, erro
 	if err != nil {
 		return nil, fmt.Errorf("can't get user info: %w", err)
 	}
-	println("##############################")
-	println("user id: ", user.Id)
-	println("##############################")
 	areas := service.repository.FindByUserId(user.Id)
 	return areas, nil
 
