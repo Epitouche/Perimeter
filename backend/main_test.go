@@ -2,18 +2,15 @@ package main
 
 import (
 	"context"
-	"log"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
+
+	"area/schemas"
+	"area/test"
 )
 
 func TestPingRoute(t *testing.T) {
@@ -21,16 +18,15 @@ func TestPingRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := CreatePostgresContainer(ctx)
-	require.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
-	// Ensure cleanup after the test completes
+	// Clean up the container after the test
 	defer func() {
-		if err := testcontainers.TerminateContainer(postgresContainer); err != nil {
-			t.Logf("failed to terminate container: %s", err)
-		}
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
 	}()
-
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
@@ -49,14 +45,14 @@ func TestAboutJsonRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := CreatePostgresContainer(ctx)
-	require.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
-	// Ensure cleanup after the test completes
+	// Clean up the container after the test
 	defer func() {
-		if err := testcontainers.TerminateContainer(postgresContainer); err != nil {
-			t.Logf("failed to terminate container: %s", err)
-		}
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
@@ -69,67 +65,72 @@ func TestAboutJsonRoute(t *testing.T) {
 
 	// Assert the response
 	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
-	// assert.JSONEq(t, `{"message":"pong"}`, w.Body.String(), "unexpected response body")
+
+	// TODO - Add more assertions
 }
 
-func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, error) {
-	host := os.Getenv("DB_HOST")
-	if host == "" {
-		panic("DB_HOST is not set")
-	}
+func TestGmailRedirectToServiceRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	ctx := context.Background()
 
-	port := os.Getenv("DB_PORT")
-	if port == "" {
-		panic("DB_PORT is not set")
-	}
+	// Create Postgres container
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
-	user := os.Getenv("POSTGRES_USER")
-	if user == "" {
-		panic("POSTGRES_USER is not set")
-	}
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
 
-	password := os.Getenv("POSTGRES_PASSWORD")
-	if password == "" {
-		panic("POSTGRES_PASSWORD is not set")
-	}
+	// Set up the router (defined in main.go)
+	router := setupRouter()
 
-	dbname := os.Getenv("POSTGRES_DB")
-	if dbname == "" {
-		panic("POSTGRES_DB is not set")
-	}
+	// Perform the HTTP request
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/gmail/auth", nil)
+	router.ServeHTTP(w, req)
 
-	// Create a new container with PostgreSQL
-	dbName := dbname
-	dbUser := user
-	dbPassword := password
-
-	postgresContainer, err := postgres.Run(ctx,
-		"postgres:17-alpine",
-		postgres.WithDatabase(dbName),
-		postgres.WithUsername(dbUser),
-		postgres.WithPassword(dbPassword),
-		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
-				WithStartupTimeout(20*time.Second)),
-	)
-
+	// Assert the response
+	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	expectedResponse := schemas.JWT{}
+	err = json.NewDecoder(w.Body).Decode(&expectedResponse)
 	if err != nil {
-		log.Printf("failed to start container: %s", err)
-		return postgresContainer, err
+		t.Fatalf("failed to decode response body: %v", err)
 	}
+	assert.NotNil(t, expectedResponse, "unexpected response body")
+}
 
-	host, err = postgresContainer.Host(ctx)
+func TestSpotifyRedirectToServiceRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	ctx := context.Background()
+
+	// Create Postgres container
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
+
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
+
+	// Set up the router (defined in main.go)
+	router := setupRouter()
+
+	// Perform the HTTP request
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/spotify/auth", nil)
+	router.ServeHTTP(w, req)
+
+	// Assert the response
+	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	expectedResponse := schemas.JWT{}
+	err = json.NewDecoder(w.Body).Decode(&expectedResponse)
 	if err != nil {
-		log.Fatalf("failed to get container host: %s", err)
+		t.Fatalf("failed to decode response body: %v", err)
 	}
-	mappedPort, err := postgresContainer.MappedPort(ctx, "5432")
-	if err != nil {
-		log.Fatalf("failed to get container port: %s", err)
-	}
-
-	os.Setenv("DB_HOST", host)
-	os.Setenv("DB_PORT", mappedPort.Port())
-
-	return postgresContainer, nil
+	assert.NotNil(t, expectedResponse, "unexpected response body")
 }

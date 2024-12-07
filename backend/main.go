@@ -142,7 +142,7 @@ func setupRouter() *gin.Engine {
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
 	api.NewGithubAPI(githubController, apiRoutes)
-	api.NewAreAPI(areaController, apiRoutes)
+	api.NewAreaAPI(areaController, apiRoutes)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJson)
