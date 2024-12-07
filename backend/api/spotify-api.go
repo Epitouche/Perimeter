@@ -59,9 +59,10 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Tags			Spotify
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Success		200		{object}	schemas.JWT
-//	@Failure		500		{object}	schemas.ErrorResponse
+//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Param			Authorization	header		string					false	"Bearer token"
+//	@Success		200				{object}	schemas.JWT
+//	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/spotify/auth/callback [post]
 func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
@@ -87,10 +88,10 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorResponse
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserCredentials
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/spotify/info/user [get]
 func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {

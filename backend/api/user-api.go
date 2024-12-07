@@ -23,6 +23,7 @@ func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup
 	api.Register(apiRoutes)
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
 	api.GetUserInfo(apiRoutesInfo)
+	api.GetUserAllInfo(apiRoutesInfo)
 	return &api
 }
 
@@ -89,14 +90,40 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorResponse
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserCredentials
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/user/info/user [get]
 func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusOK, usetInfo)
+		}
+	})
+}
+
+// GetUserAllInfo godoc
+//
+//	@Summary		give user info of user
+//	@Description	give user info of user
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserAllInfo
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/user/info/all [get]
+func (api *UserApi) GetUserAllInfo(apiRoutes *gin.RouterGroup) {
+	apiRoutes.GET("/all", func(ctx *gin.Context) {
+		usetInfo, err := api.controller.GetUserAllInfo(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),

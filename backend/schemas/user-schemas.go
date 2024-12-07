@@ -18,3 +18,8 @@ type UserCredentials struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 }
+
+type UserAllInfo struct {
+	User   User    `json:"user"`
+	Tokens []Token `json:"tokens"`
+}

@@ -1,4 +1,53 @@
 definitions:
+  schemas.Action:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      option:
+        type: string
+      service_id:
+        $ref: '#/definitions/schemas.Service'
+      update_at:
+        type: string
+    required:
+    - description
+    - name
+    - option
+    - service_id
+    type: object
+  schemas.Area:
+    properties:
+      action_id:
+        $ref: '#/definitions/schemas.Action'
+      action_option:
+        type: string
+      createdAt:
+        type: string
+      enable:
+        type: boolean
+      id:
+        type: integer
+      reaction_id:
+        $ref: '#/definitions/schemas.Reaction'
+      reaction_option:
+        type: string
+      update_at:
+        type: string
+      user_id:
+        $ref: '#/definitions/schemas.User'
+    required:
+    - action_id
+    - action_option
+    - reaction_id
+    - reaction_option
+    - user_id
+    type: object
   schemas.AuthenticationUrl:
     properties:
       authentication_url:
@@ -19,10 +68,109 @@ definitions:
       token:
         type: string
     type: object
+  schemas.Reaction:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      option:
+        type: string
+      service_id:
+        $ref: '#/definitions/schemas.Service'
+      update_at:
+        type: string
+    required:
+    - description
+    - name
+    - option
+    - service_id
+    type: object
   schemas.Response:
     properties:
       message:
         type: string
+    type: object
+  schemas.Service:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        $ref: '#/definitions/schemas.ServiceName'
+      update_at:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  schemas.ServiceName:
+    enum:
+    - spotify
+    - openWeatherMap
+    - timer
+    - gmail
+    type: string
+    x-enum-varnames:
+    - Spotify
+    - OpenWeatherMap
+    - Timer
+    - Gmail
+  schemas.Token:
+    properties:
+      createdAt:
+        type: string
+      expireAt:
+        type: string
+      id:
+        type: integer
+      refresh_token:
+        type: string
+      service_id:
+        $ref: '#/definitions/schemas.Service'
+      token:
+        type: string
+      updateAt:
+        type: string
+      user_id:
+        $ref: '#/definitions/schemas.User'
+    type: object
+  schemas.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        description: can be null for Oauth2.0 users
+        type: string
+      token_id:
+        description: Foreign key for LinkUrl
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+    required:
+    - username
+    type: object
+  schemas.UserAllInfo:
+    properties:
+      tokens:
+        items:
+          $ref: '#/definitions/schemas.Token'
+        type: array
+      user:
+        $ref: '#/definitions/schemas.User'
     type: object
   schemas.UserCredentials:
     properties:
@@ -34,7 +182,67 @@ definitions:
 info:
   contact: {}
 paths:
+  /action/info/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get action info of service id
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.Action'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: get action info
+      tags:
+      - Action
   /area/:
+    get:
+      consumes:
+      - application/json
+      description: get user areas list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.Area'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: get user areas
+      tags:
+      - Area
     post:
       consumes:
       - application/json
@@ -103,12 +311,6 @@ paths:
       consumes:
       - application/json
       description: give user info of github
-      parameters:
-      - description: Bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -126,6 +328,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
+      - bearerAuth: []
       summary: give user info of github
       tags:
       - Github
@@ -160,6 +363,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       produces:
       - application/json
       responses:
@@ -179,12 +386,6 @@ paths:
       consumes:
       - application/json
       description: give user info of gmail
-      parameters:
-      - description: Bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -202,6 +403,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
+      - bearerAuth: []
       summary: give user info of gmail
       tags:
       - Gmail
@@ -220,6 +422,68 @@ paths:
       summary: ping example
       tags:
       - ping route
+  /reaction/info/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get reaction info of service id
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.Reaction'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: get reaction info
+      tags:
+      - Reaction
+  /service/info/:
+    get:
+      consumes:
+      - application/json
+      description: get service info of service id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.Service'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: get service info
+      tags:
+      - Service
   /spotify/auth:
     get:
       consumes:
@@ -251,6 +515,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       produces:
       - application/json
       responses:
@@ -270,12 +538,6 @@ paths:
       consumes:
       - application/json
       description: give user info of spotify
-      parameters:
-      - description: Bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -293,20 +555,41 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
+      - bearerAuth: []
       summary: give user info of spotify
       tags:
       - Spotify
+  /user/info/all:
+    get:
+      consumes:
+      - application/json
+      description: give user info of user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.UserAllInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: give user info of user
+      tags:
+      - User
   /user/info/user:
     get:
       consumes:
       - application/json
       description: give user info of user
-      parameters:
-      - description: Bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -324,6 +607,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - Bearer: []
+      - bearerAuth: []
       summary: give user info of user
       tags:
       - User
@@ -390,7 +674,8 @@ paths:
       - User
 securityDefinitions:
   bearerAuth:
+    description: Use "Bearer <token>" as the format for the Authorization header
     in: header
-    name: Authorization.
+    name: Authorization
     type: apiKey
 swagger: "2.0"
