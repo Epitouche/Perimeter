@@ -14,10 +14,13 @@ export default defineEventHandler(async (event) => {
       body: {
         code: params.code,
       },
+      headers: {
+        Authorization: params.authorization.value ? `Bearer ${params.authorization.value}` : "",
+      },
     });
     console.log(response);
     return response;
-  } catch(error) {
+  } catch (error) {
     console.log("Error is :", error);
   }
 });

@@ -84,7 +84,7 @@ API limit: 1,000 requests per day to obtain current weather data, forecasts, etc
 
 ### 3. Timer (Timer Service)
 
-[WorldTimeAPI Documentation](https://worldtimeapi.org/pages/examples)
+[TimeAPI Documentation](https://www.timeapi.io/swagger/index.html)
 
 API limit: we don't find it
 

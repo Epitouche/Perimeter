@@ -54,7 +54,7 @@ func (service *userService) Login(
 	// Oauth2.0 user
 	for _, user := range userWiththisUserName {
 		if user.Email == newUser.Email {
-			if newUser.TokenId != 0 {
+			if user.TokenId != 0 {
 				return service.serviceJWT.GenerateToken(
 					strconv.FormatUint(user.Id, 10),
 					user.Username,
@@ -64,13 +64,14 @@ func (service *userService) Login(
 		}
 	}
 
-	return "", 0, fmt.Errorf("invalid credentials")
+	return "", 0, fmt.Errorf("user not found")
 }
 
 func (service *userService) Register(
 	newUser schemas.User,
 ) (JWTtoken string, userId uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
+	fmt.Printf("%+v\n", userWiththisEmail)
 	if len(userWiththisEmail) != 0 {
 		// return service.Login(newUser)
 		return "", 0, fmt.Errorf("email already exists")
@@ -85,11 +86,14 @@ func (service *userService) Register(
 	}
 
 	service.repository.Save(newUser)
+
+	newUser.Id = service.repository.FindByUserName(newUser.Username)[0].Id
+
 	return service.serviceJWT.GenerateToken(
 		fmt.Sprint(newUser.Id),
 		newUser.Username,
 		false,
-	), newUser.Id, nil
+	), service.repository.FindByUserName(newUser.Username)[0].Id, nil
 }
 
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {

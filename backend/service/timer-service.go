@@ -1,6 +1,9 @@
 package service
 
 import (
+	"encoding/json"
+	"fmt"
+	"net/http"
 	"time"
 
 	"area/repository"
@@ -14,11 +17,15 @@ type TimerService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
+	GetActionsName() []string
+	GetReactionsName() []string
 }
 
 type timerService struct {
 	repository        repository.TimerRepository
 	serviceRepository repository.ServiceRepository
+	actionsName       []string
+	reactionsName     []string
 }
 
 func NewTimerService(
@@ -51,31 +58,80 @@ func (service *timerService) FindReactionbyName(name string) func(option string,
 	}
 }
 
-func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
-	dt := time.Now().Local()
-	if dt.Hour() == 19 && dt.Minute() == 25 {
-		println("current time is ", dt.String())
-		c <- "response" // send sum to c
+func getActualTime() (schemas.TimeAPISTRUCT, error) {
+	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
+
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error create request")
 	}
-	time.Sleep(15 * time.Second)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error do request")
+	}
+
+	if resp.StatusCode != 200 {
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error status code %d", resp.StatusCode)
+	}
+
+	var result schemas.TimeAPISTRUCT
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error decode")
+	}
+
+	resp.Body.Close()
+	return result, nil
+}
+
+func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
+	optionJson := schemas.TimerActionSpecificHour{}
+
+	err := json.Unmarshal([]byte(option), &optionJson)
+	if err != nil {
+		println("error unmarshal option: " + err.Error())
+		return
+	}
+
+	actualTimeApi, err := getActualTime()
+	if err != nil {
+		println("error get actual time" + err.Error())
+	} else {
+		if actualTimeApi.Hour == optionJson.Hour && actualTimeApi.Minute == optionJson.Minute {
+			response := "current time is " + actualTimeApi.Time
+			println(response)
+			c <- response
+		}
+	}
+	time.Sleep(time.Minute)
 }
 
 func (service *timerService) TimerReactionGiveTime(option string, idArea uint64) {
-	println("give time")
+	actualTimeApi, err := getActualTime()
+	if err != nil {
+		println("error get actual time" + err.Error())
+	} else {
+		response := "current time is " + actualTimeApi.Time
+		println(response)
+	}
 }
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
+	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
 	return []schemas.Action{
 		{
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
 			Service:     service.serviceRepository.FindByName(schemas.Timer),
-			Option:      "{hour: 0, minute: 0}",
+			Option:      "{\"hour\": 0, \"minute\": 0}",
 		},
 	}
 }
 
 func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.GiveTime),
@@ -84,4 +140,12 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 			Option:      "{}",
 		},
 	}
+}
+
+func (service *timerService) GetActionsName() []string {
+	return service.actionsName
+}
+
+func (service *timerService) GetReactionsName() []string {
+	return service.reactionsName
 }

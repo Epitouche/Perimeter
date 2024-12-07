@@ -74,13 +74,20 @@ func (repo *areaRepository) FindAll() []schemas.Area {
 }
 
 func (repo *areaRepository) FindByUserId(userId uint64) []schemas.Area {
-	var actions []schemas.Area
-	err := repo.db.Connection.Where(&schemas.Area{UserId: userId}).
-		Find(&actions)
+	var areas []schemas.Area
+
+	err := repo.db.Connection.
+		Preload("User").
+		Preload("Action.Service").
+		Preload("Reaction.Service").
+		Where(&schemas.Area{UserId: userId}).
+		Find(&areas)
+
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find action by service id: %v", err.Error))
+		panic(fmt.Errorf("failed to find areas by user id: %v", err.Error))
 	}
-	return actions
+
+	return areas
 }
 
 func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {

@@ -15,6 +15,7 @@ type TokenService interface {
 	Delete(token schemas.Token) error
 	FindAll() (allServices []schemas.Token)
 	GetTokenById(id uint64) (schemas.Token, error)
+	GetTokenByUserId(userId uint64) ([]schemas.Token, error)
 }
 
 type tokenService struct {
@@ -78,6 +79,10 @@ func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserI
 
 func (service *tokenService) GetTokenById(id uint64) (schemas.Token, error) {
 	return service.repository.FindById(id), nil
+}
+
+func (service *tokenService) GetTokenByUserId(userId uint64) ([]schemas.Token, error) {
+	return service.repository.FindByUserId(userId), nil
 }
 
 func (service *tokenService) Update(token schemas.Token) error {
