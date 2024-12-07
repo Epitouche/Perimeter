@@ -33,7 +33,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 //	@Tags			Github
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	schemas.AuthenticationUrl
+//	@Success		200	{object}	schemas.AuthenticationURL
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/github/auth [get]
 func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
@@ -44,7 +44,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, &schemas.AuthenticationUrl{Url: authURL})
+			ctx.JSON(http.StatusOK, &schemas.AuthenticationURL{URL: authURL})
 		}
 	})
 }

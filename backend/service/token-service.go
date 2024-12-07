@@ -35,7 +35,7 @@ func (service *tokenService) SaveToken(
 	tokens := service.repository.FindByToken(token.Token)
 	for _, t := range tokens {
 		if t.Token == token.Token {
-			return t.Id, fmt.Errorf("token already exists")
+			return t.Id, schemas.ErrTokenAlreadyExists
 		}
 	}
 

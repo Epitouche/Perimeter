@@ -151,7 +151,7 @@ func (controller *gmailController) HandleServiceCallback(
 	// Save the access token in the database
 	tokenId, err := controller.serviceToken.SaveToken(newgmailToken)
 	if err != nil {
-		if err.Error() == "token already exists" {
+		if err == schemas.ErrTokenAlreadyExists {
 		} else {
 			return "", fmt.Errorf("unable to save token because %w", err)
 		}

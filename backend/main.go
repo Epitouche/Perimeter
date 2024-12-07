@@ -160,17 +160,17 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-func init() {
-	// err := .Load()
-	// if err != nil {
-	// 	panic("Error loading .env file")
-	// }
-}
+// func init() {
+// err := .Load()
+// if err != nil {
+// 	panic("Error loading .env file")
+// }
+// }
 
 // @securityDefinitions.apiKey	bearerAuth
 // @in							header
 // @name						Authorization
-// @description				Use "Bearer <token>" as the format for the Authorization header
+// @description				Use "Bearer <token>" as the format for the Authorization header.
 func main() {
 	router := setupRouter()
 

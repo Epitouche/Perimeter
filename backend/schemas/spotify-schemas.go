@@ -29,7 +29,7 @@ type SpotifyUserInfo struct {
 		FilterEnabled bool `json:"filter_enabled"`
 		FilterLocked  bool `json:"filter_locked"`
 	} `json:"explicit_content"`
-	ExternalUrls struct {
+	ExternalURLs struct {
 		Spotify string `json:"spotify"`
 	} `json:"external_urls"`
 	Followers struct {
@@ -39,7 +39,7 @@ type SpotifyUserInfo struct {
 	Href   string `json:"href"`
 	Id     string `json:"id"`
 	Images []struct {
-		Url    string `json:"url"`
+		URL    string `json:"url"`
 		Height int    `json:"height"`
 		Width  int    `json:"width"`
 	} `json:"images"`

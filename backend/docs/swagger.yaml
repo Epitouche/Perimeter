@@ -64,7 +64,7 @@ definitions:
     - action_option
     - reaction_option
     type: object
-  schemas.AuthenticationUrl:
+  schemas.AuthenticationURL:
     properties:
       authentication_url:
         type: string
@@ -170,13 +170,14 @@ definitions:
         description: can be null for Oauth2.0 users
         type: string
       token_id:
-        description: Foreign key for LinkUrl
+        description: Foreign key for LinkURL
         type: integer
       updated_at:
         type: string
       username:
         type: string
     required:
+    - email
     - username
     type: object
   schemas.UserAllInfo:
@@ -298,7 +299,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.AuthenticationUrl'
+            $ref: '#/definitions/schemas.AuthenticationURL'
         "500":
           description: Internal Server Error
           schema:
@@ -369,7 +370,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.AuthenticationUrl'
+            $ref: '#/definitions/schemas.AuthenticationURL'
         "500":
           description: Internal Server Error
           schema:
@@ -521,7 +522,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.AuthenticationUrl'
+            $ref: '#/definitions/schemas.AuthenticationURL'
         "500":
           description: Internal Server Error
           schema:
@@ -700,7 +701,7 @@ paths:
       - User
 securityDefinitions:
   bearerAuth:
-    description: Use "Bearer <token>" as the format for the Authorization header
+    description: Use "Bearer <token>" as the format for the Authorization header.
     in: header
     name: Authorization
     type: apiKey

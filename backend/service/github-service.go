@@ -35,12 +35,12 @@ func (service *githubService) AuthGetServiceAccessToken(
 ) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_CLIENT_ID is not set")
+		return schemas.GitHubTokenResponse{}, schemas.ErrGithubClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GITHUB_SECRET")
 	if clientSecret == "" {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_SECRET is not set")
+		return schemas.GitHubTokenResponse{}, schemas.ErrGithubSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
