@@ -157,10 +157,10 @@ func init() {
 	// }
 }
 
-//	@securityDefinitions.apiKey	bearerAuth
-//	@in							header
-//	@name						Authorization
-//	@description				Use "Bearer <token>" as the format for the Authorization header
+// @securityDefinitions.apiKey	bearerAuth
+// @in							header
+// @name						Authorization
+// @description				Use "Bearer <token>" as the format for the Authorization header
 func main() {
 	router := setupRouter()
 
