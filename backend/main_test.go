@@ -69,6 +69,42 @@ func TestAboutJsonRoute(t *testing.T) {
 	// TODO - Add more assertions
 }
 
+func TestNotFoundRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	ctx := context.Background()
+
+	// Create Postgres container
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
+
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
+
+	// Set up the router (defined in main.go)
+	router := setupRouter()
+
+	// Perform the HTTP request
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/no-route", nil)
+	router.ServeHTTP(w, req)
+
+	// Assert the response
+	assert.Equal(t, http.StatusNotFound, w.Code, "unexpected HTTP status code")
+
+	// TODO - Add more assertions
+}
+
+func TestBackendPortNotSet(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+
+	// Set up the router (defined in main.go)
+	assert.Panics(t, func() { setupRouter() }, "expected panic")
+}
+
 func TestGmailRedirectToServiceRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	ctx := context.Background()

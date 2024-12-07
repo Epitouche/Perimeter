@@ -44,5 +44,8 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
+      - name: Setup env
+        run: echo ${{ secrets.ENV }} > .env
+
       - name: Run tests
-        run: set -a && source ../.env.example && go test ./... && set +a
+        run: set -a && source .env.example && go test ./... && set +a
