@@ -4,11 +4,13 @@ on:
   pull_request:
     branches:
       - dev
-      - backend*
+      - backend
+      - backend-feature/**
   push:
     branches:
       - dev
-      - backend*
+      - backend
+      - backend-feature/**
 
 env:
   GO_VERSION: stable
