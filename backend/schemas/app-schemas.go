@@ -2,6 +2,22 @@ package schemas
 
 import "errors"
 
+type AboutJSON struct {
+	Client struct {
+		Host string `json:"host"`
+	} `json:"client"`
+	Server struct {
+		CurrentTime string        `json:"current_time"`
+		Services    []ServiceJSON `json:"services"`
+	} `json:"server"`
+}
+
+const (
+	EmailMinimumLength    = 4
+	UsernameMinimumLength = 4
+	PasswordMinimumLength = 8
+)
+
 // Errors Messages.
 var (
 	ErrBackendPortNotSet         = errors.New("BACKEND_PORT is not set")

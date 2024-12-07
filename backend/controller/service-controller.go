@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
@@ -8,7 +11,7 @@ import (
 )
 
 type ServiceController interface {
-	AboutJSON(ctx *gin.Context) (allService []schemas.ServiceJSON, err error)
+	AboutJSON(ctx *gin.Context) (aboutJSON schemas.AboutJSON, err error)
 	GetServicesInfo() (response []schemas.Service, err error)
 }
 
@@ -32,7 +35,8 @@ func NewServiceController(
 
 func (controller *serviceController) AboutJSON(
 	ctx *gin.Context,
-) (allServicesJSON []schemas.ServiceJSON, err error) {
+) (aboutJSON schemas.AboutJSON, err error) {
+	allServicesJSON := []schemas.ServiceJSON{}
 	allServices := controller.service.FindAll()
 	for _, oneService := range allServices {
 		allServicesJSON = append(allServicesJSON, schemas.ServiceJSON{
@@ -41,7 +45,10 @@ func (controller *serviceController) AboutJSON(
 			Reaction: controller.serviceReaction.GetAllServicesByServiceId(oneService.Id),
 		})
 	}
-	return allServicesJSON, nil
+	aboutJSON.Client.Host = ctx.ClientIP()
+	aboutJSON.Server.CurrentTime = fmt.Sprintf("%d", time.Now().Unix())
+	aboutJSON.Server.Services = allServicesJSON
+	return aboutJSON, nil
 }
 
 func (controller *serviceController) GetServicesInfo() (response []schemas.Service, err error) {
