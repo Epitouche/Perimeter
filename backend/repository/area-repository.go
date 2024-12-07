@@ -90,7 +90,6 @@ func (repo *areaRepository) FindByUserId(userId uint64) []schemas.Area {
 	return areas
 }
 
-
 func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
 	var area schemas.Area
 	err := repo.db.Connection.Where(&schemas.Area{Id: id}).First(&area)
