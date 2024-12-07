@@ -98,6 +98,8 @@ func (service *userService) Register(
 
 	service.repository.Save(newUser)
 
+	newUser.Id = service.repository.FindByUserName(newUser.Username)[0].Id
+
 	return service.serviceJWT.GenerateToken(
 		fmt.Sprint(newUser.Id),
 		newUser.Username,

@@ -20,6 +20,7 @@ func NewAreAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup)
 		controller: controller,
 	}
 	api.CreateArea(apiRoutes)
+	api.GetUserAreas(apiRoutes)
 	return &api
 }
 
@@ -45,5 +46,18 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 		ctx.JSON(http.StatusOK, &schemas.Response{
 			Message: response,
 		})
+	})
+}
+
+func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
+	apiRoutes.GET("/", func(ctx *gin.Context) {
+		response, err := api.controller.GetUserAreas(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, response)
 	})
 }
