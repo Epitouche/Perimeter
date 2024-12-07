@@ -1,5 +1,7 @@
 package schemas
 
+import "errors"
+
 type SpotifyAction string
 
 type SpotifyReaction string
@@ -47,3 +49,9 @@ type SpotifyUserInfo struct {
 	Type    string `json:"type"`
 	Uri     string `json:"uri"`
 }
+
+// Errors Messages.
+var (
+	ErrSpotifySecretNotSet   = errors.New("SPOTIFY_SECRET is not set")
+	ErrSpotifyClientIdNotSet = errors.New("SPOTIFY_CLIENT_ID is not set")
+)

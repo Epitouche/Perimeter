@@ -21,7 +21,6 @@ type Token struct {
 
 // Errors Messages.
 var (
-	ErrTokenAlreadyExists = errors.New("token already exists")
-
-	ErrUnableGenerateCsrfToken = errors.New("unable to generate CSRF token")
+	ErrTokenAlreadyExists            = errors.New("token already exists")
+	ErrAccessTokenNotFoundInResponse = errors.New("access token not found in response")
 )

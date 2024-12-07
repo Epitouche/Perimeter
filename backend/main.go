@@ -145,7 +145,7 @@ func setupRouter() *gin.Engine {
 	api.NewAreAPI(areaController, apiRoutes)
 
 	// basic about.json route
-	router.GET("/about.json", serviceAPI.AboutJson)
+	router.GET("/about.json", serviceAPI.AboutJSON)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// view request received but not found

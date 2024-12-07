@@ -19,7 +19,7 @@ func TestPingRoute(t *testing.T) {
 	assert.JSONEq(t, `{"message":"pong"}`, w.Body.String())
 }
 
-func TestAboutJsonRoute(t *testing.T) {
+func TestAboutJSONRoute(t *testing.T) {
 	router := setupRouter()
 
 	w := httptest.NewRecorder()

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -55,7 +56,7 @@ func (controller *githubController) RedirectToService(
 	// Generate the CSRF token
 	state, err := tools.GenerateCSRFToken()
 	if err != nil {
-		return "", schemas.ErrUnableGenerateCsrfToken
+		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
 	}
 
 	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
@@ -114,7 +115,7 @@ func (controller *githubController) HandleServiceCallback(
 	tokenId, err := controller.serviceToken.SaveToken(newGithubToken)
 	userAlreadExists := false
 	if err != nil {
-		if err == schemas.ErrTokenAlreadyExists {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
 			userAlreadExists = true
 		} else {
 			return "", fmt.Errorf("unable to save token because %w", err)

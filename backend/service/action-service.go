@@ -12,7 +12,7 @@ type ActionService interface {
 	SaveAllAction()
 	FindById(actionId uint64) schemas.Action
 	GetActionsInfo(id uint64) (response []schemas.Action, err error)
-	GetAllServicesByServiceId(serviceId uint64) (actionJson []schemas.ActionJson)
+	GetAllServicesByServiceId(serviceId uint64) (actionJSON []schemas.ActionJSON)
 }
 
 type ServiceAction interface {
@@ -42,15 +42,15 @@ func (service *actionService) FindAll() []schemas.Action {
 
 func (service *actionService) GetAllServicesByServiceId(
 	serviceId uint64,
-) (actionJson []schemas.ActionJson) {
+) (actionJSON []schemas.ActionJSON) {
 	allActionForService := service.repository.FindByServiceId(serviceId)
 	for _, oneAction := range allActionForService {
-		actionJson = append(actionJson, schemas.ActionJson{
+		actionJSON = append(actionJSON, schemas.ActionJSON{
 			Name:        oneAction.Name,
 			Description: oneAction.Description,
 		})
 	}
-	return actionJson
+	return actionJSON
 }
 
 func (service *actionService) SaveAllAction() {

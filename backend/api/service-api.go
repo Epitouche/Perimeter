@@ -29,8 +29,8 @@ func NewServiceApi(
 	return &api
 }
 
-func (api *ServiceApi) AboutJson(ctx *gin.Context) {
-	allServices, err := api.controller.AboutJson(ctx)
+func (api *ServiceApi) AboutJSON(ctx *gin.Context) {
+	allServices, err := api.controller.AboutJSON(ctx)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{

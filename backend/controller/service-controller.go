@@ -8,7 +8,7 @@ import (
 )
 
 type ServiceController interface {
-	AboutJson(ctx *gin.Context) (allService []schemas.ServiceJson, err error)
+	AboutJSON(ctx *gin.Context) (allService []schemas.ServiceJSON, err error)
 	GetServicesInfo() (response []schemas.Service, err error)
 }
 
@@ -30,18 +30,18 @@ func NewServiceController(
 	}
 }
 
-func (controller *serviceController) AboutJson(
+func (controller *serviceController) AboutJSON(
 	ctx *gin.Context,
-) (allServicesJson []schemas.ServiceJson, err error) {
+) (allServicesJSON []schemas.ServiceJSON, err error) {
 	allServices := controller.service.FindAll()
 	for _, oneService := range allServices {
-		allServicesJson = append(allServicesJson, schemas.ServiceJson{
+		allServicesJSON = append(allServicesJSON, schemas.ServiceJSON{
 			Name:     schemas.ServiceName(oneService.Name),
 			Action:   controller.serviceAction.GetAllServicesByServiceId(oneService.Id),
 			Reaction: controller.serviceReaction.GetAllServicesByServiceId(oneService.Id),
 		})
 	}
-	return allServicesJson, nil
+	return allServicesJSON, nil
 }
 
 func (controller *serviceController) GetServicesInfo() (response []schemas.Service, err error) {

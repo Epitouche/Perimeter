@@ -1,5 +1,7 @@
 package schemas
 
+import "errors"
+
 type GmailAction string
 
 type GmailReaction string
@@ -53,3 +55,9 @@ type GmailReactionSendMailOption struct {
 	Subject string `json:"subject"`
 	Body    string `json:"body"`
 }
+
+// Errors Messages.
+var (
+	ErrGmailSecretNotSet   = errors.New("GMAIL_SECRET is not set")
+	ErrGmailClientIdNotSet = errors.New("GMAIL_CLIENT_ID is not set")
+)
