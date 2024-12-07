@@ -31,8 +31,11 @@ func NewAreAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup)
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	schemas.Response
-//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Security		Bearer
+//	@Security		bearerAuth
+//	@Param			payload	body		schemas.AreaMessage	true	"Area Payload"
+//	@Success		200		{object}	schemas.Response
+//	@Failure		500		{object}	schemas.ErrorResponse
 //	@Router			/area/ [post]
 func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/", func(ctx *gin.Context) {

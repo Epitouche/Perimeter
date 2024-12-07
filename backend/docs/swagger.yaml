@@ -48,6 +48,22 @@ definitions:
     - reaction_option
     - user_id
     type: object
+  schemas.AreaMessage:
+    properties:
+      action_id:
+        description: Foreign key for Action
+        type: integer
+      action_option:
+        type: string
+      reaction_id:
+        description: Foreign key for Reaction
+        type: integer
+      reaction_option:
+        type: string
+    required:
+    - action_option
+    - reaction_option
+    type: object
   schemas.AuthenticationUrl:
     properties:
       authentication_url:
@@ -247,6 +263,13 @@ paths:
       consumes:
       - application/json
       description: create area
+      parameters:
+      - description: Area Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.AreaMessage'
       produces:
       - application/json
       responses:
@@ -258,6 +281,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
       summary: create area
       tags:
       - Area
