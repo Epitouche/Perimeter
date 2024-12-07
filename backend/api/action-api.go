@@ -32,10 +32,11 @@ func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterG
 //	@Tags			Action
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.Response
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Security		bearerAuth
+//	@Param			id	path		int	true	"Service ID"
+//	@Success		200	{object}	[]schemas.Action
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/action/info/{id} [get]
 func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/:id", func(ctx *gin.Context) {

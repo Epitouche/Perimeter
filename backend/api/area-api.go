@@ -49,6 +49,19 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 	})
 }
 
+// GetUserAreas godoc
+//
+//	@Summary		get user areas
+//	@Description	get user areas list
+//	@Tags			Area
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Security		bearerAuth
+//	@Success		200	{object}	[]schemas.Area
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/area/ [get]
 func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		response, err := api.controller.GetUserAreas(ctx)

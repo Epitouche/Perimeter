@@ -19,7 +19,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "get action info of service id",
@@ -35,10 +35,10 @@ const docTemplate = `{
                 "summary": "get action info",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
+                        "type": "integer",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -46,7 +46,16 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.Action"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
@@ -59,6 +68,50 @@ const docTemplate = `{
             }
         },
         "/area/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "get user areas list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "get user areas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.Area"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "create area",
                 "consumes": [
@@ -161,6 +214,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
                     }
                 ],
                 "description": "give user info of github",
@@ -174,15 +230,6 @@ const docTemplate = `{
                     "Github"
                 ],
                 "summary": "give user info of github",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -256,6 +303,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.CodeCredentials"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -279,6 +332,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
                     }
                 ],
                 "description": "give user info of gmail",
@@ -292,15 +348,6 @@ const docTemplate = `{
                     "Gmail"
                 ],
                 "summary": "give user info of gmail",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -341,6 +388,107 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reaction/info/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "get reaction info of service id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reaction"
+                ],
+                "summary": "get reaction info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.Reaction"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/service/info/": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "get service info of service id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service"
+                ],
+                "summary": "get service info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.Service"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     }
                 }
@@ -397,6 +545,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.CodeCredentials"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -420,6 +574,9 @@ const docTemplate = `{
                 "security": [
                     {
                         "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
                     }
                 ],
                 "description": "give user info of spotify",
@@ -433,15 +590,6 @@ const docTemplate = `{
                     "Spotify"
                 ],
                 "summary": "give user info of spotify",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -464,11 +612,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/info/user": {
+        "/user/info/all": {
             "get": {
                 "security": [
                     {
                         "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
                     }
                 ],
                 "description": "give user info of user",
@@ -482,15 +633,49 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "give user info of user",
-                "parameters": [
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserAllInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info/user": {
+            "get": {
+                "security": [
                     {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
                     }
                 ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -606,6 +791,77 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "schemas.Action": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "option",
+                "service_id"
+            ],
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "option": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "$ref": "#/definitions/schemas.Service"
+                },
+                "update_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.Area": {
+            "type": "object",
+            "required": [
+                "action_id",
+                "action_option",
+                "reaction_id",
+                "reaction_option",
+                "user_id"
+            ],
+            "properties": {
+                "action_id": {
+                    "$ref": "#/definitions/schemas.Action"
+                },
+                "action_option": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reaction_id": {
+                    "$ref": "#/definitions/schemas.Reaction"
+                },
+                "reaction_option": {
+                    "type": "string"
+                },
+                "update_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "$ref": "#/definitions/schemas.User"
+                }
+            }
+        },
         "schemas.AuthenticationUrl": {
             "type": "object",
             "properties": {
@@ -638,11 +894,156 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.Reaction": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "option",
+                "service_id"
+            ],
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "option": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "$ref": "#/definitions/schemas.Service"
+                },
+                "update_at": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas.Response": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "schemas.Service": {
+            "type": "object",
+            "required": [
+                "description",
+                "name"
+            ],
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "$ref": "#/definitions/schemas.ServiceName"
+                },
+                "update_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.ServiceName": {
+            "type": "string",
+            "enum": [
+                "spotify",
+                "openWeatherMap",
+                "timer",
+                "gmail"
+            ],
+            "x-enum-varnames": [
+                "Spotify",
+                "OpenWeatherMap",
+                "Timer",
+                "Gmail"
+            ]
+        },
+        "schemas.Token": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "expireAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "$ref": "#/definitions/schemas.Service"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "updateAt": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "$ref": "#/definitions/schemas.User"
+                }
+            }
+        },
+        "schemas.User": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "can be null for Oauth2.0 users",
+                    "type": "string"
+                },
+                "token_id": {
+                    "description": "Foreign key for LinkUrl",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.UserAllInfo": {
+            "type": "object",
+            "properties": {
+                "tokens": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.Token"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/schemas.User"
                 }
             }
         },
@@ -660,8 +1061,9 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "bearerAuth": {
+            "description": "Use \"Bearer \u003ctoken\u003e\" as the format for the Authorization header",
             "type": "apiKey",
-            "name": "Authorization.",
+            "name": "Authorization",
             "in": "header"
         }
     }

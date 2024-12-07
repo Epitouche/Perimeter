@@ -84,10 +84,10 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorResponse
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserCredentials
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/github/info/user [get]
 func (api *GithubAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {

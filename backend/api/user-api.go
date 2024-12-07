@@ -90,10 +90,10 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorResponse
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserCredentials
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/user/info/user [get]
 func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
@@ -116,11 +116,11 @@ func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.schemas.UserAllInfo
-//	@Failure		401				{object}	schemas.ErrorResponse
-//	@Failure		500				{object}	schemas.ErrorResponse
-//	@Router			/user/info/user [get]
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserAllInfo
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/user/info/all [get]
 func (api *UserApi) GetUserAllInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/all", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserAllInfo(ctx)

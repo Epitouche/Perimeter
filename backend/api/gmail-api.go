@@ -54,9 +54,10 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Tags			Gmail
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Success		200		{object}	schemas.JWT
-//	@Failure		500		{object}	schemas.ErrorResponse
+//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Param			Authorization	header		string					false	"Bearer token"
+//	@Success		200				{object}	schemas.JWT
+//	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback [post]
 func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
@@ -80,10 +81,10 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		Bearer
-//	@Param			Authorization	header		string	true	"Bearer token"
-//	@Success		200				{object}	schemas.UserCredentials
-//	@Failure		401				{object}	schemas.ErrorResponse
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.UserCredentials
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/gmail/info/user [get]
 func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/user", func(ctx *gin.Context) {
