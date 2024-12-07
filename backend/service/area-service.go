@@ -100,7 +100,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				return
 			}
 			if area.Enable {
-				action(channelArea, area.ActionOption)
+				action(channelArea, area.ActionOption, area.Id)
 			}
 		}
 		println("clear")
@@ -119,7 +119,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
 			if area.Enable {
 				resultAction := <-channelArea
-				reaction(area.ReactionOption)
+				reaction(area.ReactionOption, area.Id)
 				println(resultAction)
 			}
 		}

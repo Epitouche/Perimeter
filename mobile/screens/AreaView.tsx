@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomNavBar from './NavBar';
 import {RootStackParamList} from '../App';
@@ -9,10 +9,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
 
 const AreasScreen = ({ navigation, route }: Props) => {
   const areas = [
-    { text: 'Upload every day', color: '#FF4D4D', icons: ['logo-github', 'time-outline'] },
-    { text: 'Start Music!', color: '#4CAF50', icons: ['cloud-outline', 'logo-spotify'] },
-    { text: 'Upload every day', color: '#9C27B0', icons: ['cloud-upload-outline', 'time-outline'] },
-    { text: 'Stock photo!', color: '#2196F3', icons: ['mail-outline', 'logo-dropbox'] },
+    { text: 'Upload every day', color: '#FF4D4D', icons: ['github', 'clock-outline'] },
+    { text: 'Start Music!', color: '#4CAF50', icons: ['cloud-outline', 'spotify'] },
+    { text: 'Upload every day', color: '#9C27B0', icons: ['cloud-upload-outline', 'clock-outline'] },
+    { text: 'Stock photo!', color: '#2196F3', icons: ['gmail', 'dropbox'] },
   ];
 
   return (
@@ -24,7 +24,7 @@ const AreasScreen = ({ navigation, route }: Props) => {
             <Text style={styles.areaText}>{area.text}</Text>
             <View style={styles.iconsContainer}>
               {area.icons.map((icon, idx) => (
-                <Ionicons key={idx} name={icon as any} size={24} color="white" style={styles.areaIcon} />
+                <MaterialCommunityIcons key={idx} name={icon} size={24} color="white" style={styles.areaIcon} />
               ))}
             </View>
           </View>

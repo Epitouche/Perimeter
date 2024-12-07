@@ -6,7 +6,7 @@ definePageMeta({
 const username = ref('')
 const password = ref('')
 
-const token = useCookie('token')
+const token = useCookie('token');
 const loginError = ref<string | null>(null);
 
 interface RegisterResponse {
@@ -14,15 +14,16 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
+const apps = ref<string[]>(['i-logos-spotify-icon', 'i-logos-google-icon']);
 
 const handleLogin = async () => {
-  if (!username.value || !password.value) {
-    loginError.value = 'Please enter username and password.';
-    return;
-  }
   try {
     loginError.value = null;
+
+    if (!username.value || !password.value) {
+      loginError.value = 'Please fill out all fields.';
+      return;
+    }
 
     const response = await $fetch<RegisterResponse>('/api/login', {
       method: 'POST',
@@ -34,16 +35,25 @@ const handleLogin = async () => {
 
     if (response.token) {
       token.value = response.token;
-      console.log('Token stored in localStorage:', response.token);
     }
     console.log('Login successful:', response);
     navigateTo('/myareas');
-  } catch (error: any) {
-    console.error('Login failed:', error);
-    loginError.value = error?.data?.message || 'Login failed. Please try again.';
+  } catch (error) {
+    if (error && typeof error === 'object' && 'data' in error) {
+      const typedError = error as { status?: number; data?: { message?: string } };
+      if (typedError.status === 401) {
+        loginError.value = 'Login failed. Please try again.';
+      } 
+      console.error('Login error:', typedError);
+    } else if (error instanceof Error) {
+      loginError.value = error.message || 'An unknown error occurred.';
+      console.error('Login failed:', error.message);
+    } else {
+      loginError.value = 'An unknown error occurred.';
+      console.error('Unexpected error:', error);
+    }
   }
 };
-
 </script>
 
 <template>
@@ -63,7 +73,7 @@ const handleLogin = async () => {
           <ULink to="/forgotpassword" class="text-xl text-custom_color-text_link self-end px-5">Forgot password?</ULink>
         </div>
         <div class="flex flex-col justify-center items-center min-w-full pt-4">
-          <div v-if="loginError" class="text-red-500 text-xl mt-4">
+          <div v-if="loginError" class="text-red-500 text-xl pb-1">
             {{ loginError }}
           </div>
           <UButton @click="handleLogin" class="text-center text-[2.5rem] px-12">Log in</UButton>

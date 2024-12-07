@@ -15,17 +15,23 @@ import (
 type SpotifyService interface {
 	AuthGetServiceAccessToken(code string, path string) (schemas.SpotifyTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error)
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
+	SpotifyReactionPlayMusic(option string, idArea uint64)
 }
 
 type spotifyService struct {
-	repository repository.SpotifyRepository
+	repository        repository.SpotifyRepository
+	serviceRepository repository.ServiceRepository
 }
 
 func NewSpotifyService(
 	githubTokenRepository repository.SpotifyRepository,
+	serviceRepository repository.ServiceRepository,
 ) SpotifyService {
 	return &spotifyService{
-		repository: githubTokenRepository,
+		repository:        githubTokenRepository,
+		serviceRepository: serviceRepository,
 	}
 }
 
@@ -48,9 +54,13 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
 	}
 
-	redirectURI := "http://localhost:" + appPort + path
+	redirectURI := "http://localhost:8081/services/spotify"
 
 	apiURL := "https://accounts.spotify.com/api/token"
+
+	// println("redirectURI", redirectURI)
+	// println("apiURL", apiURL)
+	// println("code", code)
 
 	data := url.Values{}
 	data.Set("code", code)
@@ -76,6 +86,13 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	if err != nil {
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
 	}
+
+	// println("resp")
+	// fmt.Printf("%+v\n", resp)
+	// println("resp.header")
+	// fmt.Printf("%+v\n", resp.Header)
+	// println("resp.Body")
+	// fmt.Printf("%+v\n", resp.Body)
 
 	var result schemas.SpotifyTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
@@ -115,4 +132,25 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 
 	resp.Body.Close()
 	return result, nil
+}
+
+func (service *spotifyService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *spotifyService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	switch name {
+	case string(schemas.PlayMusic):
+		return service.SpotifyReactionPlayMusic
+	default:
+		return nil
+	}
+}
+
+func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
 }

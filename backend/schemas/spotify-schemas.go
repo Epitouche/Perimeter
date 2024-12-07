@@ -1,6 +1,13 @@
 package schemas
 
-// SpotifyTokenResponse represents the response from Github when a token is requested.
+type SpotifyAction string
+
+type SpotifyReaction string
+
+const (
+	PlayMusic SpotifyReaction = "PlayMusic"
+)
+
 type SpotifyTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	Scope       string `json:"scope"`

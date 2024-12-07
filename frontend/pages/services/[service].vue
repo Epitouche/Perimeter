@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute, navigateTo } from 'nuxt/app';
 
 interface ApiResponse {
-    token: string;
+    token?: string;
 }
 
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+const token = useCookie('token');
 
 onMounted(() => {
   connectToService();
@@ -24,24 +23,28 @@ async function connectToService() {
   }
 
   try {
-    console.log(`Connecting to service with code=${code} and state=${state}...`);
+    const response = await Promise.race([
+      $fetch<ApiResponse>('/api/auth/service/connection', {
+        method: 'POST',
+        body: {
+          service: route.params.service,
+          code: code as string,
+          state: state as string,
+        },
+      }),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
+    ]);
 
-    const url = new URL(`http://server:8080/api/v1/${route.params.service}/auth/callback`);
-    url.searchParams.append('code', code as string);
-    url.searchParams.append('state', state as string);
-    console.log(`Sending to ${url}`)
-
-    const response = await $fetch<ApiResponse>('/api/auth/service/connection', {
-      method: 'GET',
-      body: {
-        link: url,
-      },
-    });
-    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000)),
-    console.log("Token : ", response);
-
-  } catch (error:any) {
-    showError(`Failed to connect to service: ${error.message}`);
+    console.log("Service token is:", response.token);
+    token.value = response.token;
+    navigateTo('/');
+  } catch (error) {
+    if (error instanceof Error) {
+      showError(`Failed to connect to service: ${error.message}`);
+    } else {
+      showError('Failed to connect to service: An unknown error occurred.');
+      console.error('Unexpected error:', error);
+    }
   } finally {
     isLoading.value = false;
   }
@@ -52,27 +55,22 @@ function showError(message: string) {
   console.error(message);
 
   setTimeout(() => {
-    navigateTo('/error');
+    navigateTo('/login');
   }, 3000);
 }
 
 </script>
 
 <template>
-  <div>
-    <div v-if="isLoading">Loading...</div>
+  <div class="flex flex-col items-center justify-center">
+    <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
 
-    <div v-if="errorMessage" class="error">
+    <div v-if="errorMessage" class="text-red-600 font-bold mt-2 text-lg text-center">
       {{ errorMessage }}
     </div>
   </div>
 </template>
 
-<style>
-.error {
-  color: red;
-  font-weight: bold;
-  margin-top: 10px;
-}
+<style scoped>
 </style>
 

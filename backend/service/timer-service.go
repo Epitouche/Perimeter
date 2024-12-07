@@ -11,12 +11,12 @@ import (
 )
 
 type TimerService interface {
-	TimerActionSpecificHour(c chan string, option string)
-	TimerReactionGiveTime(option string)
+	TimerActionSpecificHour(c chan string, option string, idArea uint64)
+	TimerReactionGiveTime(option string, idArea uint64)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string)
-	FindReactionbyName(name string) func(option string)
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
 }
 
 type timerService struct {
@@ -34,7 +34,9 @@ func NewTimerService(
 	}
 }
 
-func (service *timerService) FindActionbyName(name string) func(c chan string, option string) {
+func (service *timerService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
 	switch name {
 	case string(schemas.SpecificTime):
 		return service.TimerActionSpecificHour
@@ -43,7 +45,7 @@ func (service *timerService) FindActionbyName(name string) func(c chan string, o
 	}
 }
 
-func (service *timerService) FindReactionbyName(name string) func(option string) {
+func (service *timerService) FindReactionbyName(name string) func(option string, idArea uint64) {
 	switch name {
 	case string(schemas.GiveTime):
 		return service.TimerReactionGiveTime
@@ -52,55 +54,34 @@ func (service *timerService) FindReactionbyName(name string) func(option string)
 	}
 }
 
-type TimerActionSpecificHour struct {
-	Hour   int `json:"hour"`
-	Minute int `json:"minute"`
-}
-
-type TimeAPISTRUCT struct {
-	Year         int    `json:"year"`
-	Month        int    `json:"month"`
-	Day          int    `json:"day"`
-	Hour         int    `json:"hour"`
-	Minute       int    `json:"minute"`
-	Seconds      int    `json:"seconds"`
-	MilliSeconds int    `json:"milliSeconds"`
-	DateTime     string `json:"dateTime"`
-	Date         string `json:"date"`
-	Time         string `json:"time"`
-	TimeZone     string `json:"timeZone"`
-	DayOfWeek    string `json:"dayOfWeek"`
-	DstActive    bool   `json:"dstActive"`
-}
-
-func getActualTime() (TimeAPISTRUCT, error) {
+func getActualTime() (schemas.TimeAPISTRUCT, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone" +
 		"&timeZone=Europe/Paris"
 
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
-		return TimeAPISTRUCT{}, fmt.Errorf("error create request")
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error create request")
 	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return TimeAPISTRUCT{}, fmt.Errorf("error do request")
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error do request")
 	}
 
-	var result TimeAPISTRUCT
+	var result schemas.TimeAPISTRUCT
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return TimeAPISTRUCT{}, fmt.Errorf("error decode")
+		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error decode")
 	}
 
 	resp.Body.Close()
 	return result, nil
 }
 
-func (service *timerService) TimerActionSpecificHour(c chan string, option string) {
+func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
 	println("option" + option)
 
-	optionJson := TimerActionSpecificHour{}
+	optionJson := schemas.TimerActionSpecificHour{}
 
 	err := json.Unmarshal([]byte(option), &optionJson)
 	if err != nil {
@@ -120,7 +101,7 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 	time.Sleep(15 * time.Second)
 }
 
-func (service *timerService) TimerReactionGiveTime(option string) {
+func (service *timerService) TimerReactionGiveTime(option string, idArea uint64) {
 	println("give time")
 }
 
@@ -130,7 +111,7 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
 			Service:     service.serviceRepository.FindByName(schemas.Timer),
-			Option:      "{hour: 0, minute: 0}",
+			Option:      "{\"hour\": 0, \"minute\": 0}",
 		},
 	}
 }

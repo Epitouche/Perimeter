@@ -49,7 +49,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 		return schemas.GmailTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
 	}
 
-	redirectURI := "http://localhost:" + appPort + path
+	redirectURI := "http://localhost:8081/services/gmail"
 
 	apiURL := "https://oauth2.googleapis.com/token"
 
