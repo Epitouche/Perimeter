@@ -2,8 +2,6 @@ package schemas
 
 type GmailAction string
 
-const ()
-
 type GmailReaction string
 
 const (
@@ -31,27 +29,27 @@ type GmailUserInfo struct {
 	Email string `json:"email"`
 }
 
-type GmailProfileNamesMetadataSource struct {
-	Type string `json:"type"`
-	Id   string `json:"id"`
-}
-
-type GmailProfileNamesMetadata struct {
-	Primary       bool                            `json:"primary"`
-	Source        GmailProfileNamesMetadataSource `json:"source"`
-	SourcePrimary bool                            `json:"sourcePrimary"`
-}
-
-type GoogleProfileNames struct {
-	Metadata             GmailProfileNamesMetadata `json:"metadata"`
-	DisplayName          string                    `json:"displayName"`
-	GivenName            string                    `json:"givenName"`
-	DisplayNameLastFirst string                    `json:"displayNameLastFirst"`
-	UnstructuredName     string                    `json:"unstructuredName"`
-}
-
 type GoogleProfile struct {
-	ResourceName string               `json:"resourceName"`
-	Etag         string               `json:"etag"`
-	Names        []GoogleProfileNames `json:"names"`
+	ResourceName string `json:"resourceName"`
+	Etag         string `json:"etag"`
+	Names        []struct {
+		Metadata struct {
+			Primary bool `json:"primary"`
+			Source  struct {
+				Type string `json:"type"`
+				Id   string `json:"id"`
+			} `json:"source"`
+			SourcePrimary bool `json:"sourcePrimary"`
+		} `json:"metadata"`
+		DisplayName          string `json:"displayName"`
+		GivenName            string `json:"givenName"`
+		DisplayNameLastFirst string `json:"displayNameLastFirst"`
+		UnstructuredName     string `json:"unstructuredName"`
+	} `json:"names"`
+}
+
+type GmailReactionSendMailOption struct {
+	To      string `json:"to"`
+	Subject string `json:"subject"`
+	Body    string `json:"body"`
 }

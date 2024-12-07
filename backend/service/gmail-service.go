@@ -200,12 +200,14 @@ func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
 			Name:        string(schemas.SendMail),
 			Description: "Send an email",
 			Service:     service.serviceRepository.FindByName(schemas.Gmail),
-			Option:      "{}",
+			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
 		},
 	}
 }
 
-func (service *gmailService) FindActionbyName(name string) func(c chan string, option string, idArea uint64) {
+func (service *gmailService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
 	switch name {
 	default:
 		return nil
@@ -231,6 +233,14 @@ func (service *gmailService) GetReactionsName() []string {
 }
 
 func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
+	optionJson := schemas.GmailReactionSendMailOption{}
+
+	err := json.Unmarshal([]byte(option), &optionJson)
+	if err != nil {
+		println("error unmarshal option: " + err.Error())
+		return
+	}
+
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
@@ -243,13 +253,18 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 		return
 	}
 
+	// TODO check if the email is valid or not
+	// TODO check if the subject is valid or not
+	// TODO check if the body is valid or not
+
 	apiURL := "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
 
 	email := []byte("From: me@example.com\r\n" +
-		"To: recipient@example.com\r\n" +
-		"Subject: Hello World\r\n" +
+		"To: " + optionJson.To + "\r\n" +
+		"Subject: " + optionJson.Subject + "\r\n" +
 		"Content-Type: text/html; charset=utf-8\r\n\r\n" +
-		"<h1>Hello, World!</h1>\r\n")
+		optionJson.Body +
+		"\r\n")
 
 	raw := base64.URLEncoding.EncodeToString(email)
 
@@ -273,7 +288,11 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		respBody, _ := io.ReadAll(resp.Body)
-		fmt.Printf("Failed to send email. Status: %s, Response: %s\n", resp.Status, string(respBody))
+		fmt.Printf(
+			"Failed to send email. Status: %s, Response: %s\n",
+			resp.Status,
+			string(respBody),
+		)
 		return
 	}
 
