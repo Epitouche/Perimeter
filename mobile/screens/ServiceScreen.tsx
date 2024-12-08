@@ -13,10 +13,10 @@ import BottomNavBar from './NavBar';
 import {authorize} from 'react-native-app-auth';
 import {AppContext} from '../context/AppContext';
 
-const ServicesScreen = ({navigation}) => {
+const ServicesScreen = ({navigation}: {navigation: any}) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { ipAddress, token, setToken} = useContext(AppContext);
+  const { ipAddress, token, setToken, setServiceConnecting} = useContext(AppContext);
 
   const serviceIcons = {
     spotify: props => (
@@ -97,6 +97,39 @@ const ServicesScreen = ({navigation}) => {
   }
   Linking.addEventListener('url', handleUrl);
 
+  const googleAuthConfig = {
+    clientId: '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com', // Replace with env variable
+    clientSecret: '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', // Replace with env variable
+    redirectUrl: 'com.area://oauthredirect',
+    scopes: [
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/gmail.send',
+      'profile', 
+      'email',
+    ],
+    serviceConfiguration: {
+      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+      tokenEndpoint: 'https://oauth2.googleapis.com/token',
+    },
+    response_type: 'string',
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const authState = await authorize(googleAuthConfig);
+      console.log('Google Auth State:', authState);
+  
+      if (authState.accessToken) {
+        console.log('Google Access Token:', authState.accessToken);
+        setToken(authState.accessToken);
+      } else {
+        console.error('Google authentication failed: No access token received.');
+      }
+    } catch (error) {
+      console.error('Google Login Error:', error);
+    }
+  };
+
   const spotifyAuthConfig = {
     clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
     clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
@@ -106,6 +139,7 @@ const ServicesScreen = ({navigation}) => {
       authorizationEndpoint: 'https://accounts.spotify.com/authorize',
       tokenEndpoint: 'https://accounts.spotify.com/api/token',
     },
+    issuer: 'https://accounts.spotify.com',
   };
 
   const handleSpotifyLogin = async () => {
@@ -121,12 +155,14 @@ const ServicesScreen = ({navigation}) => {
   function connectService(service: string) {
     switch (service) {
       case 'spotify':
+        setServiceConnecting('spotify');
         handleSpotifyLogin();
         break;
       case 'openWeatherMap':
         break;
       case 'gmail':
-        Linking.openURL('https://accounts.google.com/signup');
+        setServiceConnecting('gmail');
+        handleGoogleLogin();
         break;
       default:
         console.log(`No connection URL for service: ${service}`);

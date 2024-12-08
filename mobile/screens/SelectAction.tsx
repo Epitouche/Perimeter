@@ -79,10 +79,11 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const handleOptionChange = (key: string, value: any) => {
+  const handleOptionChange = (key: string, value: any, type: any) => {
+    console.log('Type:', type);
     setSelectedActionOptions((prev) => ({
       ...prev,
-      [key]: value,
+      [key]: type === 'number' ? Number(value) : value,
     }));
   };
 
@@ -114,8 +115,8 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
               <TextInput
                 style={styles.optionInput}
                 value={String(selectedActionOptions[key])}
-                onChangeText={(text) => handleOptionChange(key, text)}
-                keyboardType="numeric" // Adjust as needed
+                onChangeText={(text) => handleOptionChange(key, text, typeof selectedActionOptions[key])}
+                keyboardType='numeric'
               />
             </View>
           ))}

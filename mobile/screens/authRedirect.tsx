@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, token, setToken} = useContext(AppContext);
+  const {ipAddress, token, setToken, serviceConnecting, setServiceConnecting} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   }, [navigation]);
 
   async function oauthCallback(code: string) {
-    const response = await fetch(`http://${ipAddress}:8080/api/v1/spotify/auth/callback`, // change it to be modular with route name (change spotify with something else...)
+    const response = await fetch(`http://${ipAddress}:8080/api/v1/${serviceConnecting}/auth/callback`, // change it to be modular with route name (change spotify with something else...)
       {
         method: 'POST',
         headers: {
@@ -37,9 +37,8 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
         body: JSON.stringify({ code }),
       }
     )
-    
-    console.log("response: ", response)
     const data = await response.json()
+    
     if (data.error) {
       console.error(data.error)
       navigation.goBack();
@@ -48,6 +47,7 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
       console.log("data: ", data)
       navigation.navigate("AreaView")
     }
+    setServiceConnecting('')
   }
 
   if (code) {

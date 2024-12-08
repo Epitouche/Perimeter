@@ -20,7 +20,7 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const {ipAddress, token} = useContext(AppContext);
-  const {actionId, actionOptions } = route.params;
+  const {actionId, actionOptions} = route.params;
 
   useEffect(() => {
     // Fetch actionas from API
@@ -92,7 +92,13 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
           <TouchableOpacity
             key={service.id}
             style={styles.serviceBox}
-            onPress={() => navigation.navigate('SelectReactionScreen', { actionId:actionId, actionOptions: actionOptions, serviceId: service.id})}>
+            onPress={() =>
+              navigation.navigate('SelectReactionScreen', {
+                actionId: actionId,
+                actionOptions: actionOptions,
+                serviceId: service.id,
+              })
+            }>
             <Text style={styles.serviceText}>{service.name}</Text>
           </TouchableOpacity>
         ))}

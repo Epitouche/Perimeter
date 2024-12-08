@@ -14,6 +14,7 @@ import SelectActionScreen from './screens/SelectAction';
 import WorkflowReactionScreen from './screens/WorkflowReaction';
 import AddReactionScreen from './screens/AddReaction';
 import SelectReactionScreen from './screens/SelectReaction';
+import AreaDetails from './screens/AreaDetails';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -28,6 +29,7 @@ export type RootStackParamList = {
   WorkflowReactionScreen: {actionId: number, actionOptions: { [key: string]: string }}; 
   AddReactionScreen: {actionId: number, actionOptions: { [key: string]: string }};
   SelectReactionScreen: {actionId: number, actionOptions: { [key: string]: string }, serviceId: number};
+  AreaDetails: { area: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -60,6 +62,7 @@ const App: React.FC = () => {
           <Stack.Screen name="WorkflowReactionScreen" component={WorkflowReactionScreen} />
           <Stack.Screen name="AddReactionScreen" component={AddReactionScreen} />
           <Stack.Screen name="SelectReactionScreen" component={SelectReactionScreen} />
+          <Stack.Screen name="AreaDetails" component={AreaDetails} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

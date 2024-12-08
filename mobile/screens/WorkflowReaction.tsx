@@ -25,6 +25,11 @@ const WorkflowReactionScreen = ({navigation, route}: Props) => {
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -90,6 +95,20 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: 'black',
     marginVertical: 10,
+  },
+  backButton: {
+    marginTop: 20,
+    width: '90%',
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
