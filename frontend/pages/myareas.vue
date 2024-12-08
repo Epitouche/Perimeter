@@ -32,19 +32,18 @@ const fetchWorkflows = async () => {
 onMounted(() => {
   fetchWorkflows();
 });
-
 </script>
 
 <template>
   <div>
-  <div>My Areas</div>
-  <div v-if="error" class="alert alert-danger">{{ error }}</div>
-  <div v-else-if="workflows">
-    <div v-for="workflow in workflows" :key="workflow.id">
-      {{ workflow.action_id.name }}
-      {{ workflow.reaction_id.name }}
+    <div>My Areas</div>
+    <div v-if="error" class="alert alert-danger">{{ error }}</div>
+    <div v-else-if="workflows">
+      <div v-for="workflow in workflows" :key="workflow.id">
+        {{ workflow.action_id.name }}
+        {{ workflow.reaction_id.name }}
+      </div>
     </div>
-  </div>
   </div>
 </template>
 

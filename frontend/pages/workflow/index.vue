@@ -216,7 +216,9 @@ onMounted(() => {
     <div v-if="showCancelButton" class="pt-24 pl-28">
       <UButton
         class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
-        @click="setWorkflowPageDefault">Cancel</UButton>
+        @click="setWorkflowPageDefault"
+        >Cancel</UButton
+      >
     </div>
 
     <div class="flex flex-col justify-center items-center gap-10">
@@ -224,16 +226,29 @@ onMounted(() => {
         Workflow
       </h1>
       <div class="flex flex-col justify-center items-center w-[28%]">
-        <ReActionButton title="Action" link="/workflow/actions" :is-disabled="false" :is-selected="actionIsSelected" />
-        <div :class="[
-          'bg-black min-w-4 min-h-28',
-          reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
-        ]" />
-        <ReActionButton title="Reaction" link="/workflow/reactions" :is-disabled="reactionButtonisDisabled"
-          :is-selected="reactionIsSelected" />
+        <ReActionButton
+          title="Action"
+          link="/workflow/actions"
+          :is-disabled="false"
+          :is-selected="actionIsSelected"
+        />
+        <div
+          :class="[
+            'bg-black min-w-4 min-h-28',
+            reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
+          ]"
+        />
+        <ReActionButton
+          title="Reaction"
+          link="/workflow/reactions"
+          :is-disabled="reactionButtonisDisabled"
+          :is-selected="reactionIsSelected"
+        />
       </div>
       <div v-if="showCreateButton" class="pt-10">
-        <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate">Create</UButton>
+        <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate"
+          >Create</UButton
+        >
       </div>
     </div>
   </div>
