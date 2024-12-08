@@ -90,6 +90,7 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 	optionJSON := schemas.TimerActionSpecificHour{}
 
 	println("timer option: " + option)
+	fmt.Printf("%+v\n", option)
 
 	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {

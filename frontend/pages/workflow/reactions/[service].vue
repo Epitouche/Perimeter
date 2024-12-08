@@ -57,14 +57,14 @@ const parseOption = (option: string) => {
 };
 
 const saveOptions = (reactionId: number) => {
-  // Convert all values to numbers if they are numbers
-  for (const key in modifiedOptions[reactionId]) {
-      console.log("key to int", key);
-      if (!isNaN(Number(modifiedOptions[reactionId][key]))) {
-        continue;
-      }
-      modifiedOptions[reactionId][key] = Number(modifiedOptions[reactionId][key]);
-  }
+  //// Convert all values to numbers if they are numbers
+  //for (const key in modifiedOptions[reactionId]) {
+  //    console.log("key to int", key);
+  //    if (!isNaN(Number(modifiedOptions[reactionId][key]))) {
+  //      continue;
+  //    }
+  //    modifiedOptions[reactionId][key] = Number(modifiedOptions[reactionId][key]);
+  //}
   router.push({
     name: "workflow",
     query: {

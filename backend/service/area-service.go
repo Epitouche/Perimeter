@@ -50,8 +50,16 @@ func (service *areaService) FindAll() []schemas.Area {
 func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	println("CreateArea Service")
 	var result schemas.AreaMessage
+
+	fmt.Printf("\n\nctx.Request.Body %+v\n\n\n", ctx.Request.Body)
+
+	// respBody, _ := io.ReadAll(ctx.Request.Body)
+
+	// fmt.Printf("\n\nrespBody %+v\n\n\n", respBody)
+
 	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 	if err != nil {
+		println(fmt.Errorf("can't bind credentials: %w", err))
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
 
