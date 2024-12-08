@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-definePageMeta({
-  middleware: "auth",
-});
-
 const menuOpen = ref(false);
 
 function toggleMenu() {

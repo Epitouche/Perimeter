@@ -71,6 +71,7 @@ docker compose up --build
 - [Oauth Documentation](./docs/oauth.md)
 - [Server API Documentation](./docs/serverApi.md)
 - [Dev Container](./docs/devContainer.md)
+- [Test Documentation](./docs/test.md)
 - [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
 
 ### Proof of Concept (POC)
