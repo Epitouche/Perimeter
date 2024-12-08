@@ -12,7 +12,7 @@
         android:allowBackup="false"
         android:theme="@style/AppTheme"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"> <!-- Allows HTTP requests -->
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
@@ -21,9 +21,21 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
+
+            <!-- Default Launcher Configuration -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep Link Configuration -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="com.area"
+                    android:pathPrefix="/oauthredirect" />
             </intent-filter>
         </activity>
 
