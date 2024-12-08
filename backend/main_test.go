@@ -9,23 +9,36 @@ import (
 )
 
 func TestPingRoute(t *testing.T) {
+	t.Parallel()            // Enable parallel execution for this test
 	router := setupRouter() // Use the setupRouter function from main.go
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/ping", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/ping", nil)
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 	assert.JSONEq(t, `{"message":"pong"}`, w.Body.String())
 }
 
-func TestAboutJsonRoute(t *testing.T) {
+func TestAboutJSONRoute(t *testing.T) {
+	t.Parallel() // Enable parallel execution for this test
 	router := setupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/about.json", nil)
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
-	// assert.JSONEq(t, `{"message":"hello"}`, w.Body.String())
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestNotFoundRoute(t *testing.T) {
+	t.Parallel() // Enable parallel execution for this test
+	router := setupRouter()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/nonexistent", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.JSONEq(t, `{"error":"not found","path":"/nonexistent","method":"GET"}`, w.Body.String())
 }

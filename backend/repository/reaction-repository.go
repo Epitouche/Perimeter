@@ -79,7 +79,7 @@ func (repo *reactionRepository) FindByServiceId(serviceId uint64) []schemas.Reac
 	err := repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceId}).
 		Find(&actions)
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find reaction by service id: %v", err.Error))
+		panic(fmt.Errorf("failed to find reaction by service id: %w", err.Error))
 	}
 	return actions
 }

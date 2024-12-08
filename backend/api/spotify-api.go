@@ -36,7 +36,7 @@ func NewSpotifyAPI(
 //	@Tags			Spotify
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	schemas.AuthenticationUrl
+//	@Success		200	{object}	schemas.AuthenticationURL
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/spotify/auth [get]
 func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
@@ -47,7 +47,7 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, schemas.AuthenticationUrl{Url: authURL})
+			ctx.JSON(http.StatusOK, schemas.AuthenticationURL{URL: authURL})
 		}
 	})
 }

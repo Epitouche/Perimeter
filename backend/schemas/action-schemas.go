@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type ActionJson struct {
+type ActionJSON struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
