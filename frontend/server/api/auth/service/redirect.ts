@@ -4,13 +4,11 @@ export default defineEventHandler(async (event) => {
   }
   const body = await readBody(event);
 
-
   const data = await $fetch<OAuthLink>(body.link);
 
   if (!data.authentication_url) {
-    throw new Error('Invalid authentication_url: Expected a valid URL');
+    throw new Error("Invalid authentication_url: Expected a valid URL");
   }
 
   return data;
 });
-

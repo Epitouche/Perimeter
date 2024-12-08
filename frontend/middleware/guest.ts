@@ -1,7 +1,7 @@
 export default defineNuxtRouteMiddleware(() => {
-    const authToken = useCookie('token');
+  const authToken = useCookie("token");
 
-    if (authToken.value) {
-        return navigateTo('/myareas');
-    }
-})
+  if (authToken.value) {
+    return navigateTo("/myareas");
+  }
+});

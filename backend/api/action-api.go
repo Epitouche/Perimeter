@@ -22,9 +22,23 @@ func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterG
 	}
 	apiRoutes = apiRoutes.Group("/info")
 	api.GetActionsInfo(apiRoutes)
+
 	return &api
 }
 
+// GetActionsInfo godoc
+//
+//	@Summary		get action info
+//	@Description	get action info of service id
+//	@Tags			Action
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Param			id	path		int	true	"Service ID"
+//	@Success		200	{object}	[]schemas.Action
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/action/info/{id} [get]
 func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
@@ -33,6 +47,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
+
 			return
 		}
 		response, err := api.controller.GetActionsInfo(idInt)
@@ -40,6 +55,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
+
 			return
 		}
 		ctx.JSON(http.StatusOK, response)

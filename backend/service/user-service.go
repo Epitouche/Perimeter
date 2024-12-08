@@ -10,11 +10,11 @@ import (
 )
 
 type UserService interface {
-	Login(user schemas.User) (JWTtoken string, userId uint64, err error)
-	Register(newUser schemas.User) (JWTtoken string, userId uint64, err error)
+	Login(user schemas.User) (jwtToken string, userID uint64, err error)
+	Register(newUser schemas.User) (jwtToken string, userID uint64, err error)
 	GetUserInfo(token string) (userInfo schemas.User, err error)
 	UpdateUserInfo(newUser schemas.User) (err error)
-	GetUserById(userId uint64) schemas.User
+	GetUserById(userID uint64) schemas.User
 }
 
 type userService struct {
@@ -35,10 +35,10 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 
 func (service *userService) Login(
 	newUser schemas.User,
-) (JWTtoken string, userId uint64, err error) {
+) (jwtToken string, userID uint64, err error) {
 	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
 	if len(userWiththisUserName) == 0 {
-		return "", 0, fmt.Errorf("invalid credentials")
+		return "", 0, schemas.ErrInvalidCredentials
 	}
 	// regular user
 	for _, user := range userWiththisUserName {
@@ -64,23 +64,23 @@ func (service *userService) Login(
 		}
 	}
 
-	return "", 0, fmt.Errorf("user not found")
+	return "", 0, schemas.ErrUserNotFound
 }
 
 func (service *userService) Register(
 	newUser schemas.User,
-) (JWTtoken string, userId uint64, err error) {
+) (jwtToken string, userID uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	fmt.Printf("%+v\n", userWiththisEmail)
 	if len(userWiththisEmail) != 0 {
 		// return service.Login(newUser)
-		return "", 0, fmt.Errorf("email already exists")
+		return "", 0, schemas.ErrEmailAlreadyExist
 	}
 
 	if newUser.Password != "" {
 		hashedPassword, err := database.HashPassword(newUser.Password)
 		if err != nil {
-			return "", 0, fmt.Errorf("error while hashing the password")
+			return "", 0, schemas.ErrHashingPassword
 		}
 		newUser.Password = hashedPassword
 	}
@@ -110,6 +110,6 @@ func (service *userService) UpdateUserInfo(newUser schemas.User) (err error) {
 	return nil
 }
 
-func (service *userService) GetUserById(userId uint64) schemas.User {
-	return service.repository.FindById(userId)
+func (service *userService) GetUserById(userID uint64) schemas.User {
+	return service.repository.FindById(userID)
 }

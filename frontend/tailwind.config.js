@@ -31,14 +31,14 @@ module.exports = {
         },
       },
       fontSize: {
-        custom_size_title: '7rem'
+        custom_size_title: "7rem",
       },
       fontWeight: {
-        custom_weight_title: '800',
-        custom_weight_connection_title: '600'
+        custom_weight_title: "800",
+        custom_weight_connection_title: "600",
       },
       borderRadius: {
-        custom_border_radius: '3.125rem'
+        custom_border_radius: "3.125rem",
       },
       borderWidth: {
         custom_border_width: '0.2rem'

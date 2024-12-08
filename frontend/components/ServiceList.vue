@@ -13,7 +13,9 @@ const handleClick = (name: string) => {
 </script>
 
 <template>
-  <UContainer class="flex flex-wrap gap-5 justify-center p-4 bg-white rounded-lg mx-auto">
+  <UContainer
+    class="flex flex-wrap gap-5 justify-center p-4 bg-white rounded-lg mx-auto"
+  >
     <UButton
       v-for="(app, index) in apps"
       :key="index"

@@ -69,7 +69,12 @@ func setupRouter() *gin.Engine {
 
 	// Services
 	githubService := service.NewGithubService(githubRepository)
-	gmailService := service.NewGmailService(gmailRepository)
+	gmailService := service.NewGmailService(
+		gmailRepository,
+		serviceRepository,
+		areaRepository,
+		tokenRepository,
+	)
 	spotifyService := service.NewSpotifyService(
 		spotifyRepository,
 		serviceRepository,
@@ -79,7 +84,12 @@ func setupRouter() *gin.Engine {
 	timerService := service.NewTimerService(timerRepository, serviceRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
-	serviceService := service.NewServiceService(serviceRepository, timerService, spotifyService)
+	serviceService := service.NewServiceService(
+		serviceRepository,
+		timerService,
+		spotifyService,
+		gmailService,
+	)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
 	areaService := service.NewAreaService(
@@ -135,7 +145,7 @@ func setupRouter() *gin.Engine {
 	api.NewAreAPI(areaController, apiRoutes)
 
 	// basic about.json route
-	router.GET("/about.json", serviceAPI.AboutJson)
+	router.GET("/about.json", serviceAPI.AboutJSON)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// view request received but not found
@@ -150,16 +160,17 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-func init() {
-	// err := .Load()
-	// if err != nil {
-	// 	panic("Error loading .env file")
-	// }
-}
+// func init() {
+// err := .Load()
+// if err != nil {
+// 	panic("Error loading .env file")
+// }
+// }
 
 // @securityDefinitions.apiKey	bearerAuth
 // @in							header
-// @name						Authorization.
+// @name						Authorization
+// @description				Use "Bearer <token>" as the format for the Authorization header.
 func main() {
 	router := setupRouter()
 

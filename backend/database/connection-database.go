@@ -33,7 +33,8 @@ func Connection() *gorm.DB {
 		panic("POSTGRES_DB is not set")
 	}
 
-	dsn := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbname + " port=" + port + " sslmode=disable TimeZone=Europe/Paris"
+	dsn := "host=" + host + " user=" + user + " password=" + password +
+		" dbname=" + dbname + " port=" + port + " sslmode=disable TimeZone=Europe/Paris"
 	conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")

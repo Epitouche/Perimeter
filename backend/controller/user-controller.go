@@ -13,6 +13,7 @@ type UserController interface {
 	Login(ctx *gin.Context) (string, error)
 	Register(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
+	GetUserAllInfo(ctx *gin.Context) (userInfo schemas.UserAllInfo, err error)
 }
 
 type userController struct {
@@ -56,17 +57,23 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
-	if len(credentials.Username) < 4 {
+	if len(credentials.Username) < schemas.UsernameMinimumLength {
 		return "", fmt.Errorf(
-			"username must be at least 4 characters long %v",
-			credentials.Username,
+			"username must be at least %d characters long",
+			schemas.UsernameMinimumLength,
 		)
 	}
-	if len(credentials.Password) < 8 {
-		return "", fmt.Errorf("password must be at least 8 characters long")
+	if len(credentials.Password) < schemas.PasswordMinimumLength {
+		return "", fmt.Errorf(
+			"password must be at least %d characters long",
+			schemas.PasswordMinimumLength,
+		)
 	}
-	if len(credentials.Email) < 4 {
-		return "", fmt.Errorf("email must be at least 4 characters long")
+	if len(credentials.Email) < schemas.EmailMinimumLength {
+		return "", fmt.Errorf(
+			"email must be at least %d characters long",
+			schemas.EmailMinimumLength,
+		)
 	}
 
 	newUser := schemas.User{
@@ -94,5 +101,26 @@ func (controller *userController) GetUserInfo(
 
 	userInfo.Email = user.Email
 	userInfo.Username = user.Username
+	return userInfo, nil
+}
+
+func (controller *userController) GetUserAllInfo(
+	ctx *gin.Context,
+) (userInfo schemas.UserAllInfo, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := controller.userService.GetUserInfo(tokenString)
+	if err != nil {
+		return schemas.UserAllInfo{}, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	tokens, err := controller.tokenService.GetTokenByUserId(user.Id)
+	if err != nil {
+		return schemas.UserAllInfo{}, fmt.Errorf("unable to get tokens info because %w", err)
+	}
+
+	userInfo.User = user
+	userInfo.Tokens = tokens
 	return userInfo, nil
 }

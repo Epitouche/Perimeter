@@ -1,26 +1,26 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth',
+  middleware: "auth",
 });
 
 const apps = [
   {
-    name: 'Spotify',
-    color: '#1DC000',
-    icon: 'i-logos-spotify-icon',
-    apiLink: 'http://server:8080/api/v1/spotify/auth/',
+    name: "Spotify",
+    color: "#1DC000",
+    icon: "i-logos-spotify-icon",
+    apiLink: "http://server:8080/api/v1/spotify/auth/",
   },
   {
-    name: 'Google',
-    color: '#E60000',
-    icon: 'i-logos-google-icon',
-    apiLink: 'http://server:8080/api/v1/gmail/auth/',
+    name: "Google",
+    color: "#E60000",
+    icon: "i-logos-google-icon",
+    apiLink: "http://server:8080/api/v1/gmail/auth/",
   },
   {
-    name: 'Time',
-    color: '#BB00FF',
-    icon: 'i-ic-outline-timelapse',
-    apiLink: 'http://server:8080/api/v1/dropbox/auth/',
+    name: "Time",
+    color: "#BB00FF",
+    icon: "i-ic-outline-timelapse",
+    apiLink: "http://server:8080/api/v1/dropbox/auth/",
   },
 ];
 </script>
@@ -35,5 +35,4 @@ const apps = [
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

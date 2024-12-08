@@ -19,8 +19,9 @@ func AuthorizeJWT() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, schemas.ErrorResponse{
 				Error: "No token provided",
 			})
-			return
+			ctx.Abort()
 
+			return
 		}
 		tokenString := authHeader[len("Bearer "):]
 
@@ -40,6 +41,8 @@ func AuthorizeJWT() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, schemas.ErrorResponse{
 				Error: "Invalid token",
 			})
+			ctx.Abort()
+
 			return
 		}
 	}

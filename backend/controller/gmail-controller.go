@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -44,18 +45,18 @@ func (controller *gmailController) RedirectToService(
 ) (string, error) {
 	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return "", fmt.Errorf("GMAIL_CLIENT_ID is not set")
+		return "", schemas.ErrGmailClientIdNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return "", fmt.Errorf("BACKEND_PORT is not set")
+		return "", schemas.ErrGmailSecretNotSet
 	}
 
 	// Generate the CSRF token
 	state, err := tools.GenerateCSRFToken()
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token")
+		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
 	}
 
 	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
@@ -83,7 +84,7 @@ func (controller *gmailController) HandleServiceCallback(
 	}
 	code := credentials.Code
 	if code == "" {
-		return "", fmt.Errorf("missing code")
+		return "", schemas.ErrMissingAuthenticationCode
 	}
 
 	// state := credentials.State
@@ -99,7 +100,7 @@ func (controller *gmailController) HandleServiceCallback(
 	authHeader := ctx.GetHeader("Authorization")
 	newUser := schemas.User{}
 	gmailToken := schemas.Token{}
-	bearerToken := ""
+	var bearerToken string
 
 	gmailTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
 	if err != nil {
@@ -151,7 +152,7 @@ func (controller *gmailController) HandleServiceCallback(
 	// Save the access token in the database
 	tokenId, err := controller.serviceToken.SaveToken(newgmailToken)
 	if err != nil {
-		if err.Error() == "token already exists" {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
 		} else {
 			return "", fmt.Errorf("unable to save token because %w", err)
 		}

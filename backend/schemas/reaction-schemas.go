@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type ReactionJson struct {
+type ReactionJSON struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }

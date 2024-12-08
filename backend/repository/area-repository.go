@@ -14,7 +14,7 @@ type AreaRepository interface {
 	Update(action schemas.Area)
 	Delete(action schemas.Area)
 	FindAll() []schemas.Area
-	FindByUserId(userId uint64) []schemas.Area
+	FindByUserId(userID uint64) []schemas.Area
 	FindById(id uint64) (schemas.Area, error)
 }
 
@@ -38,7 +38,7 @@ func (repo *areaRepository) SaveArea(action schemas.Area) (areaID uint64, err er
 	repo.Save(action)
 	result := repo.db.Connection.Last(&action)
 	if result.Error != nil {
-		return 0, fmt.Errorf("failed to save area: %v", err.Error())
+		return 0, fmt.Errorf("failed to save area: %w", err)
 	}
 	return action.Id, nil
 }
@@ -73,18 +73,18 @@ func (repo *areaRepository) FindAll() []schemas.Area {
 	return action
 }
 
-func (repo *areaRepository) FindByUserId(userId uint64) []schemas.Area {
+func (repo *areaRepository) FindByUserId(userID uint64) []schemas.Area {
 	var areas []schemas.Area
 
 	err := repo.db.Connection.
 		Preload("User").
 		Preload("Action.Service").
 		Preload("Reaction.Service").
-		Where(&schemas.Area{UserId: userId}).
+		Where(&schemas.Area{UserId: userID}).
 		Find(&areas)
 
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find areas by user id: %v", err.Error))
+		panic(fmt.Errorf("failed to find areas by user id: %w", err.Error))
 	}
 
 	return areas
@@ -101,7 +101,7 @@ func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
 	area.Reaction = reactionResult
 	if err.Error != nil {
 		println(err.Error)
-		return schemas.Area{}, fmt.Errorf("failed to find action by id: %v", err.Error)
+		return schemas.Area{}, fmt.Errorf("failed to find action by id: %w", err.Error)
 	}
 	return area, nil
 }

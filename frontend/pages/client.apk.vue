@@ -13,25 +13,25 @@ export default {
     };
   },
   mounted() {
-    const apkUrl = '/apk/client.apk';
+    const apkUrl = "/apk/client.apk";
 
     // Check if the file exists
-    fetch(apkUrl, { method: 'HEAD' })
+    fetch(apkUrl, { method: "HEAD" })
       .then((response) => {
         if (response.ok) {
           // File exists, trigger download
-          const link = document.createElement('a');
+          const link = document.createElement("a");
           link.href = apkUrl;
-          link.download = 'client.apk';
+          link.download = "client.apk";
           link.click();
         } else {
           // File not found
-          this.errorMessage = 'File not found';
+          this.errorMessage = "File not found";
         }
       })
       .catch(() => {
         // Handle any errors (e.g., network issues)
-        this.errorMessage = 'File not found';
+        this.errorMessage = "File not found";
       });
   },
 };

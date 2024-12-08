@@ -3,9 +3,16 @@ name: Create and publish a mobile Docker image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
+  pull_request:
+    branches:
+      - mobile
+      - mobile-feature/**
+      - dev
+      - pre-prod
   push:
     branches:
       - mobile
+      - mobile-feature/**
       - dev
       - pre-prod
 

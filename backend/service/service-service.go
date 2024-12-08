@@ -8,7 +8,7 @@ import (
 type ServiceService interface {
 	FindAll() (allServices []schemas.Service)
 	FindByName(serviceName schemas.ServiceName) schemas.Service
-	GetAllServices() (allServicesJson []schemas.ServiceJson, err error)
+	GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error)
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
@@ -25,6 +25,7 @@ type serviceService struct {
 	repository        repository.ServiceRepository
 	spotifyService    SpotifyService
 	timerService      TimerService
+	gmailService      GmailService
 	allService        []interface{}
 	allServiceSchemas []schemas.Service
 }
@@ -33,20 +34,22 @@ func NewServiceService(
 	repository repository.ServiceRepository,
 	timerService TimerService,
 	spotifyService SpotifyService,
+	gmailService GmailService,
 ) ServiceService {
 	newService := serviceService{
 		repository:     repository,
 		spotifyService: spotifyService,
 		timerService:   timerService,
+		gmailService:   gmailService,
 		allServiceSchemas: []schemas.Service{
 			{
 				Name:        schemas.Spotify,
 				Description: "This service is a music service",
 			},
-			{
-				Name:        schemas.OpenWeatherMap,
-				Description: "This service is a weather service",
-			},
+			// {
+			// 	Name:        schemas.OpenWeatherMap,
+			// 	Description: "This service is a weather service",
+			// },
 			{
 				Name:        schemas.Timer,
 				Description: "This service is a time service",
@@ -56,7 +59,7 @@ func NewServiceService(
 				Description: "This service is a mail service",
 			},
 		},
-		allService: []interface{}{spotifyService, timerService},
+		allService: []interface{}{spotifyService, timerService, gmailService},
 	}
 	newService.InitialSaveService()
 	return &newService
@@ -75,15 +78,15 @@ func (service *serviceService) FindAll() (allServices []schemas.Service) {
 	return service.repository.FindAll()
 }
 
-func (service *serviceService) GetAllServices() (allServicesJson []schemas.ServiceJson, err error) {
+func (service *serviceService) GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error) {
 	allServices := service.repository.FindAll()
 	for _, oneService := range allServices {
 		println(oneService.Name)
-		allServicesJson = append(allServicesJson, schemas.ServiceJson{
+		allServicesJSON = append(allServicesJSON, schemas.ServiceJSON{
 			Name: schemas.ServiceName(oneService.Name),
 		})
 	}
-	return allServicesJson, nil
+	return allServicesJSON, nil
 }
 
 func (service *serviceService) FindByName(serviceName schemas.ServiceName) schemas.Service {
