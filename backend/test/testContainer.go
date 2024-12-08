@@ -52,7 +52,6 @@ func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, err
 				WithOccurrence(2).
 				WithStartupTimeout(20*time.Second)),
 	)
-
 	if err != nil {
 		log.Printf("failed to start container: %s", err)
 		return postgresContainer, err
