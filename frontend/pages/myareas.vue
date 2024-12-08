@@ -23,7 +23,6 @@ definePageMeta({
 //     console.error("Error fetching workflows:", err);
 //   }
 // };
-
 </script>
 
 <template>
