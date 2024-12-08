@@ -13,7 +13,7 @@ const reactions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>(
+const modifiedOptions = reactive<{ [key: number]: { [key: string]: string | number } }>(
   {},
 );
 
@@ -28,8 +28,14 @@ const fetchReactions = async () => {
       },
     });
 
-    reactions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
+    reactions.value.forEach((reaction: any) => {
+      const parsedOption = JSON.parse(reaction.option || "{}");
+      for (const key in parsedOption) {
+        parsedOption[key] = isNaN(Number(parsedOption[key]))
+          ? parsedOption[key]
+          : Number(parsedOption[key]);
+      }
+      modifiedOptions[reaction.id] = parsedOption;
     });
 
     console.log("reactions", reactions.value);
@@ -57,10 +63,17 @@ const parseOption = (option: string) => {
 };
 
 const saveOptions = (reactionId: number) => {
+  for (const key in modifiedOptions[reactionId]) {
+    const value = modifiedOptions[reactionId][key];
+    if (!isNaN(Number(value)) && value !== '') {
+      modifiedOptions[reactionId][key] = Number(value);
+    }
+  }
+
   router.push({
     name: "workflow",
     query: {
-      reactionId: reactionId.toString(),
+      reactionId: reactionId,
       reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
     },
   });
@@ -85,7 +98,10 @@ const saveOptions = (reactionId: number) => {
               :key="key"
             >
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[reaction.id][key]" type="text" />
+              <input
+                v-model="modifiedOptions[reaction.id][key]"
+                :type="typeof value === 'number' ? 'number' : 'text'"
+              />
             </div>
             <button @click="saveOptions(reaction.id)">Save</button>
           </div>

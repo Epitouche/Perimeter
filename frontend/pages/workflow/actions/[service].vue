@@ -13,7 +13,7 @@ const actions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>(
+const modifiedOptions = reactive<{ [key: number]: { [key: string]: string | number } }>(
   {},
 );
 
@@ -29,7 +29,13 @@ const fetchActions = async () => {
     });
 
     actions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
+      const parsedOption = JSON.parse(action.option || "{}");
+      for (const key in parsedOption) {
+        parsedOption[key] = isNaN(Number(parsedOption[key]))
+          ? parsedOption[key]
+          : Number(parsedOption[key]);
+      }
+      modifiedOptions[action.id] = parsedOption;
     });
 
     console.log("actions", actions.value);
@@ -57,14 +63,22 @@ const parseOption = (option: string) => {
 };
 
 const saveOptions = (actionId: number) => {
+  for (const key in modifiedOptions[actionId]) {
+    const value = modifiedOptions[actionId][key];
+    if (!isNaN(Number(value)) && value !== '') {
+      modifiedOptions[actionId][key] = Number(value);
+    }
+  }
+
   router.push({
     name: "workflow",
     query: {
-      actionId: actionId.toString(),
+      actionId: actionId,
       actionOptions: JSON.stringify(modifiedOptions[actionId]),
     },
   });
 };
+
 </script>
 
 <template>
@@ -82,7 +96,10 @@ const saveOptions = (actionId: number) => {
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" type="text" />
+              <input
+                v-model="modifiedOptions[action.id][key]"
+                :type="typeof value === 'number' ? 'number' : 'text'"
+              />
             </div>
             <button @click="saveOptions(action.id)">Save</button>
           </div>

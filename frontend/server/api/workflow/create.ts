@@ -13,21 +13,24 @@ export default defineEventHandler(async (event) => {
         message: "Missing parameters",
       });
     }
+    console.log(params.actionId);
+    console.log(params.reactionId);
+    console.log(params.actionOptions);
+    console.log(params.reactionOptions);
     const response = await $fetch(`http://server:8080/api/v1/area`, {
       method: "POST",
       headers: {
         Authorization: "Bearer " + params.token,
       },
       body: {
-        actionOptions: params.actionOptions,
-        actionId: params.actionId,
-        reactionOptions: params.reactionOptions,
-        reactionId: params.reactionId,
+        action_option: params.actionOptions,
+        action_id: Number(params.actionId),
+        reaction_option: params.reactionOptions,
+        reaction_id: Number(params.reactionId),
       },
     });
     return response;
   } catch (error) {
     console.error("Error fetching services:", error);
-    console.log("Error fetching services:", error);
   }
 });
