@@ -4,6 +4,8 @@ definePageMeta({
   middleware: "auth",
 });
 
+const token = useCookie("token");
+
 const route = useRoute();
 const router = useRouter();
 
@@ -180,6 +182,7 @@ const onCreate = async () => {
     await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
+        token: token.value,
         actionOptions: actionOptions.value,
         actionId: actionId.value,
         reactionOptions: reactionOptions.value,
