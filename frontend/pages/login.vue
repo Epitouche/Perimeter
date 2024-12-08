@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
+  layout: "nonavbar",
   middleware: "guest",
 });
 
@@ -25,7 +26,7 @@ const handleLogin = async () => {
       return;
     }
 
-    const response = await $fetch<RegisterResponse>("/api/login", {
+    const response = await $fetch<RegisterResponse>("/api/auth/login", {
       method: "POST",
       body: {
         username: username.value,
@@ -36,7 +37,7 @@ const handleLogin = async () => {
     if (response.token) {
       token.value = response.token;
     }
-    console.log("Login successful:", response);
+    //console.log("Login successful:", response);
     navigateTo("/myareas");
   } catch (error) {
     if (error && typeof error === "object" && "data" in error) {
@@ -125,6 +126,7 @@ const handleLogin = async () => {
       <ConnectWithAppContainer :apps="apps" />
     </UContainer>
   </div>
+  label
 </template>
 
 <style scoped></style>

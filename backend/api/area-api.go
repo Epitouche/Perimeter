@@ -14,7 +14,7 @@ type AreaApi struct {
 	controller controller.AreaController
 }
 
-func NewAreAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup) *AreaApi {
+func NewAreaAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup) *AreaApi {
 	apiRoutes = apiRoutes.Group("/area", middlewares.AuthorizeJWT())
 	api := AreaApi{
 		controller: controller,
