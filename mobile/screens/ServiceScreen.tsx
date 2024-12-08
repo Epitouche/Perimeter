@@ -1,15 +1,25 @@
-import React from 'react';
-import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Linking,
+  ActivityIndicator,
+} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import BottomNavBar from './NavBar';
+import {authorize} from 'react-native-app-auth';
+import {AppContext} from '../context/AppContext';
 
+const ServicesScreen = ({navigation}) => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { ipAddress, token, setToken} = useContext(AppContext);
 
-const services = [
-  {
-    id: '1',
-    name: 'Spotify',
-    color: '#1DB954',
-    icon: props => (
+  const serviceIcons = {
+    spotify: props => (
       <Svg viewBox="0 0 24 24" {...props}>
         <Path
           fill="white"
@@ -17,38 +27,7 @@ const services = [
         />
       </Svg>
     ),
-  },
-  {
-    id: '2',
-    name: 'Timer',
-    color: '#9C27B0',
-    icon: props => (
-      <Svg viewBox="0 0 24 24" {...props}>
-        <Path
-          fill="white"
-          d="M15.07 1H8.93V2.5H15.07V1ZM12 7A8 8 0 1 0 20 15 8 8 0 0 0 12 7ZM18.93 14H12V8.93A6.12 6.12 0 0 1 18.93 14Z"
-        />
-      </Svg>
-    ),
-  },
-  {
-    id: '3',
-    name: 'Dropbox',
-    color: '#2196F3',
-    icon: props => (
-      <Svg viewBox="0 0 24 24" {...props}>
-        <Path
-          fill="white"
-          d="M5.64 3.6L10.73 6.7 5.64 9.8 0.55 6.7 5.64 3.6ZM18.36 3.6L23.45 6.7 18.36 9.8 13.27 6.7 18.36 3.6ZM0.55 12.2L5.64 15.3 10.73 12.2 5.64 9.1 0.55 12.2ZM18.36 9.1L23.45 12.2 18.36 15.3 13.27 12.2 18.36 9.1ZM12 12.2L16.64 15.3 12 18.4 7.36 15.3 12 12.2Z"
-        />
-      </Svg>
-    ),
-  },
-  {
-    id: '4',
-    name: 'Weather Map',
-    color: '#FF5722',
-    icon: props => (
+    openWeatherMap: props => (
       <Svg viewBox="0 0 24 24" {...props}>
         <Path
           fill="white"
@@ -56,12 +35,15 @@ const services = [
         />
       </Svg>
     ),
-  },
-  {
-    id: '5',
-    name: 'Gmail',
-    color: '#F44336',
-    icon: props => (
+    timer: props => (
+      <Svg viewBox="0 0 24 24" {...props}>
+        <Path
+          fill="white"
+          d="M15.07 1H8.93V2.5H15.07V1ZM12 7A8 8 0 1 0 20 15 8 8 0 0 0 12 7ZM18.93 14H12V8.93A6.12 6.12 0 0 1 18.93 14Z"
+        />
+      </Svg>
+    ),
+    gmail: props => (
       <Svg viewBox="0 0 24 24" {...props}>
         <Path
           fill="white"
@@ -69,17 +51,107 @@ const services = [
         />
       </Svg>
     ),
-  },
-];
+  };
 
-const ServicesScreen = ({ navigation }: { navigation : any }) => {
-  const renderService = ({ item }: { item: any }) => (
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/service/info`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        const data = await response.json();
+        setServices(data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  const handleUrl = (event: any) => {
+    console.log('Redirect URL:', event.url);
+    if (event.url) {
+      const url = new URL(event.url).searchParams
+      const token = url.get('token')
+      const code = url.get('code')
+      const error = url.get('error')
+
+      if (code) {
+        console.log('Received auth code:', code);
+      } else if (error) {
+        console.error('OAuth error:', error);
+      } else if (token) {
+        console.log('Received token:', token);
+        setToken(token);
+      }
+    }
+  }
+  Linking.addEventListener('url', handleUrl);
+
+  const spotifyAuthConfig = {
+    clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
+    clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
+    redirectUrl: 'com.area://oauthredirect',
+    scopes: ['user-read-private', 'user-read-email'],
+    serviceConfiguration: {
+      authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+      tokenEndpoint: 'https://accounts.spotify.com/api/token',
+    },
+  };
+
+  const handleSpotifyLogin = async () => {
+    try {
+      const authState = await authorize(spotifyAuthConfig);
+      console.log('Spotify Auth State:', authState);
+      console.log('Logged into Spotify successfully!');
+    } catch (error) {
+      console.log('Spotify Login Error:', error);
+    }
+  };
+
+  function connectService(service: string) {
+    switch (service) {
+      case 'spotify':
+        handleSpotifyLogin();
+        break;
+      case 'openWeatherMap':
+        break;
+      case 'gmail':
+        Linking.openURL('https://accounts.google.com/signup');
+        break;
+      default:
+        console.log(`No connection URL for service: ${service}`);
+    }
+  }
+
+  const renderService = ({item}: {item: any}) => (
     <TouchableOpacity
-      style={[styles.serviceButton, {backgroundColor: item.color}]}>
-      {item.icon({width: 36, height: 36})}
+      style={[styles.serviceButton, {backgroundColor: '#2196F3'}]} // Default color for unknown services
+      onPress={() => connectService(item.name)}>
+      {serviceIcons[item.name]?.({width: 36, height: 36}) || (
+        <Text style={styles.unknownIcon}>?</Text>
+      )}
       <Text style={styles.serviceText}>{item.name}</Text>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Loading services...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -88,7 +160,7 @@ const ServicesScreen = ({ navigation }: { navigation : any }) => {
       <FlatList
         data={services}
         renderItem={renderService}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         numColumns={2}
         contentContainerStyle={styles.list}
       />
@@ -130,6 +202,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: 'white',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  unknownIcon: {
+    fontSize: 18,
+    color: 'white',
   },
 });
 

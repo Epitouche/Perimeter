@@ -98,16 +98,16 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       },
       body: JSON.stringify({
         action_id: actionId,
-        action_option: actionOptions,
+        action_option: JSON.stringify(actionOptions),
         reaction_id: selectedReaction.id,
-        reaction_options: selectedReactionOptions,
+        reaction_options: JSON.stringify(selectedReactionOptions),
       }),
     });
     console.log("tamere :", JSON.stringify({
       action_id: actionId,
-      action_option: actionOptions,
+      action_option: JSON.stringify(actionOptions),
       reaction_id: selectedReaction.id,
-      reaction_options: selectedReactionOptions,
+      reaction_options: JSON.stringify(selectedReactionOptions),
     }));
     const data = await res.json();
     console.log('Area Creation:', data);

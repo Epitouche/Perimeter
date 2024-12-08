@@ -1,33 +1,78 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useContext, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomNavBar from './NavBar';
-import {RootStackParamList} from '../App';
+import { RootStackParamList } from '../App';
+import { AppContext } from '../context/AppContext';
+
+const ipAddress = 'your-ip-address-here'; // Replace with the actual IP address
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
 
-const AreasScreen = ({ navigation, route }: Props) => {
-  const areas = [
-    { text: 'Upload every day', color: '#FF4D4D', icons: ['github', 'clock-outline'] },
-    { text: 'Start Music!', color: '#4CAF50', icons: ['cloud-outline', 'spotify'] },
-    { text: 'Upload every day', color: '#9C27B0', icons: ['cloud-upload-outline', 'clock-outline'] },
-    { text: 'Stock photo!', color: '#2196F3', icons: ['gmail', 'dropbox'] },
-  ];
+const AreasScreen = ({ navigation }: Props) => {
+  const [areas, setAreas] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { ipAddress, token } = useContext(AppContext);
+
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, 
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        const data = await response.json();
+        setAreas(data);
+      } catch (error) {
+        console.error('Error fetching areas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAreas();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Loading AREAs...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>My AREAs</Text>
       <View style={styles.areasContainer}>
         {areas.map((area, index) => (
-          <View key={index} style={[styles.areaBox, { backgroundColor: area.color }]}>
-            <Text style={styles.areaText}>{area.text}</Text>
+          <TouchableOpacity
+            key={index}
+            style={[styles.areaBox, { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' }]} // Dynamic colors
+            onPress={() => navigation.navigate('AreaDetails', { area })}
+          >
+            <Text style={styles.areaText}>{
+              `${area.action_id.name} ~ ${area.reaction_id.name}`
+            }</Text>
             <View style={styles.iconsContainer}>
-              {area.icons.map((icon, idx) => (
-                <MaterialCommunityIcons key={idx} name={icon} size={24} color="white" style={styles.areaIcon} />
-              ))}
+              <MaterialCommunityIcons
+                name={area.action_id.service_id.name.toLowerCase()}
+                size={24}
+                color="white"
+              />
+              <MaterialCommunityIcons
+                name={area.reaction_id.service_id.name.toLowerCase()}
+                size={24}
+                color="white"
+              />
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
       <BottomNavBar navigation={navigation} />
@@ -71,21 +116,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '80%',
   },
-  areaIcon: {
-    marginHorizontal: 4,
-  },
-  navbarContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 8,
-    backgroundColor: '#f0f0f0',
-    borderTopWidth: 1,
-    borderTopColor: '#d0d0d0',
-  },
-  navButton: {
-    alignItems: 'center',
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, setToken} = useContext(AppContext);
+  const {ipAddress, token, setToken} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
     const timer = setTimeout(() => {
       setIsLoading(false);
       navigation.goBack();
-    }, 60000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [navigation]);
@@ -32,10 +32,12 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ code }),
       }
-    ) 
+    )
+    
     console.log("response: ", response)
     const data = await response.json()
     if (data.error) {
