@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -57,17 +56,17 @@ func (service *gmailService) AuthGetServiceAccessToken(
 ) (schemas.GmailTokenResponse, error) {
 	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("GMAIL_CLIENT_ID is not set")
+		return schemas.GmailTokenResponse{}, schemas.ErrGmailClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GMAIL_SECRET")
 	if clientSecret == "" {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("GMAIL_SECRET is not set")
+		return schemas.GmailTokenResponse{}, schemas.ErrGmailSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
+		return schemas.GmailTokenResponse{}, schemas.ErrBackendPortNotSet
 	}
 
 	redirectURI := "http://localhost:8081/services/gmail"
@@ -89,9 +88,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	req.URL.RawQuery = data.Encode()
 	req.Header.Set("Accept", "application/json")
 
-	client := &http.Client{
-		Timeout: time.Second * 30, // Adjust the timeout as needed
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.GmailTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
@@ -107,7 +104,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	}
 
 	if (result.AccessToken == "") || (result.TokenType == "") {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("access token not found in response")
+		return schemas.GmailTokenResponse{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
 	resp.Body.Close()
@@ -233,9 +230,9 @@ func (service *gmailService) GetReactionsName() []string {
 }
 
 func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
-	optionJson := schemas.GmailReactionSendMailOption{}
+	optionJSON := schemas.GmailReactionSendMailOption{}
 
-	err := json.Unmarshal([]byte(option), &optionJson)
+	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal option: " + err.Error())
 		return
@@ -260,10 +257,10 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 	apiURL := "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
 
 	email := []byte("From: me@example.com\r\n" +
-		"To: " + optionJson.To + "\r\n" +
-		"Subject: " + optionJson.Subject + "\r\n" +
+		"To: " + optionJSON.To + "\r\n" +
+		"Subject: " + optionJSON.Subject + "\r\n" +
 		"Content-Type: text/html; charset=utf-8\r\n\r\n" +
-		optionJson.Body +
+		optionJSON.Body +
 		"\r\n")
 
 	raw := base64.URLEncoding.EncodeToString(email)

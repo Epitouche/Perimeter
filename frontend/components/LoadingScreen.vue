@@ -15,7 +15,7 @@ onMounted(() => {
 
 <template>
   <div v-if="!timedOut" class="loading-screen">
-    <div class="loader"/>
+    <div class="loader" />
     <p>Chargement...</p>
   </div>
 </template>

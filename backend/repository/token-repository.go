@@ -13,7 +13,7 @@ type TokenRepository interface {
 	FindAll() []schemas.Token
 	FindByToken(token string) []schemas.Token
 	FindById(id uint64) schemas.Token
-	FindByUserId(userId uint64) (tokens []schemas.Token)
+	FindByUserId(userID uint64) (tokens []schemas.Token)
 	FindByUserIdAndServiceId(id uint64, serviceId uint64) schemas.Token
 }
 
@@ -81,11 +81,11 @@ func (repo *tokenRepository) FindById(id uint64) schemas.Token {
 	return tokens
 }
 
-func (repo *tokenRepository) FindByUserId(userId uint64) (tokens []schemas.Token) {
+func (repo *tokenRepository) FindByUserId(userID uint64) (tokens []schemas.Token) {
 	err := repo.db.Connection.
 		Preload("User").
 		Preload("Service").
-		Where(&schemas.Token{UserId: userId}).Find(&tokens)
+		Where(&schemas.Token{UserId: userID}).Find(&tokens)
 	if err.Error != nil {
 		panic(err.Error)
 	}

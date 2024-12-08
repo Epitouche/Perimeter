@@ -1,5 +1,7 @@
 package schemas
 
+import "errors"
+
 type SpotifyAction string
 
 type SpotifyReaction string
@@ -29,7 +31,7 @@ type SpotifyUserInfo struct {
 		FilterEnabled bool `json:"filter_enabled"`
 		FilterLocked  bool `json:"filter_locked"`
 	} `json:"explicit_content"`
-	ExternalUrls struct {
+	ExternalURLs struct {
 		Spotify string `json:"spotify"`
 	} `json:"external_urls"`
 	Followers struct {
@@ -39,7 +41,7 @@ type SpotifyUserInfo struct {
 	Href   string `json:"href"`
 	Id     string `json:"id"`
 	Images []struct {
-		Url    string `json:"url"`
+		URL    string `json:"url"`
 		Height int    `json:"height"`
 		Width  int    `json:"width"`
 	} `json:"images"`
@@ -47,3 +49,9 @@ type SpotifyUserInfo struct {
 	Type    string `json:"type"`
 	Uri     string `json:"uri"`
 }
+
+// Errors Messages.
+var (
+	ErrSpotifySecretNotSet   = errors.New("SPOTIFY_SECRET is not set")
+	ErrSpotifyClientIdNotSet = errors.New("SPOTIFY_CLIENT_ID is not set")
+)

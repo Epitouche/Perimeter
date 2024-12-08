@@ -13,7 +13,7 @@ type AreaResultRepository interface {
 	Update(action schemas.AreaResult)
 	Delete(action schemas.AreaResult)
 	FindAll() []schemas.AreaResult
-	FindByAreaId(userId uint64) []schemas.AreaResult
+	FindByAreaId(userID uint64) []schemas.AreaResult
 }
 
 type areaResultRepository struct {
@@ -67,7 +67,7 @@ func (repo *areaResultRepository) FindByAreaId(areaId uint64) []schemas.AreaResu
 	err := repo.db.Connection.Where(&schemas.AreaResult{AreaId: areaId}).
 		Find(&actions)
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find action by service id: %v", err.Error))
+		panic(fmt.Errorf("failed to find action by service id: %w", err.Error))
 	}
 	return actions
 }

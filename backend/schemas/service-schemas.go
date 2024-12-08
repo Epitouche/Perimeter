@@ -11,10 +11,10 @@ const (
 	Gmail          ServiceName = "gmail"
 )
 
-type ServiceJson struct {
+type ServiceJSON struct {
 	Name     ServiceName    `json:"name"`
-	Action   []ActionJson   `json:"actions"`
-	Reaction []ReactionJson `json:"reactions"`
+	Action   []ActionJSON   `json:"actions"`
+	Reaction []ReactionJSON `json:"reactions"`
 }
 
 // GithubToken represents the GithubToken entity in the database.
