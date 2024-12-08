@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
         Authorization: "Bearer " + params.token,
       },
     });
+    console.log("Services fetched successfully", response);
     return response;
   } catch (error) {
     console.error("Error fetching services:", error);
