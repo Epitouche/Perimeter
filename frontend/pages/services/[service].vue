@@ -38,7 +38,7 @@ async function connectToService() {
       ),
     ]);
 
-    console.log("Service token is:", response.token);
+    //console.log("Service token is:", response.token);
     token.value = response.token;
     navigateTo("/");
   } catch (error) {
