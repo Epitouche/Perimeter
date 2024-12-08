@@ -79,7 +79,7 @@ func (repo *actionRepository) FindByServiceId(serviceId uint64) []schemas.Action
 	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
 		Find(&actions)
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find action by service id: %v", err.Error))
+		panic(fmt.Errorf("failed to find action by service id: %w", err.Error))
 	}
 	return actions
 }

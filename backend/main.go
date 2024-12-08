@@ -145,7 +145,7 @@ func setupRouter() *gin.Engine {
 	api.NewAreaAPI(areaController, apiRoutes)
 
 	// basic about.json route
-	router.GET("/about.json", serviceAPI.AboutJson)
+	router.GET("/about.json", serviceAPI.AboutJSON)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// view request received but not found
@@ -160,17 +160,17 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-func init() {
-	// err := .Load()
-	// if err != nil {
-	// 	panic("Error loading .env file")
-	// }
-}
+// func init() {
+// err := .Load()
+// if err != nil {
+// 	panic("Error loading .env file")
+// }
+// }
 
 // @securityDefinitions.apiKey	bearerAuth
 // @in							header
 // @name						Authorization
-// @description				Use "Bearer <token>" as the format for the Authorization header
+// @description				Use "Bearer <token>" as the format for the Authorization header.
 func main() {
 	router := setupRouter()
 

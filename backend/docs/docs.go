@@ -176,7 +176,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.AuthenticationUrl"
+                            "$ref": "#/definitions/schemas.AuthenticationURL"
                         }
                     },
                     "500": {
@@ -288,7 +288,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.AuthenticationUrl"
+                            "$ref": "#/definitions/schemas.AuthenticationURL"
                         }
                     },
                     "500": {
@@ -530,7 +530,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.AuthenticationUrl"
+                            "$ref": "#/definitions/schemas.AuthenticationURL"
                         }
                     },
                     "500": {
@@ -904,7 +904,7 @@ const docTemplate = `{
                 }
             }
         },
-        "schemas.AuthenticationUrl": {
+        "schemas.AuthenticationURL": {
             "type": "object",
             "properties": {
                 "authentication_url": {
@@ -1047,6 +1047,7 @@ const docTemplate = `{
         "schemas.User": {
             "type": "object",
             "required": [
+                "email",
                 "username"
             ],
             "properties": {
@@ -1064,7 +1065,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "token_id": {
-                    "description": "Foreign key for LinkUrl",
+                    "description": "Foreign key for LinkURL",
                     "type": "integer"
                 },
                 "updated_at": {
@@ -1103,7 +1104,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "bearerAuth": {
-            "description": "Use \"Bearer \u003ctoken\u003e\" as the format for the Authorization header",
+            "description": "Use \"Bearer \u003ctoken\u003e\" as the format for the Authorization header.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

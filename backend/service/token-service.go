@@ -15,7 +15,7 @@ type TokenService interface {
 	Delete(token schemas.Token) error
 	FindAll() (allServices []schemas.Token)
 	GetTokenById(id uint64) (schemas.Token, error)
-	GetTokenByUserId(userId uint64) ([]schemas.Token, error)
+	GetTokenByUserId(userID uint64) ([]schemas.Token, error)
 }
 
 type tokenService struct {
@@ -35,7 +35,7 @@ func (service *tokenService) SaveToken(
 	tokens := service.repository.FindByToken(token.Token)
 	for _, t := range tokens {
 		if t.Token == token.Token {
-			return t.Id, fmt.Errorf("token already exists")
+			return t.Id, schemas.ErrTokenAlreadyExists
 		}
 	}
 
@@ -81,8 +81,8 @@ func (service *tokenService) GetTokenById(id uint64) (schemas.Token, error) {
 	return service.repository.FindById(id), nil
 }
 
-func (service *tokenService) GetTokenByUserId(userId uint64) ([]schemas.Token, error) {
-	return service.repository.FindByUserId(userId), nil
+func (service *tokenService) GetTokenByUserId(userID uint64) ([]schemas.Token, error) {
+	return service.repository.FindByUserId(userID), nil
 }
 
 func (service *tokenService) Update(token schemas.Token) error {

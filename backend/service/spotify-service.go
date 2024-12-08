@@ -7,14 +7,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	"area/repository"
 	"area/schemas"
 )
 
 type SpotifyService interface {
-	AuthGetServiceAccessToken(code string, path string) (schemas.SpotifyTokenResponse, error)
+	AuthGetServiceAccessToken(code string) (schemas.SpotifyTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error)
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
@@ -50,21 +49,20 @@ func NewSpotifyService(
 
 func (service *spotifyService) AuthGetServiceAccessToken(
 	code string,
-	path string,
 ) (schemas.SpotifyTokenResponse, error) {
 	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	if clientID == "" {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("SPOTIFY_CLIENT_ID is not set")
+		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("SPOTIFY_SECRET")
 	if clientSecret == "" {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("SPOTIFY_SECRET is not set")
+		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifySecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
+		return schemas.SpotifyTokenResponse{}, schemas.ErrBackendPortNotSet
 	}
 
 	redirectURI := "http://localhost:8081/services/spotify"
@@ -88,9 +86,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.SetBasicAuth(clientID, clientSecret)
 
-	client := &http.Client{
-		Timeout: time.Second * 30, // Adjust the timeout as needed
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
@@ -107,7 +103,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 	if result.AccessToken == "" {
 		fmt.Printf("Token exchange failed. Response body: %v\n", resp.Body)
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("invalid access token")
+		return schemas.SpotifyTokenResponse{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
 	resp.Body.Close()
@@ -133,7 +129,7 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		errorResponse := schemas.SpotifyErrorResponse{}
 		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
 		if err != nil {

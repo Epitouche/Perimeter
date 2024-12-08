@@ -58,28 +58,28 @@ func (service *timerService) FindReactionbyName(name string) func(option string,
 	}
 }
 
-func getActualTime() (schemas.TimeAPISTRUCT, error) {
+func getActualTime() (schemas.TimeApiResponse, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
-		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error create request")
+		return schemas.TimeApiResponse{}, schemas.ErrCreateRequest
 	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error do request")
+		return schemas.TimeApiResponse{}, schemas.ErrDoRequest
 	}
 
-	if resp.StatusCode != 200 {
-		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error status code %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		return schemas.TimeApiResponse{}, fmt.Errorf("error status code %d", resp.StatusCode)
 	}
 
-	var result schemas.TimeAPISTRUCT
+	var result schemas.TimeApiResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.TimeAPISTRUCT{}, fmt.Errorf("error decode")
+		return schemas.TimeApiResponse{}, schemas.ErrDecode
 	}
 
 	resp.Body.Close()
@@ -87,9 +87,9 @@ func getActualTime() (schemas.TimeAPISTRUCT, error) {
 }
 
 func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
-	optionJson := schemas.TimerActionSpecificHour{}
+	optionJSON := schemas.TimerActionSpecificHour{}
 
-	err := json.Unmarshal([]byte(option), &optionJson)
+	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal option: " + err.Error())
 		return
@@ -99,7 +99,7 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 	if err != nil {
 		println("error get actual time" + err.Error())
 	} else {
-		if actualTimeApi.Hour == optionJson.Hour && actualTimeApi.Minute == optionJson.Minute {
+		if actualTimeApi.Hour == optionJSON.Hour && actualTimeApi.Minute == optionJSON.Minute {
 			response := "current time is " + actualTimeApi.Time
 			println(response)
 			c <- response

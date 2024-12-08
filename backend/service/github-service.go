@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -35,17 +34,17 @@ func (service *githubService) AuthGetServiceAccessToken(
 ) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_CLIENT_ID is not set")
+		return schemas.GitHubTokenResponse{}, schemas.ErrGithubClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GITHUB_SECRET")
 	if clientSecret == "" {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("GITHUB_SECRET is not set")
+		return schemas.GitHubTokenResponse{}, schemas.ErrGithubSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("BACKEND_PORT is not set")
+		return schemas.GitHubTokenResponse{}, schemas.ErrBackendPortNotSet
 	}
 
 	redirectURI := "http://localhost:" + appPort + path
@@ -66,9 +65,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 	req.URL.RawQuery = data.Encode()
 	req.Header.Set("Accept", "application/json")
 
-	client := &http.Client{
-		Timeout: time.Second * 30, // Adjust the timeout as needed
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
