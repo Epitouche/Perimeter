@@ -19,7 +19,7 @@ onMounted(() => {
 });
 
 async function servicesConnectionInfos() {
-  try { 
+  try {
     const response = await $fetch("/api/auth/service/infos", {
       method: "POST",
       body: {
@@ -27,8 +27,15 @@ async function servicesConnectionInfos() {
       },
     });
 
-    if (typeof response === "object" && response !== null && "tokens" in response && Array.isArray((response as { tokens: unknown }).tokens)) {
-      const tokens = (response as { tokens: Array<{ service_id: { name: string } }> }).tokens;
+    if (
+      typeof response === "object" &&
+      response !== null &&
+      "tokens" in response &&
+      Array.isArray((response as { tokens: unknown }).tokens)
+    ) {
+      const tokens = (
+        response as { tokens: Array<{ service_id: { name: string } }> }
+      ).tokens;
       serviceNames = tokens.map((token) => token.service_id.name);
       console.log("Service Names Updated:", serviceNames);
     } else {
@@ -44,7 +51,6 @@ async function servicesConnectionInfos() {
     return [];
   }
 }
-
 
 const authApiCall = async (label: string) => {
   try {
@@ -68,16 +74,21 @@ const authApiCall = async (label: string) => {
 };
 
 const handleClick = (label: string) => {
-  if (label == "Spotify") {
-    if (serviceNames.includes(label)) {
+  const normalizedLabel = label.toLowerCase();
+  if (normalizedLabel === "spotify") {
+    if (
+      serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+    ) {
       //Disconnect
       alert("Already connected to Spotify.");
     } else {
       const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
       authApiCall(spotifyApiLink);
     }
-  } else if (label === "Gmail") {
-    if (serviceNames.includes("gmail")) {
+  } else if (normalizedLabel === "gmail") {
+    if (
+      serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+    ) {
       alert("Already connected to Gmail.");
     } else {
       const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
@@ -108,11 +119,9 @@ const handleClick = (label: string) => {
 </template>
 
 <style scoped>
-
 :deep(.app_button span) {
   height: 6rem;
   width: 6rem;
   color: white;
 }
-
 </style>

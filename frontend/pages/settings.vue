@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <NavigationBar />
-    Settings
-  </div>
+  <div>Settings</div>
 </template>
 
 <script lang="ts" setup>

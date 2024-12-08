@@ -16,9 +16,7 @@ export default defineEventHandler(async (event) => {
           code: params.code,
         },
         headers: {
-          Authorization: params.authorization
-            ? `Bearer ${params.authorization}`
-            : "",
+          Authorization: params.authorization ? `${params.authorization}` : "",
         },
       },
     );

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
+  layout: "nonavbar",
   middleware: "guest",
 });
 
@@ -125,6 +126,7 @@ const handleLogin = async () => {
       <ConnectWithAppContainer :apps="apps" />
     </UContainer>
   </div>
+  label
 </template>
 
 <style scoped></style>
