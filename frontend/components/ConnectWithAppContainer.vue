@@ -16,7 +16,7 @@ const authApiCall = async (label: string) => {
       },
     });
     navigateTo(response.authentication_url, { external: true });
-    console.log(response.authentication_url);
+    //console.log(response.authentication_url);
     return response;
   } catch (err) {
     if (err instanceof Error) {
@@ -46,15 +46,15 @@ const handleClick = (label: string) => {
 <template>
   <UContainer
     :ui="{ padding: 'px-0' }"
-    class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-between"
+    class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly"
   >
     <UButton
+      variant="ghost"
       v-for="(app, index) in apps"
       :key="index"
-      variant="ghost"
+      @click="handleClick(app)"
       :icon="app"
       class="app_button basis-1/3 flex justify-center"
-      @click="handleClick(app)"
     />
   </UContainer>
 </template>
