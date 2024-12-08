@@ -13,16 +13,19 @@ export default defineEventHandler(async (event) => {
         message: "Missing parameters",
       });
     }
+    console.log("actionOptions.value:", params.actionOptions);
+    console.log("reactionOptions.value:", params.reactionOptions);
+
     const response = await $fetch(`http://server:8080/api/v1/area`, {
       method: "POST",
       headers: {
         Authorization: "Bearer " + params.token,
       },
       body: {
-        actionOptions: params.actionOptions,
-        actionId: params.actionId,
-        reactionOptions: params.reactionOptions,
-        reactionId: params.reactionId,
+        action_option: String(params.actionOptions),
+        action_id: Number(params.actionId),
+        reaction_option: String(params.reactionOptions),
+        reaction_id: Number(params.reactionId),
       },
     });
     return response;
