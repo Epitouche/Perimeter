@@ -179,7 +179,7 @@ const setWorkflowPageDefault = () => {
 const onCreate = async () => {
   try {
     error.value = null;
-    await $fetch("/api/workflow/create", {
+    const response = await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
         token: token.value,
@@ -189,7 +189,7 @@ const onCreate = async () => {
         reactionId: reactionId.value,
       },
     });
-    console.log("Workflow created");
+    console.log("response:", response);
     setWorkflowPageDefault();
   } catch (err) {
     console.error("Error creating workflow:", err);
