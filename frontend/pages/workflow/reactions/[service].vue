@@ -1,25 +1,27 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'nonavbar',
-  middleware: 'auth'
+  layout: "nonavbar",
+  middleware: "auth",
 });
 
 const route = useRoute();
 const router = useRouter();
 const serviceId = route.params.service;
-const token = useCookie('token');
+const token = useCookie("token");
 
 const reactions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>({});
+const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>(
+  {},
+);
 
 const fetchReactions = async () => {
   try {
     error.value = null;
-    reactions.value = await $fetch('/api/workflow/reactions', {
-      method: 'POST',
+    reactions.value = await $fetch("/api/workflow/reactions", {
+      method: "POST",
       body: {
         token: token.value,
         service: serviceId,
@@ -27,13 +29,13 @@ const fetchReactions = async () => {
     });
 
     reactions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || '{}');
+      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
     });
 
-    console.log('reactions', reactions.value);
+    console.log("reactions", reactions.value);
   } catch (err) {
-    error.value = 'Failed to load reactions';
-    console.error('Error fetching reactions:', err);
+    error.value = "Failed to load reactions";
+    console.error("Error fetching reactions:", err);
   }
 };
 
@@ -49,27 +51,25 @@ const parseOption = (option: string) => {
   try {
     return JSON.parse(option);
   } catch (err) {
-    console.error('Invalid JSON format for option:', option, err);
+    console.error("Invalid JSON format for option:", option, err);
     return {};
   }
 };
 
 const saveOptions = (reactionId: number) => {
   router.push({
-  name: 'workflow',
-  query: {
-    reactionId: reactionId.toString(),
-    reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
-  },
-});
+    name: "workflow",
+    query: {
+      reactionId: reactionId.toString(),
+      reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
+    },
+  });
 };
 </script>
 
 <template>
   <div>
-    <h1>
-      Service Reactions Page
-    </h1>
+    <h1>Service Reactions Page</h1>
     <div v-if="error">
       <div>Error: {{ error }}</div>
     </div>
@@ -80,9 +80,12 @@ const saveOptions = (reactionId: number) => {
         </button>
         <div v-if="configIsOpen[reaction.id]">
           <div>
-            <div v-for="(value, key) in parseOption(reaction.option)" :key="key">
+            <div
+              v-for="(value, key) in parseOption(reaction.option)"
+              :key="key"
+            >
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[reaction.id][key]" type="text">
+              <input v-model="modifiedOptions[reaction.id][key]" type="text" />
             </div>
             <button @click="saveOptions(reaction.id)">Save</button>
           </div>

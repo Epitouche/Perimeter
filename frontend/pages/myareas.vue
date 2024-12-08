@@ -5,9 +5,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
-    My Areas
-  </div>
+  <div>My Areas</div>
 </template>
 
 <style></style>

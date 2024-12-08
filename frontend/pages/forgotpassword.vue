@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: 'nonavbar',
-  middleware: 'guest'
+  layout: "nonavbar",
+  middleware: "guest",
 });
 </script>
 

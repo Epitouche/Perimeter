@@ -1,25 +1,27 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'nonavbar',
-  middleware: 'auth'
+  layout: "nonavbar",
+  middleware: "auth",
 });
 
 const route = useRoute();
 const router = useRouter();
 const serviceId = route.params.service;
-const token = useCookie('token');
+const token = useCookie("token");
 
 const actions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>({});
+const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>(
+  {},
+);
 
 const fetchActions = async () => {
   try {
     error.value = null;
-    actions.value = await $fetch('/api/workflow/actions', {
-      method: 'POST',
+    actions.value = await $fetch("/api/workflow/actions", {
+      method: "POST",
       body: {
         token: token.value,
         service: serviceId,
@@ -27,13 +29,13 @@ const fetchActions = async () => {
     });
 
     actions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || '{}');
+      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
     });
 
-    console.log('actions', actions.value);
+    console.log("actions", actions.value);
   } catch (err) {
-    error.value = 'Failed to load actions';
-    console.error('Error fetching actions:', err);
+    error.value = "Failed to load actions";
+    console.error("Error fetching actions:", err);
   }
 };
 
@@ -49,27 +51,25 @@ const parseOption = (option: string) => {
   try {
     return JSON.parse(option);
   } catch (err) {
-    console.error('Invalid JSON format for option:', option, err);
+    console.error("Invalid JSON format for option:", option, err);
     return {};
   }
 };
 
 const saveOptions = (actionId: number) => {
   router.push({
-  name: 'workflow',
-  query: {
-    actionId: actionId.toString(),
-    actionOptions: JSON.stringify(modifiedOptions[actionId]),
-  },
-});
+    name: "workflow",
+    query: {
+      actionId: actionId.toString(),
+      actionOptions: JSON.stringify(modifiedOptions[actionId]),
+    },
+  });
 };
 </script>
 
 <template>
   <div>
-    <h1>
-      Service Actions Page
-    </h1>
+    <h1>Service Actions Page</h1>
     <div v-if="error">
       <div>Error: {{ error }}</div>
     </div>
@@ -82,7 +82,7 @@ const saveOptions = (actionId: number) => {
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" type="text">
+              <input v-model="modifiedOptions[action.id][key]" type="text" />
             </div>
             <button @click="saveOptions(action.id)">Save</button>
           </div>
