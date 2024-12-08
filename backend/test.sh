@@ -2,6 +2,6 @@
 
 set -e
 set -a
-source "./../.env"
+source ../.env
 go test -cover -coverprofile=coverage.out -race ./...
 set +a

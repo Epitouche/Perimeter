@@ -45,7 +45,7 @@ jobs:
         run: go mod download
 
       - name: Setup env
-        run: echo ${{ secrets.ENV }} > ../.env
+        run: echo '${{ secrets.ENV }}' > ../.env
 
       - name: Run tests
         run: ./test.sh
