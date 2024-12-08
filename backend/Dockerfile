@@ -22,7 +22,7 @@ COPY ./ .
 
 CMD ["go", "test", "-v"]
 
-FROM alpine:3.15 AS run
+FROM alpine:3.21 AS run
 
 WORKDIR /app
 

@@ -92,6 +92,7 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal option: " + err.Error())
+		time.Sleep(time.Second)
 		return
 	}
 

@@ -11,10 +11,11 @@ README.md
 .dockerignore
 Dockerfile
 
-# node
-node_modules
-.output
-dist
+# air
+.air.toml
 
-# nuxt
-.nuxt
+# scripts
+**/*.sh
+
+# test output
+**/*.out
