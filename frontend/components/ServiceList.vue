@@ -74,16 +74,21 @@ const authApiCall = async (label: string) => {
 };
 
 const handleClick = (label: string) => {
-  if (label == "Spotify") {
-    if (serviceNames.includes(label)) {
+  const normalizedLabel = label.toLowerCase();
+  if (normalizedLabel === "spotify") {
+    if (
+      serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+    ) {
       //Disconnect
       alert("Already connected to Spotify.");
     } else {
       const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
       authApiCall(spotifyApiLink);
     }
-  } else if (label === "Gmail") {
-    if (serviceNames.includes("gmail")) {
+  } else if (normalizedLabel === "gmail") {
+    if (
+      serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+    ) {
       alert("Already connected to Gmail.");
     } else {
       const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
