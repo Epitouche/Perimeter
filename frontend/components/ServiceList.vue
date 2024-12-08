@@ -87,7 +87,6 @@ const handleClick = (label: string) => {
     console.log(`${label} unknown icon clicked`);
   }
 };
-
 </script>
 
 <template>
