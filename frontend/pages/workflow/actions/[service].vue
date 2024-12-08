@@ -13,9 +13,9 @@ const actions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string | number } }>(
-  {},
-);
+const modifiedOptions = reactive<{
+  [key: number]: { [key: string]: string | number };
+}>({});
 
 const fetchActions = async () => {
   try {
@@ -65,7 +65,7 @@ const parseOption = (option: string) => {
 const saveOptions = (actionId: number) => {
   for (const key in modifiedOptions[actionId]) {
     const value = modifiedOptions[actionId][key];
-    if (!isNaN(Number(value)) && value !== '') {
+    if (!isNaN(Number(value)) && value !== "") {
       modifiedOptions[actionId][key] = Number(value);
     }
   }
@@ -78,7 +78,6 @@ const saveOptions = (actionId: number) => {
     },
   });
 };
-
 </script>
 
 <template>
