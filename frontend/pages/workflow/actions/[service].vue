@@ -13,9 +13,9 @@ const actions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string | number } }>(
-  {},
-);
+const modifiedOptions = reactive<{
+  [key: number]: { [key: string]: string | number };
+}>({});
 
 const fetchActions = async () => {
   try {
@@ -59,11 +59,11 @@ const parseOption = (option: string) => {
 const saveOptions = (actionId: number) => {
   // Convert all values to numbers if they are numbers
   for (const key in modifiedOptions[actionId]) {
-      console.log("key to int", key);
-      if (!isNaN(Number(modifiedOptions[actionId][key]))) {
-        continue;
-      }
-      modifiedOptions[actionId][key] = Number(modifiedOptions[actionId][key]);
+    console.log("key to int", key);
+    if (!isNaN(Number(modifiedOptions[actionId][key]))) {
+      continue;
+    }
+    modifiedOptions[actionId][key] = Number(modifiedOptions[actionId][key]);
   }
   router.push({
     name: "workflow",
@@ -90,7 +90,7 @@ const saveOptions = (actionId: number) => {
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" type="text"/>
+              <input v-model="modifiedOptions[action.id][key]" type="text" />
             </div>
             <button @click="saveOptions(action.id)">Save</button>
           </div>

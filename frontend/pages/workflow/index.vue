@@ -68,7 +68,7 @@ const loadWorkflowState = () => {
       : route.query.actionOptions;
 
     actionOptions.value = queryActionOptions
-      ? JSON.parse(queryActionOptions as (string | number))
+      ? JSON.parse(queryActionOptions as string | number)
       : JSON.parse(localStorage.getItem(ACTION_OPTIONS_KEY) || "null");
 
     const queryReactionId = Array.isArray(route.query.reactionId)
@@ -81,7 +81,7 @@ const loadWorkflowState = () => {
       : route.query.reactionOptions;
 
     reactionOptions.value = queryReactionOptions
-      ? JSON.parse(queryReactionOptions as (string | number))
+      ? JSON.parse(queryReactionOptions as string | number)
       : JSON.parse(localStorage.getItem(REACTION_OPTIONS_KEY) || "null");
   }
 };

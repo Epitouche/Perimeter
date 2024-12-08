@@ -13,9 +13,9 @@ const reactions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string | number } }>(
-  {},
-);
+const modifiedOptions = reactive<{
+  [key: number]: { [key: string]: string | number };
+}>({});
 
 const fetchReactions = async () => {
   try {
