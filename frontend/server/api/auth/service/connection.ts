@@ -3,11 +3,10 @@ export default defineEventHandler(async (event) => {
   if (!params.code || !params.service) {
     throw createError({
       statusCode: 400,
-      message: "Missing parameters: code, state, or service",
+      message: "Missing parameters: code, or service",
     });
   }
 
-  console.log("Before POST fetch");
   try {
     const response = await $fetch(
       `http://server:8080/api/v1/${params.service}/auth/callback`,
@@ -17,15 +16,15 @@ export default defineEventHandler(async (event) => {
           code: params.code,
         },
         headers: {
-          Authorization: params.authorization.value
-            ? `Bearer ${params.authorization.value}`
+          Authorization: params.authorization
+            ? `Bearer ${params.authorization}`
             : "",
         },
       },
     );
-    console.log(response);
+    //console.log(response);
     return response;
   } catch (error) {
-    console.log("Error is :", error);
+    console.log("Error :", error);
   }
 });
