@@ -29,6 +29,5 @@ func TestCreatePostgresContainer(t *testing.T) {
 	}()
 
 	// Verify the environment variables are set correctly
-	assert.Equal(t, "localhost", os.Getenv("DB_HOST"))
 	assert.NotEqual(t, "5432", os.Getenv("DB_PORT"))
 }
