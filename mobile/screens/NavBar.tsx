@@ -21,7 +21,7 @@ const BottomNavBar = ({navigation}: {navigation: NavigationProp<any>}) => {
         </Svg>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate('WorkflowScreen')}
+        onPress={() => navigation.navigate('Add')}
         style={styles.navButton}>
         <Svg
           xmlns="http://www.w3.org/2000/svg"

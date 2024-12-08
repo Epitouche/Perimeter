@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Linking,
 } from 'react-native';
-import 'url-search-params-polyfill';
 import {authorize} from 'react-native-app-auth';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
-import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -20,27 +17,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
-  const { ipAddress, setToken } = useContext(AppContext);
-
-  const handleUrl = (event: any) => {
-    console.log('Redirect URL:', event.url);
-    if (event.url) {
-      const url = new URL(event.url).searchParams
-      const token = url.get('token')
-      const code = url.get('code')
-      const error = url.get('error')
-
-      if (code) {
-        console.log('Received auth code:', code);
-      } else if (error) {
-        console.error('OAuth error:', error);
-      } else if (token) {
-        console.log('Received token:', token);
-        setToken(token);
-      }
-    }
-  }
-  Linking.addEventListener('url', handleUrl);
+  const ip = route.params?.ip || 'localhost';
 
   const spotifyAuthConfig = {
     clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
@@ -59,7 +36,8 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       console.log('Spotify Auth State:', authState);
       console.log('Logged into Spotify successfully!');
     } catch (error) {
-      console.log('Spotify Login Error:', error);
+      console.error('Spotify Login Error:', error);
+      console.log('Failed to log in to Spotify.');
     }
   };
 
@@ -80,7 +58,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
     if (!hasError) {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/user/login`, {
+        const response = await fetch(`http://${ip}:8080/api/v1/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -90,8 +68,8 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
         if (response.ok) {
           const data = await response.json();
-          setToken(data.token);
-          navigation.navigate('AreaView');
+          console.log('Data:', data);
+          navigation.navigate('AreaView', {ip: ip});
         } else {
           console.error('Error:', response.status);
         }
@@ -103,7 +81,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
   const switchToSignup = () => {
     console.log('Switch to signup');
-    navigation.navigate('SignUp');
+    navigation.navigate('SignUp', {ip: ip});
   };
 
   return (

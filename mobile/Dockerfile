@@ -4,9 +4,12 @@ WORKDIR /app
 
 COPY ./package.json ./package-lock.json /app/
 
-RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    npm install --legacy-peer-deps
+RUN apt-get update
+
+RUN apt-get install -y nodejs npm
+
+RUN npm install --legacy-peer-deps
+
 
 FROM node-install AS java-install
 
@@ -18,10 +21,6 @@ RUN apt-get install -y default-jdk
 FROM java-install AS build
 
 WORKDIR /app
-
-COPY ./android/gradlew ./android/gradle /app/android/
-
-RUN chmod +x /app/android/gradlew
 
 COPY ./ /app
 

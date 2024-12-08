@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,62 +6,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Linking,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
-import {authorize} from 'react-native-app-auth';
-import {AppContext} from '../context/AppContext';
-
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-const SignupScreen: React.FC<Props> = ({navigation, route}) => {
+const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState({username: '', password: '', email: ''});
-  const {ipAddress} = useContext(AppContext);
-
-  const handleUrl = (event: any) => {
-    console.log('Redirect URL:', event.url);
-    if (event.url) {
-      const url = new URL(event.url).searchParams;
-      const code = url.get('code');
-      const error = url.get('error');
-
-      if (code) {
-        console.log('Received auth code:', code);
-      } else if (error) {
-        console.error('OAuth error:', error);
-      }
-    }
-  };
-  Linking.addEventListener('url', handleUrl);
-
-  const spotifyAuthConfig = {
-    clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
-    clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-    redirectUrl: 'com.area://oauthredirect',
-    scopes: ['user-read-private', 'user-read-email'],
-    serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-      tokenEndpoint: 'https://accounts.spotify.com/api/token',
-    },
-  };
-
-  const handleSpotifyLogin = async () => {
-    try {
-      const authState = await authorize(spotifyAuthConfig);
-      console.log('Spotify Auth State:', authState);
-      console.log('Logged into Spotify successfully!');
-    } catch (error) {
-      console.log('Spotify Login Error:', error);
-    }
-  };
+  const [errors, setErrors] = useState({ username: '', password: '', email: '' });
+  const ip = route.params?.ip || 'localhost';
 
   const handleSignup = async () => {
     let hasError = false;
-    const newErrors = {username: '', password: '', email: ''};
+    const newErrors = { username: '', password: '', email: '' };
 
     if (!username) {
       newErrors.username = 'Username is required';
@@ -81,34 +40,36 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
 
     if (!hasError) {
       try {
-        const response = await fetch(
-          `http://${ipAddress}:8080/api/v1/user/register`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({email, username, password}),
+        if (!ip) {
+          console.log('Please enter an IP address');
+          return;
+        }
+
+        const response = await fetch(`http://${ip}:8080/api/v1/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({ email, username, password }),
+        });
 
         if (response.ok) {
           const data = await response.json();
           console.log('Data:', data);
-          navigation.navigate('Login');
+          navigation.navigate('Login', { 'ip': ip });
         } else {
-          console.error('Error:', response.status, ' | ', response.statusText);
+          console.error('Error:', response.status, " | " , response.statusText);
         }
       } catch (error) {
         console.error('Error', error);
       }
-    }
-  };
+    };
+  }
 
   const switchToLogin = () => {
     console.log('Switch to login');
-    navigation.navigate('Login');
-  };
+    navigation.navigate('Login', { 'ip': ip });
+  }
 
   return (
     <View style={styles.container}>
@@ -121,9 +82,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         value={username}
         onChangeText={text => setUsername(text)}
       />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
+      {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
       <TextInput
         style={styles.input}
@@ -132,9 +91,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         value={email}
         onChangeText={text => setEmail(text)}
       />
-      {errors.email ? (
-        <Text style={styles.errorText}>{errors.email}</Text>
-      ) : null}
+      {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
       <TextInput
         style={styles.input}
@@ -144,9 +101,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         value={password}
         onChangeText={text => setPassword(text)}
       />
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
-      ) : null}
+      {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
       <TouchableOpacity style={styles.registerButton} onPress={handleSignup}>
         <Text style={styles.signupButtonText}>Sign up</Text>
@@ -166,24 +121,18 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity>
-          <Image
-            source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Image
-            source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleSpotifyLogin}>
-          <Image
-            source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
+        <Image
+          source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
+          style={styles.socialIcon}
+        />
+        <Image
+          source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
+          style={styles.socialIcon}
+        />
+        <Image
+          source={{ uri: 'https://img.icons8.com/color/48/facebook.png' }}
+          style={styles.socialIcon}
+        />
       </View>
     </View>
   );

@@ -3,9 +3,9 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 /**
-* This is the configuration block to customize your React Native Android app.
-* By default you don't need to apply any configuration, just uncomment the lines you need.
-*/
+ * This is the configuration block to customize your React Native Android app.
+ * By default you don't need to apply any configuration, just uncomment the lines you need.
+ */
 react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
@@ -55,46 +55,35 @@ react {
 }
 
 /**
-* Set this to true to Run Proguard on Release builds to minify the Java bytecode.
-*/
+ * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ */
 def enableProguardInReleaseBuilds = false
 
 /**
-* The preferred build flavor of JavaScriptCore (JSC)
-*
-* For example, to use the international variant, you can use:
-* `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
-*
-* The international variant includes ICU i18n library and necessary data
-* allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
-* give correct results when using with locales other than en-US. Note that
-* this variant is about 6MiB larger per architecture than default.
-*/
+ * The preferred build flavor of JavaScriptCore (JSC)
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US. Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
 def jscFlavor = 'org.webkit:android-jsc:+'
-// import io.github.cdimascio.dotenv.Dotenv
-
-// Load the .env file
-// def dotenv = Dotenv.load()
-
-// Access the variables from the .env file
-def keystorePasswordEnv = System.getenv("KEYSTORE_PASSWORD")
-def keyPasswordEnv = System.getenv("KEY_PASSWORD")
 
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.area"
+    namespace "com.mobile"
     defaultConfig {
-        applicationId "com.area"
+        applicationId "com.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        manifestPlaceholders = [
-            appAuthRedirectScheme: project.hasProperty('scheme') ? project.scheme : "defaultscheme"
-        ]
     }
     signingConfigs {
         debug {
@@ -103,21 +92,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            storeFile file('../../key/area-key.jks')
-            storePassword "password"
-            keyAlias 'my-key-alias'
-            keyPassword "password"
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.release
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
+            signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
