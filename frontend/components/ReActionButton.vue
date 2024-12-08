@@ -10,8 +10,7 @@ defineProps<{
 <template>
   <div
     v-if="isSelected"
-    :class="[
-      'flex flex-row justify-evenly items-center bg-black py-12 rounded-3xl w-full',
+    :class="['flex flex-row justify-evenly items-center bg-black py-12 px-12 gap-10 rounded-3xl w-full',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
   >
@@ -28,7 +27,7 @@ defineProps<{
   <div
     v-else
     :class="[
-      'flex flex-row justify-evenly items-center bg-black py-12 rounded-3xl w-full',
+      'flex flex-row justify-evenly items-center bg-black py-12 px-12 gap-10 rounded-3xl w-full',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
   >

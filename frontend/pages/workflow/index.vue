@@ -225,7 +225,7 @@ onMounted(() => {
       <h1 class="text-custom_size_title font-custom_weight_title pb-5">
         Workflow
       </h1>
-      <div class="flex flex-col justify-center items-center w-[28%]">
+      <div class="flex flex-col justify-center items-center">
         <ReActionButton
           title="Action"
           link="/workflow/actions"
