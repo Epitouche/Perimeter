@@ -16,7 +16,7 @@ const authApiCall = async (label: string) => {
       },
     });
     navigateTo(response.authentication_url, { external: true });
-    console.log(response.authentication_url);
+    //console.log(response.authentication_url);
     return response;
   } catch (err) {
     if (err instanceof Error) {

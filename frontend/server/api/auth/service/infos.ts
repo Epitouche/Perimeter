@@ -1,20 +1,10 @@
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
-  if (!params.code || !params.service) {
-    throw createError({
-      statusCode: 400,
-      message: "Missing parameters: code, or service",
-    });
-  }
-
   try {
     const response = await $fetch(
-      `http://server:8080/api/v1/${params.service}/auth/callback`,
+      `http://server:8080/api/v1/user/info/all`,
       {
-        method: "POST",
-        body: {
-          code: params.code,
-        },
+        method: "GET",
         headers: {
           Authorization: params.authorization
             ? `Bearer ${params.authorization}`

@@ -35,7 +35,7 @@ const handleSignUp = async () => {
       return;
     }
 
-    const response = await $fetch<RegisterResponse>("/api/register", {
+    const response = await $fetch<RegisterResponse>("/api/auth/register", {
       method: "POST",
       body: {
         email: email.value,
@@ -46,9 +46,9 @@ const handleSignUp = async () => {
 
     if (response.token) {
       token.value = response.token;
-      console.log("Token stored in localStorage:", response.token);
+      ///console.log("Token stored in cookies:", response.token);
     }
-    console.log("Sign up successful:", response);
+    //console.log("Sign up successful:", response);
     navigateTo("/myareas");
   } catch (error) {
     if (error && typeof error === "object" && "data" in error) {

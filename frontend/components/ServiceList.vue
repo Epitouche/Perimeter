@@ -7,9 +7,50 @@ defineProps<{
   }[];
 }>();
 
+interface ServicesInfos {
+  AllInfos: string;
+}
+
+const tokenCookie = useCookie("token");
+
+onMounted(() => {
+  servicesConnectionInfos();
+});
+
+async function servicesConnectionInfos() {
+  try {
+    const response = await $fetch("/api/auth/service/infos", {
+      method: "POST",
+      body: {
+        authorization: tokenCookie.value,
+      },
+    });
+
+    if (typeof response === "object" && response !== null && "tokens" in response && Array.isArray((response as { tokens: unknown }).tokens)) {
+      const tokens = (response as { tokens: Array<{ service_id: { name: string } }> }).tokens;
+
+      const serviceNames = tokens.map(token => token.service_id.name);
+      console.log("Service Names:", serviceNames);
+      return serviceNames;
+    } else {
+      console.warn("Response does not contain valid tokens.");
+      return [];
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Unexpected error:", error.message);
+    } else {
+      console.error("Unknown error occurred.");
+    }
+    return [];
+  }
+}
+
+
 const handleClick = (name: string) => {
   console.log(`${name} clicked`);
 };
+
 </script>
 
 <template>
