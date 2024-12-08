@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -44,18 +45,18 @@ func (controller *spotifyController) RedirectToService(
 ) (string, error) {
 	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	if clientID == "" {
-		return "", fmt.Errorf("SPOTIFY_CLIENT_ID is not set")
+		return "", schemas.ErrSpotifyClientIdNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return "", fmt.Errorf("BACKEND_PORT is not set")
+		return "", schemas.ErrBackendPortNotSet
 	}
 
 	// Generate the CSRF token
 	state, err := tools.GenerateCSRFToken()
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token")
+		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
 	}
 
 	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
@@ -99,9 +100,9 @@ func (controller *spotifyController) HandleServiceCallback(
 	authHeader := ctx.GetHeader("Authorization")
 	newUser := schemas.User{}
 	spotifyToken := schemas.Token{}
-	bearerToken := ""
+	var bearerToken string
 
-	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
+	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code)
 	if err != nil {
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
@@ -149,7 +150,7 @@ func (controller *spotifyController) HandleServiceCallback(
 	// Save the access token in the database
 	tokenId, err := controller.serviceToken.SaveToken(newspotifyToken)
 	if err != nil {
-		if err.Error() == "token already exists" {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
 		} else {
 			return "", fmt.Errorf("unable to save token because %w", err)
 		}

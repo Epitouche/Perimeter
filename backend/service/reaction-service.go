@@ -10,7 +10,7 @@ type ReactionService interface {
 	SaveAllReaction()
 	FindById(reactionId uint64) schemas.Reaction
 	GetReactionsInfo(id uint64) (response []schemas.Reaction, err error)
-	GetAllServicesByServiceId(serviceId uint64) (reactionJson []schemas.ReactionJson)
+	GetAllServicesByServiceId(serviceId uint64) (reactionJSON []schemas.ReactionJSON)
 }
 
 type ServiceReaction interface {
@@ -40,15 +40,15 @@ func (service *reactionService) FindAll() []schemas.Reaction {
 
 func (service *reactionService) GetAllServicesByServiceId(
 	serviceId uint64,
-) (reactionJson []schemas.ReactionJson) {
+) (reactionJSON []schemas.ReactionJSON) {
 	allRectionForService := service.repository.FindByServiceId(serviceId)
 	for _, oneReaction := range allRectionForService {
-		reactionJson = append(reactionJson, schemas.ReactionJson{
+		reactionJSON = append(reactionJSON, schemas.ReactionJSON{
 			Name:        oneReaction.Name,
 			Description: oneReaction.Description,
 		})
 	}
-	return reactionJson
+	return reactionJSON
 }
 
 func (service *reactionService) SaveAllReaction() {

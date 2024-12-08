@@ -15,7 +15,6 @@ type areaResultService struct {
 
 func NewAreaResultService(
 	repository repository.AreaResultRepository,
-	serviceService ServiceService,
 ) AreaResultService {
 	newService := areaResultService{
 		repository: repository,

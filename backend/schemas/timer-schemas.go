@@ -19,7 +19,7 @@ type TimerActionSpecificHour struct {
 
 type TimerReactionGiveTime struct{}
 
-type TimeAPISTRUCT struct {
+type TimeApiResponse struct {
 	Year         int    `json:"year"`
 	Month        int    `json:"month"`
 	Day          int    `json:"day"`

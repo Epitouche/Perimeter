@@ -20,8 +20,8 @@ func AuthorizeJWT() gin.HandlerFunc {
 				Error: "No token provided",
 			})
 			ctx.Abort()
-			return
 
+			return
 		}
 		tokenString := authHeader[len("Bearer "):]
 
@@ -42,6 +42,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 				Error: "Invalid token",
 			})
 			ctx.Abort()
+
 			return
 		}
 	}
