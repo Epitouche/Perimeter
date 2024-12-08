@@ -67,7 +67,7 @@ func (repo *areaResultRepository) FindByAreaId(areaId uint64) []schemas.AreaResu
 	err := repo.db.Connection.Where(&schemas.AreaResult{AreaId: areaId}).
 		Find(&actions)
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find action by service id: %w", err))
+		panic(fmt.Errorf("failed to find action by service id: %w", err.Error))
 	}
 	return actions
 }
