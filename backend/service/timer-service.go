@@ -89,9 +89,6 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
 	optionJSON := schemas.TimerActionSpecificHour{}
 
-	println("timer option: " + option)
-	fmt.Printf("%+v\n", option)
-
 	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal timer option: " + err.Error())
