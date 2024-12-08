@@ -10,7 +10,7 @@ const apps = [
     icon: "i-logos-spotify-icon",
   },
   {
-    name: "Google",
+    name: "Gmail",
     color: "#E60000",
     icon: "i-logos-google-icon",
   },

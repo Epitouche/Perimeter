@@ -7,18 +7,19 @@ defineProps<{
   }[];
 }>();
 
-interface ServicesInfos {
-  AllInfos: string;
+interface OAuthLink {
+  authentication_url: string;
 }
 
 const tokenCookie = useCookie("token");
+let serviceNames: string[] = [];
 
 onMounted(() => {
   servicesConnectionInfos();
 });
 
 async function servicesConnectionInfos() {
-  try {
+  try { 
     const response = await $fetch("/api/auth/service/infos", {
       method: "POST",
       body: {
@@ -28,12 +29,10 @@ async function servicesConnectionInfos() {
 
     if (typeof response === "object" && response !== null && "tokens" in response && Array.isArray((response as { tokens: unknown }).tokens)) {
       const tokens = (response as { tokens: Array<{ service_id: { name: string } }> }).tokens;
-
-      const serviceNames = tokens.map(token => token.service_id.name);
-      console.log("Service Names:", serviceNames);
-      return serviceNames;
+      serviceNames = tokens.map((token) => token.service_id.name);
+      console.log("Service Names Updated:", serviceNames);
     } else {
-      console.warn("Response does not contain valid tokens.");
+      console.error("Response does not contain valid tokens.");
       return [];
     }
   } catch (error) {
@@ -47,8 +46,46 @@ async function servicesConnectionInfos() {
 }
 
 
-const handleClick = (name: string) => {
-  console.log(`${name} clicked`);
+const authApiCall = async (label: string) => {
+  try {
+    const response = await $fetch<OAuthLink>("/api/auth/service/redirect", {
+      method: "POST",
+      body: {
+        link: label,
+      },
+    });
+    navigateTo(response.authentication_url, { external: true });
+    //console.log(response.authentication_url);
+    return response;
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    } else {
+      console.error("Unexpected error:", err);
+    }
+    throw err;
+  }
+};
+
+const handleClick = (label: string) => {
+  if (label == "Spotify") {
+    if (serviceNames.includes(label)) {
+      //Disconnect
+      alert("Already connected to Spotify.");
+    } else {
+      const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
+      authApiCall(spotifyApiLink);
+    }
+  } else if (label === "Gmail") {
+    if (serviceNames.includes("gmail")) {
+      alert("Already connected to Gmail.");
+    } else {
+      const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
+      authApiCall(gmailApiLink);
+    }
+  } else {
+    console.log(`${label} unknown icon clicked`);
+  }
 };
 
 </script>
@@ -63,6 +100,7 @@ const handleClick = (name: string) => {
       :icon="app.icon"
       class="app_button flex flex-col items-center justify-center w-[15rem] h-[15rem] rounded-lg transition-transform hover:scale-105"
       :style="{ backgroundColor: app.color }"
+      :disabled="serviceNames.includes(app.name)"
       @click="handleClick(app.name)"
     >
       <span class="text-3xl text-white font-bold mt-auto">{{ app.name }}</span>
@@ -71,9 +109,11 @@ const handleClick = (name: string) => {
 </template>
 
 <style scoped>
+
 :deep(.app_button span) {
   height: 6rem;
   width: 6rem;
   color: white;
 }
+
 </style>
