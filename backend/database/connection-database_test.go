@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -42,7 +43,11 @@ func TestConnectionWithContainer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to start container: %s", err)
 	}
-	defer postgresContainer.Terminate(ctx)
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
 
 	host, err := postgresContainer.Host(ctx)
 	if err != nil {
