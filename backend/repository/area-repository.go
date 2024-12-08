@@ -84,7 +84,7 @@ func (repo *areaRepository) FindByUserId(userID uint64) []schemas.Area {
 		Find(&areas)
 
 	if err.Error != nil {
-		panic(fmt.Errorf("failed to find areas by user id: %w", err))
+		panic(fmt.Errorf("failed to find areas by user id: %w", err.Error))
 	}
 
 	return areas
@@ -101,7 +101,7 @@ func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
 	area.Reaction = reactionResult
 	if err.Error != nil {
 		println(err.Error)
-		return schemas.Area{}, fmt.Errorf("failed to find action by id: %w", err)
+		return schemas.Area{}, fmt.Errorf("failed to find action by id: %w", err.Error)
 	}
 	return area, nil
 }
