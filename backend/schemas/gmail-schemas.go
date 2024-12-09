@@ -61,3 +61,7 @@ var (
 	ErrGmailSecretNotSet   = errors.New("GMAIL_SECRET is not set")
 	ErrGmailClientIdNotSet = errors.New("GMAIL_CLIENT_ID is not set")
 )
+
+type GmailMobileTokenRequest struct {
+	Token string `json:"token"`
+}

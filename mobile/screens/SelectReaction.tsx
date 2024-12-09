@@ -79,10 +79,10 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  const handleOptionChange = (key: string, value: any) => {
+  const handleOptionChange = (key: string, value: any, type: any) => {
     setSelectedReactionOptions((prev) => ({
       ...prev,
-      [key]: value,
+      [key]: type === 'number' ? parseFloat(value) : value,
     }));
   };
 
@@ -98,9 +98,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       },
       body: JSON.stringify({
         action_id: actionId,
-        action_option: actionOptions,
+        action_option: JSON.stringify(actionOptions),
         reaction_id: selectedReaction.id,
-        reaction_options: selectedReactionOptions,
+        reaction_options: JSON.stringify(selectedReactionOptions),
       }),
     });
     console.log("tamere :", JSON.stringify({
@@ -137,8 +137,8 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
               <TextInput
                 style={styles.optionInput}
                 value={String(selectedReactionOptions[key])}
-                onChangeText={(text) => handleOptionChange(key, text)}
-                keyboardType="numeric" // Adjust as needed
+                onChangeText={(text) => handleOptionChange(key, text, typeof selectedReactionOptions[key])}
+                keyboardType="default" // Adjust as needed
               />
             </View>
           ))}
