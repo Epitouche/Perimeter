@@ -18,6 +18,7 @@ const (
 	PasswordMinimumLength = 8
 	BearerTokenDuration   = 72
 	CSRFTokenLength       = 16
+	BearerTokenType       = "Bearer "
 )
 
 // Errors Messages.
@@ -31,4 +32,6 @@ var (
 	ErrInvalidCredentials        = errors.New("invalid credentials")
 	ErrEmailAlreadyExist         = errors.New("email already exist")
 	ErrHashingPassword           = errors.New("error hashing the password")
+	ErrMissingCode               = errors.New("missing code")
+	ErrMissingCodeVerifier       = errors.New("missing code verifier")
 )

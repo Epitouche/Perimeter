@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -90,6 +91,16 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		println("Status code", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Printf("body: %+v\n", body)
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf(
+			"unable to get token because %v",
+			resp.Status,
+		)
 	}
 
 	var result schemas.SpotifyTokenResponse
