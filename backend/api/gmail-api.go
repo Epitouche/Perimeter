@@ -1,8 +1,8 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -90,13 +90,13 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Router			/gmail/auth/callback/mobile [post]
 func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		var result schemas.GmailMobileTokenRequest
-		err := json.NewDecoder(ctx.Request.Body).Decode(&result)
+		body, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
-			fmt.Printf("error: %v\n", err)
+			fmt.Printf("error reading body: %v\n", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read request body"})
 			return
 		}
-		fmt.Printf("result: %+v\n", result)
+		fmt.Printf("Raw Body: %s\n", string(body))
 	})
 }
 

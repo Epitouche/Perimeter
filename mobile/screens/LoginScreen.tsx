@@ -59,23 +59,52 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
 
       const userInfo = await GoogleSignin.signIn();
 
+      const idToken = userInfo.data?.idToken;
       console.log(userInfo);
       const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: userInfo.data?.idToken }),
+        body: JSON.stringify({ token: String(idToken) }),
       });
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User cancelled the login flow');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "cancelled" }),
+        });
       } else if (error.code === statusCodes.IN_PROGRESS) {
         console.log('Signing in');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "in progress" }),
+        });
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         console.log('Play services not available');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "Play services not available" }),
+        });
       } else {
         console.log('Some other error happened');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "other" }),
+        });
         console.log(error.message);
         console.log(error.code);
       }
