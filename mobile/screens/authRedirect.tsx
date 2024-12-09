@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, setToken} = useContext(AppContext);
+  const {ipAddress, setToken, codeVerifier} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -33,23 +33,23 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, codeVerifier }),
       }
-    ) 
-    console.log("response: ", response)
-    const data = await response.json()
+    )
+    console.log('response: ', response);
+    const data = await response.json();
     if (data.error) {
-      console.error(data.error)
+      console.error(data.error);
       navigation.goBack();
     } else {
-      setToken(data.token)
-      console.log("data: ", data)
-      navigation.navigate("AreaView")
+      setToken(data.token);
+      console.log('data: ', data);
+      navigation.navigate('AreaView');
     }
   }
 
   if (code) {
-    oauthCallback(code)
+    oauthCallback(code);
   }
 
   if (isLoading) {

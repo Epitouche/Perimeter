@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -108,6 +109,7 @@ func (controller *gmailController) HandleServiceCallback(
 	}
 	gmailToken.Token = gmailTokenResponse.AccessToken
 	gmailToken.RefreshToken = gmailTokenResponse.RefreshToken
+	gmailToken.ExpireAt = time.Now().Add(time.Duration(gmailTokenResponse.ExpiresIn) * time.Second)
 
 	if len(authHeader) > len("Bearer ") {
 		bearerToken = authHeader[len("Bearer "):]
@@ -142,15 +144,16 @@ func (controller *gmailController) HandleServiceCallback(
 
 	gmailService := controller.serviceService.FindByName(schemas.Gmail)
 
-	newgmailToken := schemas.Token{
+	newGmailToken := schemas.Token{
 		Token:        gmailToken.Token,
 		RefreshToken: gmailToken.RefreshToken,
+		ExpireAt:     gmailToken.ExpireAt,
 		Service:      gmailService,
 		User:         newUser,
 	}
 
 	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newgmailToken)
+	tokenId, err := controller.serviceToken.SaveToken(newGmailToken)
 	if err != nil {
 		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
 		} else {

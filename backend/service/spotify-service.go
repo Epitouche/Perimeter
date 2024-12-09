@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -14,6 +15,10 @@ import (
 
 type SpotifyService interface {
 	AuthGetServiceAccessToken(code string) (schemas.SpotifyTokenResponse, error)
+	AuthGetServiceAccessTokenMobile(
+		code string,
+		codeVerifier string,
+	) (schemas.SpotifyTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error)
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
@@ -90,6 +95,13 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		println("Status code", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Printf("body: %+v\n", body)
+		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
 	}
 
 	var result schemas.SpotifyTokenResponse
@@ -240,4 +252,69 @@ func (service *spotifyService) GetActionsName() []string {
 
 func (service *spotifyService) GetReactionsName() []string {
 	return service.reactionsName
+}
+
+func (service *spotifyService) AuthGetServiceAccessTokenMobile(
+	code string,
+	codeVerifier string,
+) (schemas.SpotifyTokenResponse, error) {
+	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
+	if clientID == "" {
+		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
+	}
+
+	clientSecret := os.Getenv("SPOTIFY_SECRET")
+	if clientSecret == "" {
+		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifySecretNotSet
+	}
+
+	redirectURI := "com.area://oauthredirect"
+
+	apiURL := "https://accounts.spotify.com/api/token"
+
+	data := url.Values{}
+	data.Set("code", code)
+	data.Set("redirect_uri", redirectURI)
+	data.Set("grant_type", "authorization_code")
+	data.Set("code_verifier", codeVerifier)
+
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBufferString(data.Encode()))
+	if err != nil {
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf(
+			"unable to create request because %w",
+			err,
+		)
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.SetBasicAuth(clientID, clientSecret)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Printf("body: %+v\n", body)
+		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
+	}
+
+	var result schemas.SpotifyTokenResponse
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf(
+			"unable to decode response because %w",
+			err,
+		)
+	}
+
+	if result.AccessToken == "" {
+		fmt.Printf("Token exchange failed. Response body: %v\n", resp.Body)
+		return schemas.SpotifyTokenResponse{}, schemas.ErrAccessTokenNotFoundInResponse
+	}
+
+	return result, nil
 }

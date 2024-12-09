@@ -20,7 +20,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({username: '', password: '', email: ''});
-  const {ipAddress} = useContext(AppContext);
+  const {ipAddress, setCodeVerifier} = useContext(AppContext);
 
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
@@ -38,18 +38,48 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
   };
   Linking.addEventListener('url', handleUrl);
 
-  const spotifyAuthConfig = {
-    clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
-    clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-    redirectUrl: 'com.area://oauthredirect',
-    scopes: ['user-read-private', 'user-read-email'],
-    serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-      tokenEndpoint: 'https://accounts.spotify.com/api/token',
-    },
+  const generatePKCE = () => {
+    const array = new Uint8Array(64);
+    window.crypto.getRandomValues(array);
+    const codeVerifier = base64urlEncode(array);
+
+    return sha256(codeVerifier).then((codeChallenge) => {
+      return { codeVerifier, codeChallenge };
+    });
   };
 
+  const base64urlEncode = (array: Uint8Array) => {
+    return btoa(String.fromCharCode.apply(null, array))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+  };
+
+  // SHA-256 hashing function
+  const sha256 = (codeVerifier: string) => {
+    return crypto.subtle
+      .digest('SHA-256', new TextEncoder().encode(codeVerifier))
+      .then((hash) => base64urlEncode(new Uint8Array(hash)));
+  };
+
+
   const handleSpotifyLogin = async () => {
+    const { codeVerifier, codeChallenge } = await generatePKCE();
+    setCodeVerifier(codeVerifier);
+
+    const spotifyAuthConfig = {
+      clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
+      clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
+      redirectUrl: 'com.area://oauthredirect',
+      scopes: ['user-read-private', 'user-read-email'],
+      serviceConfiguration: {
+        authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+        tokenEndpoint: 'https://accounts.spotify.com/api/token',
+      },
+      codeChallengeMethod: 'S256',
+      codeChallenge: codeChallenge,
+    };
+
     try {
       const authState = await authorize(spotifyAuthConfig);
       console.log('Spotify Auth State:', authState);
