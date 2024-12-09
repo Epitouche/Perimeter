@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import { AppContext } from '../context/AppContext';
 import pkceChallenge from 'react-native-pkce-challenge';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -44,7 +45,28 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   };
   Linking.addEventListener('url', handleUrl);
 
-
+    useEffect(() => {
+      GoogleSignin.configure({
+        webClientId: '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com',
+        offlineAccess: true,
+      });
+    }, []);
+  
+    const signIn = async () => {
+      try {
+        await GoogleSignin.hasPlayServices();
+        const userInfo = await GoogleSignin.signIn();
+        console.log('User Info:', userInfo);
+      } catch (error) {
+        if ((error as any).code === statusCodes.SIGN_IN_CANCELLED) {
+          console.log('User cancelled the login process.');
+        } else if ((error as any).code === statusCodes.IN_PROGRESS) {
+          console.log('Login is already in progress.');
+        } else {
+          console.error('Some other error:', error);
+        }
+      }
+    };
 
   const handleSpotifyLogin = async () => {
     const challenge = pkceChallenge();
@@ -165,10 +187,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
+        <TouchableOpacity onPress={signIn}>
         <Image
           source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
           style={styles.socialIcon}
         />
+        </TouchableOpacity>
         <Image
           source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
           style={styles.socialIcon}
