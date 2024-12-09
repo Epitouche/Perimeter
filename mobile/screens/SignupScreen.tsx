@@ -71,6 +71,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
       });
       const token = await resp.json();
       setToken(token.token);
+      navigation.navigate('AreaView');
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User cancelled the login flow');
