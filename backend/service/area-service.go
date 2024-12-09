@@ -48,11 +48,32 @@ func (service *areaService) FindAll() []schemas.Area {
 }
 
 func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
+	println("CreateArea Service")
 	var result schemas.AreaMessage
+
+	fmt.Printf("\n\nctx.Request.Body %+v\n\n\n", ctx.Request.Body)
+
+	// respBody, _ := io.ReadAll(ctx.Request.Body)
+
+	// fmt.Printf("\n\nrespBody %+v\n\n\n", respBody)
+
 	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 	if err != nil {
+		println(fmt.Errorf("can't bind credentials: %w", err))
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	fmt.Printf("\n\nresult %v\n\n\n", result)
+	fmt.Printf("\n\nresult %+v\n\n\n", result)
+
+	if result.ActionOption == "" {
+		return "", fmt.Errorf("empty action empty: %w", err)
+	}
+
+	if result.ReactionOption == "" {
+		return "", fmt.Errorf("empty reaction empty: %w", err)
+	}
+
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 

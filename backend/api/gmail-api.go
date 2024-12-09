@@ -21,6 +21,7 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 	}
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
+	api.HandleServiceCallbackMobile(apiRoutes)
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
@@ -69,6 +70,32 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
 			ctx.JSON(http.StatusOK, &schemas.JWT{Token: gmail_token})
+		}
+	})
+}
+
+// HandleServiceCallbackMobile godoc
+//
+//	@Summary		give url to authenticate with gmail
+//	@Description	give url to authenticate with gmail
+//	@Tags			Gmail
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Param			Authorization	header		string					false	"Bearer token
+//	@Success		200				{object}	schemas.JWT
+//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Router			/gmail/auth/callback/mobile [post]
+func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
+	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
+		token, err := api.controller.HandleServiceCallbackMobile(
+			ctx,
+			apiRoutes.BasePath()+"/auth/callback",
+		)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
+		} else {
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: token})
 		}
 	})
 }

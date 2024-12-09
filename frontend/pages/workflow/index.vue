@@ -30,9 +30,9 @@ const showCreateButton = ref<boolean>(false);
 const actionIsSelected = ref<boolean>(false);
 const reactionIsSelected = ref<boolean>(false);
 
-const actionId = ref<string | null>(null);
+const actionId = ref<number | null>(null);
 const actionOptions = ref<any>(null);
-const reactionId = ref<string | null>(null);
+const reactionId = ref<number | null>(null);
 const reactionOptions = ref<any>(null);
 
 const error = ref<string | null>(null);
@@ -203,6 +203,7 @@ const onCreate = async () => {
   console.log("reactionOptions:", reactionOptions.value);
   try {
     error.value = null;
+
     const response = await $fetch("/api/workflow/create", {
       method: "POST",
       body: {

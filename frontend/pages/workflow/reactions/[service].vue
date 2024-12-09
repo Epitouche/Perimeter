@@ -16,6 +16,9 @@ const configIsOpen = ref<{ [key: number]: boolean }>({});
 const modifiedOptions = reactive<{
   [key: number]: { [key: string]: string | number };
 }>({});
+const modifiedOptions = reactive<{
+  [key: number]: { [key: string]: string | number };
+}>({});
 
 const fetchReactions = async () => {
   try {
@@ -73,6 +76,7 @@ const saveOptions = (reactionId: number) => {
   router.push({
     name: "workflow",
     query: {
+      reactionId: reactionId,
       reactionId: reactionId,
       reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
     },

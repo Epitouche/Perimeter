@@ -5,18 +5,21 @@ interface AppContextProps {
     setIpAddress: (ip: string) => void;
     token: string;
     setToken: (token: string) => void;
+    codeVerifier: string;
+    setCodeVerifier: (code: string) => void;
 }
 
-const AppContext = createContext<AppContextProps>({ ipAddress: '', setIpAddress: () => {}, token: '', setToken: () => {} });
+const AppContext = createContext<AppContextProps>({ ipAddress: '', setIpAddress: () => {}, token: '', setToken: () => {}, codeVerifier: '', setCodeVerifier: () => {} });
 
 interface AppProviderProps { children: ReactNode }
 
 export function AppProvider({ children }: AppProviderProps) {
     const [ipAddress, setIpAddress] = useState('');
     const [token, setToken] = useState('');
+    const [codeVerifier, setCodeVerifier] = useState('');
 
     return (
-        <AppContext.Provider value={{ ipAddress, setIpAddress, token, setToken }}>
+        <AppContext.Provider value={{ ipAddress, setIpAddress, token, setToken, codeVerifier, setCodeVerifier }}>
             {children}
         </AppContext.Provider>
     );

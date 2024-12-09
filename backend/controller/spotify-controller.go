@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -13,8 +14,8 @@ import (
 )
 
 type SpotifyController interface {
-	RedirectToService(ctx *gin.Context, path string) (string, error)
-	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
+	RedirectToService(ctx *gin.Context) (string, error)
+	HandleServiceCallback(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
@@ -41,7 +42,6 @@ func NewSpotifyController(
 
 func (controller *spotifyController) RedirectToService(
 	ctx *gin.Context,
-	path string,
 ) (string, error) {
 	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	if clientID == "" {
@@ -75,7 +75,6 @@ func (controller *spotifyController) RedirectToService(
 
 func (controller *spotifyController) HandleServiceCallback(
 	ctx *gin.Context,
-	path string,
 ) (string, error) {
 	var credentials schemas.CodeCredentials
 	err := ctx.ShouldBind(&credentials)
@@ -84,7 +83,7 @@ func (controller *spotifyController) HandleServiceCallback(
 	}
 	code := credentials.Code
 	if code == "" {
-		return "", fmt.Errorf("missing code")
+		return "", schemas.ErrMissingCode
 	}
 
 	// state := credentials.State
@@ -104,12 +103,16 @@ func (controller *spotifyController) HandleServiceCallback(
 
 	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code)
 	if err != nil {
+		println(fmt.Errorf("unable to get access token because %w", err))
 		return "", fmt.Errorf("unable to get access token because %w", err)
 	}
 	spotifyToken.Token = spotifyTokenResponse.AccessToken
+	spotifyToken.RefreshToken = spotifyTokenResponse.RefreshToken
+	spotifyToken.ExpireAt = time.Now().
+		Add(time.Duration(spotifyTokenResponse.ExpiresIn) * time.Second)
 
-	if len(authHeader) > len("Bearer ") {
-		bearerToken = authHeader[len("Bearer "):]
+	if len(authHeader) > len(schemas.BearerTokenType) {
+		bearerToken = authHeader[len(schemas.BearerTokenType):]
 
 		newUser, err = controller.serviceUser.GetUserInfo(bearerToken)
 		if err != nil {
@@ -140,15 +143,16 @@ func (controller *spotifyController) HandleServiceCallback(
 
 	spotifyService := controller.serviceService.FindByName(schemas.Spotify)
 
-	newspotifyToken := schemas.Token{
+	newSpotifyToken := schemas.Token{
 		Token:        spotifyToken.Token,
 		RefreshToken: spotifyToken.RefreshToken,
+		ExpireAt:     spotifyToken.ExpireAt,
 		Service:      spotifyService,
 		User:         newUser,
 	}
 
 	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newspotifyToken)
+	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
 	if err != nil {
 		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
 		} else {
