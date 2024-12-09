@@ -1,0 +1,56 @@
+name: lint frontend
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - frontend
+      - frontend-feature/**
+  push:
+    branches:
+      - dev
+      - frontend
+      - frontend-feature/**
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+# Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+permissions:
+  contents: write
+
+jobs:
+  run-frontend-linter:
+    name: Run Frontend linter
+    runs-on: self-hosted
+
+    steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run Formater
+        run: npx eslint --fix --ignore-pattern .nuxt --ignore-pattern dist
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "bot@github.com"
+          git add . || echo "No changes to commit"
+          git commit -m "[UPD] Auto lint frontend files" || echo "No changes to commit"
+          git push || echo "No changes to commit"

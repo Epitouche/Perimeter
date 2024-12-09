@@ -1,0 +1,91 @@
+name: area-dev
+services:
+  client_web:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+    volumes:
+      - .:/workspace:cached
+      #  SSH keys
+      - ${HOME}/.ssh:/home/node/.ssh:cached
+      #  ZSH with Zinit and Powerlevel10k
+      - ${HOME}/.zshrc:/home/node/.zshrc:cached
+      - ${HOME}/.zsh_history:/home/node/.zsh_history:cached
+      - zinit:/home/node/.zinit
+      - ${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached
+    environment:
+      - NODE_ENV=development
+      - PORT=${FRONTEND_PORT:-8081}
+    ports:
+      - '0.0.0.0:${FRONTEND_PORT:-8081}:${FRONTEND_PORT:-8081}'
+    networks:
+      - app-networks-dev
+    command: sleep infinity
+
+  database:
+    image: postgres:17
+    volumes:
+      - database-data-dev:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-area-database}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      DB_HOST: ${DB_HOST:-database}
+    networks:
+      - app-networks-dev
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-admin} -d
+            ${POSTGRES_DB:-area-database}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    build:
+      context: ./pgadmin
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_ENHANCED_CSFR: "False"
+    ports:
+      - '0.0.0.0:8079:80'
+    networks:
+      - app-networks-dev
+
+  server:
+    build:
+      context: .devcontainer/backend
+      dockerfile: Dockerfile
+    container_name: server
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - .:/workspace:cached #  SSH keys
+      - ${HOME}/.ssh:/home/vscode/.ssh:cached
+      #  ZSH with Zinit and Powerlevel10k
+      - ${HOME}/.zshrc:/home/vscode/.zshrc:cached
+      - ${HOME}/.zsh_history:/home/vscode/.zsh_history:cached
+      - zinit:/home/vscode/.zinit
+      - ${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached
+    env_file:
+      - .env
+    ports:
+      - '0.0.0.0:${BACKEND_PORT:-8080}:${BACKEND_PORT:-8080}'
+    networks:
+      - app-networks-dev
+    command: sleep infinity
+
+networks:
+  app-networks-dev:
+
+
+volumes:
+  database-data-dev:
+  zinit:

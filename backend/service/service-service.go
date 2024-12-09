@@ -1,0 +1,126 @@
+package service
+
+import (
+	"area/repository"
+	"area/schemas"
+)
+
+type ServiceService interface {
+	FindAll() (allServices []schemas.Service)
+	FindByName(serviceName schemas.ServiceName) schemas.Service
+	GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error)
+	GetServices() []interface{}
+	GetServicesInfo() (allService []schemas.Service, err error)
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindServiceByName(name string) schemas.Service
+}
+
+type ServiceInterface interface {
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
+}
+
+type serviceService struct {
+	repository        repository.ServiceRepository
+	spotifyService    SpotifyService
+	timerService      TimerService
+	gmailService      GmailService
+	allService        []interface{}
+	allServiceSchemas []schemas.Service
+}
+
+func NewServiceService(
+	repository repository.ServiceRepository,
+	timerService TimerService,
+	spotifyService SpotifyService,
+	gmailService GmailService,
+) ServiceService {
+	newService := serviceService{
+		repository:     repository,
+		spotifyService: spotifyService,
+		timerService:   timerService,
+		gmailService:   gmailService,
+		allServiceSchemas: []schemas.Service{
+			{
+				Name:        schemas.Spotify,
+				Description: "This service is a music service",
+			},
+			// {
+			// 	Name:        schemas.OpenWeatherMap,
+			// 	Description: "This service is a weather service",
+			// },
+			{
+				Name:        schemas.Timer,
+				Description: "This service is a time service",
+			},
+			{
+				Name:        schemas.Gmail,
+				Description: "This service is a mail service",
+			},
+		},
+		allService: []interface{}{spotifyService, timerService, gmailService},
+	}
+	newService.InitialSaveService()
+	return &newService
+}
+
+func (service *serviceService) InitialSaveService() {
+	for _, oneService := range service.allServiceSchemas {
+		serviceByName := service.repository.FindAllByName(oneService.Name)
+		if len(serviceByName) == 0 {
+			service.repository.Save(oneService)
+		}
+	}
+}
+
+func (service *serviceService) FindAll() (allServices []schemas.Service) {
+	return service.repository.FindAll()
+}
+
+func (service *serviceService) GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error) {
+	allServices := service.repository.FindAll()
+	for _, oneService := range allServices {
+		println(oneService.Name)
+		allServicesJSON = append(allServicesJSON, schemas.ServiceJSON{
+			Name: schemas.ServiceName(oneService.Name),
+		})
+	}
+	return allServicesJSON, nil
+}
+
+func (service *serviceService) FindByName(serviceName schemas.ServiceName) schemas.Service {
+	return service.repository.FindByName(serviceName)
+}
+
+func (service *serviceService) GetServices() []interface{} {
+	return service.allService
+}
+
+func (service *serviceService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	for _, service := range service.allService {
+		if service.(ServiceInterface).FindActionbyName(name) != nil {
+			return service.(ServiceInterface).FindActionbyName(name)
+		}
+	}
+	return nil
+}
+
+func (service *serviceService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	for _, service := range service.allService {
+		if service.(ServiceInterface).FindReactionbyName(name) != nil {
+			return service.(ServiceInterface).FindReactionbyName(name)
+		}
+	}
+	return nil
+}
+
+func (service *serviceService) GetServicesInfo() (allService []schemas.Service, err error) {
+	return service.repository.FindAll(), nil
+}
+
+func (service *serviceService) FindServiceByName(name string) schemas.Service {
+	return service.repository.FindByName(schemas.ServiceName(name))
+}
