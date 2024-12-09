@@ -175,6 +175,7 @@ func (controller *spotifyController) HandleServiceCallback(
 func (controller *spotifyController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
 ) (string, error) {
+
 	var credentials schemas.CodeCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
@@ -185,16 +186,20 @@ func (controller *spotifyController) HandleServiceCallbackMobile(
 		return "", schemas.ErrMissingCode
 	}
 
+	println("4444444444444")
+	println("code verify", credentials.CodeVerifier)
 	codeVerifier := credentials.CodeVerifier
 	if codeVerifier == "" {
 		return "", schemas.ErrMissingCodeVerifier
 	}
 
+	println("11111111111111111111")
 	authHeader := ctx.GetHeader("Authorization")
 	newUser := schemas.User{}
 	spotifyToken := schemas.Token{}
 	var bearerToken string
 
+	println("222222222222222222222")
 	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessTokenMobile(
 		code,
 		codeVerifier,
@@ -208,7 +213,7 @@ func (controller *spotifyController) HandleServiceCallbackMobile(
 	spotifyToken.ExpireAt = time.Now().
 		Add(time.Duration(spotifyTokenResponse.ExpiresIn) * time.Second)
 
-	println("ouahzoduiazhdoiazds")
+	println("3333333333333333333333")
 
 	if len(authHeader) > len(schemas.BearerTokenType) {
 		bearerToken = authHeader[len(schemas.BearerTokenType):]
