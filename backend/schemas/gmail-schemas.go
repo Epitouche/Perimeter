@@ -63,5 +63,5 @@ var (
 )
 
 type GmailMobileTokenRequest struct {
-	token string `json:"token"`
+	Token string `json:"token"`
 }
