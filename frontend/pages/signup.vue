@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
+  layout: "nonavbar",
   middleware: "guest",
 });
 const email = ref("");
@@ -35,7 +36,7 @@ const handleSignUp = async () => {
       return;
     }
 
-    const response = await $fetch<RegisterResponse>("/api/register", {
+    const response = await $fetch<RegisterResponse>("/api/auth/register", {
       method: "POST",
       body: {
         email: email.value,
@@ -46,9 +47,9 @@ const handleSignUp = async () => {
 
     if (response.token) {
       token.value = response.token;
-      console.log("Token stored in localStorage:", response.token);
+      ///console.log("Token stored in cookies:", response.token);
     }
-    console.log("Sign up successful:", response);
+    //console.log("Sign up successful:", response);
     navigateTo("/myareas");
   } catch (error) {
     if (error && typeof error === "object" && "data" in error) {
@@ -133,14 +134,14 @@ const handleSignUp = async () => {
           <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
-          <UButton class="text-center text-[2.5rem] px-12" @click="handleSignUp"
+          <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12"
             >Sign up</UButton
           >
           <p class="text-xl">
             Already signed up?
             <ULink to="/login" class="hover:text-custom_color-text_link">
-              <u>Login</u></ULink
-            >
+              <u>Login</u>
+            </ULink>
           </p>
         </div>
       </div>

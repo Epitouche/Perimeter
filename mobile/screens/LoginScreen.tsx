@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,26 +9,28 @@ import {
   Linking,
 } from 'react-native';
 import 'url-search-params-polyfill';
-import {authorize} from 'react-native-app-auth';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../App';
+import { authorize } from 'react-native-app-auth';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../App';
 import { AppContext } from '../context/AppContext';
+import pkceChallenge from 'react-native-pkce-challenge';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-const LoginScreen: React.FC<Props> = ({navigation, route}) => {
+const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({username: '', password: ''});
-  const { ipAddress, setToken } = useContext(AppContext);
+  const [errors, setErrors] = useState({ username: '', password: '' });
+  const { ipAddress, setToken, setCodeVerifier } = useContext(AppContext);
 
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
-      const url = new URL(event.url).searchParams
-      const token = url.get('token')
-      const code = url.get('code')
-      const error = url.get('error')
+      const url = new URL(event.url).searchParams;
+      const token = url.get('token');
+      const code = url.get('code');
+      const error = url.get('error');
 
       if (code) {
         console.log('Received auth code:', code);
@@ -39,21 +41,94 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         setToken(token);
       }
     }
-  }
+  };
   Linking.addEventListener('url', handleUrl);
 
-  const spotifyAuthConfig = {
-    clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
-    clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-    redirectUrl: 'com.area://oauthredirect',
-    scopes: ['user-read-private', 'user-read-email'],
-    serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-      tokenEndpoint: 'https://accounts.spotify.com/api/token',
-    },
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com',
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+  });
+
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+
+      const userInfo = await GoogleSignin.signIn();
+
+      const idToken = userInfo.data?.idToken;
+      console.log(userInfo);
+      const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: String(idToken) }),
+      });
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login flow');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "cancelled" }),
+        });
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Signing in');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "in progress" }),
+        });
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play services not available');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "Play services not available" }),
+        });
+      } else {
+        console.log('Some other error happened');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "other" }),
+        });
+        console.log(error.message);
+        console.log(error.code);
+      }
+    }
   };
 
   const handleSpotifyLogin = async () => {
+    const challenge = pkceChallenge();
+
+    setCodeVerifier(challenge.codeVerifier);
+
+    const spotifyAuthConfig = {
+      clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
+      clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
+      redirectUrl: 'com.area://oauthredirect',
+      scopes: ['user-read-private', 'user-read-email'],
+      serviceConfiguration: {
+        authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+        tokenEndpoint: 'https://accounts.spotify.com/api/token',
+      },
+      codeChallengeMethod: 'S256',
+      codeChallenge: challenge.codeChallenge,
+    };
+
     try {
       const authState = await authorize(spotifyAuthConfig);
       console.log('Spotify Auth State:', authState);
@@ -65,7 +140,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
 
   const handleLogin = async () => {
     let hasError = false;
-    const newErrors = {username: '', password: ''};
+    const newErrors = { username: '', password: '' };
 
     if (!username) {
       newErrors.username = 'Username is required';
@@ -85,7 +160,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({username, password}),
+          body: JSON.stringify({ username, password }),
         });
 
         if (response.ok) {
@@ -115,11 +190,9 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
-        onChangeText={text => setUsername(text)}
+        onChangeText={(text) => setUsername(text)}
       />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
+      {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
       <TextInput
         style={styles.input}
@@ -127,11 +200,9 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         placeholderTextColor="#aaa"
         secureTextEntry
         value={password}
-        onChangeText={text => setPassword(text)}
+        onChangeText={(text) => setPassword(text)}
       />
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
-      ) : null}
+      {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
@@ -155,17 +226,19 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
+        <TouchableOpacity onPress={signIn}>
+          <Image
+            source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
+            style={styles.socialIcon}
+          />
+        </TouchableOpacity>
         <Image
-          source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
-          style={styles.socialIcon}
-        />
-        <Image
-          source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
+          source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
           style={styles.socialIcon}
         />
         <TouchableOpacity onPress={handleSpotifyLogin}>
           <Image
-            source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
+            source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
