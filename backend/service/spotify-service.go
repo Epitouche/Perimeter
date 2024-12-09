@@ -101,7 +101,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		println("Status code", resp.StatusCode)
 		body, _ := io.ReadAll(resp.Body)
 		fmt.Printf("body: %+v\n", body)
-		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to get token because %v", resp.Status)
 	}
 
 	var result schemas.SpotifyTokenResponse
@@ -299,7 +299,7 @@ func (service *spotifyService) AuthGetServiceAccessTokenMobile(
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		fmt.Printf("body: %+v\n", body)
-		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
+		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to get token because %v", resp.Status)
 	}
 
 	var result schemas.SpotifyTokenResponse
