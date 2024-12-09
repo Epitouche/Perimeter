@@ -57,6 +57,13 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
         console.log('User Info:', userInfo);
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idToken: userInfo.data?.idToken }),
+        });
       } catch (error) {
         if ((error as any).code === statusCodes.SIGN_IN_CANCELLED) {
           console.log('User cancelled the login process.');
