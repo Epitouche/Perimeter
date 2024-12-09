@@ -68,6 +68,8 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
         },
         body: JSON.stringify({ token: String(idToken) }),
       });
+      const token = await resp.json();
+      setToken(token.token);
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User cancelled the login flow');
