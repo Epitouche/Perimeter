@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -89,13 +90,13 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Router			/gmail/auth/callback/mobile [post]
 func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		//print headers
-		for name, values := range ctx.Request.Header {
-			for _, value := range values {
-				println(name, value)
-			}
+		var result schemas.GmailMobileTokenRequest
+		err := json.NewDecoder(ctx.Request.Body).Decode(&result)
+		if err != nil {
+			fmt.Printf("error: %v\n", err)
+			return
 		}
-		fmt.Printf("Request body: %v\n", ctx.Request.Body)
+		fmt.Printf("result: %+v\n", result)
 	})
 }
 

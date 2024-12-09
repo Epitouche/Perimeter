@@ -14,6 +14,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { AppContext } from '../context/AppContext';
 import pkceChallenge from 'react-native-pkce-challenge';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -43,25 +44,41 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
   };
   Linking.addEventListener('url', handleUrl);
 
-  const googleAuthConfig = {
-    clientId: '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com', // Replace with your Google OAuth client ID
-    redirectUrl: 'com.area://oauthredirect', // Replace with your registered redirect URL
-    scopes: ['openid', 'profile', 'email'], // Scopes for Google OAuth
-    serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
-      tokenEndpoint: 'https://oauth2.googleapis.com/token',
-    },
-    usePKCE: true,
-  };
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com',
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+  });
 
-  const handleGoogleLogin = async () => {
+  const signIn = async () => {
     try {
-      const authState = await authorize(googleAuthConfig);
-      console.log('Google OAuth successful:', authState);
-      setToken(authState.accessToken); // Store the access token or use it as needed
-      navigation.navigate('AreaView');
-    } catch (error) {
-      console.error('Google OAuth error:', error);
+      await GoogleSignin.hasPlayServices();
+
+      const userInfo = await GoogleSignin.signIn();
+
+      console.log(userInfo);
+      const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: userInfo.data?.idToken }),
+      });
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login flow');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Signing in');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play services not available');
+      } else {
+        console.log('Some other error happened');
+        console.log(error.message);
+        console.log(error.code);
+      }
     }
   };
 
@@ -180,7 +197,7 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={handleGoogleLogin}>
+        <TouchableOpacity onPress={signIn}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
             style={styles.socialIcon}
