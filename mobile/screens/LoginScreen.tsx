@@ -13,6 +13,7 @@ import {authorize} from 'react-native-app-auth';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import { AppContext } from '../context/AppContext';
+import pkceChallenge from 'react-native-pkce-challenge';
 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -43,33 +44,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   };
   Linking.addEventListener('url', handleUrl);
 
-  const generatePKCE = () => {
-    const array = new Uint8Array(64);
-    global.crypto.getRandomValues(array);
-    const codeVerifier = base64urlEncode(array);
 
-    return sha256(codeVerifier).then((codeChallenge) => {
-      return { codeVerifier, codeChallenge };
-    });
-  };
-
-  const base64urlEncode = (array: Uint8Array) => {
-    return btoa(String.fromCharCode.apply(null, Array.from(array)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-  };
-
-  // SHA-256 hashing function
-  const sha256 = (codeVerifier: string) => {
-    return crypto.subtle
-      .digest('SHA-256', new TextEncoder().encode(codeVerifier))
-      .then((hash) => base64urlEncode(new Uint8Array(hash)));
-  };
 
   const handleSpotifyLogin = async () => {
-    const { codeVerifier, codeChallenge } = await generatePKCE();
-    setCodeVerifier(codeVerifier);
+    const challenge = pkceChallenge();
+
+    setCodeVerifier(challenge.codeVerifier);
 
     const spotifyAuthConfig = {
       clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
@@ -81,7 +61,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         tokenEndpoint: 'https://accounts.spotify.com/api/token',
       },
       codeChallengeMethod: 'S256',
-      codeChallenge: codeChallenge,
+      codeChallenge: challenge.codeChallenge,
     };
 
     try {
