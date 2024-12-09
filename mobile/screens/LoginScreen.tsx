@@ -43,6 +43,8 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       const userInfo = await GoogleSignin.signIn();
 
       const idToken = userInfo.data?.idToken;
+      const userEmail = userInfo.data?.user.email;
+      const userUsername = userInfo.data?.user.name;
       console.log(userInfo);
       const resp = await fetch(
         `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
@@ -51,47 +53,66 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ token: String(idToken) }),
-      });
-      const token = await resp.json();
-      setToken(token.token);
+          body: JSON.stringify({token: String(idToken), username: userUsername, email: userEmail }),
+        },
+      );
+      if (resp.status === 200) {
+        type ResponseType = {
+          token: string;
+        };
+        const token: ResponseType = await resp.json();
+        setToken(token.token);
+        navigation.navigate('AreaView');
+      }
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User cancelled the login flow');
-        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const resp = await fetch(
+          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({token: 'cancelled'}),
           },
-          body: JSON.stringify({ token: "cancelled" }),
-        });
+        );
       } else if (error.code === statusCodes.IN_PROGRESS) {
         console.log('Signing in');
-        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const resp = await fetch(
+          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({token: 'in progress'}),
           },
-          body: JSON.stringify({ token: "in progress" }),
-        });
+        );
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         console.log('Play services not available');
-        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const resp = await fetch(
+          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({token: 'Play services not available'}),
           },
-          body: JSON.stringify({ token: "Play services not available" }),
-        });
+        );
       } else {
         console.log('Some other error happened');
-        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const resp = await fetch(
+          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({token: 'other'}),
           },
-          body: JSON.stringify({ token: "other" }),
-        });
+        );
         console.log(error.message);
         console.log(error.code);
       }
@@ -141,7 +162,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
             'Content-Type': 'application/json',
           },
           // body: JSON.stringify({token: authState.accessToken}),
-          body: JSON.stringify({token: "error" + error}),
+          body: JSON.stringify({token: 'error' + error}),
         },
       );
       const data = await resp.json();

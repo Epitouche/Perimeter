@@ -16,7 +16,6 @@ import (
 type SpotifyController interface {
 	RedirectToService(ctx *gin.Context) (string, error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
-	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
@@ -111,109 +110,6 @@ func (controller *spotifyController) HandleServiceCallback(
 	spotifyToken.RefreshToken = spotifyTokenResponse.RefreshToken
 	spotifyToken.ExpireAt = time.Now().
 		Add(time.Duration(spotifyTokenResponse.ExpiresIn) * time.Second)
-
-	if len(authHeader) > len(schemas.BearerTokenType) {
-		bearerToken = authHeader[len(schemas.BearerTokenType):]
-
-		newUser, err = controller.serviceUser.GetUserInfo(bearerToken)
-		if err != nil {
-			return "", fmt.Errorf("unable to get user info because %w", err)
-		}
-	} else {
-		userInfo, err := controller.service.GetUserInfo(spotifyToken.Token)
-		if err != nil {
-			return "", fmt.Errorf("unable to get user info because %w", err)
-		}
-		newUser = schemas.User{
-			Username: userInfo.DisplayName,
-			Email:    userInfo.Email,
-		}
-
-		bearerTokenLogin, _, err := controller.serviceUser.Login(newUser)
-		if err == nil {
-			return bearerTokenLogin, nil
-		}
-
-		bearerTokenRegister, newUserId, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		bearerToken = bearerTokenRegister
-		newUser = controller.serviceUser.GetUserById(newUserId)
-	}
-
-	spotifyService := controller.serviceService.FindByName(schemas.Spotify)
-
-	newSpotifyToken := schemas.Token{
-		Token:        spotifyToken.Token,
-		RefreshToken: spotifyToken.RefreshToken,
-		ExpireAt:     spotifyToken.ExpireAt,
-		Service:      spotifyService,
-		User:         newUser,
-	}
-
-	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
-	if err != nil {
-		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
-
-	if len(authHeader) == 0 {
-		newUser.TokenId = tokenId
-
-		err = controller.serviceUser.UpdateUserInfo(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to update user info because %w", err)
-		}
-	}
-	return bearerToken, nil
-}
-
-func (controller *spotifyController) HandleServiceCallbackMobile(
-	ctx *gin.Context,
-) (string, error) {
-
-	var credentials schemas.CodeCredentials
-	err := ctx.ShouldBind(&credentials)
-	if err != nil {
-		return "", fmt.Errorf("can't bind credentials: %w", err)
-	}
-	code := credentials.Code
-	if code == "" {
-		return "", schemas.ErrMissingCode
-	}
-
-	println("4444444444444")
-	println("code verify", credentials.CodeVerifier)
-	codeVerifier := credentials.CodeVerifier
-	if codeVerifier == "" {
-		return "", schemas.ErrMissingCodeVerifier
-	}
-
-	println("11111111111111111111")
-	authHeader := ctx.GetHeader("Authorization")
-	newUser := schemas.User{}
-	spotifyToken := schemas.Token{}
-	var bearerToken string
-
-	println("222222222222222222222")
-	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessTokenMobile(
-		code,
-		codeVerifier,
-	)
-	if err != nil {
-		println(fmt.Errorf("unable to get access token because %w", err))
-		return "", fmt.Errorf("unable to get access token because %w", err)
-	}
-	spotifyToken.Token = spotifyTokenResponse.AccessToken
-	spotifyToken.RefreshToken = spotifyTokenResponse.RefreshToken
-	spotifyToken.ExpireAt = time.Now().
-		Add(time.Duration(spotifyTokenResponse.ExpiresIn) * time.Second)
-
-	println("3333333333333333333333")
 
 	if len(authHeader) > len(schemas.BearerTokenType) {
 		bearerToken = authHeader[len(schemas.BearerTokenType):]
