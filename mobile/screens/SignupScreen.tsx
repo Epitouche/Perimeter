@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,13 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
-import {authorize} from 'react-native-app-auth';
+import {authorize, AuthConfiguration} from 'react-native-app-auth';
 import {AppContext} from '../context/AppContext';
+import pkceChallenge from 'react-native-pkce-challenge';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -20,7 +25,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({username: '', password: '', email: ''});
-  const {ipAddress, setCodeVerifier} = useContext(AppContext);
+  const {ipAddress, setToken, setCodeVerifier} = useContext(AppContext);
 
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
@@ -38,54 +43,126 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
   };
   Linking.addEventListener('url', handleUrl);
 
-  const generatePKCE = () => {
-    const array = new Uint8Array(64);
-    window.crypto.getRandomValues(array);
-    const codeVerifier = base64urlEncode(array);
-
-    return sha256(codeVerifier).then((codeChallenge) => {
-      return { codeVerifier, codeChallenge };
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com',
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
     });
-  };
+  });
 
-  const base64urlEncode = (array: Uint8Array) => {
-    return btoa(String.fromCharCode.apply(null, array))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-  };
+  const signUp = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
 
-  // SHA-256 hashing function
-  const sha256 = (codeVerifier: string) => {
-    return crypto.subtle
-      .digest('SHA-256', new TextEncoder().encode(codeVerifier))
-      .then((hash) => base64urlEncode(new Uint8Array(hash)));
+      const userInfo = await GoogleSignin.signIn();
+
+      const idToken = userInfo.data?.idToken;
+      console.log(userInfo);
+      const resp = await fetch(
+        `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: String(idToken) }),
+      });
+      const token = await resp.json();
+      setToken(token.token);
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login flow');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "cancelled" }),
+        });
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Signing in');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "in progress" }),
+        });
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play services not available');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "Play services not available" }),
+        });
+      } else {
+        console.log('Some other error happened');
+        const resp = await fetch(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: "other" }),
+        });
+        console.log(error.message);
+        console.log(error.code);
+      }
+    }
   };
 
 
   const handleSpotifyLogin = async () => {
-    const { codeVerifier, codeChallenge } = await generatePKCE();
-    setCodeVerifier(codeVerifier);
+    const challenge = pkceChallenge();
 
-    const spotifyAuthConfig = {
+    setCodeVerifier(challenge.codeVerifier);
+
+    const spotifyAuthConfig: AuthConfiguration = {
       clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
       clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-      redirectUrl: 'com.area://oauthredirect',
+      redirectUrl: 'com.perimeter-epitech://oauthredirect',
       scopes: ['user-read-private', 'user-read-email'],
       serviceConfiguration: {
         authorizationEndpoint: 'https://accounts.spotify.com/authorize',
         tokenEndpoint: 'https://accounts.spotify.com/api/token',
       },
-      codeChallengeMethod: 'S256',
-      codeChallenge: codeChallenge,
     };
 
     try {
       const authState = await authorize(spotifyAuthConfig);
       console.log('Spotify Auth State:', authState);
       console.log('Logged into Spotify successfully!');
+      const resp = await fetch(
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({token: authState.accessToken}),
+        },
+      );
+      const data = await resp.json();
+      setToken(data.token);
+      console.log('Bearer Token:', data.token);
     } catch (error) {
       console.log('Spotify Login Error:', error);
+      const resp = await fetch(
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // body: JSON.stringify({token: authState.accessToken}),
+          body: JSON.stringify({token: "error" + error}),
+        },
+      );
+      const data = await resp.json();
+      setToken(data.token);
     }
   };
 
@@ -196,7 +273,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={signUp}>
           <Image
             source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
             style={styles.socialIcon}
