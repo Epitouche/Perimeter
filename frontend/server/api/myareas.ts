@@ -11,11 +11,10 @@ export default defineEventHandler(async (event) => {
       method: "GET",
       headers: {
         Authorization: "Bearer " + params.token,
-      },
+      }
     });
     return response;
   } catch (error) {
     console.error("Error fetching services:", error);
-    console.log("Error fetching services:", error);
   }
 });

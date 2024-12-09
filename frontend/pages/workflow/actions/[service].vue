@@ -82,6 +82,7 @@ const saveOptions = (actionId: number) => {
 
 <template>
   <div>
+    <UButton to="/workflow/actions">Back</UButton>
     <h1>Service Actions Page</h1>
     <div v-if="error">
       <div>Error: {{ error }}</div>

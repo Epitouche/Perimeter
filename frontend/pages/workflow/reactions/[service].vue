@@ -82,6 +82,7 @@ const saveOptions = (reactionId: number) => {
 
 <template>
   <div>
+    <UButton to="/workflow/reactions">Back</UButton>
     <h1>Service Reactions Page</h1>
     <div v-if="error">
       <div>Error: {{ error }}</div>
