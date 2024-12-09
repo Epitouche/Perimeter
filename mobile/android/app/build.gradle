@@ -71,14 +71,6 @@ def enableProguardInReleaseBuilds = false
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
-// import io.github.cdimascio.dotenv.Dotenv
-
-// Load the .env file
-// def dotenv = Dotenv.load()
-
-// Access the variables from the .env file
-def keystorePasswordEnv = System.getenv("KEYSTORE_PASSWORD")
-def keyPasswordEnv = System.getenv("KEY_PASSWORD")
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -93,7 +85,7 @@ android {
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-            appAuthRedirectScheme: project.hasProperty('scheme') ? project.scheme : "defaultscheme"
+            appAuthRedirectScheme: "com.area.MainApplication"
         ]
     }
     signingConfigs {
@@ -104,10 +96,12 @@ android {
             keyPassword 'android'
         }
         release {
-        storeFile file('key/area-key.jks')
-        storePassword keystorePasswordEnv
-        keyAlias 'my-key-alias'
-        keyPassword keyPasswordEnv
+            storeFile file('../../key/area-key.jks')
+            storePassword "password"
+            keyAlias 'my-key-alias'
+            keyPassword "password"
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     buildTypes {
@@ -117,7 +111,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

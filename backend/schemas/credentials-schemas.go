@@ -20,6 +20,13 @@ type JWT struct {
 }
 
 type CodeCredentials struct {
-	Code string `form:"code" json:"code"`
+	Code string `form:"code"          json:"code"          binding:"required"`
+	// State string `form:"state" json:"state"`
+}
+
+type TokenCredentials struct {
+	Token    string `form:"token" json:"token" binding:"required"`
+	Username string `form:"username" json:"username" binding:"required"`
+	Email    string `form:"email" json:"email" binding:"required"`
 	// State string `form:"state" json:"state"`
 }
