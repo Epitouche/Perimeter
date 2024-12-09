@@ -226,7 +226,6 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 
 	if len(authHeader) > len("Bearer ") {
 		bearerToken = authHeader[len("Bearer "):]
-
 	} else {
 
 		bearerTokenLogin, _, err := controller.serviceUser.Login(newUser)
