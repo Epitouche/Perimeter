@@ -2,7 +2,7 @@
 
 ## Authors
 
-- [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
+- [@AleaChlodnik](https://www.github.com/AleaChlodnik)
 - [@arthurgauffre](https://github.com/arthurgauffre)
 - [@ItsMeHope](https://github.com/ItsMeHope)
 - [@QuentinLeguay](https://www.github.com/QuentinLeguay)
@@ -68,6 +68,10 @@ docker compose up --build
 - [Developer Documentation](./docs/developerDocumentation.md)
 - [Service Documentation](./docs/services.md)
 - [Database Documentation](./docs/database.md)
+- [Oauth Documentation](./docs/oauth.md)
+- [Server API Documentation](./docs/serverApi.md)
+- [Dev Container](./docs/devContainer.md)
+- [Test Documentation](./docs/test.md)
 - [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
 
 ### Proof of Concept (POC)
@@ -155,7 +159,7 @@ A comparative study of different backend technologies is available:
 
 ### Frontend
 
-- [@Alea Chlodnik](https://www.github.com/AleaChlodnik)
+- [@AleaChlodnik](https://www.github.com/AleaChlodnik)
 - [@ItsMeHope](https://github.com/ItsMeHope)
 
 ### Backend

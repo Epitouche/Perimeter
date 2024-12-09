@@ -1,0 +1,51 @@
+name: test docker
+
+on:
+  pull_request:
+    branches:
+      - frontend
+      - mobile
+      - backend
+      - documentation
+      - devops
+      - dev
+      - pre-prod
+      - main
+  push:
+    branches:
+      - frontend
+      - mobile
+      - backend
+      - documentation
+      - devops
+      - dev
+      - pre-prod
+      - main
+
+jobs:
+  test-docker:
+    runs-on: [self-hosted, docker]
+    steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
+      - uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: cp .env.example .env
+
+      - name: Stop any running containers & remove volumes
+        run: docker compose down --volumes
+
+      - name: Run build
+        run: docker compose build
+
+      - name: Run containers
+        run: docker compose up -d || (docker compose logs && exit 1)
+
+      - name: Stop containers
+        run: docker compose down --volumes

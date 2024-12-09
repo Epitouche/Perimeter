@@ -1,0 +1,45 @@
+name: Update-dev-base-branch
+run-name: update-dev-base-branch
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  update_dev_base_branch:
+    name: update_dev_base_branch
+    runs-on: self-hosted
+    steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
+      - name: Checkout GH repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Update the backend branch of the dev branch
+      - run: (git switch backend && git pull origin dev && git push) || echo "No backend branch or no changes"
+
+      # Update the frontend branch of the dev branch
+      - run: (git switch frontend && git pull origin dev && git push) || echo "No frontend branch or no changes"
+
+      # Update the mobile branch of the dev branch
+      - run: (git switch mobile && git pull origin dev && git push) || echo "No mobile branch or no changes"
+
+      # Update the documentation branch of the dev branch
+      - run: (git switch documentation && git pull origin dev && git push) || echo "No documentation branch or no changes"
+
+      # Update the devops branch of the dev branch
+      - run: (git switch devops && git pull origin dev && git push) || echo "No devops branch or no changes"
