@@ -14,6 +14,7 @@ type ServiceService interface {
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	FindServiceByName(name string) schemas.Service
+	GetServiceById(serverId uint64) schemas.Service
 }
 
 type ServiceInterface interface {
@@ -123,4 +124,8 @@ func (service *serviceService) GetServicesInfo() (allService []schemas.Service, 
 
 func (service *serviceService) FindServiceByName(name string) schemas.Service {
 	return service.repository.FindByName(schemas.ServiceName(name))
+}
+
+func (service *serviceService) GetServiceById(id uint64) schemas.Service {
+	return service.repository.FindById(id)
 }

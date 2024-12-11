@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import actions from '~/server/api/workflow/actions';
+import reactions from '~/server/api/workflow/reactions';
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -12,6 +15,7 @@ const router = useRouter();
 const SHOW_NAVBAR_KEY = "workflow_showNavBar";
 const SHOW_CANCEL_BUTTON_KEY = "workflow_showCancelButton";
 const SHOW_CREATE_BUTTON_KEY = "workflow_showCreateButton";
+const CAN_DELETE_KEY = "workflow_canDelete";
 const REACTION_BUTTON_DISABLED_KEY = "workflow_reactionButtonDisabled";
 const ACTION_SELECTED_KEY = "workflow_actionIsSelected";
 const REACTION_SELECTED_KEY = "workflow_reactionIsSelected";
@@ -27,6 +31,7 @@ const showNavBar = ref<boolean>(true);
 const showCancelButton = ref<boolean>(false);
 const reactionButtonisDisabled = ref<boolean>(true);
 const showCreateButton = ref<boolean>(false);
+const canDelete = ref<boolean>(false);
 const actionIsSelected = ref<boolean>(false);
 const reactionIsSelected = ref<boolean>(false);
 
@@ -54,6 +59,7 @@ const loadWorkflowState = () => {
     showCreateButton.value = JSON.parse(
       localStorage.getItem(SHOW_CREATE_BUTTON_KEY) || "false",
     );
+    canDelete.value = JSON.parse(localStorage.getItem(CAN_DELETE_KEY) || "false");
     reactionButtonisDisabled.value = JSON.parse(
       localStorage.getItem(REACTION_BUTTON_DISABLED_KEY) || "true",
     );
@@ -125,6 +131,7 @@ const saveWorkflowState = () => {
       SHOW_CREATE_BUTTON_KEY,
       JSON.stringify(showCreateButton.value),
     );
+    localStorage.setItem(CAN_DELETE_KEY, JSON.stringify(canDelete.value));
     localStorage.setItem(
       REACTION_BUTTON_DISABLED_KEY,
       JSON.stringify(reactionButtonisDisabled.value),
@@ -158,6 +165,7 @@ const clearWorkflowState = () => {
     localStorage.removeItem(SHOW_NAVBAR_KEY);
     localStorage.removeItem(SHOW_CANCEL_BUTTON_KEY);
     localStorage.removeItem(SHOW_CREATE_BUTTON_KEY);
+    localStorage.removeItem(CAN_DELETE_KEY);
     localStorage.removeItem(REACTION_BUTTON_DISABLED_KEY);
 
     localStorage.removeItem(ACTION_KEY);
@@ -178,6 +186,7 @@ const onActionSelected = () => {
 const onReactionSelected = () => {
   showCreateButton.value = true;
   reactionIsSelected.value = true;
+  canDelete.value = true;
   saveWorkflowState();
 };
 
@@ -189,6 +198,7 @@ const setWorkflowPageDefault = () => {
   showNavBar.value = true;
   showCancelButton.value = false;
   showCreateButton.value = false;
+  canDelete.value = false;
   reactionButtonisDisabled.value = true;
   actionIsSelected.value = false;
   reactionIsSelected.value = false;
@@ -255,6 +265,8 @@ onMounted(() => {
           link="/workflow/actions"
           :is-disabled="false"
           :is-selected="actionIsSelected"
+          :can-delete="false"
+          :service="actionId"
         />
         <div
           :class="[
@@ -267,6 +279,8 @@ onMounted(() => {
           link="/workflow/reactions"
           :is-disabled="reactionButtonisDisabled"
           :is-selected="reactionIsSelected"
+          :can-delete="canDelete"
+          :service="reactionId"
         />
       </div>
       <div v-if="showCreateButton" class="pt-10">
