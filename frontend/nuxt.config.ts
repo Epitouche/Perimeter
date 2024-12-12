@@ -11,4 +11,11 @@ export default defineNuxtConfig({
   },
 
   modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint"],
+
+  icon: {
+    customCollections: [{
+      prefix: 'my-icon',
+      dir: './assets/my-icons',
+    }],
+  }
 });

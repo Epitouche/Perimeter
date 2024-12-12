@@ -54,7 +54,7 @@ watch(
     v-if="isSelected" :class="[
     'flex flex-row justify-evenly py-12 px-12 gap-10 rounded-3xl w-full', serviceInfo ? `bg-custom_color-${serviceInfo.name}` : 'bg-black', isDisabled ? 'bg-opacity-60' : 'bg-opacity-100'
   ]">
-    <!-- <UIcon :name="" /> -->
+    <UIcon :name="serviceInfo ? `my-icon:white-${serviceInfo?.name}` : ''" />
     <h2
       :class="[
       'text-white text-8xl font-custom_weight_title',
