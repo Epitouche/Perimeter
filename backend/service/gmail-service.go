@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -232,9 +233,12 @@ func (service *gmailService) GetReactionsName() []string {
 func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
+	println("gmail option: " + option)
+
 	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
-		println("error unmarshal option: " + err.Error())
+		println("error unmarshal gmail option: " + err.Error())
+		time.Sleep(time.Second)
 		return
 	}
 

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -92,13 +94,17 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Router			/spotify/auth/callback/mobile [post]
 func (api *SpotifyAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
+		println("callback mobile spotify")
+		var result schemas.GmailMobileTokenRequest
+		err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 		if err != nil {
+			fmt.Printf("error: %v\n", err)
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
+			fmt.Printf("result: %+v\n", result)
+			ctx.JSON(http.StatusOK, result)
 		}
 	})
 }

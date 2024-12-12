@@ -1,13 +1,18 @@
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);
-    const response = await $fetch("http://server:8080/api/v1/service/info", {
+    if (!params.token) {
+      throw createError({
+        statusCode: 400,
+        message: "Missing parameters",
+      });
+    }
+    const response = await $fetch(`http://server:8080/api/v1/area`, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + params.token,
       },
     });
-    console.log("Services fetched successfully", response);
     return response;
   } catch (error) {
     console.error("Error fetching services:", error);

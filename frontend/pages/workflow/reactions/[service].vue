@@ -13,9 +13,9 @@ const reactions = ref<any>(null);
 const error = ref<string | null>(null);
 
 const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{ [key: number]: { [key: string]: string } }>(
-  {},
-);
+const modifiedOptions = reactive<{
+  [key: number]: { [key: string]: string | number };
+}>({});
 
 const fetchReactions = async () => {
   try {
@@ -57,10 +57,18 @@ const parseOption = (option: string) => {
 };
 
 const saveOptions = (reactionId: number) => {
+  //// Convert all values to numbers if they are numbers
+  //for (const key in modifiedOptions[reactionId]) {
+  //    console.log("key to int", key);
+  //    if (!isNaN(Number(modifiedOptions[reactionId][key]))) {
+  //      continue;
+  //    }
+  //    modifiedOptions[reactionId][key] = Number(modifiedOptions[reactionId][key]);
+  //}
   router.push({
     name: "workflow",
     query: {
-      reactionId: reactionId.toString(),
+      reactionId: reactionId,
       reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
     },
   });

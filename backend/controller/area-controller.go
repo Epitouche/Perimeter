@@ -23,6 +23,7 @@ func NewAreaController(service service.AreaService) AreaController {
 }
 
 func (controller *areaController) CreateArea(ctx *gin.Context) (string, error) {
+	println("CreateArea Controller")
 	return controller.service.CreateArea(ctx)
 }
 
