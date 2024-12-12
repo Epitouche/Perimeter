@@ -38,10 +38,9 @@ onMounted(() => {
       <div v-for="service in services" :key="service.id">
         <NuxtLink
           :to="{
-            name: 'workflow-actions-service',
-            params: { service: service.id },
-          }"
-        >
+          name: 'workflow-actions-service',
+          params: { service: service.id },
+        }">
           {{ service.name }}
         </NuxtLink>
       </div>

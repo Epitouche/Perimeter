@@ -75,6 +75,7 @@ const saveOptions = (reactionId: number) => {
     query: {
       reactionId: reactionId,
       reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
+      reactionServiceId: serviceId,
     },
   });
 };

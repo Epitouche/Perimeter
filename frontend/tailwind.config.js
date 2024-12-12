@@ -12,6 +12,13 @@ module.exports = {
     "./nuxt.config.{js,ts}",
     "./app.config.{js,ts,mjs}",
   ],
+  safelist: [
+    'bg-custom_color-spotify',
+    'bg-custom_color-gmail',
+    'bg-custom_color-dropbox',
+    'bg-custom_color-timer',
+    'bg-custom_color-weather',
+  ],
   theme: {
     extend: {
       colors: {
@@ -23,7 +30,7 @@ module.exports = {
           text_other: "#878787", // Dark grey
           border: "#000000", // Black
           input: "#F4F4F4", // Light grey
-          google: "#E60000", // Red
+          gmail: "#E60000", // Red
           spotify: "#1DC000", // Green
           dropbox: "#001DDA", // Blue
           timer: "#BB00FF", // Purple

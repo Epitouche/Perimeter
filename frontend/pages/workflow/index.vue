@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import actions from '~/server/api/workflow/actions';
-import reactions from '~/server/api/workflow/reactions';
-
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -15,7 +12,6 @@ const router = useRouter();
 const SHOW_NAVBAR_KEY = "workflow_showNavBar";
 const SHOW_CANCEL_BUTTON_KEY = "workflow_showCancelButton";
 const SHOW_CREATE_BUTTON_KEY = "workflow_showCreateButton";
-const CAN_DELETE_KEY = "workflow_canDelete";
 const REACTION_BUTTON_DISABLED_KEY = "workflow_reactionButtonDisabled";
 const ACTION_SELECTED_KEY = "workflow_actionIsSelected";
 const REACTION_SELECTED_KEY = "workflow_reactionIsSelected";
@@ -25,13 +21,15 @@ const ACTION_OPTIONS_KEY = "workflow_actionOptions";
 const REACTION_KEY = "workflow_reactionId";
 const REACTION_OPTIONS_KEY = "workflow_reactionOptions";
 
+const ACTION_SERVICE_KEY = "workflow_actionServiceId";
+const REACTION_SERVICE_KEY = "workflow_reactionServiceId";
+
 const isClient = typeof window !== "undefined";
 
 const showNavBar = ref<boolean>(true);
 const showCancelButton = ref<boolean>(false);
 const reactionButtonisDisabled = ref<boolean>(true);
 const showCreateButton = ref<boolean>(false);
-const canDelete = ref<boolean>(false);
 const actionIsSelected = ref<boolean>(false);
 const reactionIsSelected = ref<boolean>(false);
 
@@ -39,6 +37,9 @@ const actionId = ref<string | null>(null);
 const actionOptions = ref<any>(null);
 const reactionId = ref<string | null>(null);
 const reactionOptions = ref<any>(null);
+
+const actionServiceId = ref<string | null>(null);
+const reactionServiceId = ref<string | null>(null);
 
 const error = ref<string | null>(null);
 
@@ -59,10 +60,6 @@ const loadWorkflowState = () => {
     showCreateButton.value = JSON.parse(
       localStorage.getItem(SHOW_CREATE_BUTTON_KEY) || "false",
     );
-    canDelete.value = JSON.parse(localStorage.getItem(CAN_DELETE_KEY) || "false");
-    reactionButtonisDisabled.value = JSON.parse(
-      localStorage.getItem(REACTION_BUTTON_DISABLED_KEY) || "true",
-    );
 
     const queryActionId = Array.isArray(route.query.actionId)
       ? route.query.actionId[0]
@@ -75,17 +72,17 @@ const loadWorkflowState = () => {
 
     actionOptions.value = queryActionOptions
       ? JSON.parse(queryActionOptions as string, (key, value) =>
+        typeof value === "string" && !isNaN(Number(value))
+          ? Number(value)
+          : value,
+      )
+      : JSON.parse(
+        localStorage.getItem(ACTION_OPTIONS_KEY) || "null",
+        (key, value) =>
           typeof value === "string" && !isNaN(Number(value))
             ? Number(value)
             : value,
-        )
-      : JSON.parse(
-          localStorage.getItem(ACTION_OPTIONS_KEY) || "null",
-          (key, value) =>
-            typeof value === "string" && !isNaN(Number(value))
-              ? Number(value)
-              : value,
-        );
+      );
 
     const queryReactionId = Array.isArray(route.query.reactionId)
       ? route.query.reactionId[0]
@@ -98,17 +95,27 @@ const loadWorkflowState = () => {
 
     reactionOptions.value = queryReactionOptions
       ? JSON.parse(queryReactionOptions as string, (key, value) =>
+        typeof value === "string" && !isNaN(Number(value))
+          ? Number(value)
+          : value,
+      )
+      : JSON.parse(
+        localStorage.getItem(REACTION_OPTIONS_KEY) || "null",
+        (key, value) =>
           typeof value === "string" && !isNaN(Number(value))
             ? Number(value)
             : value,
-        )
-      : JSON.parse(
-          localStorage.getItem(REACTION_OPTIONS_KEY) || "null",
-          (key, value) =>
-            typeof value === "string" && !isNaN(Number(value))
-              ? Number(value)
-              : value,
-        );
+      );
+
+      const queryActionServiceId = Array.isArray(route.query.actionServiceId)
+      ? route.query.actionServiceId[0]
+      : route.query.actionServiceId;
+      actionServiceId.value = queryActionServiceId || localStorage.getItem(ACTION_SERVICE_KEY);
+
+      const queryReactionServiceId = Array.isArray(route.query.reactionServiceId)
+      ? route.query.reactionServiceId[0]
+      : route.query.reactionServiceId;
+      reactionServiceId.value = queryReactionServiceId || localStorage.getItem(REACTION_SERVICE_KEY);
   }
 };
 
@@ -131,7 +138,6 @@ const saveWorkflowState = () => {
       SHOW_CREATE_BUTTON_KEY,
       JSON.stringify(showCreateButton.value),
     );
-    localStorage.setItem(CAN_DELETE_KEY, JSON.stringify(canDelete.value));
     localStorage.setItem(
       REACTION_BUTTON_DISABLED_KEY,
       JSON.stringify(reactionButtonisDisabled.value),
@@ -155,6 +161,12 @@ const saveWorkflowState = () => {
         JSON.stringify(reactionOptions.value),
       );
     }
+    if (actionServiceId.value) {
+      localStorage.setItem(ACTION_SERVICE_KEY, actionServiceId.value);
+    }
+    if (reactionServiceId.value) {
+      localStorage.setItem(REACTION_SERVICE_KEY, reactionServiceId.value);
+    }
   }
 };
 
@@ -165,13 +177,15 @@ const clearWorkflowState = () => {
     localStorage.removeItem(SHOW_NAVBAR_KEY);
     localStorage.removeItem(SHOW_CANCEL_BUTTON_KEY);
     localStorage.removeItem(SHOW_CREATE_BUTTON_KEY);
-    localStorage.removeItem(CAN_DELETE_KEY);
     localStorage.removeItem(REACTION_BUTTON_DISABLED_KEY);
 
     localStorage.removeItem(ACTION_KEY);
     localStorage.removeItem(ACTION_OPTIONS_KEY);
     localStorage.removeItem(REACTION_KEY);
     localStorage.removeItem(REACTION_OPTIONS_KEY);
+
+    localStorage.removeItem(ACTION_SERVICE_KEY);
+    localStorage.removeItem(REACTION_SERVICE_KEY);
   }
 };
 
@@ -186,7 +200,7 @@ const onActionSelected = () => {
 const onReactionSelected = () => {
   showCreateButton.value = true;
   reactionIsSelected.value = true;
-  canDelete.value = true;
+  reactionButtonisDisabled.value = false;
   saveWorkflowState();
 };
 
@@ -195,10 +209,11 @@ const setWorkflowPageDefault = () => {
   actionOptions.value = null;
   reactionId.value = null;
   reactionOptions.value = null;
+  actionServiceId.value = null;
+  reactionServiceId.value = null;
   showNavBar.value = true;
   showCancelButton.value = false;
   showCreateButton.value = false;
-  canDelete.value = false;
   reactionButtonisDisabled.value = true;
   actionIsSelected.value = false;
   reactionIsSelected.value = false;
@@ -229,6 +244,7 @@ const onCreate = async () => {
     console.error("Error creating workflow:", err);
     console.log("Error creating workflow:", err);
   }
+  alert("Workflow created successfully!");
 };
 
 onMounted(() => {
@@ -250,9 +266,7 @@ onMounted(() => {
     <div v-if="showCancelButton" class="pt-24 pl-28">
       <UButton
         class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
-        @click="setWorkflowPageDefault"
-        >Cancel</UButton
-      >
+        @click="setWorkflowPageDefault">Cancel</UButton>
     </div>
 
     <div class="flex flex-col justify-center items-center gap-10">
@@ -261,32 +275,18 @@ onMounted(() => {
       </h1>
       <div class="flex flex-col justify-center items-center">
         <ReActionButton
-          title="Action"
-          link="/workflow/actions"
-          :is-disabled="false"
-          :is-selected="actionIsSelected"
-          :can-delete="false"
-          :service="actionId"
-        />
+          title="Action" link="/workflow/actions" :is-disabled="false" :is-selected="actionIsSelected" :service-id="Number(actionServiceId)" />
         <div
           :class="[
-            'bg-black min-w-4 min-h-28',
-            reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
-          ]"
-        />
+          'bg-black min-w-4 min-h-28',
+          reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
+        ]" />
         <ReActionButton
-          title="Reaction"
-          link="/workflow/reactions"
-          :is-disabled="reactionButtonisDisabled"
-          :is-selected="reactionIsSelected"
-          :can-delete="canDelete"
-          :service="reactionId"
-        />
+          title="Reaction" link="/workflow/reactions" :is-disabled="reactionButtonisDisabled"
+          :is-selected="reactionIsSelected" :service-id="Number(reactionServiceId)" />
       </div>
       <div v-if="showCreateButton" class="pt-10">
-        <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate"
-          >Create</UButton
-        >
+        <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate">Create</UButton>
       </div>
     </div>
   </div>
