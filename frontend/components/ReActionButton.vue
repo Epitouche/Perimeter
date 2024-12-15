@@ -44,45 +44,61 @@ watch(
       getServiceInfo();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
-
 </script>
 
 <template>
   <div
-    v-if="isSelected" :class="[
-    'flex flex-row justify-evenly items-center py-12 px-12 gap-10 rounded-3xl w-full', serviceInfo ? `bg-custom_color-${serviceInfo.name}` : 'bg-black', isDisabled ? 'bg-opacity-60' : 'bg-opacity-100'
-  ]">
+    v-if="isSelected"
+    :class="[
+      'flex flex-row justify-evenly items-center py-12 px-12 gap-10 rounded-3xl w-full',
+      serviceInfo ? `bg-custom_color-${serviceInfo.name}` : 'bg-black',
+      isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
+    ]"
+  >
     <!-- <div class="flex justify-center items-center bg-black"> -->
-      <UIcon :name="serviceInfo ? `my-icons:white-${serviceInfo.name}` : ''" class="" /> <!-- w-[7em] h-[9em] bg-pink-500 -->
+    <UIcon
+      :name="serviceInfo ? `my-icons:white-${serviceInfo.name}` : ''"
+      class=""
+    />
+    <!-- w-[7em] h-[9em] bg-pink-500 -->
     <!-- </div> -->
     <h2
       :class="[
-      'text-white text-8xl font-custom_weight_title',
-      isDisabled ? 'text-opacity-50' : 'text-opacity-100'
-    ]">
-      {{ serviceInfo ? serviceInfo.name : '' }}
+        'text-white text-8xl font-custom_weight_title',
+        isDisabled ? 'text-opacity-50' : 'text-opacity-100',
+      ]"
+    >
+      {{ serviceInfo ? serviceInfo.name : "" }}
     </h2>
   </div>
 
   <div
-    v-else :class="[
-    'flex flex-row justify-evenly items-center bg-black py-12 px-12 gap-10 rounded-3xl w-full',
-    isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
-  ]">
+    v-else
+    :class="[
+      'flex flex-row justify-evenly items-center bg-black py-12 px-12 gap-10 rounded-3xl w-full',
+      isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
+    ]"
+  >
     <h2
       :class="[
-      'text-white text-8xl font-custom_weight_title',
-      isDisabled ? 'text-opacity-50' : 'text-opacity-100'
-    ]">
+        'text-white text-8xl font-custom_weight_title',
+        isDisabled ? 'text-opacity-50' : 'text-opacity-100',
+      ]"
+    >
       {{ title }}
     </h2>
     <UButton
-      :disabled="isDisabled" :to="link" :ui="{ rounded: 'rounded-2xl' }" :class="[
-      'text-black bg-white text-5xl font-extrabold px-10 py-3',
-      isDisabled ? '!text-opacity-60' : 'text-opacity-100',
-    ]">Add</UButton>
+      :disabled="isDisabled"
+      :to="link"
+      :ui="{ rounded: 'rounded-2xl' }"
+      :class="[
+        'text-black bg-white text-5xl font-extrabold px-10 py-3',
+        isDisabled ? '!text-opacity-60' : 'text-opacity-100',
+      ]"
+      >Add</UButton
+    >
   </div>
 </template>
 

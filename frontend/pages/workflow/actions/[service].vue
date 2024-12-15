@@ -97,7 +97,10 @@ const saveOptions = (actionId: number) => {
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" :type="typeof value === 'number' ? 'number' : 'text'" />
+              <input
+                v-model="modifiedOptions[action.id][key]"
+                :type="typeof value === 'number' ? 'number' : 'text'"
+              />
             </div>
             <button @click="saveOptions(action.id)">Save</button>
           </div>
