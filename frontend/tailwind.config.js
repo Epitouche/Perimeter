@@ -13,11 +13,11 @@ module.exports = {
     "./app.config.{js,ts,mjs}",
   ],
   safelist: [
-    'bg-custom_color-spotify',
-    'bg-custom_color-gmail',
-    'bg-custom_color-dropbox',
-    'bg-custom_color-timer',
-    'bg-custom_color-weather',
+    "bg-custom_color-spotify",
+    "bg-custom_color-gmail",
+    "bg-custom_color-dropbox",
+    "bg-custom_color-timer",
+    "bg-custom_color-weather",
   ],
   theme: {
     extend: {
