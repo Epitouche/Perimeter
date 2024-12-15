@@ -30,21 +30,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <h1>Connected services for Actions</h1>
-    <UButton to="/workflow">Back</UButton>
-    <div v-if="error">Error: {{ error }}</div>
-    <div v-else-if="services">
-      <div v-for="service in services" :key="service.id">
-        <NuxtLink
-          :to="{
-          name: 'workflow-actions-service',
-          params: { service: service.id },
-        }">
-          {{ service.name }}
-        </NuxtLink>
-      </div>
+  <div class="flex flex-col p-10">
+    <div class="flex flex-row items-center">
+      <BackButton link="/workflow" />
+      <h1 class="w-full flex justify-center text-8xl font-custom_weight_title">Add an action</h1>
     </div>
+    <UContainer class="">
+      <SearchBar />
+      <div v-if="error">Error: {{ error }}</div>
+      <div v-else-if="services">
+        <div v-for="service in services" :key="service.id">
+          <NuxtLink
+          :to="{
+            name: 'workflow-actions-service',
+            params: { service: service.id },
+          }">
+            {{ service.name }}
+          </NuxtLink>
+        </div>
+      </div>
+    </UContainer>
   </div>
 </template>
 

@@ -244,7 +244,6 @@ const onCreate = async () => {
     console.error("Error creating workflow:", err);
     console.log("Error creating workflow:", err);
   }
-  alert("Workflow created successfully!");
 };
 
 onMounted(() => {

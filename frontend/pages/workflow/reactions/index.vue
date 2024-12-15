@@ -32,7 +32,7 @@ onMounted(() => {
 <template>
   <div>
     <h1>Connected services for Actions</h1>
-    <UButton to="/workflow">Back</UButton>
+    <BackButton link="/workflow" />
     <div v-if="error">Error: {{ error }}</div>
     <div v-else-if="services">
       <div v-for="service in services" :key="service.id">
