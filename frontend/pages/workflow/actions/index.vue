@@ -6,23 +6,35 @@ definePageMeta({
 
 const token = useCookie("token");
 
-const services = ref<any>(null);
 const error = ref<string | null>(null);
+const services = ref<any[]>([]);
+const filteredServices = ref<any[]>([]);
+
+const searchQuery = ref<string>("");
 
 const fetchServices = async () => {
   try {
     error.value = null;
-    services.value = await $fetch("/api/workflow/services", {
+    const result = await $fetch<any[]>("/api/workflow/services", {
       method: "POST",
       body: {
         token: token.value,
       },
     });
+    services.value = result;
+    filteredServices.value = result;
     console.log("services", services.value);
   } catch (error) {
+    filteredServices.value = [];
     console.error("Error fetching services:", error);
   }
 };
+
+watch(searchQuery, (newQuery) => {
+  filteredServices.value = services.value.filter((service) =>
+    service.name.toLowerCase().includes(newQuery.toLowerCase())
+  );
+});
 
 onMounted(() => {
   fetchServices();
@@ -30,18 +42,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col p-10">
-    <div class="flex flex-row items-center">
-      <BackButton link="/workflow" />
-      <h1 class="w-full flex justify-center text-8xl font-custom_weight_title">Add an action</h1>
-    </div>
-    <UContainer class="">
-      <SearchBar />
+  <div class="p-10">
+    <BackButton link="/workflow" color="black" />
+    <h1 class="flex justify-center w-full text-8xl font-custom_weight_title pb-20">Add an action</h1>
+    <UContainer :ui="{ base: 'mx-auto' }" class="flex flex-col justify-center items-center gap-10 w-full h-full !p-0">
+      <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
       <div v-if="error">Error: {{ error }}</div>
-      <div v-else-if="services">
-        <div v-for="service in services" :key="service.id">
-          <NuxtLink
-          :to="{
+      <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center flex-wrap w-full">
+        <div v-for="service in filteredServices" :key="service.id">
+          <NuxtLink :to="{
             name: 'workflow-actions-service',
             params: { service: service.id },
           }">
