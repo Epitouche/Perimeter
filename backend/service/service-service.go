@@ -32,6 +32,7 @@ type ServiceService interface {
 		getUserInfo func(token string) (userInfo schemas.User, err error),
 		tokenService TokenService,
 	) (string, error)
+	GetServiceById(serverId uint64) schemas.Service
 }
 
 type ServiceInterface interface {
@@ -272,4 +273,8 @@ func (service *serviceService) GetServicesInfo() (allService []schemas.Service, 
 
 func (service *serviceService) FindServiceByName(name string) schemas.Service {
 	return service.repository.FindByName(schemas.ServiceName(name))
+}
+
+func (service *serviceService) GetServiceById(id uint64) schemas.Service {
+	return service.repository.FindById(id)
 }

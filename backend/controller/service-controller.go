@@ -13,6 +13,7 @@ import (
 type ServiceController interface {
 	AboutJSON(ctx *gin.Context) (aboutJSON schemas.AboutJSON, err error)
 	GetServicesInfo() (response []schemas.Service, err error)
+	GetServiceInfoById(id uint64) (response schemas.Service, err error)
 }
 
 type serviceController struct {
@@ -53,4 +54,10 @@ func (controller *serviceController) AboutJSON(
 
 func (controller *serviceController) GetServicesInfo() (response []schemas.Service, err error) {
 	return controller.service.GetServicesInfo()
+}
+
+func (controller *serviceController) GetServiceInfoById(
+	id uint64,
+) (response schemas.Service, err error) {
+	return controller.service.GetServiceById(id), nil
 }
