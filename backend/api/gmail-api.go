@@ -39,7 +39,7 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 //	@Router			/gmail/auth [get]
 func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
-		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
+		authURL, err := api.controller.RedirectToService(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, schemas.ErrorResponse{Error: err.Error()})
 		} else {
