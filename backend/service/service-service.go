@@ -7,6 +7,7 @@ import (
 
 	"area/repository"
 	"area/schemas"
+	"area/tools"
 )
 
 type ServiceService interface {
@@ -125,10 +126,10 @@ func (service *serviceService) RedirectToServiceOauthPage(
 	}
 
 	// Generate the CSRF token
-	// state, err := tools.GenerateCSRFToken()
-	// if err != nil {
-	// 	return "", fmt.Errorf("unable to generate CSRF token because %w", err)
-	// }
+	state, err := tools.GenerateCSRFToken()
+	if err != nil {
+		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+	}
 
 	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
 	// ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
@@ -139,7 +140,8 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		"?client_id=" + clientID +
 		"&response_type=code" +
 		"&scope=" + scope +
-		"&redirect_uri=" + redirectURI
+		"&redirect_uri=" + redirectURI +
+		"&state=" + state
 	return authURL, nil
 }
 
