@@ -16,6 +16,5 @@ export default defineEventHandler(async (event) => {
     return response;
   } catch (error) {
     console.error("Error fetching services:", error);
-    console.log("Error fetching services:", error);
   }
 });

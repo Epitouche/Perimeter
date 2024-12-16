@@ -134,7 +134,7 @@ const handleSignUp = async () => {
           <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
-          <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12"
+          <UButton class="text-center text-[2.5rem] px-12" @click="handleSignUp"
             >Sign up</UButton
           >
           <p class="text-xl">
