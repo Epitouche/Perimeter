@@ -2,11 +2,9 @@ import React, { useEffect, useContext, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import BottomNavBar from '../Components/NavBar';
-import { RootStackParamList } from '../../Navigation/navigate';
+import BottomNavBar from './NavBar';
+import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
-
-const ipAddress = 'your-ip-address-here'; // Replace with the actual IP address
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
 
@@ -55,7 +53,7 @@ const AreasScreen = ({ navigation }: Props) => {
           <TouchableOpacity
             key={index}
             style={[styles.areaBox, { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' }]} // Dynamic colors
-            onPress={() => navigation.navigate('AreaDetails', { area })}
+            // onPress={() => navigation.navigate('AreaDetails', { area })}
           >
             <Text style={styles.areaText}>{
               `${area.action_id.name} ~ ${area.reaction_id.name}`

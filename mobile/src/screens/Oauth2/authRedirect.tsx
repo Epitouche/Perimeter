@@ -1,23 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../Navigation/navigate';
-import { AppContext } from '../../context/AppContext';
+import {AppContext} from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
-const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
+const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true);
   const {ipAddress, token, setToken, codeVerifier} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
-
     const timer = setTimeout(() => {
       setIsLoading(false);
       navigation.goBack();
@@ -27,16 +21,16 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   }, [navigation]);
 
   async function oauthCallback(codeSpotify: string) {
-    const response = await fetch(`http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
+    const response = await fetch(
+      `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ codeSpotify, code_verifier: codeVerifier }),
-      }
-
+        body: JSON.stringify({codeSpotify, code_verifier: codeVerifier}),
+      },
     );
     console.log('response: ', response);
     const data = await response.json();
@@ -46,7 +40,11 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
     } else {
       setToken(data.token);
       console.log('data: ', data);
-      navigation.navigate('AreaView');
+      if (data.token !== '') {
+        navigation.navigate('AreaView');
+      } else {
+        console.error('Error: no token');
+      }
     }
   }
 

@@ -11,15 +11,24 @@ interface AppContextProps {
 
 const AppContext = createContext<AppContextProps>({ ipAddress: '', setIpAddress: () => {}, token: '', setToken: () => {}, codeVerifier: '', setCodeVerifier: () => {} });
 
-interface AppProviderProps { children: ReactNode }
+interface AppProviderProps { readonly children: ReactNode }
 
 export function AppProvider({ children }: AppProviderProps) {
     const [ipAddress, setIpAddress] = useState('');
     const [token, setToken] = useState('');
     const [codeVerifier, setCodeVerifier] = useState('');
 
+    const contextValue = React.useMemo(() => ({
+        ipAddress,
+        setIpAddress,
+        token,
+        setToken,
+        codeVerifier,
+        setCodeVerifier
+    }), [ipAddress, token, codeVerifier]);
+
     return (
-        <AppContext.Provider value={{ ipAddress, setIpAddress, token, setToken, codeVerifier, setCodeVerifier }}>
+        <AppContext.Provider value={contextValue}>
             {children}
         </AppContext.Provider>
     );

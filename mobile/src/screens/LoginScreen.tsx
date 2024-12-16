@@ -42,7 +42,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       const idToken = userInfo.data?.idToken;
       const userEmail = userInfo.data?.user.email;
       const userUsername = userInfo.data?.user.name;
-      console.log('SUIIIIIIIIIIIIIIII:', userInfo.data);
+      console.log(userInfo.data);
       const resp = await fetch(
         `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
         {
@@ -182,7 +182,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
           style={styles.socialIcon}
         />
-        <TouchableOpacity onPress={() => {console.log("tamere"); HandleSpotifyLogin()}}>
+        <TouchableOpacity onPress={() => HandleSpotifyLogin(setToken)}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
             style={styles.socialIcon}

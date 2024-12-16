@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import BottomNavBar from '../Components/NavBar';
+import BottomNavBar from './NavBar';
 import {authorize} from 'react-native-app-auth';
 import {AppContext} from '../context/AppContext';
 
@@ -100,7 +100,7 @@ const ServicesScreen = (navigation: any) => {
   const spotifyAuthConfig = {
     clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
     clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-    redirectUrl: 'com.area://oauthredirect',
+    redirectUrl: 'com.perimeter-epitech://oauthredirect',
     scopes: ['user-read-private', 'user-read-email'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://accounts.spotify.com/authorize',

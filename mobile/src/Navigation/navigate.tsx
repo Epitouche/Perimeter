@@ -40,7 +40,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
   const linking = {
-    prefixes: ['com.area://'],
+    prefixes: ['com.perimeter-epitech://'],
     config: {
       screens: {
         authRedirect: 'oauthredirect',
