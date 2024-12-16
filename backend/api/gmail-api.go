@@ -81,8 +81,8 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Tags			Gmail
 //	@Accept			json
 //	@Produce		json
+//	@Security		bearerAuth
 //	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Param			Authorization	header		string					false	"Bearer token
 //	@Success		200				{object}	schemas.JWT
 //	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback/mobile [post]
@@ -107,14 +107,13 @@ func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 //	@Tags			Gmail
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.UserCredentials
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/gmail/info/user [get]
+//	@Router			/gmail/info [get]
 func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/user", func(ctx *gin.Context) {
+	apiRoutes.GET("/", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})

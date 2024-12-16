@@ -73,6 +73,8 @@ definitions:
     properties:
       code:
         type: string
+    required:
+    - code
     type: object
   schemas.ErrorResponse:
     properties:
@@ -133,12 +135,14 @@ definitions:
     - openWeatherMap
     - timer
     - gmail
+    - github
     type: string
     x-enum-varnames:
     - Spotify
     - OpenWeatherMap
     - Timer
     - Gmail
+    - Github
   schemas.Token:
     properties:
       createdAt:
@@ -199,7 +203,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /action/info/{id}:
+  /action/info/:id:
     get:
       consumes:
       - application/json
@@ -232,7 +236,7 @@ paths:
       summary: get action info
       tags:
       - Action
-  /area/:
+  /area:
     get:
       consumes:
       - application/json
@@ -283,7 +287,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: create area
       tags:
@@ -333,7 +336,7 @@ paths:
       summary: give url to authenticate with github
       tags:
       - Github
-  /github/info/user:
+  /github/info:
     get:
       consumes:
       - application/json
@@ -354,7 +357,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: give user info of github
       tags:
@@ -408,7 +410,35 @@ paths:
       summary: give url to authenticate with gmail
       tags:
       - Gmail
-  /gmail/info/user:
+  /gmail/auth/callback/mobile:
+    post:
+      consumes:
+      - application/json
+      description: give url to authenticate with gmail
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give url to authenticate with gmail
+      tags:
+      - Gmail
+  /gmail/info:
     get:
       consumes:
       - application/json
@@ -429,7 +459,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: give user info of gmail
       tags:
@@ -449,7 +478,7 @@ paths:
       summary: ping example
       tags:
       - ping route
-  /reaction/info/{id}:
+  /reaction/info/:id:
     get:
       consumes:
       - application/json
@@ -483,7 +512,7 @@ paths:
       summary: get reaction info
       tags:
       - Reaction
-  /service/info/:
+  /service/info:
     get:
       consumes:
       - application/json
@@ -506,7 +535,37 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
+      - bearerAuth: []
+      summary: get service info
+      tags:
+      - Service
+  /service/info/:id:
+    get:
+      consumes:
+      - application/json
+      description: get service info of service id
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Service'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
       - bearerAuth: []
       summary: get service info
       tags:
@@ -534,7 +593,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: give url to authenticate with spotify
+      description: give authentication token to web client
       parameters:
       - description: Callback Payload
         in: body
@@ -557,10 +616,40 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with spotify
+      summary: give authentication token to web client
       tags:
       - Spotify
-  /spotify/info/user:
+  /spotify/auth/callback/mobile:
+    post:
+      consumes:
+      - application/json
+      description: give authentication token to mobile
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give authentication token to mobile
+      tags:
+      - Spotify
+  /spotify/info:
     get:
       consumes:
       - application/json
@@ -581,11 +670,35 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: give user info of spotify
       tags:
       - Spotify
+  /user/info:
+    get:
+      consumes:
+      - application/json
+      description: give user info of user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of user
+      tags:
+      - User
   /user/info/all:
     get:
       consumes:
@@ -607,33 +720,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
-      - bearerAuth: []
-      summary: give user info of user
-      tags:
-      - User
-  /user/info/user:
-    get:
-      consumes:
-      - application/json
-      description: give user info of user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemas.UserCredentials'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/schemas.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/schemas.ErrorResponse'
-      security:
-      - Bearer: []
       - bearerAuth: []
       summary: give user info of user
       tags:
