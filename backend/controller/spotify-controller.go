@@ -3,18 +3,16 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
 	"area/service"
-	"area/tools"
 )
 
 type SpotifyController interface {
-	RedirectToService(ctx *gin.Context) (string, error)
+	RedirectToService(ctx *gin.Context) (oauthUrl string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
@@ -42,35 +40,17 @@ func NewSpotifyController(
 
 func (controller *spotifyController) RedirectToService(
 	ctx *gin.Context,
-) (string, error) {
-	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
-	if clientID == "" {
-		return "", schemas.ErrSpotifyClientIdNotSet
-	}
+) (oauthUrl string, err error) {
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return "", schemas.ErrBackendPortNotSet
-	}
-
-	// Generate the CSRF token
-	state, err := tools.GenerateCSRFToken()
+	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
+		schemas.Gmail,
+		"https://accounts.spotify.com/authorize",
+		"user-read-private user-read-email user-modify-playback-state",
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
 	}
-
-	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
-	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
-
-	// Construct the Spotify authorization URL
-	redirectURI := "http://localhost:8081/services/spotify"
-	authURL := "https://accounts.spotify.com/authorize" +
-		"?response_type=code" +
-		"&client_id=" + clientID +
-		"&scope=user-read-private user-read-email user-modify-playback-state" +
-		"&redirect_uri=" + redirectURI +
-		"&state=" + state
-	return authURL, nil
+	return oauthUrl, nil
 }
 
 func (controller *spotifyController) HandleServiceCallback(

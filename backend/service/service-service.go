@@ -1,6 +1,8 @@
 package service
 
 import (
+	"os"
+
 	"area/repository"
 	"area/schemas"
 )
@@ -14,6 +16,11 @@ type ServiceService interface {
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	FindServiceByName(name string) schemas.Service
+	RedirectToServiceOauthPage(
+		serviceName schemas.ServiceName,
+		oauthUrl string,
+		scope string,
+	) (authURL string, err error)
 }
 
 type ServiceInterface interface {
@@ -72,6 +79,53 @@ func (service *serviceService) InitialSaveService() {
 			service.repository.Save(oneService)
 		}
 	}
+}
+
+func (service *serviceService) RedirectToServiceOauthPage(
+	serviceName schemas.ServiceName,
+	oauthUrl string,
+	scope string,
+) (authURL string, err error) {
+	clientID := ""
+
+	switch serviceName {
+	case schemas.Spotify:
+		clientID = os.Getenv("SPOTIFY_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrSpotifyClientIdNotSet
+		}
+	case schemas.Gmail:
+		clientID = os.Getenv("GMAIL_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrGmailClientIdNotSet
+		}
+	}
+	if clientID == "" {
+		return "", schemas.ErrNotOauthService
+	}
+
+	frontendPort := os.Getenv("FRONTEND_PORT")
+	if frontendPort == "" {
+		return "", schemas.ErrFrontendPortNotSet
+	}
+
+	// Generate the CSRF token
+	// state, err := tools.GenerateCSRFToken()
+	// if err != nil {
+	// 	return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+	// }
+
+	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
+	// ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
+
+	// Construct the GitHub authorization URL
+	redirectURI := "http://localhost:" + frontendPort + "/services/" + string(serviceName)
+	authURL = oauthUrl +
+		"?client_id=" + clientID +
+		"&response_type=code" +
+		"&scope=" + scope +
+		"&redirect_uri=" + redirectURI
+	return authURL, nil
 }
 
 func (service *serviceService) FindAll() (allServices []schemas.Service) {

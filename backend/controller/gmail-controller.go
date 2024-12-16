@@ -3,18 +3,16 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
 	"area/service"
-	"area/tools"
 )
 
 type GmailController interface {
-	RedirectToService(ctx *gin.Context, path string) (string, error)
+	RedirectToService(ctx *gin.Context) (string, error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context, path string) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
@@ -43,36 +41,16 @@ func NewGmailController(
 
 func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
-	path string,
-) (string, error) {
-	clientID := os.Getenv("GMAIL_CLIENT_ID")
-	if clientID == "" {
-		return "", schemas.ErrGmailClientIdNotSet
-	}
-
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return "", schemas.ErrGmailSecretNotSet
-	}
-
-	// Generate the CSRF token
-	state, err := tools.GenerateCSRFToken()
+) (oauthUrl string, err error) {
+	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
+		schemas.Gmail,
+		"https://accounts.google.com/o/oauth2/v2/auth",
+		"https://mail.google.com/ profile email",
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
 	}
-
-	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
-	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
-
-	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:8081/services/gmail"
-	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
-		"?client_id=" + clientID +
-		"&response_type=code" +
-		"&scope=https://mail.google.com/ profile email" +
-		"&redirect_uri=" + redirectURI +
-		"&state=" + state
-	return authURL, nil
+	return oauthUrl, nil
 }
 
 func (controller *gmailController) HandleServiceCallback(
