@@ -15,7 +15,7 @@ import {
   GoogleSignin,
   isErrorWithCode,
 } from '@react-native-google-signin/google-signin';
-import {HandleSpotifyLogin} from './Oauth2/OAuth2';
+import {HandleSpotifyLogin, HandleGithubLogin} from './Oauth2/OAuth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -23,7 +23,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
-  const {ipAddress, setToken} = useContext(AppContext);
+  const {ipAddress, setToken, setService} = useContext(AppContext);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -178,11 +178,21 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
             style={styles.socialIcon}
           />
         </TouchableOpacity>
-        <Image
-          source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
-          style={styles.socialIcon}
-        />
-        <TouchableOpacity onPress={() => HandleSpotifyLogin(setToken)}>
+        <TouchableOpacity
+          onPress={() => {
+            setService('Github');
+            HandleGithubLogin(setToken);
+          }}>
+          <Image
+            source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
+            style={styles.socialIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setService('Spotify');
+            HandleSpotifyLogin(setToken);
+          }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
             style={styles.socialIcon}

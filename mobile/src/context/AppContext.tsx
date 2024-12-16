@@ -7,9 +7,11 @@ interface AppContextProps {
     setToken: (token: string) => void;
     codeVerifier: string;
     setCodeVerifier: (code: string) => void;
+    service: string;
+    setService: (service: string) => void;
 }
 
-const AppContext = createContext<AppContextProps>({ ipAddress: '', setIpAddress: () => {}, token: '', setToken: () => {}, codeVerifier: '', setCodeVerifier: () => {} });
+const AppContext = createContext<AppContextProps>({ ipAddress: '', setIpAddress: () => {}, token: '', setToken: () => {}, codeVerifier: '', setCodeVerifier: () => {}, service: '', setService: () => {} });
 
 interface AppProviderProps { readonly children: ReactNode }
 
@@ -17,6 +19,7 @@ export function AppProvider({ children }: AppProviderProps) {
     const [ipAddress, setIpAddress] = useState('');
     const [token, setToken] = useState('');
     const [codeVerifier, setCodeVerifier] = useState('');
+    const [service, setService] = useState('');
 
     const contextValue = React.useMemo(() => ({
         ipAddress,
@@ -24,8 +27,10 @@ export function AppProvider({ children }: AppProviderProps) {
         token,
         setToken,
         codeVerifier,
-        setCodeVerifier
-    }), [ipAddress, token, codeVerifier]);
+        setCodeVerifier,
+        service,
+        setService,
+    }), [ipAddress, token, codeVerifier, service]);
 
     return (
         <AppContext.Provider value={contextValue}>

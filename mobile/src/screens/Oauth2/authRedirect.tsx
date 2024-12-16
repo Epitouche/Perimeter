@@ -8,7 +8,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, token, setToken, codeVerifier} = useContext(AppContext);
+  const {ipAddress, token, setToken, codeVerifier, service} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
     return () => clearTimeout(timer);
   }, [navigation]);
 
-  async function oauthCallback(codeSpotify: string) {
+  async function SpotifyOauthCallback(codeSpotify: string) {
     const response = await fetch(
       `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
       {
@@ -38,9 +38,37 @@ const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
       console.error(data.error);
       navigation.goBack();
     } else {
-      setToken(data.token);
+      setToken(data.accessToken);
       console.log('data: ', data);
-      if (data.token !== '') {
+      if (data.accessToken !== '') {
+        navigation.navigate('AreaView');
+      } else {
+        console.error('Error: no token');
+      }
+    }
+  }
+
+  async function GithubOauthCallback(codeGithub: string) {
+    const response = await fetch(
+      `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({codeGithub}),
+      },
+    );
+    console.log('response: ', response);
+    const data = await response.json();
+    if (data.error) {
+      console.error(data.error);
+      navigation.goBack();
+    } else {
+      setToken(data.accessToken);
+      console.log('data: ', data);
+      if (data.accessToken !== '') {
         navigation.navigate('AreaView');
       } else {
         console.error('Error: no token');
@@ -49,7 +77,11 @@ const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
   }
 
   if (code) {
-    oauthCallback(code);
+    if (service == 'Spotify') {
+      SpotifyOauthCallback(code);
+    } else if (service == 'Github') {
+      GithubOauthCallback(code);
+    }
   }
 
   if (isLoading) {
