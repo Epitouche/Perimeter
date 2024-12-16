@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LocationQueryValue } from 'vue-router';
+import type { LocationQueryValue } from "vue-router";
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -57,7 +57,7 @@ onMounted(() => {
   websiteStore.loadWorkflowState();
 
   const getQueryParam = (
-    param: LocationQueryValue | LocationQueryValue[] | undefined
+    param: LocationQueryValue | LocationQueryValue[] | undefined,
   ): string | null => {
     if (Array.isArray(param)) {
       return param.length > 0 ? String(param[0]) : null;
@@ -72,10 +72,14 @@ onMounted(() => {
     websiteStore.actionId = actionId;
     try {
       websiteStore.actionOptions = JSON.parse(
-        route.query.actionOptions ? String(route.query.actionOptions) : "{}"
+        route.query.actionOptions ? String(route.query.actionOptions) : "{}",
       );
     } catch (err) {
-      console.error("Failed to parse actionOptions:", route.query.actionOptions, err);
+      console.error(
+        "Failed to parse actionOptions:",
+        route.query.actionOptions,
+        err,
+      );
       websiteStore.actionOptions = {};
     }
     websiteStore.actionServiceId = getQueryParam(route.query.actionServiceId);
@@ -86,20 +90,27 @@ onMounted(() => {
     websiteStore.reactionId = reactionId;
     try {
       websiteStore.reactionOptions = JSON.parse(
-        route.query.reactionOptions ? String(route.query.reactionOptions) : "{}"
+        route.query.reactionOptions
+          ? String(route.query.reactionOptions)
+          : "{}",
       );
     } catch (err) {
-      console.error("Failed to parse reactionOptions:", route.query.reactionOptions, err);
+      console.error(
+        "Failed to parse reactionOptions:",
+        route.query.reactionOptions,
+        err,
+      );
       websiteStore.reactionOptions = {};
     }
-    websiteStore.reactionServiceId = getQueryParam(route.query.reactionServiceId);
+    websiteStore.reactionServiceId = getQueryParam(
+      route.query.reactionServiceId,
+    );
     websiteStore.onReactionSelected();
   }
 
   const cleanUrl = window.location.pathname;
-  window.history.replaceState({}, '', cleanUrl);
+  window.history.replaceState({}, "", cleanUrl);
 });
-
 </script>
 
 <template>
