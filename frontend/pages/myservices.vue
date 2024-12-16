@@ -7,17 +7,17 @@ const apps = [
   {
     name: "Spotify",
     color: "#1DC000",
-    icon: "i-logos-spotify-icon",
+    icon: "my-icons:white-spotify",
   },
   {
     name: "Gmail",
     color: "#E60000",
-    icon: "i-logos-google-icon",
+    icon: "my-icons:white-gmail",
   },
   {
     name: "Time",
     color: "#BB00FF",
-    icon: "i-ic-outline-timelapse",
+    icon: "my-icons:white-timer",
   },
 ];
 </script>
