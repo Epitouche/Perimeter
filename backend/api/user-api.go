@@ -89,14 +89,13 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 //	@Tags			User
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.UserCredentials
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/user/info/user [get]
+//	@Router			/user/info [get]
 func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/user", func(ctx *gin.Context) {
+	apiRoutes.GET("/", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -115,7 +114,6 @@ func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 //	@Tags			User
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.UserAllInfo
 //	@Failure		401	{object}	schemas.ErrorResponse
