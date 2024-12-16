@@ -96,7 +96,6 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
 	path string,
 ) (string, error) {
-
 	var credentials schemas.TokenCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
