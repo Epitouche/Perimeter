@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint", '@pinia/nuxt'],
+  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint", "@pinia/nuxt"],
 
   icon: {
     customCollections: [

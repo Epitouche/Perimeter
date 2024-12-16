@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LocationQueryValue } from 'vue-router';
+import type { LocationQueryValue } from "vue-router";
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -47,7 +47,7 @@ onMounted(() => {
   websiteStore.loadWorkflowState();
 
   const getQueryParam = (
-    param: LocationQueryValue | LocationQueryValue[] | undefined
+    param: LocationQueryValue | LocationQueryValue[] | undefined,
   ): string | null => {
     if (Array.isArray(param)) {
       return param.length > 0 ? String(param[0]) : null;
@@ -62,10 +62,14 @@ onMounted(() => {
     websiteStore.actionId = actionId;
     try {
       websiteStore.actionOptions = JSON.parse(
-        route.query.actionOptions ? String(route.query.actionOptions) : "{}"
+        route.query.actionOptions ? String(route.query.actionOptions) : "{}",
       );
     } catch (err) {
-      console.error("Failed to parse actionOptions:", route.query.actionOptions, err);
+      console.error(
+        "Failed to parse actionOptions:",
+        route.query.actionOptions,
+        err,
+      );
       websiteStore.actionOptions = {};
     }
     websiteStore.actionServiceId = getQueryParam(route.query.actionServiceId);
@@ -76,20 +80,27 @@ onMounted(() => {
     websiteStore.reactionId = reactionId;
     try {
       websiteStore.reactionOptions = JSON.parse(
-        route.query.reactionOptions ? String(route.query.reactionOptions) : "{}"
+        route.query.reactionOptions
+          ? String(route.query.reactionOptions)
+          : "{}",
       );
     } catch (err) {
-      console.error("Failed to parse reactionOptions:", route.query.reactionOptions, err);
+      console.error(
+        "Failed to parse reactionOptions:",
+        route.query.reactionOptions,
+        err,
+      );
       websiteStore.reactionOptions = {};
     }
-    websiteStore.reactionServiceId = getQueryParam(route.query.reactionServiceId);
+    websiteStore.reactionServiceId = getQueryParam(
+      route.query.reactionServiceId,
+    );
     websiteStore.onReactionSelected();
   }
 
   const cleanUrl = window.location.pathname;
-  window.history.replaceState({}, '', cleanUrl);
+  window.history.replaceState({}, "", cleanUrl);
 });
-
 </script>
 
 <template>
@@ -100,7 +111,9 @@ onMounted(() => {
     <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
       <UButton
         class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
-        @click="onCancel()">Cancel</UButton>
+        @click="onCancel()"
+        >Cancel</UButton
+      >
     </div>
 
     <div class="flex flex-col justify-center items-center gap-10">
@@ -109,19 +122,32 @@ onMounted(() => {
       </h1>
       <div class="flex flex-col justify-center items-center">
         <ReActionButton
-          title="Action" link="/workflow/actions" :is-disabled="false"
-          :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)" />
+          title="Action"
+          link="/workflow/actions"
+          :is-disabled="false"
+          :is-selected="websiteStore.actionIsSelected"
+          :service-id="Number(websiteStore.actionServiceId)"
+        />
         <div
           :class="[
-          'bg-black min-w-4 min-h-28',
-          websiteStore.reactionButtonisDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
-        ]" />
+            'bg-black min-w-4 min-h-28',
+            websiteStore.reactionButtonisDisabled
+              ? 'bg-opacity-60'
+              : 'bg-opacity-100',
+          ]"
+        />
         <ReActionButton
-          title="Reaction" link="/workflow/reactions" :is-disabled="websiteStore.reactionButtonisDisabled"
-          :is-selected="websiteStore.reactionIsSelected" :service-id="Number(websiteStore.reactionServiceId)" />
+          title="Reaction"
+          link="/workflow/reactions"
+          :is-disabled="websiteStore.reactionButtonisDisabled"
+          :is-selected="websiteStore.reactionIsSelected"
+          :service-id="Number(websiteStore.reactionServiceId)"
+        />
       </div>
       <div v-if="websiteStore.showCreateButton" class="pt-10">
-        <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate">Create</UButton>
+        <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate"
+          >Create</UButton
+        >
       </div>
     </div>
   </div>
