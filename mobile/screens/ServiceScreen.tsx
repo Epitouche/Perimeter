@@ -13,7 +13,7 @@ import BottomNavBar from './NavBar';
 import {authorize} from 'react-native-app-auth';
 import {AppContext} from '../context/AppContext';
 
-const ServicesScreen = ({navigation}) => {
+const ServicesScreen = (navigation: any) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const { ipAddress, token, setToken} = useContext(AppContext);

@@ -6,14 +6,14 @@ import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import AreaView from './screens/AreaView';
 import ServicesScreen from './screens/ServiceScreen';
-import AuthRedirectScreen from './screens/authRedirect';
+import AuthRedirectScreen from './screens/Oauth2/authRedirect';
 import AppProvider from './context/AppContext';
 import WorkflowScreen from './screens/Workflow';
-import AddActionScreen from './screens/AddAction';
-import SelectActionScreen from './screens/SelectAction';
+import AddActionScreen from './screens/AreaCreation/AddAction';
+import SelectActionScreen from './screens/AreaCreation/SelectAction';
 import WorkflowReactionScreen from './screens/WorkflowReaction';
-import AddReactionScreen from './screens/AddReaction';
-import SelectReactionScreen from './screens/SelectReaction';
+import AddReactionScreen from './screens/AreaCreation/AddReaction';
+import SelectReactionScreen from './screens/AreaCreation/SelectReaction';
 
 export type RootStackParamList = {
   Home: undefined;

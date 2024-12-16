@@ -6,18 +6,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Linking,
 } from 'react-native';
 import 'url-search-params-polyfill';
-import {authorize, AuthConfiguration} from 'react-native-app-auth';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import {AppContext} from '../context/AppContext';
-import pkceChallenge from 'react-native-pkce-challenge';
 import {
   GoogleSignin,
-  statusCodes,
+  isErrorWithCode,
 } from '@react-native-google-signin/google-signin';
+import {HandleSpotifyLogin} from './Oauth2/OAuth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -25,12 +23,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
-  const {ipAddress, setToken, setCodeVerifier} = useContext(AppContext);
+  const {ipAddress, setToken} = useContext(AppContext);
 
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
-        '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com',
+        '616333423597-9gfqlpsa6l7520sbgrk8th02apobie8m.apps.googleusercontent.com',
       offlineAccess: true,
       forceCodeForRefreshToken: true,
     });
@@ -39,13 +37,12 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-
       const userInfo = await GoogleSignin.signIn();
 
       const idToken = userInfo.data?.idToken;
       const userEmail = userInfo.data?.user.email;
       const userUsername = userInfo.data?.user.name;
-      console.log(userInfo);
+      console.log('SUIIIIIIIIIIIIIIII:', userInfo.data);
       const resp = await fetch(
         `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
         {
@@ -53,7 +50,11 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({token: String(idToken), username: userUsername, email: userEmail }),
+          body: JSON.stringify({
+            token: String(idToken),
+            username: userUsername,
+            email: userEmail,
+          }),
         },
       );
       if (resp.status === 200) {
@@ -65,108 +66,14 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         navigation.navigate('AreaView');
       }
     } catch (error: any) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
-        const resp = await fetch(
-          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({token: 'cancelled'}),
-          },
+      if (isErrorWithCode(error)) {
+        console.error(
+          'Error with code:',
+          error.code,
+          '\n\terror message:',
+          error.message,
         );
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Signing in');
-        const resp = await fetch(
-          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({token: 'in progress'}),
-          },
-        );
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play services not available');
-        const resp = await fetch(
-          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({token: 'Play services not available'}),
-          },
-        );
-      } else {
-        console.log('Some other error happened');
-        const resp = await fetch(
-          `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({token: 'other'}),
-          },
-        );
-        console.log(error.message);
-        console.log(error.code);
       }
-    }
-  };
-
-  const handleSpotifyLogin = async () => {
-    const challenge = pkceChallenge();
-
-    setCodeVerifier(challenge.codeVerifier);
-
-    const spotifyAuthConfig: AuthConfiguration = {
-      clientId: 'a2720e8c24db49ee938e84b83d7c2da1', // Replace with env variable
-      clientSecret: '9df3f1a07db44b7981036a0b04b52e51', // Replace with env variable
-      redirectUrl: 'com.perimeter-epitech://oauthredirect',
-      scopes: ['user-read-private', 'user-read-email'],
-      serviceConfiguration: {
-        authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-        tokenEndpoint: 'https://accounts.spotify.com/api/token',
-      },
-    };
-
-    try {
-      const authState = await authorize(spotifyAuthConfig);
-      console.log('Spotify Auth State:', authState);
-      console.log('Logged into Spotify successfully!');
-      const resp = await fetch(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({token: authState.accessToken}),
-        },
-      );
-      const data = await resp.json();
-      setToken(data.token);
-      console.log('Bearer Token:', data.token);
-    } catch (error) {
-      console.log('Spotify Login Error:', error);
-      const resp = await fetch(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // body: JSON.stringify({token: authState.accessToken}),
-          body: JSON.stringify({token: 'error' + error}),
-        },
-      );
-      const data = await resp.json();
-      setToken(data.token);
     }
   };
 
@@ -275,7 +182,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
           style={styles.socialIcon}
         />
-        <TouchableOpacity onPress={handleSpotifyLogin}>
+        <TouchableOpacity onPress={HandleSpotifyLogin}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
             style={styles.socialIcon}

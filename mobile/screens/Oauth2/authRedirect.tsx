@@ -6,14 +6,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../App';
-import { AppContext } from '../context/AppContext';
+import {RootStackParamList} from '../../App';
+import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, setToken, codeVerifier} = useContext(AppContext);
+  const {ipAddress, token, setToken, codeVerifier} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   }, [navigation]);
 
   async function oauthCallback(codeSpotify: string) {
-    const response = await fetch(`http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`, // change it to be modular with route name (change spotify with something else...)
+    const response = await fetch(`http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
       {
         method: 'POST',
         headers: {
