@@ -28,8 +28,14 @@ const fetchReactions = async () => {
       },
     });
 
-    reactions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
+    reactions.value.forEach((reaction: any) => {
+      const parsedOption = JSON.parse(reaction.option || "{}");
+      for (const key in parsedOption) {
+        parsedOption[key] = isNaN(Number(parsedOption[key]))
+          ? parsedOption[key]
+          : Number(parsedOption[key]);
+      }
+      modifiedOptions[reaction.id] = parsedOption;
     });
 
     console.log("reactions", reactions.value);
@@ -57,19 +63,19 @@ const parseOption = (option: string) => {
 };
 
 const saveOptions = (reactionId: number) => {
-  //// Convert all values to numbers if they are numbers
-  //for (const key in modifiedOptions[reactionId]) {
-  //    console.log("key to int", key);
-  //    if (!isNaN(Number(modifiedOptions[reactionId][key]))) {
-  //      continue;
-  //    }
-  //    modifiedOptions[reactionId][key] = Number(modifiedOptions[reactionId][key]);
-  //}
+  for (const key in modifiedOptions[reactionId]) {
+    const value = modifiedOptions[reactionId][key];
+    if (!isNaN(Number(value)) && value !== "") {
+      modifiedOptions[reactionId][key] = Number(value);
+    }
+  }
+
   router.push({
     name: "workflow",
     query: {
       reactionId: reactionId,
       reactionOptions: JSON.stringify(modifiedOptions[reactionId]),
+      reactionServiceId: serviceId,
     },
   });
 };
@@ -77,6 +83,7 @@ const saveOptions = (reactionId: number) => {
 
 <template>
   <div>
+    <UButton to="/workflow/reactions">Back</UButton>
     <h1>Service Reactions Page</h1>
     <div v-if="error">
       <div>Error: {{ error }}</div>
@@ -93,7 +100,10 @@ const saveOptions = (reactionId: number) => {
               :key="key"
             >
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[reaction.id][key]" type="text" />
+              <input
+                v-model="modifiedOptions[reaction.id][key]"
+                :type="typeof value === 'number' ? 'number' : 'text'"
+              />
             </div>
             <button @click="saveOptions(reaction.id)">Save</button>
           </div>
