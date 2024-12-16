@@ -15,7 +15,6 @@ func TestHashPassword(t *testing.T) {
 	}
 	println(password)
 	hashedPassword, err := HashPassword(password)
-
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -37,7 +36,6 @@ func TestDoPasswordsMatch(t *testing.T) {
 	}
 	println(password)
 	hashedPassword, err := HashPassword(password)
-
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
