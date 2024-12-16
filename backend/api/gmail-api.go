@@ -82,9 +82,9 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
-//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Success		200				{object}	schemas.JWT
-//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Success		200		{object}	schemas.JWT
+//	@Failure		500		{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback/mobile [post]
 func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
