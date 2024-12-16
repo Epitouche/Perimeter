@@ -9,7 +9,7 @@ import {
   Linking,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../App';
+import {RootStackParamList} from '../Navigation/navigate';
 import { HandleSpotifyLogin } from './Oauth2/OAuth2';
 import {AppContext} from '../context/AppContext';
 import {
@@ -202,7 +202,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
             style={styles.socialIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={HandleSpotifyLogin}>
+        <TouchableOpacity onPress={() => HandleSpotifyLogin()}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
             style={styles.socialIcon}

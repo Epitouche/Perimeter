@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import BottomNavBar from './NavBar';
+import BottomNavBar from '../Components/NavBar';
 import {authorize} from 'react-native-app-auth';
 import {AppContext} from '../context/AppContext';
 

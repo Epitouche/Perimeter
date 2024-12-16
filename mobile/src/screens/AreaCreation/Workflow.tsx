@@ -1,30 +1,31 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import BottomNavBar from '../../Components/NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
+import { RootStackParamList } from '../../../App';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowReactionScreen'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 
-const WorkflowReactionScreen = ({navigation, route}: Props) => {
-  const { actionId, actionOptions} = route.params;
-
+const WorkflowScreen = ({navigation}: {navigation : any}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
-      <View style={styles.reactionBox}>
+      <View style={styles.actionBox}>
         <Text style={styles.boxText}>Action</Text>
         <TouchableOpacity
-        style={styles.addButtonDisabled}>
-          <Text style={styles.addTextDisabled}>Add</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.line} />
-      <View style={styles.actionBox}>
-        <Text style={styles.boxText}>Reaction</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddReactionScreen', { actionId: actionId, actionOptions: actionOptions})}>
+        onPress={() => navigation.navigate('AddActionScreen')} 
+        style={styles.addButton}>
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.line} />
+      <View style={styles.reactionBox}>
+        <Text style={styles.boxText}>Reaction</Text>
+        <TouchableOpacity style={styles.addButtonDisabled}>
+          <Text style={styles.addTextDisabled}>Add</Text>
+        </TouchableOpacity>
+      </View>
+      <BottomNavBar navigation={navigation} />
     </View>
   );
 };
@@ -93,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WorkflowReactionScreen;
+export default WorkflowScreen;

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import 'url-search-params-polyfill';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../App';
+import {RootStackParamList} from '../Navigation/navigate';
 import {AppContext} from '../context/AppContext';
 import {
   GoogleSignin,
@@ -182,7 +182,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
           style={styles.socialIcon}
         />
-        <TouchableOpacity onPress={HandleSpotifyLogin}>
+        <TouchableOpacity onPress={() => {console.log("tamere"); HandleSpotifyLogin()}}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
             style={styles.socialIcon}

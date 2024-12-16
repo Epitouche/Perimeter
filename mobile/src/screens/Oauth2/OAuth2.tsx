@@ -3,7 +3,7 @@ import {useContext} from 'react';
 import {AppContext} from '../../context/AppContext';
 import pkceChallenge from 'react-native-pkce-challenge';
 
-const HandleSpotifyLogin = async () => {
+async function HandleSpotifyLogin() {
   const {setToken, setCodeVerifier, ipAddress} = useContext(AppContext);
   const challenge = pkceChallenge();
 
