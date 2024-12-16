@@ -156,7 +156,6 @@ func (service *serviceService) HandleServiceCallback(
 ) (string, error) {
 	authHeader := authorization
 	newUser := schemas.User{}
-	serviceToken := schemas.Token{}
 	var bearerToken string
 
 	serviceToken, err := authGetServiceAccessToken(code)
