@@ -49,8 +49,8 @@ const handleClick = (label: string) => {
     class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly"
   >
     <UButton
-    v-for="(app, index) in apps"
-    :key="index"
+      v-for="(app, index) in apps"
+      :key="index"
       variant="ghost"
       :icon="app"
       class="app_button basis-1/3 flex justify-center"
