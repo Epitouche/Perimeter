@@ -11,7 +11,7 @@ import (
 )
 
 type GmailController interface {
-	RedirectToService(ctx *gin.Context) (string, error)
+	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context, path string) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
@@ -40,8 +40,8 @@ func NewGmailController(
 
 func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
-) (oauthUrl string, err error) {
-	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
+) (oauthURL string, err error) {
+	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Gmail,
 		"https://accounts.google.com/o/oauth2/v2/auth",
 		"https://mail.google.com/ profile email",
@@ -49,7 +49,7 @@ func (controller *gmailController) RedirectToService(
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
 	}
-	return oauthUrl, nil
+	return oauthURL, nil
 }
 
 func (controller *gmailController) HandleServiceCallback(

@@ -23,4 +23,5 @@ type Token struct {
 var (
 	ErrTokenAlreadyExists            = errors.New("token already exists")
 	ErrAccessTokenNotFoundInResponse = errors.New("access token not found in response")
+	ErrUnableToSaveToken             = errors.New("unable to save token")
 )
