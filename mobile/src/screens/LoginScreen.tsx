@@ -11,71 +11,18 @@ import 'url-search-params-polyfill';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../Navigation/navigate';
 import {AppContext} from '../context/AppContext';
-import {
-  GoogleSignin,
-  isErrorWithCode,
-} from '@react-native-google-signin/google-signin';
-import {HandleSpotifyLogin, HandleGithubLogin} from './Oauth2/OAuth2';
+import {HandleSpotifyLogin} from './Oauth2/OAuth2';
+import {GoogleOauth2, googleSign} from './Oauth2/googleOauth2';
+import {HandleGithubLogin} from './Oauth2/OAuth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({navigation, route}) => {
+  GoogleOauth2();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
   const {ipAddress, setToken, setService} = useContext(AppContext);
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        '616333423597-9gfqlpsa6l7520sbgrk8th02apobie8m.apps.googleusercontent.com',
-      offlineAccess: true,
-      forceCodeForRefreshToken: true,
-    });
-  });
-
-  const signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-
-      const idToken = userInfo.data?.idToken;
-      const userEmail = userInfo.data?.user.email;
-      const userUsername = userInfo.data?.user.name;
-      console.log(userInfo.data);
-      const resp = await fetch(
-        `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            token: String(idToken),
-            username: userUsername,
-            email: userEmail,
-          }),
-        },
-      );
-      if (resp.status === 200) {
-        type ResponseType = {
-          token: string;
-        };
-        const token: ResponseType = await resp.json();
-        setToken(token.token);
-        navigation.navigate('AreaView');
-      }
-    } catch (error: any) {
-      if (isErrorWithCode(error)) {
-        console.error(
-          'Error with code:',
-          error.code,
-          '\n\terror message:',
-          error.message,
-        );
-      }
-    }
-  };
 
   const handleLogin = async () => {
     let hasError = false;
@@ -172,7 +119,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={signIn}>
+        <TouchableOpacity onPress={() => googleSign(navigation, setToken, ipAddress)}>
           <Image
             source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
             style={styles.socialIcon}
