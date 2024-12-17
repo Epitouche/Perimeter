@@ -174,14 +174,14 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity onPress={signIn}>
           <Image
-            source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
+            source={{uri: 'https://img.icons8.com/color/50/google-logo.png'}}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             setService('Github');
-            HandleGithubLogin(setToken);
+            HandleGithubLogin(setToken, navigation);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
@@ -191,7 +191,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => {
             setService('Spotify');
-            HandleSpotifyLogin(setToken);
+            HandleSpotifyLogin(setToken, navigation);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}

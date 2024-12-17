@@ -1,7 +1,7 @@
 import {AuthConfiguration, authorize} from 'react-native-app-auth';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_SECRET, GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
 
-export async function HandleSpotifyLogin(setToken: any) {
+export async function HandleSpotifyLogin(setToken: any, navigation: any) {
 
   const config: AuthConfiguration = {
     clientId: SPOTIFY_CLIENT_ID,
@@ -18,12 +18,13 @@ export async function HandleSpotifyLogin(setToken: any) {
     const result = await authorize(config);
     console.log('result', result);
     setToken(result.accessToken);
+    navigation.navigate('AreaView');
   } catch (error) {
     console.error('Failed to log in to Spotify', error);
   }
 };
 
-export async function HandleGithubLogin(setToken: any) {
+export async function HandleGithubLogin(setToken: any, navigation: any) {
   const config: AuthConfiguration = {
     clientId: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_SECRET,
@@ -39,6 +40,7 @@ export async function HandleGithubLogin(setToken: any) {
     const result = await authorize(config);
     console.log('result', result);
     setToken(result.accessToken);
+    navigation.navigate('AreaView');
   } catch (error) {
     console.error('Failed to log in to GitHub', error);
   }
