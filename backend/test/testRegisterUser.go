@@ -12,7 +12,6 @@ import (
 )
 
 func RegisterUser(router *gin.Engine, t *testing.T) (bearerToken string) {
-
 	// Define the raw JSON body for the test
 	requestBody := `{
 			"username": "toto",
@@ -80,5 +79,4 @@ func LoginUser(router *gin.Engine, t *testing.T) (bearerToken string) {
 	bearerToken = "Bearer " + token.(string)
 
 	return bearerToken
-
 }
