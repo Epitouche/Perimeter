@@ -12,6 +12,7 @@ interface OAuthLink {
 }
 
 const tokenCookie = useCookie("token");
+const isLoading = ref(true);
 let serviceNames: string[] = [];
 
 onMounted(() => {
@@ -38,6 +39,7 @@ async function servicesConnectionInfos() {
       ).tokens;
       serviceNames = tokens.map((token) => token.service_id.name);
       console.log("Service Names Updated:", serviceNames);
+      isLoading.value = false;
     } else {
       console.error("Response does not contain valid tokens.");
       return [];
@@ -75,28 +77,31 @@ const authApiCall = async (label: string) => {
 
 const handleClick = (label: string) => {
   const normalizedLabel = label.toLowerCase();
-  if (normalizedLabel === "spotify") {
-    if (
-      serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
-    ) {
-      //Disconnect
-      alert("Already connected to Spotify.");
-    } else {
-      const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
-      authApiCall(spotifyApiLink);
-    }
-  } else if (normalizedLabel === "gmail") {
-    if (
-      serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
-    ) {
-      alert("Already connected to Gmail.");
-    } else {
-      const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
-      authApiCall(gmailApiLink);
-    }
+  if (
+    serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+  ) {
+    //disconnectService(label);
   } else {
-    console.log(`${label} unknown icon clicked`);
+    const apiLink =
+      normalizedLabel === "spotify"
+        ? "http://server:8080/api/v1/spotify/auth/"
+        : normalizedLabel === "gmail"
+          ? "http://server:8080/api/v1/gmail/auth/"
+          : null;
+
+    if (apiLink) {
+      authApiCall(apiLink);
+    } else {
+      console.log(`${label} unknown icon clicked`);
+    }
   }
+};
+
+const getServiceStateText = (appName: string) => {
+  const isConnected = serviceNames.includes(appName.toLowerCase());
+  const message = isConnected ? `Disconnect ${appName}` : `Connect ${appName}`;
+  console.log(`Rendering state for ${appName}: ${message}`);
+  return message;
 };
 </script>
 
@@ -108,20 +113,32 @@ const handleClick = (label: string) => {
       v-for="(app, index) in apps"
       :key="index"
       :icon="app.icon"
-      class="app_button flex flex-col items-center justify-center w-[15rem] h-[15rem] rounded-lg transition-transform hover:scale-105"
+      class="app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105"
       :style="{ backgroundColor: app.color }"
-      :disabled="serviceNames.includes(app.name)"
       @click="handleClick(app.name)"
     >
-      <span class="text-3xl text-white font-bold mt-auto">{{ app.name }}</span>
+      <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
+        app.name
+      }}</span>
+
+      <div
+        v-if="!isLoading"
+        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
+        :class="{
+          'bg-black text-white': serviceNames.includes(app.name.toLowerCase()),
+          'bg-white text-black': !serviceNames.includes(app.name.toLowerCase()),
+        }"
+      >
+        {{ getServiceStateText(app.name) }}
+      </div>
     </UButton>
   </UContainer>
 </template>
 
 <style scoped>
 :deep(.app_button span) {
-  height: 6rem;
-  width: 6rem;
+  height: 5rem;
+  width: 5rem;
   color: white;
 }
 </style>
