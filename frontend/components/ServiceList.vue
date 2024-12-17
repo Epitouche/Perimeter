@@ -28,15 +28,8 @@ async function servicesConnectionInfos() {
       },
     });
 
-    if (
-      typeof response === "object" &&
-      response !== null &&
-      "tokens" in response &&
-      Array.isArray((response as { tokens: unknown }).tokens)
-    ) {
-      const tokens = (
-        response as { tokens: Array<{ service_id: { name: string } }> }
-      ).tokens;
+    if (typeof response === "object" && response !== null && "tokens" in response && Array.isArray((response as { tokens: unknown }).tokens)) {
+      const tokens = (response as { tokens: Array<{ service_id: { name: string } }> }).tokens;
       serviceNames = tokens.map((token) => token.service_id.name);
       console.log("Service Names Updated:", serviceNames);
       isLoading.value = false;

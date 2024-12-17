@@ -1,16 +1,18 @@
 <script lang="ts" setup>
+import type { Workflow } from '@/interfaces/areas';
+import { handleTokenStatus } from '../utils/handleErrorStatus.js';
+
 definePageMeta({
   middleware: "auth",
 });
 
 const token = useCookie("token");
-
-const workflows = ref<any>(null);
-const error = ref<string | null>(null);
+const workflows = ref<Workflow[] | null>(null);;
+const errorMessage = ref<string | null>(null);
 
 const fetchWorkflows = async () => {
+  errorMessage.value = null;
   try {
-    error.value = null;
     workflows.value = await $fetch("/api/myareas", {
       method: "POST",
       body: {
@@ -18,13 +20,14 @@ const fetchWorkflows = async () => {
       },
     });
     console.log("workflows: ", workflows.value);
-  } catch (err: any) {
-    console.error("Error fetching workflows:", err);
-    console.log("Error fetching workflows:", err);
-    if (err.data) {
-      error.value = err.data.message || "Failed to fetch workflows";
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'statusCode' in error) {
+      const statusCode = (error as { statusCode?: number }).statusCode;
+      const message = (error as { message?: string }).message || 'An error occurred';
+      errorMessage.value = handleTokenStatus(statusCode, message)
     } else {
-      error.value = "Unexpected error occurred";
+      errorMessage.value = 'An unknown error occurred';
+      console.error('An unknown error occurred');
     }
   }
 };
@@ -37,7 +40,7 @@ onMounted(() => {
 <template>
   <div>
     <div>My Areas</div>
-    <div v-if="error" class="alert alert-danger">{{ error }}</div>
+    <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div v-else-if="workflows">
       <div v-for="workflow in workflows" :key="workflow.id">
         {{ workflow.action_id.name }}
