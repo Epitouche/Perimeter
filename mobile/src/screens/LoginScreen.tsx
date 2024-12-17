@@ -12,13 +12,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../Navigation/navigate';
 import {AppContext} from '../context/AppContext';
 import {HandleSpotifyLogin} from './Oauth2/OAuth2';
-import {GoogleOauth2, googleSign} from './Oauth2/googleOauth2';
 import {HandleGithubLogin} from './Oauth2/OAuth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({navigation, route}) => {
-  GoogleOauth2();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({username: '', password: ''});
@@ -119,7 +117,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={() => googleSign(navigation, setToken, ipAddress)}>
+        <TouchableOpacity onPress={() => console.log('Google')}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/google-logo.png'}}
             style={styles.socialIcon}

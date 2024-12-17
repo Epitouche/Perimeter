@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../Navigation/navigate';
-import { HandleSpotifyLogin } from './Oauth2/OAuth2';
+import { HandleSpotifyLogin, HandleGithubLogin } from './Oauth2/OAuth2';
 import {AppContext} from '../context/AppContext';
-import { GoogleOauth2 } from './Oauth2/googleOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -21,7 +20,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({username: '', password: '', email: ''});
-  const {ipAddress, setToken} = useContext(AppContext);
+  const {ipAddress, setToken, setService} = useContext(AppContext);
 
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
@@ -146,19 +145,27 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={() => GoogleOauth2(navigation, setToken, ipAddress)}>
+        <TouchableOpacity onPress={() => console.log('Google')}>
           <Image
             source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+                  onPress={() => {
+                    setService('Github');
+                    HandleGithubLogin(setToken);
+                  }}>
           <Image
             source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => HandleSpotifyLogin()}>
+        <TouchableOpacity
+                  onPress={() => {
+                    setService('Spotify');
+                    HandleSpotifyLogin(setToken);
+                  }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
             style={styles.socialIcon}
