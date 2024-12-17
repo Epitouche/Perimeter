@@ -309,7 +309,6 @@ func TestRegisterUserRoute(t *testing.T) {
 func TestLoginUserRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
-
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -355,5 +354,4 @@ func TestLoginUserRoute(t *testing.T) {
 		assert.IsType(t, "", error, "error is not a string")
 		assert.NotEmpty(t, error, "error should not be empty")
 	})
-
 }
