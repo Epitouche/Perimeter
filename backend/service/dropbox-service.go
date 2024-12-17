@@ -17,8 +17,8 @@ type DropboxService interface {
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Token operations
@@ -162,14 +162,16 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 
 func (service *dropboxService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
 	}
 }
 
-func (service *dropboxService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *dropboxService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil

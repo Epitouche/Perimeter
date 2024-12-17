@@ -17,9 +17,9 @@ import (
 type SpotifyService interface {
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
-	SpotifyReactionPlayMusic(option string, idArea uint64)
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
+	SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	GetActionsName() []string
@@ -183,14 +183,16 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 
 func (service *spotifyService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
 	}
 }
 
-func (service *spotifyService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *spotifyService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) {
 	switch name {
 	case string(schemas.PlayMusic):
 		return service.SpotifyReactionPlayMusic
@@ -199,7 +201,7 @@ func (service *spotifyService) FindReactionbyName(name string) func(option strin
 	}
 }
 
-func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
+func (service *spotifyService) SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64) {
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)

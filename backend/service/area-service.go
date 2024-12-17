@@ -18,6 +18,19 @@ type AreaService interface {
 	GetUserAreas(ctx *gin.Context) ([]schemas.Area, error)
 }
 
+// compareMaps compares two maps for equality
+func compareMaps(map1, map2 map[string]interface{}) bool {
+	if len(map1) != len(map2) {
+		return false
+	}
+	for key, value1 := range map1 {
+		if value2, ok := map2[key]; !ok || value1 != value2 {
+			return false
+		}
+	}
+	return true
+}
+
 type areaService struct {
 	repository      repository.AreaRepository
 	actionService   ActionService
@@ -66,12 +79,22 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	fmt.Printf("\n\nresult %v\n\n\n", result)
 	fmt.Printf("\n\nresult %+v\n\n\n", result)
 
-	if result.ActionOption == "" {
-		return "", fmt.Errorf("empty action empty: %w", err)
+	var actionOption, reactionOption string
+
+	if err := json.Unmarshal(result.ActionOption, &actionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal action option: %w", err)
 	}
 
-	if result.ReactionOption == "" {
-		return "", fmt.Errorf("empty reaction empty: %w", err)
+	if err := json.Unmarshal(result.ReactionOption, &reactionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal reaction option: %w", err)
+	}
+
+	if actionOption == "" {
+		return "", fmt.Errorf("empty action option: %w", err)
+	}
+
+	if reactionOption == "" {
+		return "", fmt.Errorf("empty reaction option: %w", err)
 	}
 
 	authHeader := ctx.GetHeader("Authorization")
@@ -81,14 +104,42 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("can't get user info: %w", err)
 	}
+
+	areaAction := service.actionService.FindById(result.ActionId)
+	areaReaction := service.reactionService.FindById(result.ReactionId)
+
+	// check if the json key are the same as default areaAction.Option, json value can be different
+	var defaultActionOption, providedActionOption map[string]interface{}
+	if err := json.Unmarshal(areaAction.Option, &defaultActionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal default action option: %w", err)
+	}
+	if err := json.Unmarshal(result.ActionOption, &providedActionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal provided action option: %w", err)
+	}
+	if !compareMaps(defaultActionOption, providedActionOption) {
+		return "", fmt.Errorf("action option does not match default option")
+	}
+
+	var defaultReactionOption, providedReactionOption map[string]interface{}
+	if err := json.Unmarshal(areaReaction.Option, &defaultReactionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal default reaction option: %w", err)
+	}
+	if err := json.Unmarshal(result.ReactionOption, &providedReactionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal provided reaction option: %w", err)
+	}
+	if !compareMaps(defaultReactionOption, providedReactionOption) {
+		return "", fmt.Errorf("reaction option does not match default option")
+	}
+
 	newArea := schemas.Area{
 		User:           user,
 		ActionOption:   result.ActionOption,
 		ReactionOption: result.ReactionOption,
 		Enable:         true,
-		Action:         service.actionService.FindById(result.ActionId),
-		Reaction:       service.reactionService.FindById(result.ReactionId),
+		Action:         areaAction,
+		Reaction:       areaReaction,
 	}
+
 	id, error := service.repository.SaveArea(newArea)
 	if error != nil {
 		return "", fmt.Errorf("can't save area: %w", error)
