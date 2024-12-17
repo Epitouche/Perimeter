@@ -7,17 +7,17 @@ const apps = [
   {
     name: "Spotify",
     color: "#1DC000",
-    icon: "i-logos-spotify-icon",
+    icon: "my-icons:white-spotify",
   },
   {
     name: "Gmail",
     color: "#E60000",
-    icon: "i-logos-google-icon",
+    icon: "my-icons:white-gmail",
   },
   {
     name: "Time",
     color: "#BB00FF",
-    icon: "i-ic-outline-timelapse",
+    icon: "my-icons:white-timer",
   },
 ];
 </script>
@@ -25,7 +25,9 @@ const apps = [
 <template>
   <div>
     <div class="py-8 text-center font-sans">
-      <h1 class="mb-4 text-3xl font-bold">My Services</h1>
+      <h1 class="text-custom_size_title font-custom_weight_title pb-5">
+        My Services
+      </h1>
       <ServiceList :apps="apps" />
     </div>
   </div>

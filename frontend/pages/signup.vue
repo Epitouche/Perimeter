@@ -15,7 +15,7 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(["i-logos-spotify-icon", "i-logos-google-icon"]);
+const apps = ref<string[]>(["my-icons:color-spotify", "my-icons:color-google"]);
 
 const handleSignUp = async () => {
   try {
