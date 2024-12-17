@@ -1,5 +1,29 @@
 import { useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
+import {AuthConfiguration, authorize} from 'react-native-app-auth';
+import { GMAIL_CLIENT_ID } from '@env';
+
+async function HandleGoogleLogin(setToken: any, navigation: any) {
+    const config: AuthConfiguration =
+    {
+        clientId: GMAIL_CLIENT_ID,
+        redirectUrl: 'com.perimeter-epitech://oauthredirect',
+        scopes: ['profile', 'email'],
+        serviceConfiguration: {
+            authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+            tokenEndpoint: 'https://accounts.google.com/o/oauth2/token',
+        },
+    };
+
+    try {
+        const result = await authorize(config);
+        console.log('result', result);
+        setToken(result.accessToken);
+        navigation.navigate('AreaView');
+    } catch (error) {
+        console.error('Failed to log in to Google', error);
+    }
+}
 
 async function SpotifyOauthCallback(codeSpotify: string, navigation: any) {
     const { ipAddress, token, setToken, codeVerifier } = useContext(AppContext);
@@ -30,4 +54,4 @@ async function SpotifyOauthCallback(codeSpotify: string, navigation: any) {
     }
 }
 
-export { SpotifyOauthCallback }
+export { SpotifyOauthCallback, HandleGoogleLogin };

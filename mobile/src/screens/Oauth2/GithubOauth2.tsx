@@ -1,5 +1,29 @@
 import { useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
+import { AuthConfiguration, authorize } from 'react-native-app-auth';
+import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
+
+async function HandleGithubLogin(setToken: any, navigation: any) {
+    const config: AuthConfiguration = {
+        clientId: GITHUB_CLIENT_ID,
+        clientSecret: GITHUB_SECRET,
+        redirectUrl: 'com.perimeter-epitech://oauthredirect',
+        scopes: ['user', 'repo'],
+        serviceConfiguration: {
+            authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+            tokenEndpoint: 'https://github.com/login/oauth/access_token',
+        },
+    };
+
+    try {
+        const result = await authorize(config);
+        console.log('result', result);
+        setToken(result.accessToken);
+        navigation.navigate('AreaView');
+    } catch (error) {
+        console.error('Failed to log in to GitHub', error);
+    }
+}
 
 async function GithubOauthCallback(codeGithub: string, navigation: any) {
     const { ipAddress, token, setToken } = useContext(AppContext);
@@ -30,5 +54,4 @@ async function GithubOauthCallback(codeGithub: string, navigation: any) {
     }
 }
 
-
-export { GithubOauthCallback }
+export { GithubOauthCallback, HandleGithubLogin };

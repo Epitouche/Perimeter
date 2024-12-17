@@ -10,8 +10,10 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../Navigation/navigate';
-import { HandleSpotifyLogin, HandleGithubLogin, HandleGoogleLogin } from './Oauth2/OAuth2';
 import {AppContext} from '../context/AppContext';
+import {HandleGithubLogin} from './Oauth2/GithubOauth2';
+import {HandleGoogleLogin} from './Oauth2/GoogleOauth2';
+import {HandleSpotifyLogin} from './Oauth2/SpotifyOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
