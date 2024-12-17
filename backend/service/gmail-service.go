@@ -201,12 +201,21 @@ func (service *gmailService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
+	defaultValue := schemas.GmailReactionSendMailOption{
+		To:      "",
+		Subject: "",
+		Body:    "",
+	}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMail),
 			Description: "Send an email",
 			Service:     service.serviceRepository.FindByName(schemas.Gmail),
-			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+			Option:      option,
 		},
 	}
 }

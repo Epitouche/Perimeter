@@ -157,14 +157,7 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.SendMail),
-			Description: "Send an email",
-			Service:     service.serviceRepository.FindByName(schemas.Dropbox),
-			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
-		},
-	}
+	return []schemas.Reaction{}
 }
 
 func (service *dropboxService) FindActionbyName(

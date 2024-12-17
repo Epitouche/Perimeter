@@ -249,12 +249,17 @@ func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 
 func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
+	defaultValue := struct{}{}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.PlayMusic),
 			Description: "This reaction will play music",
 			Service:     service.serviceRepository.FindByName(schemas.Spotify),
-			Option:      "{}",
+			Option:      option,
 		},
 	}
 }
