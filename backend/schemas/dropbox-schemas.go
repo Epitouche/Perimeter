@@ -6,8 +6,6 @@ type DropboxAction string
 
 type DropboxReaction string
 
-const ()
-
 // DropboxTokenResponse represents the response from Dropbox when a token is requested.
 type DropboxTokenResponse struct {
 	AccessToken  string `json:"access_token"`

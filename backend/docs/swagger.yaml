@@ -136,6 +136,7 @@ definitions:
     - timer
     - gmail
     - github
+    - dropbox
     type: string
     x-enum-varnames:
     - Spotify
@@ -143,6 +144,7 @@ definitions:
     - Timer
     - Gmail
     - Github
+    - Dropbox
   schemas.Token:
     properties:
       createdAt:
@@ -291,6 +293,108 @@ paths:
       summary: create area
       tags:
       - Area
+  /dropbox/auth:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with dropbox
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.AuthenticationURL'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give url to authenticate with dropbox
+      tags:
+      - Dropbox
+  /dropbox/auth/callback:
+    post:
+      consumes:
+      - application/json
+      description: give url to authenticate with dropbox
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give url to authenticate with dropbox
+      tags:
+      - Dropbox
+  /dropbox/auth/callback/mobile:
+    post:
+      consumes:
+      - application/json
+      description: give url to authenticate with dropbox
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give url to authenticate with dropbox
+      tags:
+      - Dropbox
+  /dropbox/info:
+    get:
+      consumes:
+      - application/json
+      description: give user info of dropbox
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of dropbox
+      tags:
+      - Dropbox
   /github/auth:
     get:
       consumes:

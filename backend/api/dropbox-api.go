@@ -14,7 +14,10 @@ type DropboxAPI struct {
 	controller controller.DropboxController
 }
 
-func NewDropboxAPI(controller controller.DropboxController, apiRoutes *gin.RouterGroup) *DropboxAPI {
+func NewDropboxAPI(
+	controller controller.DropboxController,
+	apiRoutes *gin.RouterGroup,
+) *DropboxAPI {
 	apiRoutes = apiRoutes.Group("/dropbox")
 	api := DropboxAPI{
 		controller: controller,
