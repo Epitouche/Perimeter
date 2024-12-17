@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,6 +25,7 @@ func NewServiceApi(
 	}
 	apiRoutes = apiRoutes.Group("/info", middlewares.AuthorizeJWT())
 	api.GetServicesInfo(apiRoutes)
+	api.GetServiceInfoById(apiRoutes)
 	return &api
 }
 
@@ -58,6 +60,29 @@ func (api *ServiceApi) GetServicesInfo(apiRoutes *gin.RouterGroup) {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
+			return
+		}
+		ctx.JSON(http.StatusOK, response)
+	})
+}
+
+func (api *ServiceApi) GetServiceInfoById(apiRoutes *gin.RouterGroup) {
+	apiRoutes.GET("/:id", func(ctx *gin.Context) {
+		id := ctx.Param("id")
+		idInt, err := strconv.ParseUint(id, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+
+			return
+		}
+		response, err := api.controller.GetServiceInfoById(idInt)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+
 			return
 		}
 		ctx.JSON(http.StatusOK, response)

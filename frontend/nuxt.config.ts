@@ -9,6 +9,14 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-
   modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint"],
+
+  icon: {
+    customCollections: [
+      {
+        prefix: "my-icons",
+        dir: "./assets/my-icons",
+      },
+    ],
+  },
 });

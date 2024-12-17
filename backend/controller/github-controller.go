@@ -1,19 +1,16 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
-	"os"
 
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
 	"area/service"
-	"area/tools"
 )
 
 type GithubController interface {
-	RedirectToService(ctx *gin.Context, path string) (string, error)
+	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
@@ -41,36 +38,16 @@ func NewGithubController(
 
 func (controller *githubController) RedirectToService(
 	ctx *gin.Context,
-	path string,
-) (string, error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
-	if clientID == "" {
-		return "", schemas.ErrGithubClientIdNotSet
-	}
-
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return "", schemas.ErrBackendPortNotSet
-	}
-
-	// Generate the CSRF token
-	state, err := tools.GenerateCSRFToken()
+) (oauthURL string, err error) {
+	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
+		schemas.Github,
+		"https://github.com/login/oauth/authorize",
+		"repo",
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
 	}
-
-	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
-	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
-
-	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:" + appPort + path
-	authURL := "https://github.com/login/oauth/authorize" +
-		"?client_id=" + clientID +
-		"&response_type=code" +
-		"&scope=repo" +
-		"&redirect_uri=" + redirectURI +
-		"&state=" + state
-	return authURL, nil
+	return oauthURL, nil
 }
 
 func (controller *githubController) HandleServiceCallback(
@@ -97,55 +74,20 @@ func (controller *githubController) HandleServiceCallback(
 	// 	return "", fmt.Errorf("invalid CSRF token")
 	// }
 
-	githubTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
+	authHeader := ctx.GetHeader("Authorization")
+
+	bearer, err := controller.serviceService.HandleServiceCallback(
+		code,
+		authHeader,
+		controller.service.AuthGetServiceAccessToken,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to get access token because %w", err)
+		return "", fmt.Errorf("unable to handle service callback because %w", err)
 	}
-
-	spotifyService := controller.serviceService.FindByName(schemas.Spotify)
-
-	// TODO: Save the access token in the database
-	newGithubToken := schemas.Token{
-		Token:   githubTokenResponse.AccessToken,
-		Service: spotifyService,
-		UserId:  1,
-	}
-
-	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newGithubToken)
-	userAlreadExists := false
-	if err != nil {
-		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
-			userAlreadExists = true
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
-
-	userInfo, err := controller.service.GetUserInfo(newGithubToken.Token)
-	if err != nil {
-		return "", fmt.Errorf("unable to get user info because %w", err)
-	}
-
-	newUser := schemas.User{
-		Username: userInfo.Login,
-		Email:    userInfo.Email,
-		TokenId:  tokenId,
-	}
-
-	if userAlreadExists {
-		token, _, err := controller.serviceUser.Login(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to login user because %w", err)
-		}
-		return token, nil
-	} else {
-		token, _, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		return token, nil
-	}
+	return bearer, nil
 }
 
 func (controller *githubController) GetUserInfo(
@@ -170,7 +112,7 @@ func (controller *githubController) GetUserInfo(
 	}
 
 	userInfo.Email = githubUserInfo.Email
-	userInfo.Username = githubUserInfo.Login
+	userInfo.Username = githubUserInfo.Username
 
 	return userInfo, nil
 }

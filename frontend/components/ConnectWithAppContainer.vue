@@ -29,11 +29,11 @@ const authApiCall = async (label: string) => {
 };
 
 const handleClick = (label: string) => {
-  if (label == "i-logos-spotify-icon") {
+  if (label == "my-icon:color-spotify") {
     console.log("Spotify icon clicked");
     const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
     authApiCall(spotifyApiLink);
-  } else if (label === "i-logos-google-icon") {
+  } else if (label === "my-icon:color-google") {
     console.log("Google icon clicked");
     const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
     authApiCall(gmailApiLink);

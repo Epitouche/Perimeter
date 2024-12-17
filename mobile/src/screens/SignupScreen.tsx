@@ -12,10 +12,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../Navigation/navigate';
 import { HandleSpotifyLogin } from './Oauth2/OAuth2';
 import {AppContext} from '../context/AppContext';
-import {
-  GoogleSignin,
-  isErrorWithCode
-} from '@react-native-google-signin/google-signin';
+import { GoogleOauth2 } from './Oauth2/googleOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -41,47 +38,6 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
     }
   };
   Linking.addEventListener('url', handleUrl);
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        '616333423597-nh5d001itful769q51j0o0r54qbg4poq.apps.googleusercontent.com',
-      offlineAccess: true,
-      forceCodeForRefreshToken: true,
-    });
-  });
-
-  const signUp = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-
-      const userInfo = await GoogleSignin.signIn();
-
-      const idToken = userInfo.data?.idToken;
-      console.log(userInfo);
-      const resp = await fetch(
-        `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token: String(idToken) }),
-      });
-      const token = await resp.json();
-      setToken(token.token);
-      navigation.navigate('AreaView');
-    } catch (error: any) {
-      if (isErrorWithCode(error)) {
-        console.error(
-          'Error with code:',
-          error.code,
-          '\n\terror message:',
-          error.message,
-        );
-      }
-    }
-  };
 
   const handleSignup = async () => {
     let hasError = false;
@@ -190,7 +146,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={signUp}>
+        <TouchableOpacity onPress={() => GoogleOauth2(navigation, setToken, ipAddress)}>
           <Image
             source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
             style={styles.socialIcon}

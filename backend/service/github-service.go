@@ -12,8 +12,8 @@ import (
 )
 
 type GithubService interface {
-	AuthGetServiceAccessToken(code string, path string) (schemas.GitHubTokenResponse, error)
-	GetUserInfo(accessToken string) (schemas.GithubUserInfo, error)
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
 }
 
 type githubService struct {
@@ -30,24 +30,23 @@ func NewGithubService(
 
 func (service *githubService) AuthGetServiceAccessToken(
 	code string,
-	path string,
-) (schemas.GitHubTokenResponse, error) {
+) (token schemas.Token, err error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GitHubTokenResponse{}, schemas.ErrGithubClientIdNotSet
+		return schemas.Token{}, schemas.ErrGithubClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GITHUB_SECRET")
 	if clientSecret == "" {
-		return schemas.GitHubTokenResponse{}, schemas.ErrGithubSecretNotSet
+		return schemas.Token{}, schemas.ErrGithubSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.GitHubTokenResponse{}, schemas.ErrBackendPortNotSet
+		return schemas.Token{}, schemas.ErrBackendPortNotSet
 	}
 
-	redirectURI := "http://localhost:" + appPort + path
+	redirectURI := "http://localhost:8081/services/github"
 
 	apiURL := "https://github.com/login/oauth/access_token"
 
@@ -59,7 +58,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	req.URL.RawQuery = data.Encode()
@@ -68,27 +67,33 @@ func (service *githubService) AuthGetServiceAccessToken(
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.GitHubTokenResponse{}, fmt.Errorf(
+		return schemas.Token{}, fmt.Errorf(
 			"unable to decode response because %w",
 			err,
 		)
 	}
 
 	resp.Body.Close()
-	return result, nil
+
+	token = schemas.Token{
+		Token: result.AccessToken,
+		// RefreshToken:  result.RefreshToken,
+		// ExpireAt: result.ExpiresIn,
+	}
+	return token, nil
 }
 
-func (service *githubService) GetUserInfo(accessToken string) (schemas.GithubUserInfo, error) {
+func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	// Add the Authorization header
@@ -98,15 +103,20 @@ func (service *githubService) GetUserInfo(accessToken string) (schemas.GithubUse
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	result := schemas.GithubUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.GithubUserInfo{}, fmt.Errorf("unable to decode response because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
 	resp.Body.Close()
-	return result, nil
+
+	user = schemas.User{
+		Username: result.Login,
+		Email:    result.Email,
+	}
+	return user, nil
 }

@@ -29,7 +29,13 @@ const fetchActions = async () => {
     });
 
     actions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
+      const parsedOption = JSON.parse(action.option || "{}");
+      for (const key in parsedOption) {
+        parsedOption[key] = isNaN(Number(parsedOption[key]))
+          ? parsedOption[key]
+          : Number(parsedOption[key]);
+      }
+      modifiedOptions[action.id] = parsedOption;
     });
 
     console.log("actions", actions.value);
@@ -57,19 +63,19 @@ const parseOption = (option: string) => {
 };
 
 const saveOptions = (actionId: number) => {
-  // Convert all values to numbers if they are numbers
   for (const key in modifiedOptions[actionId]) {
-    console.log("key to int", key);
-    if (!isNaN(Number(modifiedOptions[actionId][key]))) {
-      continue;
+    const value = modifiedOptions[actionId][key];
+    if (!isNaN(Number(value)) && value !== "") {
+      modifiedOptions[actionId][key] = Number(value);
     }
-    modifiedOptions[actionId][key] = Number(modifiedOptions[actionId][key]);
   }
+
   router.push({
     name: "workflow",
     query: {
       actionId: actionId,
       actionOptions: JSON.stringify(modifiedOptions[actionId]),
+      actionServiceId: serviceId,
     },
   });
 };
@@ -77,6 +83,7 @@ const saveOptions = (actionId: number) => {
 
 <template>
   <div>
+    <UButton to="/workflow/actions">Back</UButton>
     <h1>Service Actions Page</h1>
     <div v-if="error">
       <div>Error: {{ error }}</div>
@@ -90,7 +97,10 @@ const saveOptions = (actionId: number) => {
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" type="text" />
+              <input
+                v-model="modifiedOptions[action.id][key]"
+                :type="typeof value === 'number' ? 'number' : 'text'"
+              />
             </div>
             <button @click="saveOptions(action.id)">Save</button>
           </div>

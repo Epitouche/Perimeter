@@ -38,7 +38,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 //	@Router			/github/auth [get]
 func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
-		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
+		authURL, err := api.controller.RedirectToService(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
