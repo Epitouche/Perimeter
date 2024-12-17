@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../Navigation/navigate';
-import { HandleSpotifyLogin, HandleGithubLogin } from './Oauth2/OAuth2';
+import { HandleSpotifyLogin, HandleGithubLogin, HandleGoogleLogin } from './Oauth2/OAuth2';
 import {AppContext} from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
@@ -145,7 +145,11 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={() => console.log('Google')}>
+        <TouchableOpacity
+                  onPress={() => {
+                    setService('Google');
+                    HandleGoogleLogin(setToken, navigation);
+                  }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
             style={styles.socialIcon}
@@ -154,7 +158,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity
                   onPress={() => {
                     setService('Github');
-                    HandleGithubLogin(setToken);
+                    HandleGithubLogin(setToken, navigation);
                   }}>
           <Image
             source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
@@ -164,7 +168,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity
                   onPress={() => {
                     setService('Spotify');
-                    HandleSpotifyLogin(setToken);
+                    HandleSpotifyLogin(setToken, navigation);
                   }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}

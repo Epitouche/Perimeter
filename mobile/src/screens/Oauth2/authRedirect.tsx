@@ -3,12 +3,15 @@ import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../Navigation/navigate';
 import {AppContext} from '../../context/AppContext';
+import { SpotifyOauthCallback } from './GoogleOauth2';
+import { GoogleOauthCallback } from './SpotifyOauth2';
+import { GithubOauthCallback } from './GithubOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {ipAddress, token, setToken, codeVerifier, service} = useContext(AppContext);
+  const {service} = useContext(AppContext);
   const code = route.params?.code || '';
 
   useEffect(() => {
@@ -20,67 +23,13 @@ const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
     return () => clearTimeout(timer);
   }, [navigation]);
 
-  async function SpotifyOauthCallback(codeSpotify: string) {
-    const response = await fetch(
-      `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({codeSpotify, code_verifier: codeVerifier}),
-      },
-    );
-    console.log('response: ', response);
-    const data = await response.json();
-    if (data.error) {
-      console.error(data.error);
-      navigation.goBack();
-    } else {
-      setToken(data.accessToken);
-      console.log('data: ', data);
-      if (data.accessToken !== '') {
-        navigation.navigate('AreaView');
-      } else {
-        console.error('Error: no token');
-      }
-    }
-  }
-
-  async function GithubOauthCallback(codeGithub: string) {
-    const response = await fetch(
-      `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({codeGithub}),
-      },
-    );
-    console.log('response: ', response);
-    const data = await response.json();
-    if (data.error) {
-      console.error(data.error);
-      navigation.goBack();
-    } else {
-      setToken(data.accessToken);
-      console.log('data: ', data);
-      if (data.accessToken !== '') {
-        navigation.navigate('AreaView');
-      } else {
-        console.error('Error: no token');
-      }
-    }
-  }
-
   if (code) {
     if (service == 'Spotify') {
-      SpotifyOauthCallback(code);
+      SpotifyOauthCallback(code, navigation);
     } else if (service == 'Github') {
-      GithubOauthCallback(code);
+      GithubOauthCallback(code, navigation);
+    } else if (service == 'Google') {
+      GoogleOauthCallback(code, navigation);
     }
   }
 

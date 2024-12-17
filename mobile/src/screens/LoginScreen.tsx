@@ -13,6 +13,7 @@ import {RootStackParamList} from '../Navigation/navigate';
 import {AppContext} from '../context/AppContext';
 import {HandleSpotifyLogin} from './Oauth2/OAuth2';
 import {HandleGithubLogin} from './Oauth2/OAuth2';
+import {HandleGoogleLogin} from './Oauth2/OAuth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -117,7 +118,11 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity onPress={() => console.log('Google')}>
+        <TouchableOpacity 
+          onPress={() => {
+            setService('Google');
+            HandleGoogleLogin(setToken, navigation);
+          }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/google-logo.png'}}
             style={styles.socialIcon}
