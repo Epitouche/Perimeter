@@ -38,7 +38,7 @@ module.exports = {
         },
       },
       fontSize: {
-        custom_size_title: "7rem",
+        custom_size_title: "5.5rem",
       },
       fontWeight: {
         custom_weight_title: "800",
