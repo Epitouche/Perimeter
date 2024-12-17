@@ -282,7 +282,6 @@ func TestRegisterUserRoute(t *testing.T) {
 func TestLoginUserRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
-
 		ctx := context.Background()
 
 		// Create Postgres container
