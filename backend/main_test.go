@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"area/schemas"
 	"area/test"
 )
 
@@ -130,12 +130,17 @@ func TestGmailRedirectToServiceRoute(t *testing.T) {
 
 	// Assert the response
 	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
-	expectedResponse := schemas.JWT{}
-	err = json.NewDecoder(w.Body).Decode(&expectedResponse)
-	if err != nil {
-		t.Fatalf("failed to decode response body: %v", err)
-	}
-	assert.NotNil(t, expectedResponse, "unexpected response body")
+
+	// Parse and validate the response JSON
+	var response map[string]interface{}
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err, "failed to parse response JSON")
+
+	// Assert the authentication_url exists and is non-empty
+	authentication_url, exists := response["authentication_url"]
+	assert.True(t, exists, "response does not contain 'authentication_url' key")
+	assert.IsType(t, "", authentication_url, "authentication_url is not a string")
+	assert.NotEmpty(t, authentication_url, "authentication_url should not be empty")
 }
 
 func TestSpotifyRedirectToServiceRoute(t *testing.T) {
@@ -163,10 +168,192 @@ func TestSpotifyRedirectToServiceRoute(t *testing.T) {
 
 	// Assert the response
 	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
-	expectedResponse := schemas.JWT{}
-	err = json.NewDecoder(w.Body).Decode(&expectedResponse)
-	if err != nil {
-		t.Fatalf("failed to decode response body: %v", err)
-	}
-	assert.NotNil(t, expectedResponse, "unexpected response body")
+
+	// Parse and validate the response JSON
+	var response map[string]interface{}
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err, "failed to parse response JSON")
+
+	// Assert the authentication_url exists and is non-empty
+	authentication_url, exists := response["authentication_url"]
+	assert.True(t, exists, "response does not contain 'authentication_url' key")
+	assert.IsType(t, "", authentication_url, "authentication_url is not a string")
+	assert.NotEmpty(t, authentication_url, "authentication_url should not be empty")
+}
+
+func TestGithubRedirectToServiceRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	ctx := context.Background()
+
+	// Create Postgres container
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
+
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
+
+	// Set up the router (defined in main.go)
+	router := setupRouter()
+
+	// Perform the HTTP request
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/github/auth", nil)
+	router.ServeHTTP(w, req)
+
+	// Assert the response
+	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+
+	// Parse and validate the response JSON
+	var response map[string]interface{}
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err, "failed to parse response JSON")
+
+	// Assert the authentication_url exists and is non-empty
+	authentication_url, exists := response["authentication_url"]
+	assert.True(t, exists, "response does not contain 'authentication_url' key")
+	assert.IsType(t, "", authentication_url, "authentication_url is not a string")
+	assert.NotEmpty(t, authentication_url, "authentication_url should not be empty")
+}
+
+func TestDropboxRedirectToServiceRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	ctx := context.Background()
+
+	// Create Postgres container
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
+
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
+
+	// Set up the router (defined in main.go)
+	router := setupRouter()
+
+	// Perform the HTTP request
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/dropbox/auth", nil)
+	router.ServeHTTP(w, req)
+
+	// Assert the response
+	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+
+	// Parse and validate the response JSON
+	var response map[string]interface{}
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err, "failed to parse response JSON")
+
+	// Assert the authentication_url exists and is non-empty
+	authentication_url, exists := response["authentication_url"]
+	assert.True(t, exists, "response does not contain 'authentication_url' key")
+	assert.IsType(t, "", authentication_url, "authentication_url is not a string")
+	assert.NotEmpty(t, authentication_url, "authentication_url should not be empty")
+}
+
+func TestRegisterUserRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	ctx := context.Background()
+
+	// Create Postgres container
+	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	assert.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
+
+	// Clean up the container after the test
+	defer func() {
+		err := postgresContainer.Terminate(ctx)
+		assert.NoError(t, err)
+	}()
+
+	// Set up the router (defined in main.go)
+	router := setupRouter()
+
+	// Define the raw JSON body for the test
+	requestBody := `{
+			"username": "toto",
+			"email": "test@gmail.com",
+			"password": "totototo"
+		}`
+	reqBody := bytes.NewBuffer([]byte(requestBody))
+
+	// Perform the HTTP POST request
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("POST", "/api/v1/user/register", reqBody)
+	assert.NoError(t, err, "failed to create request")
+	req.Header.Set("Content-Type", "application/json")
+
+	router.ServeHTTP(w, req)
+
+	// Assert the response
+	assert.Equal(t, http.StatusCreated, w.Code, "unexpected HTTP status code")
+
+	// Parse and validate the response JSON
+	var response map[string]interface{}
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err, "failed to parse response JSON")
+
+	// Assert the token exists and is non-empty
+	token, exists := response["token"]
+	assert.True(t, exists, "response does not contain 'token' key")
+	assert.IsType(t, "", token, "token is not a string")
+	assert.NotEmpty(t, token, "token should not be empty")
+}
+
+func TestLoginUserRoute(t *testing.T) {
+	t.Parallel() // Run this test in parallel with other tests
+	t.Run("no registered user", func(t *testing.T) {
+
+		ctx := context.Background()
+
+		// Create Postgres container
+		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		assert.NoError(t, err, "failed to create Postgres container")
+		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
+
+		// Clean up the container after the test
+		defer func() {
+			err := postgresContainer.Terminate(ctx)
+			assert.NoError(t, err)
+		}()
+
+		// Set up the router (defined in main.go)
+		router := setupRouter()
+
+		// Define the raw JSON body for the test
+		requestBody := `{
+			"username": "toto",
+			"password": "totototo"
+		}`
+		reqBody := bytes.NewBuffer([]byte(requestBody))
+
+		// Perform the HTTP POST request
+		w := httptest.NewRecorder()
+		req, err := http.NewRequest("POST", "/api/v1/user/login", reqBody)
+		assert.NoError(t, err, "failed to create request")
+		req.Header.Set("Content-Type", "application/json")
+
+		router.ServeHTTP(w, req)
+
+		// Assert the response
+		assert.Equal(t, http.StatusBadRequest, w.Code, "unexpected HTTP status code")
+
+		// Parse and validate the response JSON
+		var response map[string]interface{}
+		err = json.Unmarshal(w.Body.Bytes(), &response)
+		assert.NoError(t, err, "failed to parse response JSON")
+
+		// Assert the error exists and is non-empty
+		error, exists := response["error"]
+		assert.True(t, exists, "response does not contain 'error' key")
+		assert.IsType(t, "", error, "error is not a string")
+		assert.NotEmpty(t, error, "error should not be empty")
+	})
+
 }

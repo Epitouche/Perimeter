@@ -37,13 +37,13 @@ func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup
 //	@Param			username	formData	string	true	"Username"
 //	@Param			password	formData	string	true	"Password"
 //	@Success		200			{object}	schemas.JWT
-//	@Failure		401			{object}	schemas.ErrorResponse
+//	@Failure		400			{object}	schemas.ErrorResponse
 //	@Router			/user/login [post].
 func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/login", func(ctx *gin.Context) {
 		token, err := api.controller.Login(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusUnauthorized, &schemas.ErrorResponse{
+			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 			return
@@ -64,14 +64,14 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 //	@Param			email		formData	string	true	"Email"
 //	@Param			username	formData	string	true	"Username"
 //	@Param			password	formData	string	true	"Password"
-//	@Success		200			{object}	schemas.JWT
-//	@Failure		401			{object}	schemas.ErrorResponse
+//	@Success		201			{object}	schemas.JWT
+//	@Failure		400			{object}	schemas.ErrorResponse
 //	@Router			/user/register [post].
 func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/register", func(ctx *gin.Context) {
 		token, err := api.controller.Register(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusConflict, &schemas.ErrorResponse{
+			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
 			return
