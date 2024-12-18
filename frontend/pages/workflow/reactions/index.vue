@@ -59,7 +59,10 @@ onMounted(() => {
       <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
       <div v-if="error">Error: {{ error }}</div>
       <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
-      <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full">
+      <div
+        v-else-if="filteredServices.length"
+        class="flex flex-row justify-evenly items-center w-full"
+      >
         <ServiceCardContainer :services="filteredServices" />
       </div>
     </UContainer>
