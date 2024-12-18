@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import 'url-search-params-polyfill';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -58,6 +59,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
           navigation.navigate('AreaView');
         } else {
           console.error('Error:', response.status);
+          Alert.alert('Error logging in, please try again');
         }
       } catch (error) {
         console.error('Error:', error);
@@ -122,7 +124,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity 
           onPress={() => {
             setService('Google');
-            HandleGoogleLogin(setToken, navigation);
+            HandleDropboxLogin(setToken, navigation);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/google-logo.png'}}

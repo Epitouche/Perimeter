@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,22 +7,27 @@ import {
   StyleSheet,
   Image,
   Linking,
+  Alert,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../Navigation/navigate';
-import {AppContext} from '../context/AppContext';
-import {HandleGithubLogin} from './Oauth2/GithubOauth2';
-import {HandleGoogleLogin} from './Oauth2/GoogleOauth2';
-import {HandleSpotifyLogin} from './Oauth2/SpotifyOauth2';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../Navigation/navigate';
+import { AppContext } from '../context/AppContext';
+import { HandleGithubLogin } from './Oauth2/GithubOauth2';
+import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
+import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-const SignupScreen: React.FC<Props> = ({navigation, route}) => {
+const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState({username: '', password: '', email: ''});
-  const {ipAddress, setToken, setService} = useContext(AppContext);
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+    email: '',
+  });
+  const { ipAddress, setToken, setService } = useContext(AppContext);
 
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
@@ -42,7 +47,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
 
   const handleSignup = async () => {
     let hasError = false;
-    const newErrors = {username: '', password: '', email: ''};
+    const newErrors = { username: '', password: '', email: '' };
 
     if (!username) {
       newErrors.username = 'Username is required';
@@ -69,7 +74,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({email, username, password}),
+            body: JSON.stringify({ email, username, password }),
           },
         );
 
@@ -77,8 +82,10 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
           const data = await response.json();
           console.log('Data:', data);
           navigation.navigate('Login');
+          Alert.alert('Successfully registered, please login now');
         } else {
           console.error('Error:', response.status, ' | ', response.statusText);
+          Alert.alert('Error registering, please try again (Username or email might already be taken)');
         }
       } catch (error) {
         console.error('Error', error);
@@ -100,6 +107,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
+        inputMode='text'
         onChangeText={text => setUsername(text)}
       />
       {errors.username ? (
@@ -111,6 +119,7 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
         placeholder="Enter email"
         placeholderTextColor="#aaa"
         value={email}
+        inputMode='email'
         onChangeText={text => setEmail(text)}
       />
       {errors.email ? (
@@ -148,32 +157,32 @@ const SignupScreen: React.FC<Props> = ({navigation, route}) => {
 
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity
-                  onPress={() => {
-                    setService('Google');
-                    HandleGoogleLogin(setToken, navigation);
-                  }}>
+          onPress={() => {
+            setService('Google');
+            HandleGoogleLogin(setToken, navigation);
+          }}>
           <Image
-            source={{uri: 'https://img.icons8.com/color/48/google-logo.png'}}
+            source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
         <TouchableOpacity
-                  onPress={() => {
-                    setService('Github');
-                    HandleGithubLogin(setToken, navigation);
-                  }}>
+          onPress={() => {
+            setService('Github');
+            HandleGithubLogin(setToken, navigation);
+          }}>
           <Image
-            source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
+            source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
         <TouchableOpacity
-                  onPress={() => {
-                    setService('Spotify');
-                    HandleSpotifyLogin(setToken, navigation);
-                  }}>
+          onPress={() => {
+            setService('Spotify');
+            HandleSpotifyLogin(setToken, navigation);
+          }}>
           <Image
-            source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
+            source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>

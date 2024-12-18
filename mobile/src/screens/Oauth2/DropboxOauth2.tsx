@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { Alert } from 'react-native';
 import { AppContext } from '../../context/AppContext';
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { DROPBOX_CLIENT_ID, DROPBOX_SECRET } from '@env';
@@ -8,7 +9,7 @@ async function HandleDropboxLogin(setToken: any, navigation: any) {
     clientId: DROPBOX_CLIENT_ID,
     clientSecret: DROPBOX_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['files.metadata.read', 'files.content.read'],
+    scopes: ['account_info.read', 'profile', 'email', 'openid'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://www.dropbox.com/oauth2/authorize',
       tokenEndpoint: 'https://api.dropboxapi.com/oauth2/token',
@@ -21,7 +22,10 @@ async function HandleDropboxLogin(setToken: any, navigation: any) {
     setToken(result.accessToken);
     navigation.navigate('AreaView');
   } catch (error) {
-    console.error('Failed to log in to Dropbox, ', error);
+    if (error.message != 'User cancelled flow') {
+        console.error('Failed to log in to Dropbox, ', error);
+        Alert.alert("Error", error.message);
+    }
   }
 }
 
