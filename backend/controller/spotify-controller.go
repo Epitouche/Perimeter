@@ -1,20 +1,16 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
 	"area/service"
-	"area/tools"
 )
 
 type SpotifyController interface {
-	RedirectToService(ctx *gin.Context) (string, error)
+	RedirectToService(ctx *gin.Context) (oauthUrl string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
@@ -42,35 +38,16 @@ func NewSpotifyController(
 
 func (controller *spotifyController) RedirectToService(
 	ctx *gin.Context,
-) (string, error) {
-	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
-	if clientID == "" {
-		return "", schemas.ErrSpotifyClientIdNotSet
-	}
-
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return "", schemas.ErrBackendPortNotSet
-	}
-
-	// Generate the CSRF token
-	state, err := tools.GenerateCSRFToken()
+) (oauthUrl string, err error) {
+	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
+		schemas.Gmail,
+		"https://accounts.spotify.com/authorize",
+		"user-read-private user-read-email user-modify-playback-state",
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
 	}
-
-	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
-	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
-
-	// Construct the Spotify authorization URL
-	redirectURI := "http://localhost:8081/services/spotify"
-	authURL := "https://accounts.spotify.com/authorize" +
-		"?response_type=code" +
-		"&client_id=" + clientID +
-		"&scope=user-read-private user-read-email user-modify-playback-state" +
-		"&redirect_uri=" + redirectURI +
-		"&state=" + state
-	return authURL, nil
+	return oauthUrl, nil
 }
 
 func (controller *spotifyController) HandleServiceCallback(
@@ -97,78 +74,19 @@ func (controller *spotifyController) HandleServiceCallback(
 	// }
 
 	authHeader := ctx.GetHeader("Authorization")
-	newUser := schemas.User{}
-	spotifyToken := schemas.Token{}
-	var bearerToken string
 
-	spotifyTokenResponse, err := controller.service.AuthGetServiceAccessToken(code)
+	bearer, err := controller.serviceService.HandleServiceCallback(
+		code,
+		authHeader,
+		controller.service.AuthGetServiceAccessToken,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
 	if err != nil {
-		println(fmt.Errorf("unable to get access token because %w", err))
-		return "", fmt.Errorf("unable to get access token because %w", err)
+		return "", fmt.Errorf("unable to handle service callback because %w", err)
 	}
-	spotifyToken.Token = spotifyTokenResponse.AccessToken
-	spotifyToken.RefreshToken = spotifyTokenResponse.RefreshToken
-	spotifyToken.ExpireAt = time.Now().
-		Add(time.Duration(spotifyTokenResponse.ExpiresIn) * time.Second)
-
-	if len(authHeader) > len(schemas.BearerTokenType) {
-		bearerToken = authHeader[len(schemas.BearerTokenType):]
-
-		newUser, err = controller.serviceUser.GetUserInfo(bearerToken)
-		if err != nil {
-			return "", fmt.Errorf("unable to get user info because %w", err)
-		}
-	} else {
-		userInfo, err := controller.service.GetUserInfo(spotifyToken.Token)
-		if err != nil {
-			return "", fmt.Errorf("unable to get user info because %w", err)
-		}
-		newUser = schemas.User{
-			Username: userInfo.DisplayName,
-			Email:    userInfo.Email,
-		}
-
-		bearerTokenLogin, _, err := controller.serviceUser.Login(newUser)
-		if err == nil {
-			return bearerTokenLogin, nil
-		}
-
-		bearerTokenRegister, newUserId, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		bearerToken = bearerTokenRegister
-		newUser = controller.serviceUser.GetUserById(newUserId)
-	}
-
-	spotifyService := controller.serviceService.FindByName(schemas.Spotify)
-
-	newSpotifyToken := schemas.Token{
-		Token:        spotifyToken.Token,
-		RefreshToken: spotifyToken.RefreshToken,
-		ExpireAt:     spotifyToken.ExpireAt,
-		Service:      spotifyService,
-		User:         newUser,
-	}
-
-	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newSpotifyToken)
-	if err != nil {
-		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
-
-	if len(authHeader) == 0 {
-		newUser.TokenId = tokenId
-
-		err = controller.serviceUser.UpdateUserInfo(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to update user info because %w", err)
-		}
-	}
-	return bearerToken, nil
+	return bearer, nil
 }
 
 func (controller *spotifyController) GetUserInfo(
@@ -193,6 +111,6 @@ func (controller *spotifyController) GetUserInfo(
 	}
 
 	userInfo.Email = spotifyUserInfo.Email
-	userInfo.Username = spotifyUserInfo.DisplayName
+	userInfo.Username = spotifyUserInfo.Username
 	return userInfo, nil
 }

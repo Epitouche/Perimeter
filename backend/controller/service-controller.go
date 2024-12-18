@@ -56,6 +56,8 @@ func (controller *serviceController) GetServicesInfo() (response []schemas.Servi
 	return controller.service.GetServicesInfo()
 }
 
-func (controller *serviceController) GetServiceInfoById(id uint64) (response schemas.Service, err error) {
+func (controller *serviceController) GetServiceInfoById(
+	id uint64,
+) (response schemas.Service, err error) {
 	return controller.service.GetServiceById(id), nil
 }
