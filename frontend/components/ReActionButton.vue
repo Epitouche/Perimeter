@@ -26,7 +26,7 @@ const getServiceInfo = async () => {
           serviceId: serviceId.value,
         },
       });
-      console.log("services", serviceInfo.value);
+      // console.log("services", serviceInfo.value);
     } catch (err) {
       console.error("Error fetching services:", err);
     }

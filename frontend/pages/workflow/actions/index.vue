@@ -64,7 +64,7 @@ onMounted(() => {
         v-else-if="filteredServices.length"
         class="flex flex-row justify-evenly items-center w-full"
       >
-        <ServiceCardContainer :services="filteredServices" />
+        <ServiceCardContainer type="actions" :services="filteredServices" />
       </div>
     </UContainer>
   </div>

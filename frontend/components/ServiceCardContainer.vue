@@ -1,5 +1,6 @@
 <script setup lang="ts">
 defineProps<{
+  type: string;
   services: any[];
 }>();
 
@@ -15,7 +16,7 @@ function formatName(name: string): string {
     <div v-for="service in services" :key="service.id">
       <NuxtLink 
       :to="{
-        name: 'workflow-actions-service',
+        name: `workflow-${type}-service`,
         params: { service: service.id },
       }">
         <UContainer 
