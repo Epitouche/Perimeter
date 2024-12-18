@@ -8,7 +8,7 @@ const route = useRoute();
 const router = useRouter();
 const serviceId = route.params.service;
 const token = useCookie("token");
-
+const isLoading = ref(true);
 const reactions = ref<any>(null);
 const error = ref<string | null>(null);
 
@@ -42,6 +42,8 @@ const fetchReactions = async () => {
   } catch (err) {
     error.value = "Failed to load reactions";
     console.error("Error fetching reactions:", err);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -88,6 +90,7 @@ const saveOptions = (reactionId: number) => {
     <div v-if="error">
       <div>Error: {{ error }}</div>
     </div>
+    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
     <div v-else-if="reactions">
       <div v-for="reaction in reactions" :key="reaction.id">
         <button @click="openConfig(reaction.id)">

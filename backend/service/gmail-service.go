@@ -16,8 +16,8 @@ import (
 )
 
 type GmailService interface {
-	AuthGetServiceAccessToken(code string, path string) (schemas.GmailTokenResponse, error)
-	GetUserInfo(accessToken string) (result schemas.GmailUserInfo, err error)
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
@@ -53,21 +53,20 @@ func NewGmailService(
 
 func (service *gmailService) AuthGetServiceAccessToken(
 	code string,
-	path string,
-) (schemas.GmailTokenResponse, error) {
+) (token schemas.Token, err error) {
 	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return schemas.GmailTokenResponse{}, schemas.ErrGmailClientIdNotSet
+		return schemas.Token{}, schemas.ErrGmailClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GMAIL_SECRET")
 	if clientSecret == "" {
-		return schemas.GmailTokenResponse{}, schemas.ErrGmailSecretNotSet
+		return schemas.Token{}, schemas.ErrGmailSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.GmailTokenResponse{}, schemas.ErrBackendPortNotSet
+		return schemas.Token{}, schemas.ErrBackendPortNotSet
 	}
 
 	redirectURI := "http://localhost:8081/services/gmail"
@@ -83,7 +82,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	req.URL.RawQuery = data.Encode()
@@ -92,24 +91,30 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.GmailTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	var result schemas.GmailTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.GmailTokenResponse{}, fmt.Errorf(
+		return schemas.Token{}, fmt.Errorf(
 			"unable to decode response because %w",
 			err,
 		)
 	}
 
 	if (result.AccessToken == "") || (result.TokenType == "") {
-		return schemas.GmailTokenResponse{}, schemas.ErrAccessTokenNotFoundInResponse
+		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
 	resp.Body.Close()
-	return result, nil
+
+	token = schemas.Token{
+		Token:        result.AccessToken,
+		RefreshToken: result.RefreshToken,
+		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
+	}
+	return token, nil
 }
 
 func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
@@ -173,19 +178,22 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 
 func (service *gmailService) GetUserInfo(
 	accessToken string,
-) (result schemas.GmailUserInfo, err error) {
+) (user schemas.User, err error) {
 	gmailProfile, err := GetUserGmailProfile(accessToken)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get gmail profile because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to get gmail profile because %w", err)
 	}
 	googleProfile, err := GetUserGoogleProfile(accessToken)
 	if err != nil {
-		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get google profile because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to get google profile because %w", err)
 	}
-	result.Email = gmailProfile.EmailAddress
-	result.Login = googleProfile.Names[0].DisplayName
 
-	return result, nil
+	user = schemas.User{
+		Email:    gmailProfile.EmailAddress,
+		Username: googleProfile.Names[0].DisplayName,
+	}
+
+	return user, nil
 }
 
 func (service *gmailService) GetServiceActionInfo() []schemas.Action {

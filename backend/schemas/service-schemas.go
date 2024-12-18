@@ -1,6 +1,9 @@
 package schemas
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type ServiceName string
 
@@ -9,6 +12,7 @@ const (
 	OpenWeatherMap ServiceName = "openWeatherMap"
 	Timer          ServiceName = "timer"
 	Gmail          ServiceName = "gmail"
+	Github         ServiceName = "github"
 )
 
 type ServiceJSON struct {
@@ -25,3 +29,8 @@ type Service struct {
 	CreatedAt   time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdateAt    time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
+
+// Errors Messages.
+var (
+	ErrNotOauthService = errors.New("service is not an oauth service")
+)

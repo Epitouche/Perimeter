@@ -17,7 +17,7 @@ module.exports = {
     "bg-custom_color-gmail",
     "bg-custom_color-dropbox",
     "bg-custom_color-timer",
-    "bg-custom_color-weather",
+    "bg-custom_color-openWeatherMap",
   ],
   theme: {
     extend: {
@@ -34,11 +34,11 @@ module.exports = {
           spotify: "#1DC000", // Green
           dropbox: "#001DDA", // Blue
           timer: "#BB00FF", // Purple
-          weather: "#946500", // Brown
+          openWeatherMap: "#946500", // Brown
         },
       },
       fontSize: {
-        custom_size_title: "7rem",
+        custom_size_title: "5.5rem",
       },
       fontWeight: {
         custom_weight_title: "800",

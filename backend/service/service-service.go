@@ -1,8 +1,13 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+	"os"
+
 	"area/repository"
 	"area/schemas"
+	"area/tools"
 )
 
 type ServiceService interface {
@@ -14,6 +19,19 @@ type ServiceService interface {
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	FindServiceByName(name string) schemas.Service
+	RedirectToServiceOauthPage(
+		serviceName schemas.ServiceName,
+		oauthUrl string,
+		scope string,
+	) (authURL string, err error)
+	HandleServiceCallback(
+		code string,
+		authorization string,
+		authGetServiceAccessToken func(code string) (schemas.Token, error),
+		serviceUser UserService,
+		getUserInfo func(token string) (userInfo schemas.User, err error),
+		tokenService TokenService,
+	) (string, error)
 	GetServiceById(serverId uint64) schemas.Service
 }
 
@@ -73,6 +91,136 @@ func (service *serviceService) InitialSaveService() {
 			service.repository.Save(oneService)
 		}
 	}
+}
+
+func (service *serviceService) RedirectToServiceOauthPage(
+	serviceName schemas.ServiceName,
+	oauthUrl string,
+	scope string,
+) (authURL string, err error) {
+	clientID := ""
+
+	switch serviceName {
+	case schemas.Spotify:
+		clientID = os.Getenv("SPOTIFY_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrSpotifyClientIdNotSet
+		}
+	case schemas.Gmail:
+		clientID = os.Getenv("GMAIL_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrGmailClientIdNotSet
+		}
+	case schemas.Github:
+		clientID = os.Getenv("GITHUB_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrGithubClientIdNotSet
+		}
+	}
+	if clientID == "" {
+		return "", schemas.ErrNotOauthService
+	}
+
+	frontendPort := os.Getenv("FRONTEND_PORT")
+	if frontendPort == "" {
+		return "", schemas.ErrFrontendPortNotSet
+	}
+
+	// Generate the CSRF token
+	state, err := tools.GenerateCSRFToken()
+	if err != nil {
+		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+	}
+
+	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
+	// ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
+
+	// Construct the GitHub authorization URL
+	redirectURI := "http://localhost:" + frontendPort + "/services/" + string(serviceName)
+	authURL = oauthUrl +
+		"?client_id=" + clientID +
+		"&response_type=code" +
+		"&scope=" + scope +
+		"&redirect_uri=" + redirectURI +
+		"&state=" + state
+	return authURL, nil
+}
+
+func (service *serviceService) HandleServiceCallback(
+	code string,
+	authorization string,
+	authGetServiceAccessToken func(code string) (schemas.Token, error),
+	serviceUser UserService,
+	getUserInfo func(token string) (userInfo schemas.User, err error),
+	tokenService TokenService,
+) (string, error) {
+	authHeader := authorization
+	newUser := schemas.User{}
+	var bearerToken string
+
+	serviceToken, err := authGetServiceAccessToken(code)
+	if err != nil {
+		return "", fmt.Errorf("unable to get access token because %w", err)
+	}
+
+	if len(authHeader) > len("Bearer ") {
+		bearerToken = authHeader[len("Bearer "):]
+
+		newUser, err = serviceUser.GetUserInfo(bearerToken)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user info because %w", err)
+		}
+	} else {
+		userInfo, err := getUserInfo(serviceToken.Token)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user info because %w", err)
+		}
+		newUser = schemas.User{
+			Username: userInfo.Username,
+			Email:    userInfo.Email,
+		}
+
+		bearerTokenLogin, _, err := serviceUser.Login(newUser)
+		if err == nil {
+			return bearerTokenLogin, nil
+		}
+
+		bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
+		if err != nil {
+			return "", fmt.Errorf("unable to register user because %w", err)
+		}
+		bearerToken = bearerTokenRegister
+		newUser = serviceUser.GetUserById(newUserId)
+	}
+
+	gmailService := service.FindByName(schemas.Gmail)
+
+	newServiceToken := schemas.Token{
+		Token:        serviceToken.Token,
+		RefreshToken: serviceToken.RefreshToken,
+		ExpireAt:     serviceToken.ExpireAt,
+		Service:      gmailService,
+		User:         newUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := tokenService.SaveToken(newServiceToken)
+	if err != nil {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	if len(authHeader) == 0 {
+		newUser.TokenId = tokenId
+
+		err = serviceUser.UpdateUserInfo(newUser)
+		if err != nil {
+			return "", fmt.Errorf("unable to update user info because %w", err)
+		}
+	}
+	return bearerToken, nil
 }
 
 func (service *serviceService) FindAll() (allServices []schemas.Service) {
