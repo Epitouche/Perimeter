@@ -54,7 +54,7 @@ onMounted(() => {
     </h1>
     <UContainer
       :ui="{ base: 'mx-auto' }"
-      class="flex flex-col justify-center items-center gap-10 w-full h-full !p-0"
+      class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
     >
       <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
       <div v-if="error">Error: {{ error }}</div>
