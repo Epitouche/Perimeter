@@ -33,6 +33,7 @@ type spotifyService struct {
 	tokenRepository   repository.TokenRepository
 	actionsName       []string
 	reactionsName     []string
+	serviceInfo       schemas.Service
 }
 
 func NewSpotifyService(
@@ -46,7 +47,15 @@ func NewSpotifyService(
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Spotify,
+			Description: "This service is a music service",
+		},
 	}
+}
+
+func (service *spotifyService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
 }
 
 func (service *spotifyService) AuthGetServiceAccessToken(

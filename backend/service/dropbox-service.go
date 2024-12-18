@@ -31,6 +31,7 @@ type dropboxService struct {
 	tokenRepository   repository.TokenRepository
 	actionName        []string
 	reactionName      []string
+	serviceInfo       schemas.Service
 }
 
 func NewDropboxService(
@@ -44,7 +45,15 @@ func NewDropboxService(
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Dropbox,
+			Description: "This service is a file storage service",
+		},
 	}
+}
+
+func (service *dropboxService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
 }
 
 func (service *dropboxService) AuthGetServiceAccessToken(

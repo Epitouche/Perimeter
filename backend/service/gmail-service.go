@@ -35,20 +35,29 @@ type gmailService struct {
 	tokenRepository   repository.TokenRepository
 	actionName        []string
 	reactionName      []string
+	serviceInfo       schemas.Service
 }
 
 func NewGmailService(
-	githubTokenRepository repository.GmailRepository,
+	repository repository.GmailRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
 	tokenRepository repository.TokenRepository,
 ) GmailService {
 	return &gmailService{
-		repository:        githubTokenRepository,
+		repository:        repository,
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Gmail,
+			Description: "This service is a mail service",
+		},
 	}
+}
+
+func (service *gmailService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
 }
 
 func (service *gmailService) AuthGetServiceAccessToken(

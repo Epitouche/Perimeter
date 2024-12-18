@@ -69,7 +69,12 @@ func setupRouter() *gin.Engine {
 	tokenRepository := repository.NewTokenRepository(databaseConnection)
 
 	// Services
-	githubService := service.NewGithubService(githubRepository)
+	githubService := service.NewGithubService(
+		githubRepository,
+		serviceRepository,
+		areaRepository,
+		tokenRepository,
+	)
 	gmailService := service.NewGmailService(
 		gmailRepository,
 		serviceRepository,
@@ -96,6 +101,8 @@ func setupRouter() *gin.Engine {
 		timerService,
 		spotifyService,
 		gmailService,
+		githubService,
+		dropboxService,
 	)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)

@@ -26,6 +26,7 @@ type timerService struct {
 	serviceRepository repository.ServiceRepository
 	actionsName       []string
 	reactionsName     []string
+	serviceInfo       schemas.Service
 }
 
 func NewTimerService(
@@ -35,7 +36,15 @@ func NewTimerService(
 	return &timerService{
 		repository:        repository,
 		serviceRepository: serviceRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Timer,
+			Description: "This service is a time service",
+		},
 	}
+}
+
+func (service *timerService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
 }
 
 func (service *timerService) FindActionbyName(
