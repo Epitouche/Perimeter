@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
-import {AuthConfiguration, authorize} from 'react-native-app-auth';
+import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_SECRET } from '@env';
 
 async function HandleSpotifyLogin(setToken: any, navigation: any) {
