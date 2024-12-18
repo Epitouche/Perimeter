@@ -57,7 +57,9 @@ func (service *openweathermapService) FindActionbyName(
 	}
 }
 
-func (service *openweathermapService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *openweathermapService) FindReactionbyName(
+	name string,
+) func(option string, idArea uint64) {
 	switch name {
 	default:
 		return nil
