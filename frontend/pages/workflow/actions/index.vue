@@ -50,14 +50,22 @@ onMounted(() => {
     <div class="px-20">
       <BackButton link="/workflow" :is-white="false" />
     </div>
-    <h1 class="flex justify-center w-full text-8xl font-custom_weight_title pb-20">
+    <h1
+      class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
+    >
       Add an action
     </h1>
-    <UContainer :ui="{ base: 'mx-auto' }" class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0">
+    <UContainer
+      :ui="{ base: 'mx-auto' }"
+      class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
+    >
       <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
       <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
       <div v-else-if="error">Error: {{ error }}</div>
-      <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full">
+      <div
+        v-else-if="filteredServices.length"
+        class="flex flex-row justify-evenly items-center w-full"
+      >
         <ServiceCardContainer type="actions" :services="filteredServices" />
       </div>
     </UContainer>

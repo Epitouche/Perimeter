@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import servicebyid from '~/server/api/servicebyid';
+import servicebyid from "~/server/api/servicebyid";
 
 definePageMeta({
   layout: "nonavbar",
@@ -116,16 +116,25 @@ const saveOptions = (actionId: number) => {
       <div>Error: {{ error }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
-    <UContainer 
-    v-else-if="serviceInfo" :ui="{ constrained: 'max-w-none' }"
-      :class="[`bg-custom_color-${serviceInfo.name}`, 'py-20']">
+    <UContainer
+      v-else-if="serviceInfo"
+      :ui="{ constrained: 'max-w-none' }"
+      :class="[`bg-custom_color-${serviceInfo.name}`, 'py-20']"
+    >
       <div class="px-20">
         <BackButton link="/workflow/actions" :is-white="true" />
       </div>
       <div class="flex flex-col justify-center items-center gap-2">
-        <h1 class="text-8xl text-white font-custom_weight_title">Add an action</h1>
-        <UIcon :name="`my-icons:white-${serviceInfo.name}`" class="w-[9em] h-[9em]" />
-        <h2 class="capitalize text-white text-7xl font-bold pt-8">{{ serviceInfo.name }}</h2>
+        <h1 class="text-8xl text-white font-custom_weight_title">
+          Add an action
+        </h1>
+        <UIcon
+          :name="`my-icons:white-${serviceInfo.name}`"
+          class="w-[9em] h-[9em]"
+        />
+        <h2 class="capitalize text-white text-7xl font-bold pt-8">
+          {{ serviceInfo.name }}
+        </h2>
       </div>
     </UContainer>
     <div v-if="error">
@@ -140,7 +149,10 @@ const saveOptions = (actionId: number) => {
           <div>
             <div v-for="(value, key) in parseOption(action.option)" :key="key">
               <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" :type="typeof value === 'number' ? 'number' : 'text'">
+              <input
+                v-model="modifiedOptions[action.id][key]"
+                :type="typeof value === 'number' ? 'number' : 'text'"
+              />
             </div>
             <button @click="saveOptions(action.id)">Save</button>
           </div>
