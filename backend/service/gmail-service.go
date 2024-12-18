@@ -15,17 +15,22 @@ import (
 	"area/schemas"
 )
 
+// Constructor
+
 type GmailService interface {
-	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
-	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	GetActionsName() []string
 	GetReactionsName() []string
+	// Service specific functions
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Actions functions
+	// Reactions functions
 	GmailReactionSendMail(option string, idArea uint64)
-	// Token operations
 }
 
 type gmailService struct {
@@ -35,21 +40,76 @@ type gmailService struct {
 	tokenRepository   repository.TokenRepository
 	actionName        []string
 	reactionName      []string
+	serviceInfo       schemas.Service
 }
 
 func NewGmailService(
-	githubTokenRepository repository.GmailRepository,
+	repository repository.GmailRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
 	tokenRepository repository.TokenRepository,
 ) GmailService {
 	return &gmailService{
-		repository:        githubTokenRepository,
+		repository:        repository,
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Gmail,
+			Description: "This service is a mail service",
+		},
 	}
 }
+
+// Service interface functions
+
+func (service *gmailService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
+}
+
+func (service *gmailService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *gmailService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	switch name {
+	case string(schemas.SendMail):
+		println("SendMail")
+		return service.GmailReactionSendMail
+	default:
+		return nil
+	}
+}
+
+func (service *gmailService) GetActionsName() []string {
+	return service.actionName
+}
+
+func (service *gmailService) GetReactionsName() []string {
+	return service.reactionName
+}
+
+func (service *gmailService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{}
+}
+
+func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SendMail),
+			Description: "Send an email",
+			Service:     service.serviceRepository.FindByName(schemas.Gmail),
+			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+		},
+	}
+}
+
+// Service specific functions
 
 func (service *gmailService) AuthGetServiceAccessToken(
 	code string,
@@ -196,47 +256,9 @@ func (service *gmailService) GetUserInfo(
 	return user, nil
 }
 
-func (service *gmailService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
-}
+// Actions functions
 
-func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.SendMail),
-			Description: "Send an email",
-			Service:     service.serviceRepository.FindByName(schemas.Gmail),
-			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
-		},
-	}
-}
-
-func (service *gmailService) FindActionbyName(
-	name string,
-) func(c chan string, option string, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *gmailService) FindReactionbyName(name string) func(option string, idArea uint64) {
-	switch name {
-	case string(schemas.SendMail):
-		println("SendMail")
-		return service.GmailReactionSendMail
-	default:
-		return nil
-	}
-}
-
-func (service *gmailService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *gmailService) GetReactionsName() []string {
-	return service.reactionName
-}
+// Reactions functions
 
 func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
 	optionJSON := schemas.GmailReactionSendMailOption{}
