@@ -19,5 +19,4 @@ type OpenweathermapActionSpecificHour struct {
 
 type OpenweathermapReactionGiveTime struct{}
 
-type OpenweathermapReactionApiResponse struct {
-}
+type OpenweathermapReactionApiResponse struct{}
