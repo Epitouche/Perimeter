@@ -12,16 +12,21 @@ import (
 	"area/schemas"
 )
 
+// Constructor
+
 type DropboxService interface {
-	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
-	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	GetActionsName() []string
 	GetReactionsName() []string
-	// Token operations
+	// Service specific functions
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Actions functions
+	// Reactions functions
 }
 
 type dropboxService struct {
@@ -52,9 +57,52 @@ func NewDropboxService(
 	}
 }
 
+// Service interface functions
+
 func (service *dropboxService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
+
+func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{}
+}
+
+func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SendMail),
+			Description: "Send an email",
+			Service:     service.serviceRepository.FindByName(schemas.Dropbox),
+			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+		},
+	}
+}
+
+func (service *dropboxService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *dropboxService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *dropboxService) GetActionsName() []string {
+	return service.actionName
+}
+
+func (service *dropboxService) GetReactionsName() []string {
+	return service.reactionName
+}
+
+// Service specific functions
 
 func (service *dropboxService) AuthGetServiceAccessToken(
 	code string,
@@ -161,41 +209,6 @@ func (service *dropboxService) GetUserInfo(
 	return user, nil
 }
 
-func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
-}
+// Actions functions
 
-func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.SendMail),
-			Description: "Send an email",
-			Service:     service.serviceRepository.FindByName(schemas.Dropbox),
-			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
-		},
-	}
-}
-
-func (service *dropboxService) FindActionbyName(
-	name string,
-) func(c chan string, option string, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *dropboxService) FindReactionbyName(name string) func(option string, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *dropboxService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *dropboxService) GetReactionsName() []string {
-	return service.reactionName
-}
+// Reactions functions

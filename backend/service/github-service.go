@@ -11,15 +11,21 @@ import (
 	"area/schemas"
 )
 
+// Constructor
+
 type GithubService interface {
-	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
-	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
 	GetActionsName() []string
 	GetReactionsName() []string
+	// Service specific functions
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Actions functions
+	// Reactions functions
 }
 
 type githubService struct {
@@ -50,9 +56,45 @@ func NewGithubService(
 	}
 }
 
+// Service interface functions
+
 func (service *githubService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
+
+func (service *githubService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{}
+}
+
+func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{}
+}
+
+func (service *githubService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *githubService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *githubService) GetActionsName() []string {
+	return service.actionName
+}
+
+func (service *githubService) GetReactionsName() []string {
+	return service.reactionName
+}
+
+// Service specific functions
 
 func (service *githubService) AuthGetServiceAccessToken(
 	code string,
@@ -147,34 +189,5 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 	return user, nil
 }
 
-func (service *githubService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
-}
-
-func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
-}
-
-func (service *githubService) FindActionbyName(
-	name string,
-) func(c chan string, option string, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *githubService) FindReactionbyName(name string) func(option string, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *githubService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *githubService) GetReactionsName() []string {
-	return service.reactionName
-}
+// Actions functions
+// Reactions functions
