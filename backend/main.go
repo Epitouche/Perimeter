@@ -61,6 +61,7 @@ func setupRouter() *gin.Engine {
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
 	dropboxRepository := repository.NewDropboxRepository(databaseConnection)
 	timerRepository := repository.NewTimerRepository()
+	openweathermapRepository := repository.NewOpenweathermapRepository()
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
@@ -94,6 +95,7 @@ func setupRouter() *gin.Engine {
 		tokenRepository,
 	)
 	timerService := service.NewTimerService(timerRepository, serviceRepository)
+	openweathermapService := service.NewOpenweathermapService(openweathermapRepository, serviceRepository)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
 	serviceService := service.NewServiceService(
@@ -103,6 +105,7 @@ func setupRouter() *gin.Engine {
 		gmailService,
 		githubService,
 		dropboxService,
+		openweathermapService,
 	)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
