@@ -59,6 +59,7 @@ func setupRouter() *gin.Engine {
 	githubRepository := repository.NewGithubRepository(databaseConnection)
 	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
+	dropboxRepository := repository.NewDropboxRepository(databaseConnection)
 	timerRepository := repository.NewTimerRepository()
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
@@ -77,6 +78,12 @@ func setupRouter() *gin.Engine {
 	)
 	spotifyService := service.NewSpotifyService(
 		spotifyRepository,
+		serviceRepository,
+		areaRepository,
+		tokenRepository,
+	)
+	dropboxService := service.NewDropboxService(
+		dropboxRepository,
 		serviceRepository,
 		areaRepository,
 		tokenRepository,
@@ -120,6 +127,12 @@ func setupRouter() *gin.Engine {
 		tokenService,
 		serviceService,
 	)
+	dropboxController := controller.NewDropboxController(
+		dropboxService,
+		userService,
+		tokenService,
+		serviceService,
+	)
 	userController := controller.NewUserController(userService, jwtService, tokenService)
 	serviceController := controller.NewServiceController(
 		serviceService,
@@ -142,6 +155,7 @@ func setupRouter() *gin.Engine {
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
 	api.NewGithubAPI(githubController, apiRoutes)
+	api.NewDropboxAPI(dropboxController, apiRoutes)
 	api.NewAreaAPI(areaController, apiRoutes)
 
 	// basic about.json route

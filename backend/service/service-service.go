@@ -116,6 +116,11 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		if clientID == "" {
 			return "", schemas.ErrGithubClientIdNotSet
 		}
+	case schemas.Dropbox:
+		clientID = os.Getenv("DROPBOX_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrDropboxClientIdNotSet
+		}
 	}
 	if clientID == "" {
 		return "", schemas.ErrNotOauthService

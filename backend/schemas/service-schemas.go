@@ -13,6 +13,7 @@ const (
 	Timer          ServiceName = "timer"
 	Gmail          ServiceName = "gmail"
 	Github         ServiceName = "github"
+	Dropbox        ServiceName = "dropbox"
 )
 
 type ServiceJSON struct {

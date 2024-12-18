@@ -116,14 +116,13 @@ func (api *SpotifyAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 //	@Tags			Spotify
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.UserCredentials
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/spotify/info/user [get]
+//	@Router			/spotify/info [get]
 func (api *SpotifyAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/user", func(ctx *gin.Context) {
+	apiRoutes.GET("/", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{

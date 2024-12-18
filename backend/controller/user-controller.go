@@ -57,6 +57,7 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
 	if len(credentials.Username) < schemas.UsernameMinimumLength {
 		return "", fmt.Errorf(
 			"username must be at least %d characters long",
