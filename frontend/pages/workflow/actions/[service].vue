@@ -8,7 +8,7 @@ const route = useRoute();
 const router = useRouter();
 const serviceId = route.params.service;
 const token = useCookie("token");
-
+const isLoading = ref(true);
 const actions = ref<any>(null);
 const error = ref<string | null>(null);
 
@@ -42,6 +42,8 @@ const fetchActions = async () => {
   } catch (err) {
     error.value = "Failed to load actions";
     console.error("Error fetching actions:", err);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -107,6 +109,7 @@ const saveOptions = (actionId: number) => {
         </div>
       </div>
     </div>
+    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
   </div>
 </template>
 

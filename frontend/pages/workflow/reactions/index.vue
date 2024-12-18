@@ -9,6 +9,7 @@ const token = useCookie("token");
 const error = ref<string | null>(null);
 const services = ref<any[]>([]);
 const filteredServices = ref<any[]>([]);
+const isLoading = ref(true);
 
 const searchQuery = ref<string>("");
 
@@ -27,6 +28,8 @@ const fetchServices = async () => {
   } catch (error) {
     filteredServices.value = [];
     console.error("Error fetching services:", error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -43,7 +46,7 @@ onMounted(() => {
 
 <template>
   <div class="p-10">
-    <BackButton link="/workflow" color="black" />
+    <BackButton link="/workflow" :is-white="false" />
     <h1
       class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
     >
@@ -55,20 +58,9 @@ onMounted(() => {
     >
       <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
       <div v-if="error">Error: {{ error }}</div>
-      <div
-        v-else-if="filteredServices.length"
-        class="flex flex-row justify-evenly items-center flex-wrap w-full"
-      >
-        <div v-for="service in filteredServices" :key="service.id">
-          <NuxtLink
-            :to="{
-              name: 'workflow-reactions-service',
-              params: { service: service.id },
-            }"
-          >
-            {{ service.name }}
-          </NuxtLink>
-        </div>
+      <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
+      <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full">
+        <ServiceCardContainer :services="filteredServices" />
       </div>
     </UContainer>
   </div>
