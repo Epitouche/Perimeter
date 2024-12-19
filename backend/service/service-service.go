@@ -38,15 +38,12 @@ type ServiceService interface {
 type ServiceInterface interface {
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
 	FindReactionbyName(name string) func(option string, idArea uint64)
+	GetServiceInfo() schemas.Service
 }
 
 type serviceService struct {
-	repository        repository.ServiceRepository
-	spotifyService    SpotifyService
-	timerService      TimerService
-	gmailService      GmailService
-	allService        []interface{}
-	allServiceSchemas []schemas.Service
+	repository repository.ServiceRepository
+	allService []interface{}
 }
 
 func NewServiceService(
@@ -54,41 +51,32 @@ func NewServiceService(
 	timerService TimerService,
 	spotifyService SpotifyService,
 	gmailService GmailService,
+	githubService GithubService,
+	dropboxService DropboxService,
+	openweathermapService OpenweathermapService,
 ) ServiceService {
 	newService := serviceService{
-		repository:     repository,
-		spotifyService: spotifyService,
-		timerService:   timerService,
-		gmailService:   gmailService,
-		allServiceSchemas: []schemas.Service{
-			{
-				Name:        schemas.Spotify,
-				Description: "This service is a music service",
-			},
-			// {
-			// 	Name:        schemas.OpenWeatherMap,
-			// 	Description: "This service is a weather service",
-			// },
-			{
-				Name:        schemas.Timer,
-				Description: "This service is a time service",
-			},
-			{
-				Name:        schemas.Gmail,
-				Description: "This service is a mail service",
-			},
+		repository: repository,
+		allService: []interface{}{
+			spotifyService,
+			timerService,
+			gmailService,
+			githubService,
+			dropboxService,
+			openweathermapService,
 		},
-		allService: []interface{}{spotifyService, timerService, gmailService},
 	}
 	newService.InitialSaveService()
 	return &newService
 }
 
 func (service *serviceService) InitialSaveService() {
-	for _, oneService := range service.allServiceSchemas {
-		serviceByName := service.repository.FindAllByName(oneService.Name)
+	for _, oneService := range service.allService {
+		serviceByName := service.repository.FindAllByName(
+			oneService.(ServiceInterface).GetServiceInfo().Name,
+		)
 		if len(serviceByName) == 0 {
-			service.repository.Save(oneService)
+			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
 		}
 	}
 }
