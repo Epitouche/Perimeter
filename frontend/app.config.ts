@@ -29,6 +29,6 @@ export default defineAppConfig({
     },
     modal: {
       rounded: "rounded-custom_border_radius",
-    }
+    },
   },
 });

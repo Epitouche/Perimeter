@@ -59,7 +59,6 @@ onMounted(() => {
   getServiceInfo();
   fetchActions();
 });
-
 </script>
 
 <template>
@@ -93,7 +92,11 @@ onMounted(() => {
       <div>Error: {{ error }}</div>
     </div>
     <div v-else-if="actions">
-      <ReActionCardContainer type-name="action" :types="actions" :service-info="serviceInfo" />
+      <ReActionCardContainer
+        type-name="action"
+        :types="actions"
+        :service-info="serviceInfo"
+      />
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
   </div>
