@@ -18,6 +18,11 @@ module.exports = {
     "bg-custom_color-dropbox",
     "bg-custom_color-timer",
     "bg-custom_color-openWeatherMap",
+    "border-custom_color-spotify",
+    "border-custom_color-gmail",
+    "border-custom_color-dropbox",
+    "border-custom_color-timer",
+    "border-custom_color-openWeatherMap",
   ],
   theme: {
     extend: {
