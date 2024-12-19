@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -13,7 +14,7 @@ import (
 
 // Constructor
 
-type GithubService interface {
+type DropboxService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
@@ -28,8 +29,8 @@ type GithubService interface {
 	// Reactions functions
 }
 
-type githubService struct {
-	repository        repository.GithubRepository
+type dropboxService struct {
+	repository        repository.DropboxRepository
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
@@ -38,39 +39,46 @@ type githubService struct {
 	serviceInfo       schemas.Service
 }
 
-func NewGithubService(
-	repository repository.GithubRepository,
+func NewDropboxService(
+	githubTokenRepository repository.DropboxRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
 	tokenRepository repository.TokenRepository,
-) GithubService {
-	return &githubService{
-		repository:        repository,
+) DropboxService {
+	return &dropboxService{
+		repository:        githubTokenRepository,
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
 		serviceInfo: schemas.Service{
-			Name:        schemas.Github,
-			Description: "This service is a code repository service",
+			Name:        schemas.Dropbox,
+			Description: "This service is a file storage service",
 		},
 	}
 }
 
 // Service interface functions
 
-func (service *githubService) GetServiceInfo() schemas.Service {
+func (service *dropboxService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
-func (service *githubService) GetServiceActionInfo() []schemas.Action {
+func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	return []schemas.Action{}
 }
 
-func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
+func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SendMail),
+			Description: "Send an email",
+			Service:     service.serviceRepository.FindByName(schemas.Dropbox),
+			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+		},
+	}
 }
 
-func (service *githubService) FindActionbyName(
+func (service *dropboxService) FindActionbyName(
 	name string,
 ) func(c chan string, option string, idArea uint64) {
 	switch name {
@@ -79,34 +87,34 @@ func (service *githubService) FindActionbyName(
 	}
 }
 
-func (service *githubService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *dropboxService) FindReactionbyName(name string) func(option string, idArea uint64) {
 	switch name {
 	default:
 		return nil
 	}
 }
 
-func (service *githubService) GetActionsName() []string {
+func (service *dropboxService) GetActionsName() []string {
 	return service.actionName
 }
 
-func (service *githubService) GetReactionsName() []string {
+func (service *dropboxService) GetReactionsName() []string {
 	return service.reactionName
 }
 
 // Service specific functions
 
-func (service *githubService) AuthGetServiceAccessToken(
+func (service *dropboxService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	clientID := os.Getenv("DROPBOX_CLIENT_ID")
 	if clientID == "" {
-		return schemas.Token{}, schemas.ErrGithubClientIdNotSet
+		return schemas.Token{}, schemas.ErrDropboxClientIdNotSet
 	}
 
-	clientSecret := os.Getenv("GITHUB_SECRET")
+	clientSecret := os.Getenv("DROPBOX_SECRET")
 	if clientSecret == "" {
-		return schemas.Token{}, schemas.ErrGithubSecretNotSet
+		return schemas.Token{}, schemas.ErrDropboxSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
@@ -114,15 +122,16 @@ func (service *githubService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrBackendPortNotSet
 	}
 
-	redirectURI := "http://localhost:8081/services/github"
+	redirectURI := "http://localhost:8081/services/dropbox"
 
-	apiURL := "https://github.com/login/oauth/access_token"
+	apiURL := "https://api.dropboxapi.com/oauth2/token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
 	data.Set("client_secret", clientSecret)
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
+	data.Set("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
@@ -138,7 +147,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	var result schemas.GitHubTokenResponse
+	var result schemas.DropboxTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf(
@@ -147,19 +156,29 @@ func (service *githubService) AuthGetServiceAccessToken(
 		)
 	}
 
+	if (result.AccessToken == "") || (result.TokenType == "") {
+		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
+	}
+
 	resp.Body.Close()
 
 	token = schemas.Token{
-		Token: result.AccessToken,
-		// RefreshToken:  result.RefreshToken,
-		// ExpireAt: result.ExpiresIn,
+		Token:        result.AccessToken,
+		RefreshToken: result.RefreshToken,
+		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
 	}
 	return token, nil
 }
 
-func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+func (service *dropboxService) GetUserInfo(
+	accessToken string,
+) (user schemas.User, err error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req, err := http.NewRequest(
+		"GET",
+		"    https://api.dropboxapi.com/2/users/get_account",
+		nil,
+	)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -174,7 +193,7 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	result := schemas.GithubUserInfo{}
+	result := schemas.DropboxUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
@@ -183,11 +202,13 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 	resp.Body.Close()
 
 	user = schemas.User{
-		Username: result.Login,
 		Email:    result.Email,
+		Username: result.Name.DisplayName,
 	}
+
 	return user, nil
 }
 
 // Actions functions
+
 // Reactions functions
