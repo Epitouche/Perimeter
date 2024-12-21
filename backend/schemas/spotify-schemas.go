@@ -1,6 +1,9 @@
 package schemas
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 type SpotifyAction string
 
@@ -57,3 +60,9 @@ var (
 	ErrSpotifySecretNotSet   = errors.New("SPOTIFY_SECRET is not set")
 	ErrSpotifyClientIdNotSet = errors.New("SPOTIFY_CLIENT_ID is not set")
 )
+
+type SpotifyMobileTokenRequest struct {
+	AccessToken string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn time.Time `json:"accessTokenExpirationDate	"`
+}

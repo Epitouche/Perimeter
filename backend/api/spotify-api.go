@@ -95,7 +95,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 func (api *SpotifyAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
 		println("callback mobile spotify")
-		var result schemas.GmailMobileTokenRequest
+		var result schemas.SpotifyMobileTokenRequest
 		err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 		if err != nil {
 			fmt.Printf("error: %v\n", err)
