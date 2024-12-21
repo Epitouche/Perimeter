@@ -4,7 +4,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../Navigation/navigate';
 import {AppContext} from '../../context/AppContext';
 import { SpotifyOauthCallback } from './GoogleOauth2';
-import { GoogleOauthCallback } from './SpotifyOauth2';
 import { GithubOauthCallback } from './GithubOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
@@ -22,16 +21,6 @@ const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
 
     return () => clearTimeout(timer);
   }, [navigation]);
-
-  if (code) {
-    if (service == 'Spotify') {
-      SpotifyOauthCallback(code, navigation);
-    } else if (service == 'Github') {
-      GithubOauthCallback(code, navigation);
-    } else if (service == 'Google') {
-      GoogleOauthCallback(code, navigation);
-    }
-  }
 
   if (isLoading) {
     return (

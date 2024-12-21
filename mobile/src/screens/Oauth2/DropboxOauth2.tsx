@@ -4,7 +4,7 @@ import { AppContext } from '../../context/AppContext';
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { DROPBOX_CLIENT_ID, DROPBOX_SECRET } from '@env';
 
-async function HandleDropboxLogin(setToken: any, navigation: any) {
+async function HandleDropboxLogin(setToken: any, navigation: any, login: boolean = false) {
   const config: AuthConfiguration = {
     clientId: DROPBOX_CLIENT_ID,
     clientSecret: DROPBOX_SECRET,
@@ -20,7 +20,9 @@ async function HandleDropboxLogin(setToken: any, navigation: any) {
     const result = await authorize(config);
     console.log('result', result);
     setToken(result.accessToken);
-    navigation.navigate('AreaView');
+    if (login) {
+      navigation.navigate('AreaView');
+    }
   } catch (error) {
     if (error.message != 'User cancelled flow') {
         console.error('Failed to log in to Dropbox, ', error);

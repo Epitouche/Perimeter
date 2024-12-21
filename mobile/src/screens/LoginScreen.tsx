@@ -124,7 +124,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity 
           onPress={() => {
             setService('Google');
-            HandleDropboxLogin(setToken, navigation);
+            HandleGoogleLogin(setToken, navigation, true);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/google-logo.png'}}
@@ -134,7 +134,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => {
             setService('Github');
-            HandleGithubLogin(setToken, navigation);
+            HandleGithubLogin(setToken, navigation, true);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
@@ -144,7 +144,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => {
             setService('Spotify');
-            HandleSpotifyLogin(setToken, navigation);
+            HandleSpotifyLogin(setToken, navigation, ipAddress ,true);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}

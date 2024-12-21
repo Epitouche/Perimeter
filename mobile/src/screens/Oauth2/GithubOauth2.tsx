@@ -4,7 +4,7 @@ import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 
-async function HandleGithubLogin(setToken: any, navigation: any) {
+async function HandleGithubLogin(setToken: any, navigation: any, login: boolean = false) {
   const config: AuthConfiguration = {
     clientId: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_SECRET,
@@ -20,7 +20,9 @@ async function HandleGithubLogin(setToken: any, navigation: any) {
     const result = await authorize(config);
     console.log('result', result);
     setToken(result.accessToken);
-    navigation.navigate('AreaView');
+    if (login) {
+      navigation.navigate('AreaView');
+    }
   } catch (error) {
     if (error.message != 'User cancelled flow') {
       console.error('Failed to log in to GitHub', error);

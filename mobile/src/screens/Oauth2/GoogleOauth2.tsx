@@ -4,7 +4,7 @@ import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { GMAIL_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 
-async function HandleGoogleLogin(setToken: any, navigation: any) {
+async function HandleGoogleLogin(setToken: any, navigation: any, login: boolean = false) {
   const config: AuthConfiguration = {
     clientId: GMAIL_CLIENT_ID,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
@@ -19,8 +19,10 @@ async function HandleGoogleLogin(setToken: any, navigation: any) {
     const result = await authorize(config);
     console.log('result', result);
     setToken(result.accessToken);
-    navigation.navigate('AreaView');
-  } catch (error) {
+    if (login) {
+      navigation.navigate('AreaView');
+    }
+    } catch (error) {
     if (error.message != 'User cancelled flow') {
       console.error('Failed to log in to Google', error);
       Alert.alert('Error', error.message);

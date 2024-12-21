@@ -159,7 +159,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Google');
-            HandleGoogleLogin(setToken, navigation);
+            HandleGoogleLogin(setToken, navigation, true);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
@@ -169,7 +169,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Github');
-            HandleGithubLogin(setToken, navigation);
+            HandleGithubLogin(setToken, navigation, true);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
@@ -179,7 +179,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Spotify');
-            HandleSpotifyLogin(setToken, navigation);
+            HandleSpotifyLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}
