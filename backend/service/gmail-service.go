@@ -77,7 +77,9 @@ func (service *gmailService) FindActionbyName(
 	}
 }
 
-func (service *gmailService) FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) {
+func (service *gmailService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) {
 	switch name {
 	case string(schemas.SendMail):
 		println("SendMail")

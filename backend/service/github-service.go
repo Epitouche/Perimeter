@@ -79,7 +79,9 @@ func (service *githubService) FindActionbyName(
 	}
 }
 
-func (service *githubService) FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) {
+func (service *githubService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
