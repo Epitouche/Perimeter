@@ -32,7 +32,13 @@ type ServiceService interface {
 		getUserInfo func(token string) (userInfo schemas.User, err error),
 		tokenService TokenService,
 	) (string, error)
-	HandleServiceCallbackMobile() (string, error)
+	HandleServiceCallbackMobile(
+		serviceName schemas.ServiceName,
+		credentials schemas.MobileTokenRequest,
+		serviceUser UserService,
+		getUserInfo func(token string) (userInfo schemas.User, err error),
+		tokenService TokenService,
+	) (string, error)
 	GetServiceById(serverId uint64) schemas.Service
 }
 
@@ -217,8 +223,63 @@ func (service *serviceService) HandleServiceCallback(
 	return bearerToken, nil
 }
 
-func (service *serviceService) HandleServiceCallbackMobile() (string, error) {
-	return "hey!", nil
+func (service *serviceService) HandleServiceCallbackMobile(
+	serviceName schemas.ServiceName,
+	credentials schemas.MobileTokenRequest,
+	serviceUser UserService,
+	getUserInfo func(token string) (userInfo schemas.User, err error),
+	tokenService TokenService,
+) (string, error) {
+	newUser := schemas.User{}
+	var bearerToken string
+
+	userInfo, err := getUserInfo(credentials.AccessToken)
+	if err != nil {
+		return "", fmt.Errorf("unable to get user info because %w", err)
+	}
+	newUser = schemas.User{
+		Username: userInfo.Username,
+		Email:    userInfo.Email,
+	}
+
+	bearerTokenLogin, _, err := serviceUser.Login(newUser)
+	if err == nil {
+		return bearerTokenLogin, nil
+	}
+
+	bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to register user because %w", err)
+	}
+	bearerToken = bearerTokenRegister
+		newUser = serviceUser.GetUserById(newUserId)
+
+	actualService := service.FindByName(schemas.Gmail)
+
+	newServiceToken := schemas.Token{
+		Token:        credentials.AccessToken,
+		RefreshToken: credentials.RefreshToken,
+		ExpireAt:     credentials.ExpiresIn,
+		Service:      actualService,
+		User:         newUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := tokenService.SaveToken(newServiceToken)
+	if err != nil {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	newUser.TokenId = tokenId
+
+	err = serviceUser.UpdateUserInfo(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to update user info because %w", err)
+	}
+	return bearerToken, nil
 }
 
 func (service *serviceService) FindAll() (allServices []schemas.Service) {

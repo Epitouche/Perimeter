@@ -93,7 +93,18 @@ func (controller *spotifyController) HandleServiceCallback(
 func (controller *spotifyController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
 ) (string, error) {
-	bearer, err := controller.serviceService.HandleServiceCallbackMobile()
+	var credentials schemas.MobileTokenRequest
+	err := ctx.ShouldBind(&credentials)
+	if err != nil {
+		return "", fmt.Errorf("can't bind credentials: %w", err)
+	}
+	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		schemas.Spotify,
+		credentials,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
 	return bearer, err
 }
 
