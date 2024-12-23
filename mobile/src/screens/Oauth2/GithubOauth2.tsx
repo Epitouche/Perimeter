@@ -20,7 +20,7 @@ async function HandleGithubLogin(setToken: any, navigation: any, ipAddress: stri
       // console.log('result', result);
       let data;
       if (login) {
-        data = await handleCallback(`https://${ipAddress}:8080/api/v1/oauth2/github/mobile`, result);
+        data = await handleCallback(`http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`, result);
       } else {
         setToken(result.accessToken);
         // TODO: call route when loging in from myServices page (waiting for back to be done)
@@ -28,7 +28,7 @@ async function HandleGithubLogin(setToken: any, navigation: any, ipAddress: stri
       if (data.error) {
         console.error(data.error);
       } else {
-        setToken(data.accessToken);
+        setToken(data.token);
         if (login)
           navigation.navigate('AreaView');
       }
