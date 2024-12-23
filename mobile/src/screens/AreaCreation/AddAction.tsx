@@ -9,25 +9,24 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../App';
-import {AppContext} from '../context/AppContext';
+import {RootStackParamList} from '../../../App';
+import {AppContext} from '../../context/AppContext';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'AddReactionScreen'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'AddActionScreen'>;
 
-const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
+const AddActionScreen: React.FC<Props> = ({navigation}) => {
   const [services, setServices] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const {ipAddress, token} = useContext(AppContext);
-  const {actionId, actionOptions } = route.params;
 
   useEffect(() => {
-    // Fetch actionas from API
+    // Fetch services from API
     const fetchServices = async () => {
       try {
         const response = await fetch(
-          `http://${ipAddress}:8080/api/v1/service/info/`,
+          `http://${ipAddress}:8080/api/v1/service/info`,
           {
             method: 'GET',
             headers: {
@@ -80,7 +79,7 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Choose reaction</Text>
+      <Text style={styles.title}>Add action</Text>
       <TextInput
         style={styles.searchBar}
         placeholder="Search services"
@@ -92,7 +91,11 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
           <TouchableOpacity
             key={service.id}
             style={styles.serviceBox}
-            onPress={() => navigation.navigate('SelectReactionScreen', { actionId:actionId, actionOptions: actionOptions, serviceId: service.id})}>
+            onPress={() =>
+              navigation.navigate('SelectActionScreen', {
+                serviceId: service.id,
+              })
+            }>
             <Text style={styles.serviceText}>{service.name}</Text>
           </TouchableOpacity>
         ))}
@@ -164,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddReactionScreen;
+export default AddActionScreen;

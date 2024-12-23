@@ -9,26 +9,26 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
-import { AppContext } from '../context/AppContext';
+import { RootStackParamList } from '../../Navigation/navigate';
+import { AppContext } from '../../context/AppContext';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'SelectActionScreen'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'SelectReactionScreen'>;
 
-const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
+const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [services, setServices] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [selectedAction, setSelectedAction] = useState<any | null>(null);
-  const [selectedActionOptions, setSelectedActionOptions] = useState<{ [key: string]: any }>({});
+  const [selectedReaction, setSelectedReaction] = useState<any | null>(null);
+  const [selectedReactionOptions, setSelectedReactionOptions] = useState<{ [key: string]: any }>({});
   const { ipAddress, token } = useContext(AppContext);
-  const serviceId = route.params?.serviceId;
+  const {actionId, actionOptions, serviceId} = route.params;
 
   useEffect(() => {
     // Fetch actions from API
     const fetchServices = async () => {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/action/info/${serviceId}`, {
+        const response = await fetch(`http://${ipAddress}:8080/api/v1/reaction/info/${serviceId}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,29 +69,46 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleActionPress = (action: any) => {
-    setSelectedAction(action);
+    setSelectedReaction(action);
     if (action.option) {
       console.log('Action Options:', action.option);
       const parsedOptions = JSON.parse(action.option);
-      setSelectedActionOptions(parsedOptions);
+      setSelectedReactionOptions(parsedOptions);
     } else {
-      setSelectedActionOptions({});
+      setSelectedReactionOptions({});
     }
   };
 
   const handleOptionChange = (key: string, value: any, type: any) => {
-    setSelectedActionOptions((prev) => ({
+    setSelectedReactionOptions((prev) => ({
       ...prev,
-      [key]: type === 'number' ? Number(value) : value,
+      [key]: type === 'number' ? parseFloat(value) : value,
     }));
   };
 
-  const handleSaveOptions = () => {
-    console.log('Selected Action:', selectedAction);
-    console.log('Configured Options:', selectedActionOptions);
-    navigation.navigate('WorkflowReactionScreen', { actionId: selectedAction.id, actionOptions: selectedActionOptions });
-    setSelectedAction(null);
-    setSelectedActionOptions({});
+  const handleSaveOptions = async () => {
+    console.log('Selected Action:', selectedReaction);
+    console.log('Configured Options:', selectedReactionOptions);
+
+    const res = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        action_id: actionId,
+        action_option: JSON.stringify(actionOptions),
+        reaction_id: selectedReaction.id,
+        reaction_options: JSON.stringify(selectedReactionOptions),
+      }),
+    });
+    const data = await res.json();
+    console.log('Area Creation:', data);
+
+    navigation.navigate('AreaView');
+    setSelectedReaction(null);
+    setSelectedReactionOptions({});
   };
 
   if (loading) {
@@ -104,17 +121,17 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Choose action</Text>
-      {selectedAction ? (
+      <Text style={styles.title}>Choose reaction</Text>
+      {selectedReaction ? (
         <View style={styles.optionsContainer}>
-          <Text style={styles.optionTitle}>Configure Options for {selectedAction.name}</Text>
-          {Object.keys(selectedActionOptions).map((key) => (
+          <Text style={styles.optionTitle}>Configure Options for {selectedReaction.name}</Text>
+          {Object.keys(selectedReactionOptions).map((key) => (
             <View key={key} style={styles.optionRow}>
               <Text style={styles.optionLabel}>{key}</Text>
               <TextInput
                 style={styles.optionInput}
-                value={String(selectedActionOptions[key])}
-                onChangeText={(text) => handleOptionChange(key, text, typeof selectedActionOptions[key])}
+                value={String(selectedReactionOptions[key])}
+                onChangeText={(text) => handleOptionChange(key, text, typeof selectedReactionOptions[key])}
                 keyboardType="default" // Adjust as needed
               />
             </View>
@@ -122,7 +139,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
           <TouchableOpacity style={styles.saveButton} onPress={handleSaveOptions}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.backButton} onPress={() => setSelectedAction(null)}>
+          <TouchableOpacity style={styles.backButton} onPress={() => setSelectedReaction(null)}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </View>
@@ -250,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectActionScreen;
+export default SelectReactionScreen;

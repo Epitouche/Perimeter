@@ -35,3 +35,9 @@ type Service struct {
 var (
 	ErrNotOauthService = errors.New("service is not an oauth service")
 )
+
+type MobileTokenRequest struct {
+	AccessToken string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn time.Time `json:"accessTokenExpirationDate	"`
+}
