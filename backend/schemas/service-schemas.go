@@ -37,7 +37,7 @@ var (
 )
 
 type MobileTokenRequest struct {
-	AccessToken string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-	ExpiresIn time.Time `json:"accessTokenExpirationDate	"`
+	AccessToken  string    `json:"accessToken"`
+	RefreshToken string    `json:"refreshToken"`
+	ExpiresIn    time.Time `json:"accessTokenExpirationDate	"`
 }
