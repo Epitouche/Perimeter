@@ -12,7 +12,7 @@ const (
 	CurrentWeatherReaction OpenweathermapReaction = "CurrentWeather"
 )
 
-type OpenweathermapActionSpecificHour struct {
+type Openweather struct {
 	Hour   int `json:"hour"`
 	Minute int `json:"minute"`
 }
