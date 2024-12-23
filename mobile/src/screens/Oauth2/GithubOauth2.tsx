@@ -1,8 +1,7 @@
-import { useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
+import { handleCallback } from './Callback';
 
 async function HandleGithubLogin(setToken: any, navigation: any, login: boolean = false) {
   const config: AuthConfiguration = {
@@ -17,47 +16,28 @@ async function HandleGithubLogin(setToken: any, navigation: any, login: boolean 
   };
 
   try {
-    const result = await authorize(config);
-    console.log('result', result);
-    setToken(result.accessToken);
-    if (login) {
-      navigation.navigate('AreaView');
+      const result = await authorize(config);
+      // console.log('result', result);
+      let data;
+      if (login) {
+        data = await handleCallback(`https://${ipAddress}:8080/api/v1/oauth2/github/mobile`, result);
+      } else {
+        setToken(result.accessToken);
+        // TODO: call route when loging in from myServices page (waiting for back to be done)
+      }
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        setToken(data.accessToken);
+        if (login)
+          navigation.navigate('AreaView');
+      }
+    } catch (error) {
+      if ((error as Error).message != 'User cancelled flow') {
+        console.error('Failed to log in', error);
+        Alert.alert('Error', (error as Error).message);
+      }
     }
-  } catch (error) {
-    if (error.message != 'User cancelled flow') {
-      console.error('Failed to log in to GitHub', error);
-      Alert.alert('Error', error.message);
-    }
-  }
 }
 
-async function GithubOauthCallback(codeGithub: string, navigation: any) {
-  const { ipAddress, token, setToken } = useContext(AppContext);
-  const response = await fetch(
-    `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ codeGithub }),
-    },
-  );
-  console.log('response: ', response);
-  const data = await response.json();
-  if (data.error) {
-    console.error(data.error);
-    navigation.goBack();
-  } else {
-    setToken(data.accessToken);
-    console.log('data: ', data);
-    if (data.accessToken !== '') {
-      navigation.navigate('AreaView');
-    } else {
-      console.error('Error: no token');
-    }
-  }
-}
-
-export { GithubOauthCallback, HandleGithubLogin };
+export { HandleGithubLogin };

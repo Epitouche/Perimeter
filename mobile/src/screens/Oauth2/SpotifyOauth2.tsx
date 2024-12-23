@@ -1,6 +1,7 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_SECRET } from '@env';
 import { Alert } from 'react-native';
+import { handleCallback } from './Callback';
 
 async function HandleSpotifyLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
   const config: AuthConfiguration = {
@@ -17,36 +18,23 @@ async function HandleSpotifyLogin(setToken: any, navigation: any, ipAddress: str
   try {
     const result = await authorize(config);
     // console.log('result', result);
+    let data;
     if (login) {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            accessToken: result.accessToken,
-            refreshToken: result.refreshToken,
-            
-          }),
-        },
-      );
-      const data = await response.json();
-      console.log('data: ', data);
-      if (data.error) {
-        console.error(data.error);
-      } else {
-        setToken(result.accessToken);
-        navigation.navigate('AreaView');
-      }
+      data = await handleCallback(`https://${ipAddress}:8080/api/v1/oauth2/spotify/mobile`, result);
     } else {
       setToken(result.accessToken);
       // TODO: call route when loging in from myServices page (waiting for back to be done)
     }
+    if (data.error) {
+      console.error(data.error);
+    } else {
+      setToken(data.accessToken);
+      if (login)
+        navigation.navigate('AreaView');
+    }
   } catch (error) {
     if ((error as Error).message != 'User cancelled flow') {
-      console.error('Failed to log in to Spotify', error);
+      console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }
   }

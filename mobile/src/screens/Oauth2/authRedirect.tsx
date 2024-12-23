@@ -1,17 +1,12 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../Navigation/navigate';
-import {AppContext} from '../../context/AppContext';
-import { SpotifyOauthCallback } from './GoogleOauth2';
-import { GithubOauthCallback } from './GithubOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
 const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {service} = useContext(AppContext);
-  const code = route.params?.code || '';
 
   useEffect(() => {
     const timer = setTimeout(() => {
