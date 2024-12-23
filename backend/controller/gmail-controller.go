@@ -81,6 +81,7 @@ func (controller *gmailController) HandleServiceCallback(
 	bearer, err := controller.serviceService.HandleServiceCallback(
 		code,
 		authHeader,
+		schemas.Gmail,
 		controller.service.AuthGetServiceAccessToken,
 		controller.serviceUser,
 		controller.service.GetUserInfo,

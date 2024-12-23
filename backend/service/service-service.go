@@ -28,7 +28,15 @@ type ServiceService interface {
 	HandleServiceCallback(
 		code string,
 		authorization string,
+		serviceName schemas.ServiceName,
 		authGetServiceAccessToken func(code string) (schemas.Token, error),
+		serviceUser UserService,
+		getUserInfo func(token string) (userInfo schemas.User, err error),
+		tokenService TokenService,
+	) (string, error)
+	HandleServiceCallbackMobile(
+		serviceName schemas.ServiceName,
+		credentials schemas.MobileTokenRequest,
 		serviceUser UserService,
 		getUserInfo func(token string) (userInfo schemas.User, err error),
 		tokenService TokenService,
@@ -39,15 +47,12 @@ type ServiceService interface {
 type ServiceInterface interface {
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
+	GetServiceInfo() schemas.Service
 }
 
 type serviceService struct {
-	repository        repository.ServiceRepository
-	spotifyService    SpotifyService
-	timerService      TimerService
-	gmailService      GmailService
-	allService        []interface{}
-	allServiceSchemas []schemas.Service
+	repository repository.ServiceRepository
+	allService []interface{}
 }
 
 func NewServiceService(
@@ -55,41 +60,32 @@ func NewServiceService(
 	timerService TimerService,
 	spotifyService SpotifyService,
 	gmailService GmailService,
+	githubService GithubService,
+	dropboxService DropboxService,
+	openweathermapService OpenweathermapService,
 ) ServiceService {
 	newService := serviceService{
-		repository:     repository,
-		spotifyService: spotifyService,
-		timerService:   timerService,
-		gmailService:   gmailService,
-		allServiceSchemas: []schemas.Service{
-			{
-				Name:        schemas.Spotify,
-				Description: "This service is a music service",
-			},
-			// {
-			// 	Name:        schemas.OpenWeatherMap,
-			// 	Description: "This service is a weather service",
-			// },
-			{
-				Name:        schemas.Timer,
-				Description: "This service is a time service",
-			},
-			{
-				Name:        schemas.Gmail,
-				Description: "This service is a mail service",
-			},
+		repository: repository,
+		allService: []interface{}{
+			spotifyService,
+			timerService,
+			gmailService,
+			githubService,
+			dropboxService,
+			openweathermapService,
 		},
-		allService: []interface{}{spotifyService, timerService, gmailService},
 	}
 	newService.InitialSaveService()
 	return &newService
 }
 
 func (service *serviceService) InitialSaveService() {
-	for _, oneService := range service.allServiceSchemas {
-		serviceByName := service.repository.FindAllByName(oneService.Name)
+	for _, oneService := range service.allService {
+		serviceByName := service.repository.FindAllByName(
+			oneService.(ServiceInterface).GetServiceInfo().Name,
+		)
 		if len(serviceByName) == 0 {
-			service.repository.Save(oneService)
+			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
 		}
 	}
 }
@@ -155,9 +151,10 @@ func (service *serviceService) RedirectToServiceOauthPage(
 func (service *serviceService) HandleServiceCallback(
 	code string,
 	authorization string,
+	serviceName schemas.ServiceName,
 	authGetServiceAccessToken func(code string) (schemas.Token, error),
 	serviceUser UserService,
-	getUserInfo func(token string) (userInfo schemas.User, err error),
+	getUserServiceInfo func(token string) (userInfo schemas.User, err error),
 	tokenService TokenService,
 ) (string, error) {
 	authHeader := authorization
@@ -177,7 +174,7 @@ func (service *serviceService) HandleServiceCallback(
 			return "", fmt.Errorf("unable to get user info because %w", err)
 		}
 	} else {
-		userInfo, err := getUserInfo(serviceToken.Token)
+		userInfo, err := getUserServiceInfo(serviceToken.Token)
 		if err != nil {
 			return "", fmt.Errorf("unable to get user info because %w", err)
 		}
@@ -199,13 +196,13 @@ func (service *serviceService) HandleServiceCallback(
 		newUser = serviceUser.GetUserById(newUserId)
 	}
 
-	gmailService := service.FindByName(schemas.Gmail)
+	serviceService := service.FindByName(serviceName)
 
 	newServiceToken := schemas.Token{
 		Token:        serviceToken.Token,
 		RefreshToken: serviceToken.RefreshToken,
 		ExpireAt:     serviceToken.ExpireAt,
-		Service:      gmailService,
+		Service:      serviceService,
 		User:         newUser,
 	}
 
@@ -225,6 +222,65 @@ func (service *serviceService) HandleServiceCallback(
 		if err != nil {
 			return "", fmt.Errorf("unable to update user info because %w", err)
 		}
+	}
+	return bearerToken, nil
+}
+
+func (service *serviceService) HandleServiceCallbackMobile(
+	serviceName schemas.ServiceName,
+	credentials schemas.MobileTokenRequest,
+	serviceUser UserService,
+	getUserInfo func(token string) (userInfo schemas.User, err error),
+	tokenService TokenService,
+) (string, error) {
+	newUser := schemas.User{}
+	var bearerToken string
+
+	userInfo, err := getUserInfo(credentials.AccessToken)
+	if err != nil {
+		return "", fmt.Errorf("unable to get user info because %w", err)
+	}
+	newUser = schemas.User{
+		Username: userInfo.Username,
+		Email:    userInfo.Email,
+	}
+
+	bearerTokenLogin, _, err := serviceUser.Login(newUser)
+	if err == nil {
+		return bearerTokenLogin, nil
+	}
+
+	bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to register user because %w", err)
+	}
+	bearerToken = bearerTokenRegister
+	newUser = serviceUser.GetUserById(newUserId)
+
+	actualService := service.FindByName(schemas.Gmail)
+
+	newServiceToken := schemas.Token{
+		Token:        credentials.AccessToken,
+		RefreshToken: credentials.RefreshToken,
+		ExpireAt:     credentials.ExpiresIn,
+		Service:      actualService,
+		User:         newUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := tokenService.SaveToken(newServiceToken)
+	if err != nil {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	newUser.TokenId = tokenId
+
+	err = serviceUser.UpdateUserInfo(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to update user info because %w", err)
 	}
 	return bearerToken, nil
 }

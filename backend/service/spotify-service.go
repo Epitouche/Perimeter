@@ -14,16 +14,22 @@ import (
 	"area/schemas"
 )
 
+// Constructor
+
 type SpotifyService interface {
-	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
-	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Service interface functions
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
-	SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	GetActionsName() []string
 	GetReactionsName() []string
+	// Service specific functions
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Actions functions
+	// Reactions functions
+	SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64)
 }
 
 type spotifyService struct {
@@ -33,6 +39,7 @@ type spotifyService struct {
 	tokenRepository   repository.TokenRepository
 	actionsName       []string
 	reactionsName     []string
+	serviceInfo       schemas.Service
 }
 
 func NewSpotifyService(
@@ -46,8 +53,70 @@ func NewSpotifyService(
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Spotify,
+			Description: "This service is a music service",
+		},
 	}
 }
+
+// Service interface functions
+
+func (service *spotifyService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
+}
+
+func (service *spotifyService) FindActionbyName(
+	name string,
+) func(c chan string, option json.RawMessage, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *spotifyService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) {
+	switch name {
+	case string(schemas.PlayMusic):
+		return service.SpotifyReactionPlayMusic
+	default:
+		return nil
+	}
+}
+
+func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
+	// service.actionsName = append(service.actionsName, )
+	return []schemas.Action{}
+}
+
+func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
+	defaultValue := struct{}{}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.PlayMusic),
+			Description: "This reaction will play music",
+			Service:     service.serviceRepository.FindByName(schemas.Spotify),
+			Option:      option,
+		},
+	}
+}
+
+func (service *spotifyService) GetActionsName() []string {
+	return service.actionsName
+}
+
+func (service *spotifyService) GetReactionsName() []string {
+	return service.reactionsName
+}
+
+// Service specific functions
 
 func (service *spotifyService) AuthGetServiceAccessToken(
 	code string,
@@ -181,25 +250,9 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 	return user, nil
 }
 
-func (service *spotifyService) FindActionbyName(
-	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
+// Actions functions
 
-func (service *spotifyService) FindReactionbyName(
-	name string,
-) func(option json.RawMessage, idArea uint64) {
-	switch name {
-	case string(schemas.PlayMusic):
-		return service.SpotifyReactionPlayMusic
-	default:
-		return nil
-	}
-}
+// Reactions functions
 
 func (service *spotifyService) SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64) {
 	area, err := service.areaRepository.FindById(idArea)
@@ -242,34 +295,4 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option json.RawMessage, 
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)
-}
-
-func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
-	// service.actionsName = append(service.actionsName, )
-	return []schemas.Action{}
-}
-
-func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
-	defaultValue := struct{}{}
-	option, err := json.Marshal(defaultValue)
-	if err != nil {
-		println("error marshal timer option: " + err.Error())
-	}
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.PlayMusic),
-			Description: "This reaction will play music",
-			Service:     service.serviceRepository.FindByName(schemas.Spotify),
-			Option:      option,
-		},
-	}
-}
-
-func (service *spotifyService) GetActionsName() []string {
-	return service.actionsName
-}
-
-func (service *spotifyService) GetReactionsName() []string {
-	return service.reactionsName
 }
