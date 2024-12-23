@@ -1,10 +1,14 @@
-import { useContext } from 'react';
 import { Alert } from 'react-native';
-import { AppContext } from '../../context/AppContext';
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { DROPBOX_CLIENT_ID, DROPBOX_SECRET } from '@env';
+import { handleCallback } from './Callback';
 
-async function HandleDropboxLogin(setToken: any, navigation: any, login: boolean = false) {
+async function HandleDropboxLogin(
+  setToken: any,
+  navigation: any,
+  ipAddress: string,
+  login: boolean = false,
+) {
   const config: AuthConfiguration = {
     clientId: DROPBOX_CLIENT_ID,
     clientSecret: DROPBOX_SECRET,
@@ -18,46 +22,29 @@ async function HandleDropboxLogin(setToken: any, navigation: any, login: boolean
 
   try {
     const result = await authorize(config);
-    console.log('result', result);
-    setToken(result.accessToken);
+    // console.log('result', result);
+    let data;
     if (login) {
-      navigation.navigate('AreaView');
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`, // TODO: call dropbox url
+        result,
+      );
+    } else {
+      setToken(result.accessToken);
+      // TODO: call route when loging in from myServices page (waiting for back to be done)
+    }
+    if (data.error) {
+      console.error(data.error);
+    } else {
+      setToken(data.token);
+      if (login) navigation.navigate('AreaView');
     }
   } catch (error) {
-    if (error.message != 'User cancelled flow') {
-        console.error('Failed to log in to Dropbox, ', error);
-        Alert.alert("Error", error.message);
+    if ((error as Error).message != 'User cancelled flow') {
+      console.error('Failed to log in', error);
+      Alert.alert('Error', (error as Error).message);
     }
   }
 }
 
-async function DropboxOauthCallback(codeGoogle: string, navigation: any) {
-  const { ipAddress, token, setToken } = useContext(AppContext);
-  const response = await fetch(
-    `http://${ipAddress}:8080/api/v1/dropbox/auth/callback/mobile`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ codeGoogle }),
-    },
-  );
-  console.log('response: ', response);
-  const data = await response.json();
-  if (data.error) {
-    console.error(data.error);
-    navigation.goBack();
-  } else {
-    setToken(data.accessToken);
-    console.log('data: ', data);
-    if (data.accessToken !== '') {
-      navigation.navigate('AreaView');
-    } else {
-      console.error('Error: no token');
-    }
-  }
-}
-
-export { DropboxOauthCallback, HandleDropboxLogin };
+export { HandleDropboxLogin };

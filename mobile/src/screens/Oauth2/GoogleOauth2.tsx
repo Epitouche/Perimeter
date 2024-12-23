@@ -1,12 +1,12 @@
-import { useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GMAIL_CLIENT_ID } from '@env';
+import { GMAIL_MOBILE_CLIENT_ID, GMAIL_SECRET } from '@env';
 import { Alert } from 'react-native';
+import { handleCallback } from './Callback';
 
-async function HandleGoogleLogin(setToken: any, navigation: any, login: boolean = false) {
+async function HandleGoogleLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
   const config: AuthConfiguration = {
-    clientId: GMAIL_CLIENT_ID,
+    clientId: GMAIL_MOBILE_CLIENT_ID,
+    clientSecret: GMAIL_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
     scopes: ['profile', 'email'],
     serviceConfiguration: {
@@ -17,46 +17,27 @@ async function HandleGoogleLogin(setToken: any, navigation: any, login: boolean 
 
   try {
     const result = await authorize(config);
-    console.log('result', result);
-    setToken(result.accessToken);
+    // console.log('result', result);
+    let data;
     if (login) {
-      navigation.navigate('AreaView');
-    }
-    } catch (error) {
-    if (error.message != 'User cancelled flow') {
-      console.error('Failed to log in to Google', error);
-      Alert.alert('Error', error.message);
-    }
-  }
-}
-
-async function SpotifyOauthCallback(codeSpotify: string, navigation: any) {
-  const { ipAddress, token, setToken, codeVerifier } = useContext(AppContext);
-  const response = await fetch(
-    `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ codeSpotify, code_verifier: codeVerifier }),
-    },
-  );
-  console.log('response: ', response);
-  const data = await response.json();
-  if (data.error) {
-    console.error(data.error);
-    navigation.goBack();
-  } else {
-    setToken(data.accessToken);
-    console.log('data: ', data);
-    if (data.accessToken !== '') {
-      navigation.navigate('AreaView');
+      data = await handleCallback(`http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`, result);
     } else {
-      console.error('Error: no token');
+      setToken(result.accessToken);
+      // TODO: call route when loging in from myServices page (waiting for back to be done)
+    }
+    if (data.error) {
+      console.error(data.error);
+    } else {
+      setToken(data.token);
+      if (login)
+        navigation.navigate('AreaView');
+    }
+  } catch (error) {
+    if ((error as Error).message != 'User cancelled flow') {
+      console.error('Failed to log in', error);
+      Alert.alert('Error', (error as Error).message);
     }
   }
 }
 
-export { SpotifyOauthCallback, HandleGoogleLogin };
+export { HandleGoogleLogin };

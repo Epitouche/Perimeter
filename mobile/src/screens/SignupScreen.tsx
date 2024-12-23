@@ -159,7 +159,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Google');
-            HandleGoogleLogin(setToken, navigation, true);
+            HandleGoogleLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}

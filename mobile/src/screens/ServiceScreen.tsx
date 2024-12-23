@@ -106,10 +106,10 @@ const ServicesScreen = (navigation: any) => {
         HandleSpotifyLogin(setToken, navigation, ipAddress);
         break;
       case 'gmail':
-        HandleGoogleLogin(setToken, navigation);
+        HandleGoogleLogin(setToken, navigation, ipAddress);
         break;
       case 'dropbox':
-        HandleDropboxLogin(setToken, navigation);
+        HandleDropboxLogin(setToken, navigation, ipAddress);
         break;
       case 'github':
         HandleGithubLogin(setToken, navigation, ipAddress);
