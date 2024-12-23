@@ -3,7 +3,7 @@ import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
-async function HandleGithubLogin(setToken: any, navigation: any, login: boolean = false) {
+async function HandleGithubLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
   const config: AuthConfiguration = {
     clientId: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_SECRET,

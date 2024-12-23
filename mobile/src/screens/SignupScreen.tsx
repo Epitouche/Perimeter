@@ -169,7 +169,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Github');
-            HandleGithubLogin(setToken, navigation, true);
+            HandleGithubLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}

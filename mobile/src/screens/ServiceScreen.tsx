@@ -112,7 +112,7 @@ const ServicesScreen = (navigation: any) => {
         HandleDropboxLogin(setToken, navigation);
         break;
       case 'github':
-        HandleGithubLogin(setToken, navigation);
+        HandleGithubLogin(setToken, navigation, ipAddress);
         break;
       default:
         break;
