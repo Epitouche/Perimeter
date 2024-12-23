@@ -12,6 +12,7 @@ import (
 type SpotifyController interface {
 	RedirectToService(ctx *gin.Context) (oauthUrl string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
+	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
@@ -87,6 +88,24 @@ func (controller *spotifyController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to handle service callback because %w", err)
 	}
 	return bearer, nil
+}
+
+func (controller *spotifyController) HandleServiceCallbackMobile(
+	ctx *gin.Context,
+) (string, error) {
+	var credentials schemas.MobileTokenRequest
+	err := ctx.ShouldBind(&credentials)
+	if err != nil {
+		return "", fmt.Errorf("can't bind credentials: %w", err)
+	}
+	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		schemas.Spotify,
+		credentials,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
+	return bearer, err
 }
 
 func (controller *spotifyController) GetUserInfo(
