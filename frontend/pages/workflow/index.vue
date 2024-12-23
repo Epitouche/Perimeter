@@ -12,12 +12,13 @@ const route = useRoute();
 const error = ref<string | null>(null);
 const createdMessage = ref<string | null>(null);
 const showPageContent = ref(true);
+const isLoading = ref(false);
 
 const onCreate = async () => {
-  console.log("actionId:", websiteStore.actionId);
-  console.log("actionOptions:", websiteStore.actionOptions);
-  console.log("reactionId:", websiteStore.reactionId);
-  console.log("reactionOptions:", websiteStore.reactionOptions);
+  // console.log("actionId:", websiteStore.actionId);
+  // console.log("actionOptions:", websiteStore.actionOptions);
+  // console.log("reactionId:", websiteStore.reactionId);
+  // console.log("reactionOptions:", websiteStore.reactionOptions);
 
   createdMessage.value = "Workflow created successfully!";
   showPageContent.value = false;
@@ -53,7 +54,14 @@ const onCancel = () => {
 };
 
 onMounted(() => {
-  websiteStore.loadWorkflowState();
+  isLoading.value = true;
+  try {
+    websiteStore.loadWorkflowState();
+  } catch (err) {
+    console.error("Error loading services:", err);
+  } finally {
+    isLoading.value = false;
+  }
 
   const getQueryParam = (
     param: LocationQueryValue | LocationQueryValue[] | undefined,
@@ -136,6 +144,7 @@ onMounted(() => {
         <h1 class="text-custom_size_title font-custom_weight_title pb-5">
           Workflow
         </h1>
+        <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
           <ReActionButton
             title="Action"
