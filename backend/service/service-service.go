@@ -27,6 +27,7 @@ type ServiceService interface {
 	HandleServiceCallback(
 		code string,
 		authorization string,
+		serviceName schemas.ServiceName,
 		authGetServiceAccessToken func(code string) (schemas.Token, error),
 		serviceUser UserService,
 		getUserInfo func(token string) (userInfo schemas.User, err error),
@@ -149,9 +150,10 @@ func (service *serviceService) RedirectToServiceOauthPage(
 func (service *serviceService) HandleServiceCallback(
 	code string,
 	authorization string,
+	serviceName schemas.ServiceName,
 	authGetServiceAccessToken func(code string) (schemas.Token, error),
 	serviceUser UserService,
-	getUserInfo func(token string) (userInfo schemas.User, err error),
+	getUserServiceInfo func(token string) (userInfo schemas.User, err error),
 	tokenService TokenService,
 ) (string, error) {
 	authHeader := authorization
@@ -171,7 +173,7 @@ func (service *serviceService) HandleServiceCallback(
 			return "", fmt.Errorf("unable to get user info because %w", err)
 		}
 	} else {
-		userInfo, err := getUserInfo(serviceToken.Token)
+		userInfo, err := getUserServiceInfo(serviceToken.Token)
 		if err != nil {
 			return "", fmt.Errorf("unable to get user info because %w", err)
 		}
@@ -193,13 +195,13 @@ func (service *serviceService) HandleServiceCallback(
 		newUser = serviceUser.GetUserById(newUserId)
 	}
 
-	gmailService := service.FindByName(schemas.Gmail)
+	serviceService := service.FindByName(serviceName)
 
 	newServiceToken := schemas.Token{
 		Token:        serviceToken.Token,
 		RefreshToken: serviceToken.RefreshToken,
 		ExpireAt:     serviceToken.ExpireAt,
-		Service:      gmailService,
+		Service:      serviceService,
 		User:         newUser,
 	}
 
