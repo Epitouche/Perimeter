@@ -32,6 +32,7 @@ type ServiceService interface {
 		getUserInfo func(token string) (userInfo schemas.User, err error),
 		tokenService TokenService,
 	) (string, error)
+	HandleServiceCallbackMobile() (string, error)
 	GetServiceById(serverId uint64) schemas.Service
 }
 
@@ -214,6 +215,10 @@ func (service *serviceService) HandleServiceCallback(
 		}
 	}
 	return bearerToken, nil
+}
+
+func (service *serviceService) HandleServiceCallbackMobile() (string, error) {
+	return "hey!", nil
 }
 
 func (service *serviceService) FindAll() (allServices []schemas.Service) {
