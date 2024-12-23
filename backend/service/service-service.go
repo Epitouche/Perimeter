@@ -252,7 +252,7 @@ func (service *serviceService) HandleServiceCallbackMobile(
 		return "", fmt.Errorf("unable to register user because %w", err)
 	}
 	bearerToken = bearerTokenRegister
-		newUser = serviceUser.GetUserById(newUserId)
+	newUser = serviceUser.GetUserById(newUserId)
 
 	actualService := service.FindByName(schemas.Gmail)
 
