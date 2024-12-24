@@ -10,7 +10,10 @@ type AreaResultApi struct {
 	controller controller.AreaResultController
 }
 
-func NewAreaResultAPI(controller controller.AreaResultController, apiRoutes *gin.RouterGroup) *AreaResultApi {
+func NewAreaResultAPI(
+	controller controller.AreaResultController,
+	apiRoutes *gin.RouterGroup,
+) *AreaResultApi {
 	return &AreaResultApi{
 		controller: controller,
 	}
