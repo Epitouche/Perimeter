@@ -113,14 +113,15 @@ func setupRouter() *gin.Engine {
 	)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
+	areaResultService := service.NewAreaResultService(areaResultRepository)
 	areaService := service.NewAreaService(
 		areaRepository,
 		serviceService,
 		actionService,
 		reactionService,
 		userService,
+		areaResultService,
 	)
-	areaResultService := service.NewAreaResultService(areaResultRepository)
 	tokenService := service.NewTokenService(tokenRepository)
 
 	// Controllers

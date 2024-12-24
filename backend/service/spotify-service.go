@@ -19,7 +19,7 @@ import (
 type SpotifyService interface {
 	// Service interface functions
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64) string
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	GetActionsName() []string
@@ -29,7 +29,7 @@ type SpotifyService interface {
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
 	// Reactions functions
-	SpotifyReactionPlayMusic(option string, idArea uint64)
+	SpotifyReactionPlayMusic(option string, idArea uint64) string
 }
 
 type spotifyService struct {
@@ -75,7 +75,9 @@ func (service *spotifyService) FindActionbyName(
 	}
 }
 
-func (service *spotifyService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *spotifyService) FindReactionbyName(
+	name string,
+) func(option string, idArea uint64) string {
 	switch name {
 	case string(schemas.PlayMusic):
 		return service.SpotifyReactionPlayMusic
@@ -247,17 +249,17 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 
 // Reactions functions
 
-func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
+func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) string {
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
-		return
+		return "Error finding area:" + err.Error()
 	}
 
 	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
-		return
+		return "Error: Token not found"
 	}
 
 	apiURL := "https://api.spotify.com/v1/me/player/play"
@@ -273,7 +275,7 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return
+		return "Error creating request:" + err.Error()
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token.Token)
@@ -283,9 +285,10 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error making request:", err)
-		return
+		return "Error making request:" + err.Error()
 	}
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)
+	return "Response Status:" + resp.Status
 }
