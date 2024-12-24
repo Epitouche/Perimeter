@@ -11,6 +11,7 @@ const router = useRouter();
 const route = useRoute();
 const error = ref<string | null>(null);
 const createdMessage = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
 const showPageContent = ref(true);
 const isLoading = ref(false);
 
@@ -42,9 +43,12 @@ const onCreate = async () => {
     }, 500);
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
-  } catch (err) {
-    console.error("Error creating workflow:", err);
-    error.value = "Error creating workflow. Please try again.";
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+
+    if (errorMessage.value === "An unknown error occurred") {
+      console.error("An unknown error occurred", error);
+    }
   }
 };
 

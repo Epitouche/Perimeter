@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Workflow } from "@/interfaces/areas";
-import { handleTokenStatus } from "../utils/handleErrorStatus.js";
+import { handleErrorStatus } from "../utils/handleErrorStatus.js";
 
 definePageMeta({
   middleware: "auth",
@@ -21,14 +21,10 @@ const fetchWorkflows = async () => {
     });
     console.log("workflows: ", workflows.value);
   } catch (error: unknown) {
-    if (typeof error === "object" && error !== null && "statusCode" in error) {
-      const statusCode = (error as { statusCode?: number }).statusCode;
-      const message =
-        (error as { message?: string }).message || "An error occurred";
-      errorMessage.value = handleTokenStatus(statusCode, message);
-    } else {
-      errorMessage.value = "An unknown error occurred";
-      console.error("An unknown error occurred");
+    errorMessage.value = handleErrorStatus(error);
+
+    if (errorMessage.value === "An unknown error occurred") {
+      console.error("An unknown error occurred", error);
     }
   }
 };

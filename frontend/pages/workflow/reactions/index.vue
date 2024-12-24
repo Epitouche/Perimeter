@@ -6,7 +6,7 @@ definePageMeta({
 
 const token = useCookie("token");
 
-const error = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
 const services = ref<any[]>([]);
 const filteredServices = ref<any[]>([]);
 const isLoading = ref(true);
@@ -15,7 +15,7 @@ const searchQuery = ref<string>("");
 
 const fetchServices = async () => {
   try {
-    error.value = null;
+    errorMessage.value = null;
     const result = await $fetch<any[]>("/api/workflow/services", {
       method: "POST",
       body: {
@@ -25,9 +25,13 @@ const fetchServices = async () => {
     services.value = result;
     filteredServices.value = result;
     console.log("services", services.value);
-  } catch (error) {
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    
+    if (errorMessage.value === "An unknown error occurred") {
+      console.error("An unknown error occurred", error);
+    }
     filteredServices.value = [];
-    console.error("Error fetching services:", error);
   } finally {
     isLoading.value = false;
   }
@@ -57,7 +61,7 @@ onMounted(() => {
       class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
     >
       <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
-      <div v-if="error">Error: {{ error }}</div>
+      <div v-if="errorMessage">Error: {{ errorMessage }}</div>
       <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
       <div
         v-else-if="filteredServices.length"
