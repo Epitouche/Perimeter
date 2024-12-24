@@ -19,7 +19,7 @@ type DropboxService interface {
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
@@ -87,7 +87,9 @@ func (service *dropboxService) FindActionbyName(
 	}
 }
 
-func (service *dropboxService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *dropboxService) FindReactionbyName(
+	name string,
+) func(option string, idArea uint64) string {
 	switch name {
 	default:
 		return nil

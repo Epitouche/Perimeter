@@ -68,6 +68,7 @@ func setupRouter() *gin.Engine {
 	reactionRepository := repository.NewReactionRepository(databaseConnection)
 	areaRepository := repository.NewAreaRepository(databaseConnection)
 	tokenRepository := repository.NewTokenRepository(databaseConnection)
+	areaResultRepository := repository.NewAreaResultRepository(databaseConnection)
 
 	// Services
 	githubService := service.NewGithubService(
@@ -112,12 +113,14 @@ func setupRouter() *gin.Engine {
 	)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
+	areaResultService := service.NewAreaResultService(areaResultRepository)
 	areaService := service.NewAreaService(
 		areaRepository,
 		serviceService,
 		actionService,
 		reactionService,
 		userService,
+		areaResultService,
 	)
 	tokenService := service.NewTokenService(tokenRepository)
 
@@ -156,6 +159,7 @@ func setupRouter() *gin.Engine {
 	reactionController := controller.NewReactionController(reactionService)
 	areaController := controller.NewAreaController(areaService)
 	tokenController := controller.NewTokenController(tokenService)
+	areaResultController := controller.NewAreaResultController(areaResultService)
 
 	// API routes
 	api.NewActionApi(actionController, apiRoutes)
@@ -170,6 +174,7 @@ func setupRouter() *gin.Engine {
 	api.NewGithubAPI(githubController, apiRoutes)
 	api.NewDropboxAPI(dropboxController, apiRoutes)
 	api.NewAreaAPI(areaController, apiRoutes)
+	api.NewAreaResultAPI(areaResultController, apiRoutes)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJSON)

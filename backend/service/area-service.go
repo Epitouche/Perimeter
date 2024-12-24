@@ -19,11 +19,12 @@ type AreaService interface {
 }
 
 type areaService struct {
-	repository      repository.AreaRepository
-	actionService   ActionService
-	reactionService ReactionService
-	serviceUser     UserService
-	serviceService  ServiceService
+	repository        repository.AreaRepository
+	actionService     ActionService
+	reactionService   ReactionService
+	serviceUser       UserService
+	serviceService    ServiceService
+	areaResultService AreaResultService
 }
 
 func NewAreaService(
@@ -32,13 +33,15 @@ func NewAreaService(
 	actionService ActionService,
 	reactionService ReactionService,
 	serviceUser UserService,
+	areaResultService AreaResultService,
 ) AreaService {
 	newService := areaService{
-		repository:      repository,
-		actionService:   actionService,
-		reactionService: reactionService,
-		serviceUser:     serviceUser,
-		serviceService:  serviceService,
+		repository:        repository,
+		actionService:     actionService,
+		reactionService:   reactionService,
+		serviceUser:       serviceUser,
+		serviceService:    serviceService,
+		areaResultService: areaResultService,
 	}
 	return &newService
 }
@@ -140,8 +143,13 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
 			if area.Enable {
 				resultAction := <-channelArea
-				reaction(area.ReactionOption, area.Id)
+				resultReaction := reaction(area.ReactionOption, area.Id)
+				service.areaResultService.Save(schemas.AreaResult{
+					Area:   area,
+					Result: resultReaction,
+				})
 				println(resultAction)
+				println(resultReaction)
 			}
 		}
 	}(areaStartValue, channelArea)
