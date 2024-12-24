@@ -1,4 +1,4 @@
-import type { ErrorResponse } from '~/interfaces/error';
+import type { ErrorResponse } from "~/interfaces/error";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -23,11 +23,15 @@ export default defineEventHandler(async (event) => {
     let message = "An unknown error occurred";
 
     if (error instanceof Error) {
-      if ('statusCode' in error) {
+      if ("statusCode" in error) {
         statusCode = (error as ErrorResponse).statusCode || statusCode;
       }
       message = error.message;
-    } else if (typeof error === 'object' && error !== null && 'statusCode' in error) {
+    } else if (
+      typeof error === "object" &&
+      error !== null &&
+      "statusCode" in error
+    ) {
       statusCode = (error as ErrorResponse).statusCode || statusCode;
     }
     throw createError({
