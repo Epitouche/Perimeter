@@ -1,0 +1,195 @@
+package service
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/url"
+
+	"area/repository"
+	"area/schemas"
+)
+
+// Constructor
+
+type OpenweathermapService interface {
+	// Service interface functions
+	GetServiceActionInfo() []schemas.Action
+	GetServiceReactionInfo() []schemas.Reaction
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
+	GetActionsName() []string
+	GetReactionsName() []string
+	// Service specific functions
+	// Actions functions
+	// Reactions functions
+}
+
+type openweathermapService struct {
+	repository        repository.OpenweathermapRepository
+	serviceRepository repository.ServiceRepository
+	actionsName       []string
+	reactionsName     []string
+	serviceInfo       schemas.Service
+}
+
+func NewOpenweathermapService(
+	repository repository.OpenweathermapRepository,
+	serviceRepository repository.ServiceRepository,
+) OpenweathermapService {
+	coordinates, err := getCoordinatesOfCity("Paris")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(coordinates)
+	totot, err := getWeatherOfCoodinate(coordinates)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(totot)
+	return &openweathermapService{
+		repository:        repository,
+		serviceRepository: serviceRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Openweathermap,
+			Description: "This service is a weather service",
+		},
+	}
+}
+
+// Service interface functions
+
+func (service *openweathermapService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
+}
+
+func (service *openweathermapService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *openweathermapService) FindReactionbyName(
+	name string,
+) func(option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
+	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
+	return []schemas.Action{
+		{
+			Name:        string(schemas.SpecificTime),
+			Description: "This action is a specific time action",
+			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Option:      "{\"hour\": 0, \"minute\": 0}",
+		},
+	}
+}
+
+func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.GiveTime),
+			Description: "This reaction is a give time reaction",
+			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Option:      "{}",
+		},
+	}
+}
+
+func (service *openweathermapService) GetActionsName() []string {
+	return service.actionsName
+}
+
+func (service *openweathermapService) GetReactionsName() []string {
+	return service.reactionsName
+}
+
+// Service specific functions
+
+func getCoordinatesOfCity(city string) (coordinates struct {
+	Lat float64
+	Lon float64
+}, err error,
+) {
+	apiURL := "http://api.openweathermap.org/geo/1.0/direct"
+	data := url.Values{}
+	data.Set("q", city)
+	data.Set("limit", "1")
+	data.Set("appid", "62f8d2d8d305f8128a0010ef6058b728")
+
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return coordinates, fmt.Errorf("unable to create request because %w", err)
+	}
+
+	req.URL.RawQuery = data.Encode()
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return coordinates, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	var result []schemas.OpenweathermapCityCoordinatesResponse
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return coordinates, fmt.Errorf(
+			"unable to decode response because %w",
+			err,
+		)
+	}
+	coordinates.Lat = result[0].Lat
+	coordinates.Lon = result[0].Lon
+	return coordinates, nil
+}
+
+func getWeatherOfCoodinate(coordinates struct {
+	Lat float64
+	Lon float64
+},
+) (weather schemas.OpenweathermapCoordinatesWeatherResponse, err error) {
+	apiURL := "https://api.openweathermap.org/data/2.5/weather"
+	data := url.Values{}
+	data.Set("lat", fmt.Sprintf("%f", coordinates.Lat))
+	data.Set("lon", fmt.Sprintf("%f", coordinates.Lon))
+	data.Set("appid", "62f8d2d8d305f8128a0010ef6058b728")
+
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return weather, fmt.Errorf("unable to create request because %w", err)
+	}
+
+	req.URL.RawQuery = data.Encode()
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return weather, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	var result schemas.OpenweathermapCoordinatesWeatherResponse
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return weather, fmt.Errorf(
+			"unable to decode response because %w",
+			err,
+		)
+	}
+	weather = result
+	return weather, nil
+}
+
+// Actions functions
+
+// Reactions functions

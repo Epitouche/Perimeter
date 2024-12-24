@@ -59,7 +59,9 @@ func setupRouter() *gin.Engine {
 	githubRepository := repository.NewGithubRepository(databaseConnection)
 	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
+	dropboxRepository := repository.NewDropboxRepository(databaseConnection)
 	timerRepository := repository.NewTimerRepository()
+	openweathermapRepository := repository.NewOpenweathermapRepository()
 	userRepository := repository.NewUserRepository(databaseConnection)
 	serviceRepository := repository.NewServiceRepository(databaseConnection)
 	actionRepository := repository.NewActionRepository(databaseConnection)
@@ -68,7 +70,12 @@ func setupRouter() *gin.Engine {
 	tokenRepository := repository.NewTokenRepository(databaseConnection)
 
 	// Services
-	githubService := service.NewGithubService(githubRepository)
+	githubService := service.NewGithubService(
+		githubRepository,
+		serviceRepository,
+		areaRepository,
+		tokenRepository,
+	)
 	gmailService := service.NewGmailService(
 		gmailRepository,
 		serviceRepository,
@@ -81,7 +88,17 @@ func setupRouter() *gin.Engine {
 		areaRepository,
 		tokenRepository,
 	)
+	dropboxService := service.NewDropboxService(
+		dropboxRepository,
+		serviceRepository,
+		areaRepository,
+		tokenRepository,
+	)
 	timerService := service.NewTimerService(timerRepository, serviceRepository)
+	openweathermapService := service.NewOpenweathermapService(
+		openweathermapRepository,
+		serviceRepository,
+	)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
 	serviceService := service.NewServiceService(
@@ -89,6 +106,9 @@ func setupRouter() *gin.Engine {
 		timerService,
 		spotifyService,
 		gmailService,
+		githubService,
+		dropboxService,
+		openweathermapService,
 	)
 	actionService := service.NewActionService(actionRepository, serviceService)
 	reactionService := service.NewReactionService(reactionRepository, serviceService)
@@ -120,6 +140,12 @@ func setupRouter() *gin.Engine {
 		tokenService,
 		serviceService,
 	)
+	dropboxController := controller.NewDropboxController(
+		dropboxService,
+		userService,
+		tokenService,
+		serviceService,
+	)
 	userController := controller.NewUserController(userService, jwtService, tokenService)
 	serviceController := controller.NewServiceController(
 		serviceService,
@@ -142,6 +168,7 @@ func setupRouter() *gin.Engine {
 	api.NewSpotifyAPI(spotifyController, apiRoutes)
 	api.NewGmailAPI(gmailController, apiRoutes)
 	api.NewGithubAPI(githubController, apiRoutes)
+	api.NewDropboxAPI(dropboxController, apiRoutes)
 	api.NewAreaAPI(areaController, apiRoutes)
 
 	// basic about.json route
