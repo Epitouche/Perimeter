@@ -1,5 +1,7 @@
 package schemas
 
+import "errors"
+
 type OpenweathermapAction string
 
 const (
@@ -24,7 +26,8 @@ type OpenweathermapActionSpecificTemperature struct {
 	Temperature float64 `json:"temperature"`
 }
 
-type OpenweathermapReactionCurrentWeather struct {
+// all reaction options schema
+type OpenweathermapReactionOption struct {
 	City string `json:"city"`
 }
 
@@ -86,3 +89,5 @@ type OpenweathermapCoordinatesWeatherResponse struct {
 type OpenweathermapReactionGiveTime struct{}
 
 type OpenweathermapReactionApiResponse struct{}
+
+var ErrOpenWeatherMapApiKeyNotSet = errors.New("OPENWEATHERMAP_API_KEY is not set")
