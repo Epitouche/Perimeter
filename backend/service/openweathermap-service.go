@@ -242,7 +242,7 @@ func (service *openweathermapService) OpenweathermapActionSpecificWeather(
 		println("error get actual weather info" + err.Error())
 	} else {
 		if weatherOfSpecifiedCity.Weather[0].Main == optionJSON.Weather {
-			response := "current weather in " + optionJSON.City + " is " + weatherOfSpecifiedCity.Weather[0].Main
+			response := "current weather in " + optionJSON.City + " is " + string(weatherOfSpecifiedCity.Weather[0].Main)
 			println(response)
 			c <- response
 		}
@@ -304,7 +304,7 @@ func (service *openweathermapService) OpenweathermapReactionCurrentWeather(
 	if err != nil {
 		println("error get actual weather info" + err.Error())
 	} else {
-		response := "current weather in " + optionJSON.City + " is " + weatherOfSpecifiedCity.Weather[0].Main
+		response := "current weather in " + optionJSON.City + " is " + string(weatherOfSpecifiedCity.Weather[0].Main)
 		println(response)
 		// TODO: save to database
 	}
