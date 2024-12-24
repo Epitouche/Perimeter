@@ -22,7 +22,7 @@ type GmailService interface {
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
@@ -30,7 +30,7 @@ type GmailService interface {
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
 	// Reactions functions
-	GmailReactionSendMail(option string, idArea uint64)
+	GmailReactionSendMail(option string, idArea uint64) string
 }
 
 type gmailService struct {
@@ -76,7 +76,9 @@ func (service *gmailService) FindActionbyName(
 	}
 }
 
-func (service *gmailService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *gmailService) FindReactionbyName(
+	name string,
+) func(option string, idArea uint64) string {
 	switch name {
 	case string(schemas.SendMail):
 		println("SendMail")
@@ -260,7 +262,7 @@ func (service *gmailService) GetUserInfo(
 
 // Reactions functions
 
-func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
+func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) string {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
 	println("gmail option: " + option)
@@ -269,19 +271,19 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 	if err != nil {
 		println("error unmarshal gmail option: " + err.Error())
 		time.Sleep(time.Second)
-		return
+		return "Error unmarshal gmail option" + err.Error()
 	}
 
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
-		return
+		return "Error finding area" + err.Error()
 	}
 
 	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
-		return
+		return "Error: Token not found"
 	}
 
 	// TODO check if the email is valid or not
@@ -304,7 +306,7 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return
+		return "Error creating request" + err.Error()
 	}
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
@@ -313,7 +315,7 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error making request:", err)
-		return
+		return "Error making request:" + err.Error()
 	}
 	defer resp.Body.Close()
 
@@ -324,8 +326,9 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 			resp.Status,
 			string(respBody),
 		)
-		return
+		return "Failed to send email"
 	}
 
 	fmt.Println("Email sent successfully!")
+	return "Email sent successfully!"
 }

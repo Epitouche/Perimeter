@@ -16,9 +16,38 @@ const (
 	CurrentTemperature OpenweathermapReaction = "CurrentTemperature"
 )
 
+// https://openweathermap.org/weather-conditions
+
+type WeatherCondition string
+
+const (
+	// Thunderstorm
+	Thunderstorm WeatherCondition = "Thunderstorm"
+	// Drizzle
+	Drizzle WeatherCondition = "Drizzle"
+	// Rain
+	Rain WeatherCondition = "Rain"
+	// Snow
+	Snow WeatherCondition = "Snow"
+	// Atmosphere
+	Mist    WeatherCondition = "Mist"
+	Smoke   WeatherCondition = "Smoke"
+	Haze    WeatherCondition = "Haze"
+	Dust    WeatherCondition = "Dust"
+	Fog     WeatherCondition = "Fog"
+	Sand    WeatherCondition = "Sand"
+	Ash     WeatherCondition = "Ash"
+	Squall  WeatherCondition = "Squall"
+	Tornado WeatherCondition = "Tornado"
+	// Clear
+	Clear WeatherCondition = "Clear"
+	// Clouds
+	Clouds WeatherCondition = "Clouds"
+)
+
 type OpenweathermapActionSpecificWeather struct {
-	City    string `json:"city"`
-	Weather string `json:"weather"`
+	City    string           `json:"city"`
+	Weather WeatherCondition `json:"weather"`
 }
 
 type OpenweathermapActionSpecificTemperature struct {
@@ -45,10 +74,10 @@ type OpenweathermapCoordinatesWeatherResponse struct {
 		Lat float64 `json:"lat"`
 	} `json:"coord"`
 	Weather []struct {
-		ID          int    `json:"id"`
-		Main        string `json:"main"`
-		Description string `json:"description"`
-		Icon        string `json:"icon"`
+		ID          int              `json:"id"`
+		Main        WeatherCondition `json:"main"`
+		Description string           `json:"description"`
+		Icon        string           `json:"icon"`
 	} `json:"weather"`
 	Base string `json:"base"`
 	Main struct {
