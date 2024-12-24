@@ -196,7 +196,11 @@ func getWeatherOfCoodinate(coordinates struct {
 
 // Actions functions
 
-func (service *openweathermapService) OpenweathermapActionSpecificWeather(c chan string, option string, idArea uint64) {
+func (service *openweathermapService) OpenweathermapActionSpecificWeather(
+	c chan string,
+	option string,
+	idArea uint64,
+) {
 	optionJSON := schemas.OpenweathermapActionSpecificWeather{}
 
 	err := json.Unmarshal([]byte(option), &optionJSON)
@@ -223,7 +227,11 @@ func (service *openweathermapService) OpenweathermapActionSpecificWeather(c chan
 	time.Sleep(time.Minute)
 }
 
-func (service *openweathermapService) OpenweathermapActionSpecificTemperature(c chan string, option string, idArea uint64) {
+func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
+	c chan string,
+	option string,
+	idArea uint64,
+) {
 	optionJSON := schemas.OpenweathermapActionSpecificTemperature{}
 
 	err := json.Unmarshal([]byte(option), &optionJSON)
@@ -253,7 +261,10 @@ func (service *openweathermapService) OpenweathermapActionSpecificTemperature(c 
 
 // Reactions functions
 
-func (service *openweathermapService) OpenweathermapReactionCurrentWeather(option string, idArea uint64) {
+func (service *openweathermapService) OpenweathermapReactionCurrentWeather(
+	option string,
+	idArea uint64,
+) {
 	optionJSON := schemas.OpenweathermapActionSpecificWeather{}
 
 	err := json.Unmarshal([]byte(option), &optionJSON)
