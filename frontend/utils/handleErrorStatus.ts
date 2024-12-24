@@ -3,7 +3,8 @@ export const handleErrorStatus = (error: unknown): string => {
 
   if (typeof error === "object" && error !== null) {
     const statusCode = (error as { statusCode?: number }).statusCode;
-    const message = (error as { message?: string }).message || "An error occurred";
+    const message =
+      (error as { message?: string }).message || "An error occurred";
 
     if (statusCode === 401) {
       token.value = null;

@@ -28,7 +28,7 @@ const fetchServices = async () => {
     console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
-  
+
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }

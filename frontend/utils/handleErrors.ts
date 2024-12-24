@@ -9,7 +9,11 @@ export function handleError(error: unknown): never {
       statusCode = (error as ErrorResponse).statusCode || statusCode;
     }
     message = error.message;
-  } else if (typeof error === "object" && error !== null && "statusCode" in error) {
+  } else if (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error
+  ) {
     statusCode = (error as ErrorResponse).statusCode || statusCode;
   }
 
