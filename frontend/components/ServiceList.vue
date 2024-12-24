@@ -13,6 +13,7 @@ interface OAuthLink {
 
 const tokenCookie = useCookie("token");
 const isLoading = ref(true);
+const errorMessage = ref<string | null>(null);
 let serviceNames: string[] = [];
 
 onMounted(() => {
@@ -38,19 +39,18 @@ async function servicesConnectionInfos() {
         response as { tokens: Array<{ service_id: { name: string } }> }
       ).tokens;
       serviceNames = tokens.map((token) => token.service_id.name);
-      console.log("Service Names Updated:", serviceNames);
+      //console.log("Service Names Updated:", serviceNames);
       isLoading.value = false;
     } else {
       console.error("Response does not contain valid tokens.");
       return [];
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error("Unexpected error:", error.message);
-    } else {
-      console.error("Unknown error occurred.");
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+
+    if (errorMessage.value === "An unknown error occurred") {
+      console.error("An unknown error occurred", error);
     }
-    return [];
   }
 }
 
