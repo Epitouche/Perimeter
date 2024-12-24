@@ -3,16 +3,30 @@ package schemas
 type OpenweathermapAction string
 
 const (
-	CurrentWeatherAction OpenweathermapAction = "CurrentWeather"
+	SpecificWeather     OpenweathermapAction = "SpecificWeather"
+	SpecificTemperature OpenweathermapAction = "SpecificTemperature"
 )
 
 type OpenweathermapReaction string
 
 const (
-	CurrentWeatherReaction OpenweathermapReaction = "CurrentWeather"
+	CurrentWeather     OpenweathermapReaction = "CurrentWeather"
+	CurrentTemperature OpenweathermapReaction = "CurrentTemperature"
 )
 
-type OpenweathermapActionaze struct{}
+type OpenweathermapActionSpecificWeather struct {
+	City    string `json:"city"`
+	Weather string `json:"weather"`
+}
+
+type OpenweathermapActionSpecificTemperature struct {
+	City        string  `json:"city"`
+	Temperature float64 `json:"temperature"`
+}
+
+type OpenweathermapReactionCurrentWeather struct {
+	City string `json:"city"`
+}
 
 type OpenweathermapCityCoordinatesResponse struct {
 	Name    string  `json:"name"`

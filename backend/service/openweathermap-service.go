@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -37,16 +38,6 @@ func NewOpenweathermapService(
 	repository repository.OpenweathermapRepository,
 	serviceRepository repository.ServiceRepository,
 ) OpenweathermapService {
-	coordinates, err := getCoordinatesOfCity("Paris")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(coordinates)
-	totot, err := getWeatherOfCoodinate(coordinates)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(totot)
 	return &openweathermapService{
 		repository:        repository,
 		serviceRepository: serviceRepository,
@@ -67,6 +58,10 @@ func (service *openweathermapService) FindActionbyName(
 	name string,
 ) func(c chan string, option string, idArea uint64) {
 	switch name {
+	case string(schemas.SpecificWeather):
+		return service.OpenweathermapActionSpecificWeather
+	case string(schemas.SpecificTemperature):
+		return service.OpenweathermapActionSpecificTemperature
 	default:
 		return nil
 	}
@@ -76,6 +71,8 @@ func (service *openweathermapService) FindReactionbyName(
 	name string,
 ) func(option string, idArea uint64) {
 	switch name {
+	case string(schemas.CurrentWeather):
+		return service.OpenweathermapReactionCurrentWeather
 	default:
 		return nil
 	}
@@ -85,10 +82,16 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
 	return []schemas.Action{
 		{
-			Name:        string(schemas.SpecificTime),
-			Description: "This action is a specific time action",
+			Name:        string(schemas.SpecificWeather),
+			Description: "This action is a specific weather action",
 			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
-			Option:      "{\"hour\": 0, \"minute\": 0}",
+			Option:      "{\"city\": \"\", \"weather\": \"\"}",
+		},
+		{
+			Name:        string(schemas.SpecificTemperature),
+			Description: "This action is a specific temperature action",
+			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Option:      "{\"city\": \"\", \"temperature\": 0}",
 		},
 	}
 }
@@ -97,10 +100,10 @@ func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reactio
 	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
 	return []schemas.Reaction{
 		{
-			Name:        string(schemas.GiveTime),
-			Description: "This reaction is a give time reaction",
+			Name:        string(schemas.CurrentWeather),
+			Description: "This reaction is a current weather reaction",
 			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
-			Option:      "{}",
+			Option:      "{\"city\": \"\"}",
 		},
 	}
 }
@@ -163,6 +166,7 @@ func getWeatherOfCoodinate(coordinates struct {
 	data.Set("lat", fmt.Sprintf("%f", coordinates.Lat))
 	data.Set("lon", fmt.Sprintf("%f", coordinates.Lon))
 	data.Set("appid", "62f8d2d8d305f8128a0010ef6058b728")
+	data.Set("units", "metric") // to get temperature in celsius
 
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
@@ -192,4 +196,82 @@ func getWeatherOfCoodinate(coordinates struct {
 
 // Actions functions
 
+func (service *openweathermapService) OpenweathermapActionSpecificWeather(c chan string, option string, idArea uint64) {
+	optionJSON := schemas.OpenweathermapActionSpecificWeather{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal weather option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	coordinates, err := getCoordinatesOfCity(optionJSON.City)
+	if err != nil {
+		fmt.Println(err)
+	}
+	weatherOfSpecifiedCity, err := getWeatherOfCoodinate(coordinates)
+	if err != nil {
+		println("error get actual weather info" + err.Error())
+	} else {
+		if weatherOfSpecifiedCity.Weather[0].Main == optionJSON.Weather {
+			response := "current weather in " + optionJSON.City + " is " + weatherOfSpecifiedCity.Weather[0].Main
+			println(response)
+			c <- response
+		}
+	}
+	time.Sleep(time.Minute)
+}
+
+func (service *openweathermapService) OpenweathermapActionSpecificTemperature(c chan string, option string, idArea uint64) {
+	optionJSON := schemas.OpenweathermapActionSpecificTemperature{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal temperature option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	coordinates, err := getCoordinatesOfCity(optionJSON.City)
+	if err != nil {
+		fmt.Println(err)
+	}
+	weatherOfSpecifiedCity, err := getWeatherOfCoodinate(coordinates)
+
+	if err != nil {
+		println("error get actual temperature info" + err.Error())
+	} else {
+		if weatherOfSpecifiedCity.Main.Temp == optionJSON.Temperature {
+			response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf("%f", weatherOfSpecifiedCity.Main.Temp) + "°C"
+			println(response)
+			c <- response
+		}
+	}
+	time.Sleep(time.Minute)
+}
+
 // Reactions functions
+
+func (service *openweathermapService) OpenweathermapReactionCurrentWeather(option string, idArea uint64) {
+	optionJSON := schemas.OpenweathermapActionSpecificWeather{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal weather option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+	coordinates, err := getCoordinatesOfCity(optionJSON.City)
+	if err != nil {
+		fmt.Println(err)
+	}
+	weatherOfSpecifiedCity, err := getWeatherOfCoodinate(coordinates)
+	if err != nil {
+		println("error get actual weather info" + err.Error())
+	} else {
+		response := "current weather in " + optionJSON.City + " is " + weatherOfSpecifiedCity.Weather[0].Main
+		println(response)
+		// TODO: save to database
+	}
+}
