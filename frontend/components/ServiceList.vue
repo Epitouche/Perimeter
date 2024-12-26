@@ -14,6 +14,7 @@ interface OAuthLink {
 const tokenCookie = useCookie("token");
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+
 let serviceNames: string[] = [];
 
 onMounted(() => {
@@ -35,11 +36,8 @@ async function servicesConnectionInfos() {
       "tokens" in response &&
       Array.isArray((response as { tokens: unknown }).tokens)
     ) {
-      const tokens = (
-        response as { tokens: Array<{ service_id: { name: string } }> }
-      ).tokens;
+      const tokens = (response as { tokens: Array<{ service_id: { name: string } }> }).tokens;
       serviceNames = tokens.map((token) => token.service_id.name);
-      //console.log("Service Names Updated:", serviceNames);
       isLoading.value = false;
     } else {
       console.error("Response does not contain valid tokens.");
@@ -47,7 +45,6 @@ async function servicesConnectionInfos() {
     }
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
-
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }
@@ -63,7 +60,6 @@ const authApiCall = async (label: string) => {
       },
     });
     navigateTo(response.authentication_url, { external: true });
-    //console.log(response.authentication_url);
     return response;
   } catch (err) {
     if (err instanceof Error) {
@@ -77,19 +73,12 @@ const authApiCall = async (label: string) => {
 
 const handleClick = (label: string) => {
   const normalizedLabel = label.toLowerCase();
-  if (
-    serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
-  ) {
+  if (serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)) {
     //disconnectService(label);
   } else {
-    const apiLink =
-      normalizedLabel === "spotify"
-        ? "http://server:8080/api/v1/spotify/auth/"
-        : normalizedLabel === "gmail"
-          ? "http://server:8080/api/v1/gmail/auth/"
-          : null;
+    const apiLink = `http://server:8080/api/v1/${normalizedLabel}/auth/`;
 
-    if (apiLink) {
+    if (normalizedLabel === "spotify" || normalizedLabel === "gmail") {
       authApiCall(apiLink);
     } else {
       console.log(`${label} unknown icon clicked`);
@@ -106,9 +95,7 @@ const getServiceStateText = (appName: string) => {
 </script>
 
 <template>
-  <UContainer
-    class="flex flex-wrap gap-5 justify-center p-4 bg-white rounded-lg mx-auto"
-  >
+  <div class="flex flex-wrap gap-5 justify-center">
     <UButton
       v-for="(app, index) in apps"
       :key="index"
@@ -132,7 +119,7 @@ const getServiceStateText = (appName: string) => {
         {{ getServiceStateText(app.name) }}
       </div>
     </UButton>
-  </UContainer>
+  </div>
 </template>
 
 <style scoped>
