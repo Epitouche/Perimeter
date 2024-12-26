@@ -12,6 +12,7 @@ import (
 type GithubController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
+	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
@@ -89,6 +90,24 @@ func (controller *githubController) HandleServiceCallback(
 		return "", fmt.Errorf("unable to handle service callback because %w", err)
 	}
 	return bearer, nil
+}
+
+func (controller *githubController) HandleServiceCallbackMobile(
+	ctx *gin.Context,
+) (string, error) {
+	var credentials schemas.MobileTokenRequest
+	err := ctx.ShouldBind(&credentials)
+	if err != nil {
+		return "", fmt.Errorf("can't bind credentials: %w", err)
+	}
+	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		schemas.Github,
+		credentials,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
+	return bearer, err
 }
 
 func (controller *githubController) GetUserInfo(

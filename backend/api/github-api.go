@@ -21,6 +21,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 	}
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
+	api.HandleServiceCallbackMobile(apiRoutes)
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
@@ -72,6 +73,31 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 			})
 		} else {
 			ctx.JSON(http.StatusOK, &schemas.JWT{Token: github_token})
+		}
+	})
+}
+
+// HandleServiceCallbackMobile godoc
+//
+//	@Summary		give authentication token to mobile
+//	@Description	give authentication token to mobile
+//	@Tags			Spotify
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Param			Authorization	header		string					false	"Bearer token"
+//	@Success		200				{object}	schemas.JWT
+//	@Failure		500				{object}	schemas.ErrorResponse
+//	@Router			/github/auth/callback/mobile [post]
+func (api *GithubAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
+	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
+		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
 		}
 	})
 }

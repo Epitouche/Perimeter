@@ -78,7 +78,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	})
 }
 
-// HandleServiceCallback godoc
+// HandleServiceCallbackMobile godoc
 //
 //	@Summary		give authentication token to mobile
 //	@Description	give authentication token to mobile
