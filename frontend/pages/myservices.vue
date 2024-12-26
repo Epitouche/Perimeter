@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import SearchBar from '@/components/SearchBar.vue';
+import SearchBar from "@/components/SearchBar.vue";
 definePageMeta({
   middleware: "auth",
 });
@@ -17,11 +17,11 @@ const apps = [
   },
 ];
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 
 const filteredApps = computed(() => {
-  return apps.filter(app => 
-    app.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  return apps.filter((app) =>
+    app.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   );
 });
 </script>

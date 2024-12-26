@@ -36,7 +36,9 @@ async function servicesConnectionInfos() {
       "tokens" in response &&
       Array.isArray((response as { tokens: unknown }).tokens)
     ) {
-      const tokens = (response as { tokens: Array<{ service_id: { name: string } }> }).tokens;
+      const tokens = (
+        response as { tokens: Array<{ service_id: { name: string } }> }
+      ).tokens;
       serviceNames = tokens.map((token) => token.service_id.name);
       isLoading.value = false;
     } else {
@@ -73,7 +75,9 @@ const authApiCall = async (label: string) => {
 
 const handleClick = (label: string) => {
   const normalizedLabel = label.toLowerCase();
-  if (serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)) {
+  if (
+    serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+  ) {
     //disconnectService(label);
   } else {
     const apiLink = `http://server:8080/api/v1/${normalizedLabel}/auth/`;
