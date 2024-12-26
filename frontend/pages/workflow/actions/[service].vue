@@ -9,7 +9,7 @@ const serviceId = route.params.service;
 const token = useCookie("token");
 const isLoading = ref(true);
 const actions = ref<any>(null);
-const error = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
 
 const serviceInfo = ref<{ name: string } | null>(null);
 
@@ -17,7 +17,7 @@ const getServiceInfo = async () => {
   if (serviceId) {
     isLoading.value = true;
     try {
-      error.value = null;
+      errorMessage.value = null;
       serviceInfo.value = await $fetch("/api/servicebyid", {
         method: "POST",
         body: {
@@ -26,8 +26,12 @@ const getServiceInfo = async () => {
         },
       });
       // console.log("services", serviceInfo.value);
-    } catch (err) {
-      console.error("Error fetching services:", err);
+    } catch (error: unknown) {
+      errorMessage.value = handleErrorStatus(error);
+
+      if (errorMessage.value === "An unknown error occurred") {
+        console.error("An unknown error occurred", error);
+      }
     } finally {
       isLoading.value = false;
     }
@@ -37,7 +41,7 @@ const getServiceInfo = async () => {
 const fetchActions = async () => {
   isLoading.value = true;
   try {
-    error.value = null;
+    errorMessage.value = null;
     actions.value = await $fetch("/api/workflow/actions", {
       method: "POST",
       body: {
@@ -47,9 +51,12 @@ const fetchActions = async () => {
     });
 
     console.log("actions", actions.value);
-  } catch (err) {
-    error.value = "Failed to load actions";
-    console.error("Error fetching actions:", err);
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+
+    if (errorMessage.value === "An unknown error occurred") {
+      console.error("An unknown error occurred", error);
+    }
   } finally {
     isLoading.value = false;
   }
@@ -63,8 +70,8 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-20">
-    <div v-if="error">
-      <div>Error: {{ error }}</div>
+    <div v-if="errorMessage">
+      <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
     <UContainer
@@ -88,8 +95,8 @@ onMounted(() => {
         </h2>
       </div>
     </UContainer>
-    <div v-if="error">
-      <div>Error: {{ error }}</div>
+    <div v-if="errorMessage">
+      <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="actions">
       <ReActionCardContainer
