@@ -254,7 +254,10 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 
 // Reactions functions
 
-func (service *spotifyService) SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64) string {
+func (service *spotifyService) SpotifyReactionPlayMusic(
+	option json.RawMessage,
+	idArea uint64,
+) string {
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
