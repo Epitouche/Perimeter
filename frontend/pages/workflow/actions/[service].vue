@@ -199,9 +199,7 @@ onMounted(() => {
     </div>
 
     <!-- Loading state -->
-    <div v-else-if="isLoading" class="text-xl font-semibold">
-      Loading...
-    </div>
+    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
 
     <!-- Service Information Section -->
     <UContainer
@@ -238,4 +236,3 @@ onMounted(() => {
 </template>
 
 <style scoped></style>
-

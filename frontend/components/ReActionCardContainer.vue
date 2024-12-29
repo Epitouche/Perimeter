@@ -172,9 +172,9 @@ const state = reactive<{ [key: number]: Record<string, string | number> }>(
 );
 
 // Stores initial form values to reset on cancel
-const initialState = reactive<{ [key: number]: Record<string, string | number> }>(
-  JSON.parse(JSON.stringify(state)),
-);
+const initialState = reactive<{
+  [key: number]: Record<string, string | number>;
+}>(JSON.parse(JSON.stringify(state)));
 
 // Handles opening/closing the configuration modal
 const openConfig = (typeId: number) => {
@@ -287,4 +287,3 @@ onMounted(() => {
     </div>
   </UContainer>
 </template>
-
