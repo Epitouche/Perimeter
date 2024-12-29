@@ -1,39 +1,41 @@
-import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GMAIL_MOBILE_CLIENT_ID, GMAIL_SECRET } from '@env';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Alert } from 'react-native';
+import { GMAIL_MOBILE_CLIENT_ID, GMAIL_SECRET } from '@env';
 import { handleCallback } from './Callback';
 
 async function HandleGoogleLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
-  const config: AuthConfiguration = {
-    clientId: GMAIL_MOBILE_CLIENT_ID,
-    clientSecret: GMAIL_SECRET,
-    redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['profile', 'email'],
-    serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
-      tokenEndpoint: 'https://accounts.google.com/o/oauth2/token',
-    },
-  };
+  GoogleSignin.configure({
+    webClientId: GMAIL_MOBILE_CLIENT_ID,
+    offlineAccess: true,
+    forceCodeForRefreshToken: true,
+  });
 
   try {
-    const result = await authorize(config);
-    // console.log('result', result);
+    // Sign in the user
+    await GoogleSignin.hasPlayServices(); // Ensure Play Services are available
+    const userInfo = await GoogleSignin.signIn();
+
+    const { idToken } = userInfo;
     let data;
+
     if (login) {
-      data = await handleCallback(`http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`, result);
+      // Handle login callback with your backend
+      data = await handleCallback(`http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`, { idToken });
     } else {
-      setToken(result.accessToken);
-      // TODO: call route when loging in from myServices page (waiting for back to be done)
+      // Directly set token for client-side use
+      setToken(idToken);
     }
-    if (data.error) {
+
+    if (data?.error) {
       console.error(data.error);
     } else {
-      setToken(data.token);
-      if (login)
+      setToken(data?.token || idToken);
+      if (login) {
         navigation.navigate('AreaView');
+      }
     }
   } catch (error) {
-    if ((error as Error).message != 'User cancelled flow') {
+    if ((error as Error).message !== 'User cancelled flow') {
       console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }
