@@ -65,10 +65,7 @@ func (api *DropboxAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Router			/dropbox/auth/callback [post]
 func (api *DropboxAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
-		dropbox_token, err := api.controller.HandleServiceCallback(
-			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
-		)
+		dropbox_token, err := api.controller.HandleServiceCallback(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {

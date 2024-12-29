@@ -65,7 +65,6 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		github_token, err := api.controller.HandleServiceCallback(
 			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{

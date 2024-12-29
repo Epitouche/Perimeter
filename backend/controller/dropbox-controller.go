@@ -11,7 +11,7 @@ import (
 
 type DropboxController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
-	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
+	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
@@ -53,7 +53,6 @@ func (controller *dropboxController) RedirectToService(
 
 func (controller *dropboxController) HandleServiceCallback(
 	ctx *gin.Context,
-	path string,
 ) (string, error) {
 	var credentials schemas.CodeCredentials
 	err := ctx.ShouldBind(&credentials)
