@@ -76,26 +76,25 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give url to authenticate with gmail
-//	@Description	give url to authenticate with gmail
-//	@Tags			Gmail
+//	@Summary		give authentication token to mobile
+//	@Description	give authentication token to mobile
+//	@Tags			Spotify
 //	@Accept			json
 //	@Produce		json
-//	@Security		bearerAuth
-//	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Success		200		{object}	schemas.JWT
-//	@Failure		500		{object}	schemas.ErrorResponse
+//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Param			Authorization	header		string					false	"Bearer token"
+//	@Success		200				{object}	schemas.JWT
+//	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback/mobile [post]
 func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		token, err := api.controller.HandleServiceCallbackMobile(
-			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
-		)
+		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
 		} else {
-			ctx.JSON(http.StatusOK, &schemas.JWT{Token: token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
 		}
 	})
 }

@@ -17,14 +17,14 @@ type TimerService interface {
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
 	// Actions functions
 	TimerActionSpecificHour(c chan string, option json.RawMessage, idArea uint64)
 	// Reactions functions
-	TimerReactionGiveTime(option json.RawMessage, idArea uint64)
+	TimerReactionGiveTime(option json.RawMessage, idArea uint64) string
 }
 
 type timerService struct {
@@ -68,7 +68,7 @@ func (service *timerService) FindActionbyName(
 
 func (service *timerService) FindReactionbyName(
 	name string,
-) func(option json.RawMessage, idArea uint64) {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 	case string(schemas.GiveTime):
 		return service.TimerReactionGiveTime
@@ -183,12 +183,14 @@ func (service *timerService) TimerActionSpecificHour(
 
 // Reactions functions
 
-func (service *timerService) TimerReactionGiveTime(option json.RawMessage, idArea uint64) {
+func (service *timerService) TimerReactionGiveTime(option json.RawMessage, idArea uint64) string {
 	actualTimeApi, err := getActualTime()
 	if err != nil {
 		println("error get actual time" + err.Error())
+		return "error get actual time"
 	} else {
 		response := "current time is " + actualTimeApi.Time
 		println(response)
+		return response
 	}
 }

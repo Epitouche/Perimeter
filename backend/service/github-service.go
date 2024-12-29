@@ -18,7 +18,7 @@ type GithubService interface {
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
@@ -81,7 +81,7 @@ func (service *githubService) FindActionbyName(
 
 func (service *githubService) FindReactionbyName(
 	name string,
-) func(option json.RawMessage, idArea uint64) {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 	default:
 		return nil

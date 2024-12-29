@@ -27,7 +27,7 @@ type Service struct {
 	Id          uint64      `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`
 	Name        ServiceName `                                 json:"name"         binding:"required"`
 	Description string      `                                 json:"description"  binding:"required"`
-	CreatedAt   time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"createdAt"`
+	CreatedAt   time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt    time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
 }
 
@@ -39,5 +39,5 @@ var (
 type MobileTokenRequest struct {
 	AccessToken  string    `json:"accessToken"`
 	RefreshToken string    `json:"refreshToken"`
-	ExpiresIn    time.Time `json:"accessTokenExpirationDate	"`
+	ExpiresIn    time.Time `json:"accessTokenExpirationDate"`
 }

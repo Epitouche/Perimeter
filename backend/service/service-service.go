@@ -18,7 +18,7 @@ type ServiceService interface {
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	FindServiceByName(name string) schemas.Service
 	RedirectToServiceOauthPage(
 		serviceName schemas.ServiceName,
@@ -46,7 +46,7 @@ type ServiceService interface {
 
 type ServiceInterface interface {
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetServiceInfo() schemas.Service
 }
 
@@ -321,7 +321,7 @@ func (service *serviceService) FindActionbyName(
 
 func (service *serviceService) FindReactionbyName(
 	name string,
-) func(option json.RawMessage, idArea uint64) {
+) func(option json.RawMessage, idArea uint64) string {
 	for _, service := range service.allService {
 		if service.(ServiceInterface).FindReactionbyName(name) != nil {
 			return service.(ServiceInterface).FindReactionbyName(name)
