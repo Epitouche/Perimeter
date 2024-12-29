@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,7 +25,8 @@ func compareMaps(map1, map2 map[string]interface{}) bool {
 		return false
 	}
 	for key, value1 := range map1 {
-		if value2, ok := map2[key]; !ok || value1 != value2 {
+		value2, ok := map2[key]
+		if !ok || reflect.TypeOf(value1) != reflect.TypeOf(value2) {
 			return false
 		}
 	}
@@ -64,14 +66,7 @@ func (service *areaService) FindAll() []schemas.Area {
 }
 
 func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
-	println("CreateArea Service")
 	var result schemas.AreaMessage
-
-	fmt.Printf("\n\nctx.Request.Body %+v\n\n\n", ctx.Request.Body)
-
-	// respBody, _ := io.ReadAll(ctx.Request.Body)
-
-	// fmt.Printf("\n\nrespBody %+v\n\n\n", respBody)
 
 	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 	if err != nil {
@@ -79,10 +74,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
 
-	fmt.Printf("\n\nresult %v\n\n\n", result)
-	fmt.Printf("\n\nresult %+v\n\n\n", result)
-
-	var actionOption, reactionOption string
+	var actionOption, reactionOption json.RawMessage
 
 	if err := json.Unmarshal(result.ActionOption, &actionOption); err != nil {
 		return "", fmt.Errorf("can't unmarshal action option: %w", err)
@@ -90,14 +82,6 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 
 	if err := json.Unmarshal(result.ReactionOption, &reactionOption); err != nil {
 		return "", fmt.Errorf("can't unmarshal reaction option: %w", err)
-	}
-
-	if actionOption == "" {
-		return "", fmt.Errorf("empty action option: %w", err)
-	}
-
-	if reactionOption == "" {
-		return "", fmt.Errorf("empty reaction option: %w", err)
 	}
 
 	authHeader := ctx.GetHeader("Authorization")
@@ -120,7 +104,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		return "", fmt.Errorf("can't unmarshal provided action option: %w", err)
 	}
 	if !compareMaps(defaultActionOption, providedActionOption) {
-		return "", fmt.Errorf("action option does not match default option")
+		return "", fmt.Errorf("action option does not match default option type")
 	}
 
 	var defaultReactionOption, providedReactionOption map[string]interface{}
@@ -131,7 +115,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		return "", fmt.Errorf("can't unmarshal provided reaction option: %w", err)
 	}
 	if !compareMaps(defaultReactionOption, providedReactionOption) {
-		return "", fmt.Errorf("reaction option does not match default option")
+		return "", fmt.Errorf("reaction option does not match default option type")
 	}
 
 	newArea := schemas.Area{
@@ -159,7 +143,7 @@ func (service *areaService) AreaExist(id uint64) bool {
 
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	channelArea := make(chan string)
-	println("go routine action")
+	println("go routine action " + areaStartValue.Action.Name)
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// get the action with the id
 		for service.AreaExist(areaStartValue.Id) {
