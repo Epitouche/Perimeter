@@ -144,6 +144,7 @@ func (service *areaService) AreaExist(id uint64) bool {
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	channelArea := make(chan string)
 	println("go routine action " + areaStartValue.Action.Name)
+	println("reaction " + areaStartValue.Reaction.Name)
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// get the action with the id
 		for service.AreaExist(areaStartValue.Id) {
@@ -166,7 +167,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 		channelArea <- "response to clear"
 	}(areaStartValue, channelArea)
 	// area
-	println("go routine area")
+	fmt.Printf("go routine area %+v\n", areaStartValue)
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// check if the area is in the databse
 		for service.AreaExist(areaStartValue.Id) {
