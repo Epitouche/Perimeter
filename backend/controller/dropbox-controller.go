@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +12,7 @@ import (
 type DropboxController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
-	HandleServiceCallbackMobile(ctx *gin.Context, path string) (string, error)
+	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
@@ -95,93 +94,20 @@ func (controller *dropboxController) HandleServiceCallback(
 
 func (controller *dropboxController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
-	path string,
 ) (string, error) {
-	var credentials schemas.TokenCredentials
+	var credentials schemas.MobileTokenRequest
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
-
-	token := credentials.Token
-	if token == "" {
-		return "", schemas.ErrMissingAuthenticationCode
-	}
-
-	email := credentials.Email
-	if email == "" {
-		return "", schemas.ErrMissingAuthenticationCode
-	}
-
-	username := credentials.Username
-	if username == "" {
-		return "", schemas.ErrMissingAuthenticationCode
-	}
-
-	// state := credentials.State
-	// latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
-	// if err != nil {
-	// 	return "", fmt.Errorf("missing CSRF token")
-	// }
-
-	// if state != latestCSRFToken {
-	// 	return "", fmt.Errorf("invalid CSRF token")
-	// }
-
-	authHeader := ctx.GetHeader("Authorization")
-	newUser := schemas.User{
-		Username: username,
-		Email:    email,
-	}
-	dropboxToken := schemas.Token{}
-	dropboxToken.Token = token
-	var bearerToken string
-
-	if len(authHeader) > len("Bearer ") {
-		bearerToken = authHeader[len("Bearer "):]
-	} else {
-
-		bearerTokenLogin, _, err := controller.serviceUser.Login(newUser)
-		if err == nil {
-			return bearerTokenLogin, nil
-		}
-
-		bearerTokenRegister, newUserId, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		bearerToken = bearerTokenRegister
-		newUser = controller.serviceUser.GetUserById(newUserId)
-	}
-
-	dropboxService := controller.serviceService.FindByName(schemas.Dropbox)
-
-	newDropboxToken := schemas.Token{
-		Token:        dropboxToken.Token,
-		RefreshToken: dropboxToken.RefreshToken,
-		ExpireAt:     dropboxToken.ExpireAt,
-		Service:      dropboxService,
-		User:         newUser,
-	}
-
-	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newDropboxToken)
-	if err != nil {
-		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
-	}
-
-	if len(authHeader) == 0 {
-		newUser.TokenId = tokenId
-
-		err = controller.serviceUser.UpdateUserInfo(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to update user info because %w", err)
-		}
-	}
-	return bearerToken, nil
+	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		schemas.Dropbox,
+		credentials,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
+	return bearer, err
 }
 
 func (controller *dropboxController) GetUserInfo(
