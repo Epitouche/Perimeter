@@ -41,7 +41,8 @@ func TestSpotifyAPI(t *testing.T) {
 		assert.Contains(t, w.Body.String(), "mock_token")
 	})
 	t.Run("TestHandleServiceCallback", func(t *testing.T) {
-		mockController.On("HandleServiceCallbackMobile", mock.Anything).Return("mock_mobile_token", nil)
+		mockController.On("HandleServiceCallbackMobile", mock.Anything).
+			Return("mock_mobile_token", nil)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("POST", "/api/spotify/auth/callback/mobile", nil)
