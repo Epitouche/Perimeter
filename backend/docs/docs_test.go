@@ -17,7 +17,11 @@ func TestSwaggerInfo(t *testing.T) {
 	assert.Equal("", SwaggerInfo.Title, "Title should be empty")
 	assert.Equal("", SwaggerInfo.Description, "Description should be empty")
 	assert.Equal("swagger", SwaggerInfo.InfoInstanceName, "InfoInstanceName should be 'swagger'")
-	assert.Equal(docTemplate, SwaggerInfo.SwaggerTemplate, "SwaggerTemplate should match the docTemplate")
+	assert.Equal(
+		docTemplate,
+		SwaggerInfo.SwaggerTemplate,
+		"SwaggerTemplate should match the docTemplate",
+	)
 	assert.Equal("{{", SwaggerInfo.LeftDelim, "LeftDelim should be '{{'")
 	assert.Equal("}}", SwaggerInfo.RightDelim, "RightDelim should be '}}'")
 }
