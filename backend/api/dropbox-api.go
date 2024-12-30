@@ -91,14 +91,13 @@ func (api *DropboxAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Router			/dropbox/auth/callback/mobile [post]
 func (api *DropboxAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		token, err := api.controller.HandleServiceCallbackMobile(
-			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
-		)
+		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
 		} else {
-			ctx.JSON(http.StatusOK, &schemas.JWT{Token: token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
 		}
 	})
 }
