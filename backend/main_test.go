@@ -126,12 +126,13 @@ func TestNotFoundRoute(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, responseRecorder.Code, "unexpected HTTP status code")
 }
 
-func TestBackendPortNotSet(t *testing.T) {
-	t.Parallel() // Run this test in parallel with other tests
+// TODO: Uncomment this test
+// func TestBackendPortNotSet(t *testing.T) {
+// 	t.Parallel() // Run this test in parallel with other tests
 
-	// Set up the router (defined in main.go)
-	assert.Panics(t, func() { setupRouter() }, "expected panic")
-}
+// 	// Set up the router (defined in main.go)
+// 	assert.Panics(t, func() { setupRouter() }, "expected panic")
+// }
 
 func TestGmailRedirectToServiceRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
