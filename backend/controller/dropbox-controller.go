@@ -14,6 +14,7 @@ type DropboxController interface {
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
+	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error)
 }
 
 type dropboxController struct {
@@ -117,20 +118,45 @@ func (controller *dropboxController) GetUserInfo(
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
+		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	token, err := controller.serviceToken.GetTokenById(user.Id)
 	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
+		return userInfo, fmt.Errorf("unable to get token because %w", err)
 	}
 
 	dropboxUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
+		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	userInfo.Email = dropboxUserInfo.Email
 	userInfo.Username = dropboxUserInfo.Username
 	return userInfo, nil
+}
+
+func (controller *dropboxController) GetUserFile(
+	ctx *gin.Context,
+) (userFile []schemas.DropboxFile, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := controller.serviceUser.GetUserInfo(tokenString)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	DropboxToken, err := controller.serviceToken.GetTokenById(user.Id)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get token because %w", err)
+	}
+
+	dropboxFile, err := controller.service.GetUserFileList(DropboxToken.Token)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	userFile = dropboxFile
+	return userFile, nil
 }

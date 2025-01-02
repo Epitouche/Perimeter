@@ -182,7 +182,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest(
-		"GET",
+		http.MethodGet,
 		"https://gmail.googleapis.com/gmail/v1/users/me/profile",
 		nil,
 	)
@@ -212,7 +212,7 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest(
-		"GET",
+		http.MethodGet,
 		"https://people.googleapis.com/v1/people/me?personFields=names",
 		nil,
 	)

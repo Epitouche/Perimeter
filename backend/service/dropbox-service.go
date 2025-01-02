@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"area/repository"
@@ -25,6 +26,7 @@ type DropboxService interface {
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
+	GetUserFileList(userDropboxToken string) (fileList []schemas.DropboxFile, err error)
 	// Actions functions
 	// Reactions functions
 }
@@ -176,9 +178,8 @@ func (service *dropboxService) GetUserInfo(
 	accessToken string,
 ) (user schemas.User, err error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest(
-		"GET",
-		"    https://api.dropboxapi.com/2/users/get_account",
+	req, err := http.NewRequest(http.MethodGet,
+		"https://api.dropboxapi.com/2/users/get_account",
 		nil,
 	)
 	if err != nil {
@@ -209,6 +210,40 @@ func (service *dropboxService) GetUserInfo(
 	}
 
 	return user, nil
+}
+
+func (service *dropboxService) GetUserFileList(
+	userDropboxToken string,
+) (fileList []schemas.DropboxFile, err error) {
+	reqBody := `{"limit": 100}`
+	req, err := http.NewRequest(http.MethodPost,
+		"https://api.dropboxapi.com/2/file_requests/list_v2",
+		strings.NewReader(reqBody),
+	)
+	if err != nil {
+		return fileList, fmt.Errorf("unable to create request because %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fileList, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	result := schemas.ListFileRequestsV2Result{}
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return fileList, fmt.Errorf("unable to decode response because %w", err)
+	}
+
+	resp.Body.Close()
+
+	fileList = append(fileList, result.FileRequests...)
+
+	return fileList, nil
 }
 
 // Actions functions
