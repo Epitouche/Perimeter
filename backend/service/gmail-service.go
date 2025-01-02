@@ -142,7 +142,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest("POST", apiURL, nil)
+	req, err := http.NewRequest(http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -303,7 +303,7 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 
 	body := fmt.Sprintf(`{"raw": "%s"}`, raw)
 
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer([]byte(body)))
+	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request" + err.Error()

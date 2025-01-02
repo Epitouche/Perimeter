@@ -22,7 +22,7 @@ func RegisterUser(router *gin.Engine, t *testing.T) (bearerToken string) {
 
 	// Perform the HTTP POST request
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest("POST", "/api/v1/user/register", reqBody)
+	req, err := http.NewRequest(http.MethodPost, "/api/v1/user/register", reqBody)
 	assert.NoError(t, err, "failed to create request")
 	req.Header.Set("Content-Type", "application/json")
 
@@ -56,7 +56,7 @@ func LoginUser(router *gin.Engine, t *testing.T) (bearerToken string) {
 
 	// Perform the HTTP POST request
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest("POST", "/api/v1/user/login", reqBody)
+	req, err := http.NewRequest(http.MethodPost, "/api/v1/user/login", reqBody)
 	assert.NoError(t, err, "failed to create request")
 	req.Header.Set("Content-Type", "application/json")
 

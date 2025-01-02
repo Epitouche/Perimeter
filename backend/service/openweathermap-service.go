@@ -166,7 +166,7 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 	data.Set("limit", "1")
 	data.Set("appid", APIKey)
 
-	req, err := http.NewRequest("GET", apiURL, nil)
+	req, err := http.NewRequest(http.MethodGet, apiURL, nil)
 	if err != nil {
 		return coordinates, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -209,7 +209,7 @@ func getWeatherOfCoodinate(coordinates struct {
 	data.Set("appid", APIKey)
 	data.Set("units", "metric") // to get temperature in celsius
 
-	req, err := http.NewRequest("GET", apiURL, nil)
+	req, err := http.NewRequest(http.MethodGet, apiURL, nil)
 	if err != nil {
 		return weather, fmt.Errorf("unable to create request because %w", err)
 	}

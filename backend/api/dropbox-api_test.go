@@ -13,7 +13,10 @@ import (
 )
 
 func TestDropboxAPI(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	if gin.Mode() != gin.TestMode {
+		gin.SetMode(gin.TestMode)
+	}
+	t.Parallel()
 
 	mockController := new(test.MockController)
 	router := gin.Default()
@@ -21,31 +24,36 @@ func TestDropboxAPI(t *testing.T) {
 	NewDropboxAPI(mockController, apiRoutes)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
+		t.Parallel()
 		mockController.On("RedirectToService", mock.Anything).Return("http://example.com/auth", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/api/dropbox/auth", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/api/dropbox/auth", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Contains(t, w.Body.String(), "http://example.com/auth")
 	})
 	t.Run("TestHandleServiceCallback", func(t *testing.T) {
+		t.Parallel()
+
 		mockController.On("HandleServiceCallback", mock.Anything).Return("mock_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("POST", "/api/dropbox/auth/callback", nil)
+		req, _ := http.NewRequest(http.MethodPost, "/api/dropbox/auth/callback", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Contains(t, w.Body.String(), "mock_token")
 	})
 	t.Run("TestHandleServiceCallback", func(t *testing.T) {
+		t.Parallel()
+
 		mockController.On("HandleServiceCallbackMobile", mock.Anything).
 			Return("mock_mobile_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("POST", "/api/dropbox/auth/callback/mobile", nil)
+		req, _ := http.NewRequest(http.MethodPost, "/api/dropbox/auth/callback/mobile", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -56,7 +64,7 @@ func TestDropboxAPI(t *testing.T) {
 	// 	mockController.On("GetUserInfo", mock.Anything).Return(mockUserInfo, nil)
 
 	// 	w := httptest.NewRecorder()
-	// 	req, _ := http.NewRequest("GET", "/api/dropbox/info", nil)
+	// 	req, _ := http.NewRequest(http.MethodGet, "/api/dropbox/info", nil)
 	// 	router.ServeHTTP(w, req)
 
 	// 	assert.Equal(t, http.StatusOK, w.Code)

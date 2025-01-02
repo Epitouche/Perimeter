@@ -114,7 +114,7 @@ func (service *timerService) GetReactionsName() []string {
 func getActualTime() (schemas.TimeApiResponse, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
-	req, err := http.NewRequest("GET", apiURL, nil)
+	req, err := http.NewRequest(http.MethodGet, apiURL, nil)
 	if err != nil {
 		return schemas.TimeApiResponse{}, schemas.ErrCreateRequest
 	}

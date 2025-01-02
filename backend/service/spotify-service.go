@@ -140,7 +140,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest("POST", apiURL, nil)
+	req, err := http.NewRequest(http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf(
 			"unable to create request because %w",
@@ -195,7 +195,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.User, err error) {
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/me", nil)
+	req, err := http.NewRequest(http.MethodGet, "https://api.spotify.com/v1/me", nil)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}

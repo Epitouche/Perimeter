@@ -33,7 +33,7 @@ func TestPingRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/ping", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/ping", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -61,7 +61,7 @@ func TestAboutJsonRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/about.json", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/about.json", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -103,7 +103,7 @@ func TestNotFoundRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/no-route", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/no-route", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -137,7 +137,7 @@ func TestGmailRedirectToServiceRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/gmail/auth", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/gmail/auth", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -175,7 +175,7 @@ func TestSpotifyRedirectToServiceRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/spotify/auth", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/spotify/auth", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -213,7 +213,7 @@ func TestGithubRedirectToServiceRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/github/auth", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/github/auth", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -251,7 +251,7 @@ func TestDropboxRedirectToServiceRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/dropbox/auth", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/dropbox/auth", nil)
 	router.ServeHTTP(w, req)
 
 	// Assert the response
@@ -293,6 +293,8 @@ func TestRegisterUserRoute(t *testing.T) {
 func TestLoginUserRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -318,7 +320,7 @@ func TestLoginUserRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("POST", "/api/v1/user/login", reqBody)
+		req, err := http.NewRequest(http.MethodPost, "/api/v1/user/login", reqBody)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 
@@ -340,6 +342,8 @@ func TestLoginUserRoute(t *testing.T) {
 	})
 
 	t.Run("registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -365,6 +369,8 @@ func TestLoginUserRoute(t *testing.T) {
 func TestActionRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -383,7 +389,7 @@ func TestActionRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/action/info/1", nil)
+		req, err := http.NewRequest(http.MethodGet, "/api/v1/action/info/1", nil)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 
@@ -405,6 +411,8 @@ func TestActionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -425,7 +433,7 @@ func TestActionRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/action/info/1", nil)
+		req, err := http.NewRequest(http.MethodGet, "/api/v1/action/info/1", nil)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
@@ -448,6 +456,8 @@ func TestActionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user, id not a number", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -468,7 +478,7 @@ func TestActionRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/action/info/test", nil)
+		req, err := http.NewRequest(http.MethodGet, "/api/v1/action/info/test", nil)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
@@ -494,6 +504,8 @@ func TestActionRoute(t *testing.T) {
 func TestReactionRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -512,7 +524,7 @@ func TestReactionRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/reaction/info/1", nil)
+		req, err := http.NewRequest(http.MethodGet, "/api/v1/reaction/info/1", nil)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 
@@ -534,6 +546,8 @@ func TestReactionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -554,7 +568,7 @@ func TestReactionRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/reaction/info/1", nil)
+		req, err := http.NewRequest(http.MethodGet, "/api/v1/reaction/info/1", nil)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
@@ -577,6 +591,8 @@ func TestReactionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user, id not a number", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
@@ -597,7 +613,7 @@ func TestReactionRoute(t *testing.T) {
 
 		// Perform the HTTP POST request
 		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/reaction/info/test", nil)
+		req, err := http.NewRequest(http.MethodGet, "/api/v1/reaction/info/test", nil)
 		assert.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
