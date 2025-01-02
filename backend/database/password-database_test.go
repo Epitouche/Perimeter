@@ -45,7 +45,11 @@ func TestDoPasswordsMatch(t *testing.T) {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 
-	assert.True(t, database.DoPasswordsMatch(hashedPassword, password), "Expected passwords to match")
+	assert.True(
+		t,
+		database.DoPasswordsMatch(hashedPassword, password),
+		"Expected passwords to match",
+	)
 
 	assert.False(
 		t,
@@ -53,5 +57,9 @@ func TestDoPasswordsMatch(t *testing.T) {
 		"Expected passwords not to match",
 	)
 
-	assert.False(t, database.DoPasswordsMatch("wronghash", password), "Expected passwords not to match")
+	assert.False(
+		t,
+		database.DoPasswordsMatch("wronghash", password),
+		"Expected passwords not to match",
+	)
 }

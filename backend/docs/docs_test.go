@@ -20,7 +20,11 @@ func TestSwaggerInfo(t *testing.T) {
 	assert.Equal([]string{}, docs.SwaggerInfo.Schemes, "Schemes should be empty")
 	assert.Equal("", docs.SwaggerInfo.Title, "Title should be empty")
 	assert.Equal("", docs.SwaggerInfo.Description, "Description should be empty")
-	assert.Equal("swagger", docs.SwaggerInfo.InfoInstanceName, "InfoInstanceName should be 'swagger'")
+	assert.Equal(
+		"swagger",
+		docs.SwaggerInfo.InfoInstanceName,
+		"InfoInstanceName should be 'swagger'",
+	)
 	// assert.Equal(
 	// 	docTemplate,
 	// 	docs.SwaggerInfo.SwaggerTemplate,
