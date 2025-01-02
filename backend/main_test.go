@@ -39,7 +39,12 @@ func TestPingRoute(t *testing.T) {
 
 	// Assert the response
 	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
-	assert.JSONEq(t, `{"message":"pong"}`, responseRecorder.Body.String(), "unexpected response body")
+	assert.JSONEq(
+		t,
+		`{"message":"pong"}`,
+		responseRecorder.Body.String(),
+		"unexpected response body",
+	)
 }
 
 func TestAboutJsonRoute(t *testing.T) {
@@ -397,7 +402,12 @@ func TestActionRoute(t *testing.T) {
 		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code, "unexpected HTTP status code")
+		assert.Equal(
+			t,
+			http.StatusUnauthorized,
+			responseRecorder.Code,
+			"unexpected HTTP status code",
+		)
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}
@@ -532,7 +542,12 @@ func TestReactionRoute(t *testing.T) {
 		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code, "unexpected HTTP status code")
+		assert.Equal(
+			t,
+			http.StatusUnauthorized,
+			responseRecorder.Code,
+			"unexpected HTTP status code",
+		)
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}

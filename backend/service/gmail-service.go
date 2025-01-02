@@ -318,7 +318,6 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 		apiURL,
 		bytes.NewBuffer([]byte(body)),
 	)
-
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request" + err.Error()

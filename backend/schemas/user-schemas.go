@@ -27,7 +27,16 @@ type UserAllInfo struct {
 }
 
 var (
-	ErrUsernameTooShort = fmt.Errorf("username must be at least %d characters long", UsernameMinimumLength)
-	ErrPasswordTooShort = fmt.Errorf("password must be at least %d characters long", PasswordMinimumLength)
-	ErrEmailTooShort    = fmt.Errorf("email must be at least %d characters long", EmailMinimumLength)
+	ErrUsernameTooShort = fmt.Errorf(
+		"username must be at least %d characters long",
+		UsernameMinimumLength,
+	)
+	ErrPasswordTooShort = fmt.Errorf(
+		"password must be at least %d characters long",
+		PasswordMinimumLength,
+	)
+	ErrEmailTooShort = fmt.Errorf(
+		"email must be at least %d characters long",
+		EmailMinimumLength,
+	)
 )

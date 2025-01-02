@@ -29,7 +29,9 @@ func (controller *areaController) CreateArea(ctx *gin.Context) (string, error) {
 	return controller.service.CreateArea(ctx)
 }
 
-func (controller *areaController) GetUserAreas(ctx *gin.Context) (areaList []schemas.Area, err error) {
+func (controller *areaController) GetUserAreas(
+	ctx *gin.Context,
+) (areaList []schemas.Area, err error) {
 	areaList, err = controller.service.GetUserAreas(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("can't get user areas: %w", err)
