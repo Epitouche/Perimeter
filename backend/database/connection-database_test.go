@@ -1,34 +1,38 @@
-package database
+package database_test
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	"area/test"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"area/database"
+	"area/test"
 )
 
 func TestConnection(t *testing.T) {
+	t.Parallel()
+
 	// Set environment variables for testing
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "5432")
-	os.Setenv("POSTGRES_USER", "testuser")
-	os.Setenv("POSTGRES_PASSWORD", "testpassword")
-	os.Setenv("POSTGRES_DB", "testdb")
+	t.Setenv("DB_HOST", "localhost")
+	t.Setenv("DB_PORT", "5432")
+	t.Setenv("POSTGRES_USER", "testuser")
+	t.Setenv("POSTGRES_PASSWORD", "testpassword")
+	t.Setenv("POSTGRES_DB", "testdb")
 
 	ctx := context.Background()
 
 	// Create Postgres container
 	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	defer func() {
@@ -37,20 +41,15 @@ func TestConnection(t *testing.T) {
 		}
 	}()
 
-	db := Connection()
+	db := database.Connection()
 	if db == nil {
 		t.Error("Expected a valid database connection, got nil")
 	}
-
-	// Clean up environment variables after test
-	os.Unsetenv("DB_HOST")
-	os.Unsetenv("DB_PORT")
-	os.Unsetenv("POSTGRES_USER")
-	os.Unsetenv("POSTGRES_PASSWORD")
-	os.Unsetenv("POSTGRES_DB")
 }
 
 func TestConnectionMissingEnvVars(t *testing.T) {
+	t.Parallel()
+
 	// Save original environment variables
 	originalEnv := map[string]string{
 		"DB_HOST":           os.Getenv("DB_HOST"),
@@ -60,13 +59,6 @@ func TestConnectionMissingEnvVars(t *testing.T) {
 		"POSTGRES_DB":       os.Getenv("POSTGRES_DB"),
 	}
 
-	// Clean up environment variables for testing missing cases
-	os.Unsetenv("DB_HOST")
-	os.Unsetenv("DB_PORT")
-	os.Unsetenv("POSTGRES_USER")
-	os.Unsetenv("POSTGRES_PASSWORD")
-	os.Unsetenv("POSTGRES_DB")
-
 	defer func() {
 		if r := recover(); r == nil {
 			t.Error("Expected panic due to missing environment variables, but did not panic")
@@ -74,9 +66,9 @@ func TestConnectionMissingEnvVars(t *testing.T) {
 
 		// Restore original environment variables
 		for key, value := range originalEnv {
-			os.Setenv(key, value)
+			t.Setenv(key, value)
 		}
 	}()
 
-	Connection()
+	database.Connection()
 }

@@ -84,6 +84,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("can't get user info: %w", err)
 	}
+
 	newArea := schemas.Area{
 		User:           user,
 		ActionOption:   result.ActionOption,
@@ -92,10 +93,12 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		Action:         service.actionService.FindById(result.ActionId),
 		Reaction:       service.reactionService.FindById(result.ReactionId),
 	}
+
 	id, error := service.repository.SaveArea(newArea)
 	if error != nil {
 		return "", fmt.Errorf("can't save area: %w", error)
 	}
+
 	newArea.Id = id
 	service.InitArea(newArea)
 	return "Area created successfully", nil
@@ -109,6 +112,8 @@ func (service *areaService) AreaExist(id uint64) bool {
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	channelArea := make(chan string)
 	println("go routine action")
+
+	// action
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// get the action with the id
 		for service.AreaExist(areaStartValue.Id) {
@@ -123,6 +128,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				println("action not found")
 				return
 			}
+
 			if area.Enable {
 				action(channelArea, area.ActionOption, area.Id)
 			}
@@ -132,6 +138,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	}(areaStartValue, channelArea)
 	// area
 	println("go routine area")
+
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// check if the area is in the databse
 		for service.AreaExist(areaStartValue.Id) {
@@ -140,7 +147,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			if err != nil {
 				return
 			}
+
 			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
+
 			if area.Enable {
 				resultAction := <-channelArea
 				resultReaction := reaction(area.ReactionOption, area.Id)

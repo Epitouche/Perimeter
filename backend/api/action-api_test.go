@@ -1,4 +1,4 @@
-package api
+package api_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	"area/api"
 	"area/schemas"
 )
 
@@ -23,12 +24,16 @@ func (m *MockActionController) GetActionsInfo(id uint64) ([]schemas.Action, erro
 }
 
 func TestGetActionsInfo(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	t.Parallel()
+
+	if gin.Mode() != gin.TestMode {
+		gin.SetMode(gin.TestMode)
+	}
 
 	mockController := new(MockActionController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
-	NewActionApi(mockController, apiRoutes) // Assuming NewActionApi registers routes
+	api.NewActionApi(mockController, apiRoutes) // Assuming NewActionApi registers routes
 
 	// t.Run("Success", func(t *testing.T) {
 	// 	mockActions := []schemas.Action{
@@ -65,6 +70,8 @@ func TestGetActionsInfo(t *testing.T) {
 	// })
 
 	t.Run("Unauthorized", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/action/info/1", nil)

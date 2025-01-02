@@ -1,4 +1,4 @@
-package api
+package api_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	"area/api"
 	"area/schemas"
 )
 
@@ -28,29 +29,31 @@ func (m *MockAreaController) GetUserAreas(ctx *gin.Context) ([]schemas.Area, err
 }
 
 func TestAreaAPI(t *testing.T) {
+	t.Parallel()
+
 	if gin.Mode() != gin.TestMode {
 		gin.SetMode(gin.TestMode)
 	}
-	t.Parallel()
+
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 
 	mockController := new(MockAreaController)
-	NewAreaAPI(mockController, apiRoutes)
+	api.NewAreaAPI(mockController, apiRoutes)
 
 	t.Run("TestCreateAreaNoToken", func(t *testing.T) {
 		t.Parallel()
 
 		mockController.On("CreateArea", mock.Anything).Return("Area created", nil)
 
-		w := httptest.NewRecorder()
+		responseRecorder := httptest.NewRecorder()
 		ctx := context.Background()
 
 		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/api/area/", nil)
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
-		assert.JSONEq(t, `{"error":"No token provided"}`, w.Body.String())
+		assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
+		assert.JSONEq(t, `{"error":"No token provided"}`, responseRecorder.Body.String())
 	})
 
 	// t.Run("TestGetUserAreasNoToken", func(t *testing.T) {
@@ -62,11 +65,11 @@ func TestAreaAPI(t *testing.T) {
 	// 	}
 	// 	mockController.On("GetUserAreas", mock.Anything).Return(mockAreas, nil)
 
-	// 	w := httptest.NewRecorder()
+	// 	responseRecorder := httptest.NewRecorder()
 	// 	req, _ := http.NewRequest(http.MethodGet, "/api/area", nil)
-	// 	router.ServeHTTP(w, req)
+	// 	router.ServeHTTP(responseRecorder, req)
 
-	// 	assert.Equal(t, http.StatusUnauthorized, w.Code)
-	// 	assert.JSONEq(t, `{"error":"No token provided"}`, w.Body.String())
+	// 	assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
+	// 	assert.JSONEq(t, `{"error":"No token provided"}`, responseRecorder.Body.String())
 	// })
 }

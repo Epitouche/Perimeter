@@ -239,6 +239,7 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 	if err != nil {
 		return schemas.GoogleProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
+
 	resp.Body.Close()
 	return result, nil
 }
@@ -250,6 +251,7 @@ func (service *gmailService) GetUserInfo(
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to get gmail profile because %w", err)
 	}
+
 	googleProfile, err := GetUserGoogleProfile(accessToken)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to get google profile because %w", err)
@@ -316,10 +318,12 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 		apiURL,
 		bytes.NewBuffer([]byte(body)),
 	)
+
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request" + err.Error()
 	}
+
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
 
@@ -329,6 +333,7 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 		fmt.Println("Error making request:", err)
 		return "Error making request:" + err.Error()
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {

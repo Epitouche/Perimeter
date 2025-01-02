@@ -35,5 +35,7 @@ func (m *MockController) GetUserInfo(ctx *gin.Context) (schemas.UserCredentials,
 
 func (m *MockController) GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error) {
 	args := m.Called(ctx)
-	return args.Get(0).([]schemas.DropboxFile), args.Error(1)
+	userFile = args.Get(0).([]schemas.DropboxFile)
+	err = args.Error(1)
+	return userFile, err
 }

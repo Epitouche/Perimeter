@@ -72,6 +72,7 @@ func (service *userService) Register(
 ) (jwtToken string, userID uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	fmt.Printf("%+v\n", userWiththisEmail)
+
 	if len(userWiththisEmail) != 0 {
 		// return service.Login(newUser)
 		return "", 0, schemas.ErrEmailAlreadyExist

@@ -1,6 +1,7 @@
 package schemas
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -24,3 +25,9 @@ type UserAllInfo struct {
 	User   User    `json:"user"`   // User
 	Tokens []Token `json:"tokens"` // List of tokens
 }
+
+var (
+	ErrUsernameTooShort = fmt.Errorf("username must be at least %d characters long", UsernameMinimumLength)
+	ErrPasswordTooShort = fmt.Errorf("password must be at least %d characters long", PasswordMinimumLength)
+	ErrEmailTooShort    = fmt.Errorf("email must be at least %d characters long", EmailMinimumLength)
+)

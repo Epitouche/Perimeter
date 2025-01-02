@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -55,7 +56,7 @@ func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, err
 	if err != nil {
 		log.Printf("failed to start container: %s", err)
 
-		return postgresContainer, err
+		return postgresContainer, fmt.Errorf("failed to start container: %w", err)
 	}
 
 	host, err = postgresContainer.Host(ctx)

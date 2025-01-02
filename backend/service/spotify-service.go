@@ -230,6 +230,7 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 				err,
 			)
 		}
+
 		resp.Body.Close()
 		return schemas.User{}, fmt.Errorf(
 			"unable to get user info because %v %v",
@@ -302,6 +303,7 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 		fmt.Println("Error making request:", err)
 		return "Error making request:" + err.Error()
 	}
+
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)

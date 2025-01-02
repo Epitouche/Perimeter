@@ -38,7 +38,6 @@ func NewAreaAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup
 //	@Router			/area [post]
 func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/", func(ctx *gin.Context) {
-		println("CreateArea API")
 		response, err := api.controller.CreateArea(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -46,6 +45,7 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, &schemas.Response{
 			Message: response,
 		})
@@ -74,6 +74,7 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }
