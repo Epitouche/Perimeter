@@ -1,10 +1,11 @@
 package database
 
 import (
-	"area/test"
 	"context"
 	"os"
 	"testing"
+
+	"area/test"
 
 	"github.com/stretchr/testify/assert"
 )
