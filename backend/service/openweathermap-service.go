@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -166,7 +167,9 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 	data.Set("limit", "1")
 	data.Set("appid", APIKey)
 
-	req, err := http.NewRequest(http.MethodGet, apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
 	if err != nil {
 		return coordinates, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -188,6 +191,9 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 			err,
 		)
 	}
+
+	resp.Body.Close()
+
 	coordinates.Lat = result[0].Lat
 	coordinates.Lon = result[0].Lon
 	return coordinates, nil
@@ -209,7 +215,9 @@ func getWeatherOfCoodinate(coordinates struct {
 	data.Set("appid", APIKey)
 	data.Set("units", "metric") // to get temperature in celsius
 
-	req, err := http.NewRequest(http.MethodGet, apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
 	if err != nil {
 		return weather, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -231,6 +239,8 @@ func getWeatherOfCoodinate(coordinates struct {
 			err,
 		)
 	}
+	resp.Body.Close()
+
 	weather = result
 	return weather, nil
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -126,7 +127,9 @@ func (service *githubService) AuthGetServiceAccessToken(
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
 
-	req, err := http.NewRequest(http.MethodPost, apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -160,8 +163,10 @@ func (service *githubService) AuthGetServiceAccessToken(
 }
 
 func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/user", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.github.com/user", nil)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}

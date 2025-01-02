@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -64,7 +65,9 @@ func TestGetActionsInfo(t *testing.T) {
 	// })
 
 	t.Run("Unauthorized", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/api/action/info/1", nil)
+		ctx := context.Background()
+
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/action/info/1", nil)
 		w := httptest.NewRecorder()
 		router.ServeHTTP(w, req)
 

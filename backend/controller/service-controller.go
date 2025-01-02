@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +47,7 @@ func (controller *serviceController) AboutJSON(
 		})
 	}
 	aboutJSON.Client.Host = ctx.ClientIP()
-	aboutJSON.Server.CurrentTime = fmt.Sprintf("%d", time.Now().Unix())
+	aboutJSON.Server.CurrentTime = strconv.FormatInt(time.Now().Unix(), 10)
 	aboutJSON.Server.Services = allServicesJSON
 	return aboutJSON, nil
 }

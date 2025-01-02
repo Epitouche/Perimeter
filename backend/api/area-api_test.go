@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -43,7 +44,9 @@ func TestAreaAPI(t *testing.T) {
 		mockController.On("CreateArea", mock.Anything).Return("Area created", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/area/", nil)
+		ctx := context.Background()
+
+		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/api/area/", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)

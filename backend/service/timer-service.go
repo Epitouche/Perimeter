@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -114,7 +115,8 @@ func (service *timerService) GetReactionsName() []string {
 func getActualTime() (schemas.TimeApiResponse, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
-	req, err := http.NewRequest(http.MethodGet, apiURL, nil)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
 	if err != nil {
 		return schemas.TimeApiResponse{}, schemas.ErrCreateRequest
 	}

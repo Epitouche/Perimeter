@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -30,7 +31,8 @@ func TestGmailAPI(t *testing.T) {
 		mockController.On("RedirectToService", mock.Anything).Return("http://example.com/auth", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/api/gmail/auth", nil)
+		ctx := context.Background()
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/gmail/auth", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -42,7 +44,8 @@ func TestGmailAPI(t *testing.T) {
 		mockController.On("HandleServiceCallback", mock.Anything).Return("mock_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/gmail/auth/callback", nil)
+		ctx := context.Background()
+		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/api/gmail/auth/callback", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -55,7 +58,13 @@ func TestGmailAPI(t *testing.T) {
 			Return("mock_mobile_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/gmail/auth/callback/mobile", nil)
+		ctx := context.Background()
+		req, _ := http.NewRequestWithContext(
+			ctx,
+			http.MethodPost,
+			"/api/gmail/auth/callback/mobile",
+			nil,
+		)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)

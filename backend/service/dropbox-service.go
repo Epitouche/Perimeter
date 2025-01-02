@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -177,8 +178,10 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 func (service *dropboxService) GetUserInfo(
 	accessToken string,
 ) (user schemas.User, err error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest(http.MethodGet,
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
 		"https://api.dropboxapi.com/2/users/get_account",
 		nil,
 	)
@@ -215,8 +218,11 @@ func (service *dropboxService) GetUserInfo(
 func (service *dropboxService) GetUserFileList(
 	userDropboxToken string,
 ) (fileList []schemas.DropboxFile, err error) {
+	ctx := context.Background()
+
 	reqBody := `{"limit": 100}`
-	req, err := http.NewRequest(http.MethodPost,
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
 		"https://api.dropboxapi.com/2/file_requests/list_v2",
 		strings.NewReader(reqBody),
 	)
@@ -233,7 +239,7 @@ func (service *dropboxService) GetUserFileList(
 		return fileList, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	result := schemas.ListFileRequestsV2Result{}
+	result := schemas.DropboxListFileRequestsV2Result{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return fileList, fmt.Errorf("unable to decode response because %w", err)
@@ -244,6 +250,38 @@ func (service *dropboxService) GetUserFileList(
 	fileList = append(fileList, result.FileRequests...)
 
 	return fileList, nil
+}
+
+func (service *dropboxService) GetUserFileCount(
+	userDropboxToken string,
+) (numberFile uint64, err error) {
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.dropboxapi.com/2/file_requests/count", nil,
+	)
+	if err != nil {
+		return numberFile, fmt.Errorf("unable to create request because %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return numberFile, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	result := schemas.DropboxCountFileRequestsResult{}
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return numberFile, fmt.Errorf("unable to decode response because %w", err)
+	}
+
+	resp.Body.Close()
+
+	numberFile = result.FileRequestCount
+	return numberFile, nil
 }
 
 // Actions functions

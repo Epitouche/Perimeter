@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -142,7 +143,9 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest(http.MethodPost, apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -180,8 +183,10 @@ func (service *gmailService) AuthGetServiceAccessToken(
 }
 
 func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest(
+	req, err := http.NewRequestWithContext(ctx,
 		http.MethodGet,
 		"https://gmail.googleapis.com/gmail/v1/users/me/profile",
 		nil,
@@ -210,9 +215,9 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 }
 
 func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err error) {
+	ctx := context.Background()
 	// Create a new HTTP request
-	req, err := http.NewRequest(
-		http.MethodGet,
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
 		"https://people.googleapis.com/v1/people/me?personFields=names",
 		nil,
 	)
@@ -303,7 +308,14 @@ func (service *gmailService) GmailReactionSendMail(option string, idArea uint64)
 
 	body := fmt.Sprintf(`{"raw": "%s"}`, raw)
 
-	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer([]byte(body)))
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		apiURL,
+		bytes.NewBuffer([]byte(body)),
+	)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request" + err.Error()

@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -140,7 +141,9 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest(http.MethodPost, apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf(
 			"unable to create request because %w",
@@ -194,8 +197,14 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 }
 
 func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+	ctx := context.Background()
 	// Create a new HTTP request
-	req, err := http.NewRequest(http.MethodGet, "https://api.spotify.com/v1/me", nil)
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		"https://api.spotify.com/v1/me",
+		nil,
+	)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -271,8 +280,14 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 		},
 		"position_ms": 0
 	}`
+	ctx := context.Background()
 
-	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer([]byte(body)))
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPut,
+		apiURL,
+		bytes.NewBuffer([]byte(body)),
+	)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request:" + err.Error()

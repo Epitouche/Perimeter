@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -51,8 +52,10 @@ func (service *tokenService) SaveToken(
 }
 
 func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/user", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.github.com/user", nil)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to create request because %w", err)
 	}

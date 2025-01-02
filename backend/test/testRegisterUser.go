@@ -2,6 +2,7 @@ package test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -18,11 +19,13 @@ func RegisterUser(router *gin.Engine, t *testing.T) (bearerToken string) {
 			"email": "test@gmail.com",
 			"password": "totototo"
 		}`
-	reqBody := bytes.NewBuffer([]byte(requestBody))
+	reqBody := bytes.NewBufferString(requestBody)
 
 	// Perform the HTTP POST request
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest(http.MethodPost, "/api/v1/user/register", reqBody)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "/api/v1/user/register", reqBody)
 	assert.NoError(t, err, "failed to create request")
 	req.Header.Set("Content-Type", "application/json")
 
@@ -49,14 +52,17 @@ func RegisterUser(router *gin.Engine, t *testing.T) (bearerToken string) {
 func LoginUser(router *gin.Engine, t *testing.T) (bearerToken string) {
 	// Define the raw JSON body for the test
 	requestBody := `{
-		"username": "toto",
-		"password": "totototo"
-	}`
-	reqBody := bytes.NewBuffer([]byte(requestBody))
+        "username": "toto",
+        "password": "totototo"
+    }`
+	reqBody := bytes.NewBufferString(requestBody)
+
+	// Create a context
+	ctx := context.Background()
 
 	// Perform the HTTP POST request
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest(http.MethodPost, "/api/v1/user/login", reqBody)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "/api/v1/user/login", reqBody)
 	assert.NoError(t, err, "failed to create request")
 	req.Header.Set("Content-Type", "application/json")
 

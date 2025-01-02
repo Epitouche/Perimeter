@@ -90,7 +90,7 @@ func (service *userService) Register(
 	newUser.Id = service.repository.FindByUserName(newUser.Username)[0].Id
 
 	return service.serviceJWT.GenerateToken(
-		fmt.Sprint(newUser.Id),
+		strconv.FormatUint(newUser.Id, 10),
 		newUser.Username,
 		false,
 	), service.repository.FindByUserName(newUser.Username)[0].Id, nil

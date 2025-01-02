@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,7 +32,8 @@ func TestSpotifyAPI(t *testing.T) {
 		mockController.On("RedirectToService", mock.Anything).Return("http://example.com/auth", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/api/spotify/auth", nil)
+		ctx := context.Background()
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/spotify/auth", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -43,7 +45,14 @@ func TestSpotifyAPI(t *testing.T) {
 		mockController.On("HandleServiceCallback", mock.Anything).Return("mock_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/spotify/auth/callback", nil)
+		ctx := context.Background()
+
+		req, _ := http.NewRequestWithContext(
+			ctx,
+			http.MethodPost,
+			"/api/spotify/auth/callback",
+			nil,
+		)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -56,7 +65,14 @@ func TestSpotifyAPI(t *testing.T) {
 			Return("mock_mobile_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/spotify/auth/callback/mobile", nil)
+		ctx := context.Background()
+
+		req, _ := http.NewRequestWithContext(
+			ctx,
+			http.MethodPost,
+			"/api/spotify/auth/callback/mobile",
+			nil,
+		)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,6 +22,7 @@ func TestDropboxAPI(t *testing.T) {
 	mockController := new(test.MockController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
+
 	NewDropboxAPI(mockController, apiRoutes)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
@@ -28,7 +30,9 @@ func TestDropboxAPI(t *testing.T) {
 		mockController.On("RedirectToService", mock.Anything).Return("http://example.com/auth", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/api/dropbox/auth", nil)
+		ctx := context.Background()
+
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/dropbox/auth", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -40,7 +44,14 @@ func TestDropboxAPI(t *testing.T) {
 		mockController.On("HandleServiceCallback", mock.Anything).Return("mock_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/dropbox/auth/callback", nil)
+		ctx := context.Background()
+
+		req, _ := http.NewRequestWithContext(
+			ctx,
+			http.MethodPost,
+			"/api/dropbox/auth/callback",
+			nil,
+		)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -53,7 +64,13 @@ func TestDropboxAPI(t *testing.T) {
 			Return("mock_mobile_token", nil)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodPost, "/api/dropbox/auth/callback/mobile", nil)
+		ctx := context.Background()
+		req, _ := http.NewRequestWithContext(
+			ctx,
+			http.MethodPost,
+			"/api/dropbox/auth/callback/mobile",
+			nil,
+		)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)

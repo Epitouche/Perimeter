@@ -70,8 +70,12 @@ type DropboxFile struct {
 	URL         string    `json:"url"`
 }
 
-type ListFileRequestsV2Result struct {
+type DropboxListFileRequestsV2Result struct {
 	Cursor       string        `json:"cursor"`
 	FileRequests []DropboxFile `json:"file_requests"`
 	HasMore      bool          `json:"has_more"`
+}
+
+type DropboxCountFileRequestsResult struct {
+	FileRequestCount uint64 `json:"file_request_count"`
 }
