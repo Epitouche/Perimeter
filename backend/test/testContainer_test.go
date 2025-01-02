@@ -11,7 +11,6 @@ import (
 )
 
 func TestCreatePostgresContainer(t *testing.T) {
-
 	// Set environment variables for the test
 	t.Setenv("DB_HOST", "localhost")
 	t.Setenv("DB_PORT", "5432")

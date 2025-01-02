@@ -13,7 +13,6 @@ import (
 )
 
 func TestConnection(t *testing.T) {
-
 	// Set environment variables for testing
 	t.Setenv("DB_HOST", "localhost")
 	t.Setenv("DB_PORT", "5432")
