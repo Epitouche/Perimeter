@@ -16,10 +16,6 @@ import (
 
 func TestGithubAPI(t *testing.T) {
 	t.Parallel()
-	// set the router to test mode
-	if gin.Mode() != gin.TestMode {
-		gin.SetMode(gin.TestMode)
-	}
 
 	mockController := new(test.MockController)
 	router := gin.Default()

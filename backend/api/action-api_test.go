@@ -26,10 +26,6 @@ func (m *MockActionController) GetActionsInfo(id uint64) ([]schemas.Action, erro
 func TestGetActionsInfo(t *testing.T) {
 	t.Parallel()
 
-	if gin.Mode() != gin.TestMode {
-		gin.SetMode(gin.TestMode)
-	}
-
 	mockController := new(MockActionController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")

@@ -13,7 +13,6 @@ import (
 )
 
 func TestConnection(t *testing.T) {
-	t.Parallel()
 
 	// Set environment variables for testing
 	t.Setenv("DB_HOST", "localhost")
@@ -66,7 +65,7 @@ func TestConnectionMissingEnvVars(t *testing.T) {
 
 		// Restore original environment variables
 		for key, value := range originalEnv {
-			t.Setenv(key, value)
+			os.Setenv(key, value)
 		}
 	}()
 

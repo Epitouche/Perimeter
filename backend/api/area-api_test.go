@@ -31,10 +31,6 @@ func (m *MockAreaController) GetUserAreas(ctx *gin.Context) ([]schemas.Area, err
 func TestAreaAPI(t *testing.T) {
 	t.Parallel()
 
-	if gin.Mode() != gin.TestMode {
-		gin.SetMode(gin.TestMode)
-	}
-
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 

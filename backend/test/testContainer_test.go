@@ -11,7 +11,6 @@ import (
 )
 
 func TestCreatePostgresContainer(t *testing.T) {
-	ctx := context.Background()
 
 	// Set environment variables for the test
 	t.Setenv("DB_HOST", "localhost")
@@ -19,6 +18,8 @@ func TestCreatePostgresContainer(t *testing.T) {
 	t.Setenv("POSTGRES_USER", "testuser")
 	t.Setenv("POSTGRES_PASSWORD", "testpassword")
 	t.Setenv("POSTGRES_DB", "testdb")
+
+	ctx := context.Background()
 
 	container, err := test.CreatePostgresContainer(ctx)
 	require.NoError(t, err, "failed to create Postgres container")

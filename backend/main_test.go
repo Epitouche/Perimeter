@@ -6,14 +6,24 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"area/schemas"
 	"area/test"
 )
+
+func TestMain(m *testing.M) {
+	// Set the Gin mode to TestMode
+	gin.SetMode(gin.TestMode)
+
+	// Run the tests
+	os.Exit(m.Run())
+}
 
 func TestPingRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests

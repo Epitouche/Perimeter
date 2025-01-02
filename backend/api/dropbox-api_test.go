@@ -16,9 +16,6 @@ import (
 
 func TestDropboxAPI(t *testing.T) {
 	t.Parallel()
-	if gin.Mode() != gin.TestMode {
-		gin.SetMode(gin.TestMode)
-	}
 
 	mockController := new(test.MockController)
 	router := gin.Default()
