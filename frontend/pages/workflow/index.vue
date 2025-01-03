@@ -21,9 +21,6 @@ const onCreate = async () => {
   console.log("reactionId:", websiteStore.reactionId);
   console.log("reactionOptions:", websiteStore.reactionOptions);
 
-  createdMessage.value = "Workflow created successfully!";
-  showPageContent.value = false;
-
   try {
     error.value = null;
     const response = await $fetch("/api/workflow/create", {
@@ -37,6 +34,8 @@ const onCreate = async () => {
       },
     });
     console.log("response:", response);
+    createdMessage.value = "Workflow created successfully!";
+    showPageContent.value = false;
     setTimeout(() => {
       createdMessage.value = null;
       showPageContent.value = true;
@@ -44,11 +43,13 @@ const onCreate = async () => {
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
   } catch (error: unknown) {
+    alert("An error occurred while creating the workflow, please try again");
     errorMessage.value = handleErrorStatus(error);
-
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }
+    websiteStore.resetWorkflowPage();
+    router.push("/workflow");
   }
 };
 
@@ -126,10 +127,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div
-      v-if="createdMessage"
-      class="flex justify-center items-center text-7xl font-bold h-screen w-screen"
-    >
+    <div v-if="createdMessage" class="flex justify-center items-center text-7xl font-bold h-screen w-screen">
       {{ createdMessage }}
     </div>
     <div v-if="showPageContent">
@@ -139,9 +137,7 @@ onMounted(() => {
       <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
         <UButton
           class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
-          @click="onCancel()"
-          >Cancel</UButton
-        >
+          @click="onCancel()">Cancel</UButton>
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
@@ -150,33 +146,20 @@ onMounted(() => {
         </h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
-          <ReActionButton
-            title="Action"
-            link="/workflow/actions"
-            :is-disabled="false"
-            :is-selected="websiteStore.actionIsSelected"
-            :service-id="Number(websiteStore.actionServiceId)"
-          />
-          <div
-            :class="[
-              'bg-black min-w-4 min-h-28',
-              websiteStore.reactionButtonisDisabled
-                ? 'bg-opacity-60'
-                : 'bg-opacity-100',
-            ]"
-          />
-          <ReActionButton
-            title="Reaction"
-            link="/workflow/reactions"
-            :is-disabled="websiteStore.reactionButtonisDisabled"
-            :is-selected="websiteStore.reactionIsSelected"
-            :service-id="Number(websiteStore.reactionServiceId)"
-          />
+          <ReActionButton title="Action" link="/workflow/actions" :is-disabled="false"
+            :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)" />
+          <div :class="[
+            'bg-black min-w-4 min-h-28',
+            websiteStore.reactionButtonisDisabled
+              ? 'bg-opacity-60'
+              : 'bg-opacity-100',
+          ]" />
+          <ReActionButton title="Reaction" link="/workflow/reactions"
+            :is-disabled="websiteStore.reactionButtonisDisabled" :is-selected="websiteStore.reactionIsSelected"
+            :service-id="Number(websiteStore.reactionServiceId)" />
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
-          <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate"
-            >Create</UButton
-          >
+          <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate">Create</UButton>
         </div>
       </div>
     </div>
