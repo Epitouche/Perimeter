@@ -58,7 +58,9 @@ export const useWebsiteStore = defineStore("websiteStore", {
     },
 
     isValidJsonObject(value: unknown): value is Record<string, unknown> {
-      return typeof value === "object" && value !== null && !Array.isArray(value);
+      return (
+        typeof value === "object" && value !== null && !Array.isArray(value)
+      );
     },
 
     clearWorkflowState() {

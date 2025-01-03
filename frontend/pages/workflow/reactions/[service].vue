@@ -34,7 +34,7 @@ const getServiceInfo = async () => {
           serviceId: serviceId,
         },
       });
-      console.log("serviceInfo: ", serviceInfo.value)
+      console.log("serviceInfo: ", serviceInfo.value);
     } catch (error: unknown) {
       errorMessage.value = handleErrorStatus(error);
 
