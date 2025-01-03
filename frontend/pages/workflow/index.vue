@@ -60,14 +60,16 @@ const onCancel = () => {
   router.push("/workflow");
 };
 
-function validateOptions(options: Record<string, unknown>): Record<string, unknown> {
+function validateOptions(
+  options: Record<string, unknown>,
+): Record<string, unknown> {
   return Object.fromEntries(
     Object.entries(options).map(([key, value]) => {
       if (typeof value === "string" && !isNaN(Number(value))) {
         return [key, Number(value)];
       }
       return [key, value];
-    })
+    }),
   );
 }
 
@@ -101,7 +103,11 @@ onMounted(() => {
       try {
         actionOptions = JSON.parse(actionOptionsString);
       } catch (err) {
-        console.error("Failed to parse actionOptions:", actionOptionsString, err);
+        console.error(
+          "Failed to parse actionOptions:",
+          actionOptionsString,
+          err,
+        );
         actionOptions = {};
       }
     }
@@ -122,7 +128,11 @@ onMounted(() => {
       try {
         reactionOptions = JSON.parse(reactionOptionsString);
       } catch (err) {
-        console.error("Failed to parse reactionOptions:", reactionOptionsString, err);
+        console.error(
+          "Failed to parse reactionOptions:",
+          reactionOptionsString,
+          err,
+        );
         reactionOptions = {};
       }
     }
