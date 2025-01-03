@@ -21,8 +21,18 @@ const onCreate = async () => {
   console.log("reactionId:", websiteStore.reactionId);
   console.log("reactionOptions:", websiteStore.reactionOptions);
 
+  error.value = null;
+
   try {
-    error.value = null;
+    if (
+      typeof websiteStore.actionOptions !== "object" ||
+      typeof websiteStore.reactionOptions !== "object"
+    ) {
+      console.log("options are not JSON objects.");
+    } else {
+      console.log("options are json objects");
+    }
+
     const response = await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
@@ -43,11 +53,12 @@ const onCreate = async () => {
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
   } catch (error: unknown) {
-    alert("An error occurred while creating the workflow, please try again");
+    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }
+    alert("An error occurred while creating the workflow, please try again");
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
   }
