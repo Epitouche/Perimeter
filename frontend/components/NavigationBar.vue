@@ -18,7 +18,7 @@ const clearTokenAndLogout = () => {
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         class="h-[4em] w-[4em]"
-      >
+      />
       <span class="font-black text-[2em]">Perimeter</span>
     </div>
 

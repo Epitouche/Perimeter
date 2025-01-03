@@ -24,7 +24,7 @@ const state = reactive<{ [key: number]: Record<string, string | number> }>(
   Object.fromEntries(
     props.types.map((type) => [
       type.id,
-      typeof type.option === "string" 
+      typeof type.option === "string"
         ? JSON.parse(type.option)
         : type.option || {},
     ]),
