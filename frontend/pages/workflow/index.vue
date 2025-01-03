@@ -24,15 +24,6 @@ const onCreate = async () => {
   error.value = null;
 
   try {
-    if (
-      typeof websiteStore.actionOptions !== "object" ||
-      typeof websiteStore.reactionOptions !== "object"
-    ) {
-      console.log("options are not JSON objects.");
-    } else {
-      console.log("options are json objects");
-    }
-
     const response = await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
@@ -69,6 +60,17 @@ const onCancel = () => {
   router.push("/workflow");
 };
 
+function validateOptions(options: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(options).map(([key, value]) => {
+      if (typeof value === "string" && !isNaN(Number(value))) {
+        return [key, Number(value)];
+      }
+      return [key, value];
+    })
+  );
+}
+
 onMounted(() => {
   isLoading.value = true;
   try {
@@ -89,42 +91,43 @@ onMounted(() => {
   };
 
   const actionId = getQueryParam(route.query.actionId);
-  const reactionId = getQueryParam(route.query.reactionId);
 
   if (actionId) {
     websiteStore.actionId = actionId;
-    try {
-      websiteStore.actionOptions = JSON.parse(
-        route.query.actionOptions ? String(route.query.actionOptions) : "{}",
-      );
-    } catch (err) {
-      console.error(
-        "Failed to parse actionOptions:",
-        route.query.actionOptions,
-        err,
-      );
-      websiteStore.actionOptions = {};
+    const actionOptionsString = getQueryParam(route.query.actionOptions);
+    let actionOptions = {};
+
+    if (actionOptionsString) {
+      try {
+        actionOptions = JSON.parse(actionOptionsString);
+      } catch (err) {
+        console.error("Failed to parse actionOptions:", actionOptionsString, err);
+        actionOptions = {};
+      }
     }
+    actionOptions = validateOptions(actionOptions);
+    websiteStore.actionOptions = actionOptions;
     websiteStore.actionServiceId = getQueryParam(route.query.actionServiceId);
     websiteStore.onActionSelected();
   }
 
+  const reactionId = getQueryParam(route.query.reactionId);
+
   if (reactionId) {
     websiteStore.reactionId = reactionId;
-    try {
-      websiteStore.reactionOptions = JSON.parse(
-        route.query.reactionOptions
-          ? String(route.query.reactionOptions)
-          : "{}",
-      );
-    } catch (err) {
-      console.error(
-        "Failed to parse reactionOptions:",
-        route.query.reactionOptions,
-        err,
-      );
-      websiteStore.reactionOptions = {};
+    const reactionOptionsString = getQueryParam(route.query.reactionOptions);
+    let reactionOptions = {};
+
+    if (reactionOptionsString) {
+      try {
+        reactionOptions = JSON.parse(reactionOptionsString);
+      } catch (err) {
+        console.error("Failed to parse reactionOptions:", reactionOptionsString, err);
+        reactionOptions = {};
+      }
     }
+    reactionOptions = validateOptions(reactionOptions);
+    websiteStore.reactionOptions = reactionOptions;
     websiteStore.reactionServiceId = getQueryParam(
       route.query.reactionServiceId,
     );
@@ -157,18 +160,18 @@ onMounted(() => {
         </h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
-          <ReActionButton
-title="Action" link="/workflow/actions" :is-disabled="false"
+          <ReActionButton 
+          title="Action" link="/workflow/actions" :is-disabled="false"
             :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)" />
-          <div
-:class="[
+          <div 
+          :class="[
             'bg-black min-w-4 min-h-28',
             websiteStore.reactionButtonisDisabled
               ? 'bg-opacity-60'
               : 'bg-opacity-100',
           ]" />
           <ReActionButton
-title="Reaction" link="/workflow/reactions"
+           title="Reaction" link="/workflow/reactions"
             :is-disabled="websiteStore.reactionButtonisDisabled" :is-selected="websiteStore.reactionIsSelected"
             :service-id="Number(websiteStore.reactionServiceId)" />
         </div>

@@ -44,7 +44,7 @@ const openConfig = (typeId: number) => {
 };
 
 const onSubmit = (typeId: number) => {
-  const modifiedOptions = state[typeId];
+  const modifiedOptions = { ...state[typeId] };
 
   router.push({
     name: "workflow",
