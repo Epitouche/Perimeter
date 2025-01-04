@@ -59,7 +59,6 @@ func (repo *actionRepository) Delete(action schemas.Action) {
 func (repo *actionRepository) FindAll() []schemas.Action {
 	var action []schemas.Action
 	err := repo.db.Connection.Preload("Service").Find(&action)
-
 	if err.Error != nil {
 		panic(err.Error)
 	}
@@ -69,7 +68,6 @@ func (repo *actionRepository) FindAll() []schemas.Action {
 func (repo *actionRepository) FindByName(actionName string) []schemas.Action {
 	var actions []schemas.Action
 	err := repo.db.Connection.Where(&schemas.Action{Name: actionName}).Find(&actions)
-
 	if err.Error != nil {
 		panic(err.Error)
 	}
@@ -80,7 +78,6 @@ func (repo *actionRepository) FindByServiceId(serviceId uint64) []schemas.Action
 	var actions []schemas.Action
 	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
 		Find(&actions)
-
 	if err.Error != nil {
 		panic(fmt.Errorf("failed to find action by service id: %w", err.Error))
 	}
@@ -94,7 +91,6 @@ func (repo *actionRepository) FindByServiceByName(
 	var actions []schemas.Action
 	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).
 		Find(&actions)
-
 	if err.Error != nil {
 		panic(err.Error)
 	}
@@ -104,7 +100,6 @@ func (repo *actionRepository) FindByServiceByName(
 func (repo *actionRepository) FindById(actionId uint64) schemas.Action {
 	var action schemas.Action
 	err := repo.db.Connection.Where(&schemas.Action{Id: actionId}).First(&action)
-
 	if err.Error != nil {
 		panic(err.Error)
 	}

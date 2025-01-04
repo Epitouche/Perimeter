@@ -13,7 +13,6 @@ type ServiceRepository interface {
 	FindAll() []schemas.Service
 	FindAllByName(name schemas.ServiceName) []schemas.Service
 	FindByName(name schemas.ServiceName) schemas.Service
-	FindById(id uint64) schemas.Service
 }
 
 type serviceRepository struct {
@@ -78,13 +77,4 @@ func (repo *serviceRepository) FindByName(name schemas.ServiceName) schemas.Serv
 		panic(err.Error)
 	}
 	return services
-}
-
-func (repo *serviceRepository) FindById(id uint64) schemas.Service {
-	var service schemas.Service
-	err := repo.db.Connection.Where(&schemas.Service{Id: id}).First(&service)
-	if err.Error != nil {
-		panic(err.Error)
-	}
-	return service
 }

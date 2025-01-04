@@ -1,5 +1,3 @@
-import { handleError } from "~/utils/handleErrors";
-
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   try {
@@ -13,7 +11,7 @@ export default defineEventHandler(async (event) => {
     });
     //console.log(response);
     return response;
-  } catch (error: unknown) {
-    handleError(error);
+  } catch (error) {
+    console.log("Error :", error);
   }
 });

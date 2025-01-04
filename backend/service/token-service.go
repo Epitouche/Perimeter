@@ -47,7 +47,7 @@ func (service *tokenService) SaveToken(
 			return t.Id, nil
 		}
 	}
-	return 0, schemas.ErrUnableToSaveToken
+	return 0, fmt.Errorf("unable to save token")
 }
 
 func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {

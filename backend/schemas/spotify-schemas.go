@@ -1,8 +1,6 @@
 package schemas
 
-import (
-	"errors"
-)
+import "errors"
 
 type SpotifyAction string
 

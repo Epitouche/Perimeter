@@ -29,11 +29,11 @@ const authApiCall = async (label: string) => {
 };
 
 const handleClick = (label: string) => {
-  if (label == "my-icons:color-spotify") {
+  if (label == "i-logos-spotify-icon") {
     console.log("Spotify icon clicked");
     const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
     authApiCall(spotifyApiLink);
-  } else if (label === "my-icons:color-google") {
+  } else if (label === "i-logos-google-icon") {
     console.log("Google icon clicked");
     const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
     authApiCall(gmailApiLink);
@@ -49,12 +49,12 @@ const handleClick = (label: string) => {
     class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly"
   >
     <UButton
+      variant="ghost"
       v-for="(app, index) in apps"
       :key="index"
-      variant="ghost"
+      @click="handleClick(app)"
       :icon="app"
       class="app_button basis-1/3 flex justify-center"
-      @click="handleClick(app)"
     />
   </UContainer>
 </template>

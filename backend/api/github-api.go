@@ -21,7 +21,6 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 	}
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
-	api.HandleServiceCallbackMobile(apiRoutes)
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
@@ -39,7 +38,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 //	@Router			/github/auth [get]
 func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
-		authURL, err := api.controller.RedirectToService(ctx)
+		authURL, err := api.controller.RedirectToService(ctx, apiRoutes.BasePath()+"/auth/callback")
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
@@ -77,31 +76,6 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	})
 }
 
-// HandleServiceCallbackMobile godoc
-//
-//	@Summary		give authentication token to mobile
-//	@Description	give authentication token to mobile
-//	@Tags			Spotify
-//	@Accept			json
-//	@Produce		json
-//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Param			Authorization	header		string					false	"Bearer token"
-//	@Success		200				{object}	schemas.JWT
-//	@Failure		500				{object}	schemas.ErrorResponse
-//	@Router			/github/auth/callback/mobile [post]
-func (api *GithubAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
-	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
-				Error: err.Error(),
-			})
-		} else {
-			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
-		}
-	})
-}
-
 // GetUserInfo godoc
 //
 //	@Summary		give user info of github
@@ -109,13 +83,14 @@ func (api *GithubAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 //	@Tags			Github
 //	@Accept			json
 //	@Produce		json
+//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.UserCredentials
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/github/info [get]
+//	@Router			/github/info/user [get]
 func (api *GithubAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/", func(ctx *gin.Context) {
+	apiRoutes.GET("/user", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{

@@ -21,8 +21,7 @@
 				"Nuxtr.nuxt-vscode-extentions",
 				"Tyriar.lorem-ipsum",
 				"ZaferAYAN.lorem-picsum",
-				"Cardinal90.multi-cursor-case-preserve",
-				"cweijan.vscode-postgresql-client2" // pgadmin client
+				"Cardinal90.multi-cursor-case-preserve"
 			]
 		}
 	},

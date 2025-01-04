@@ -42,6 +42,22 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    build:
+      context: ./pgadmin
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_ENHANCED_CSFR: "False"
+    ports:
+      - '0.0.0.0:8079:80'
+    networks:
+      - app-networks-dev
+
   server:
     build:
       context: .devcontainer/backend

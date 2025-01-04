@@ -54,7 +54,6 @@ func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, err
 	)
 	if err != nil {
 		log.Printf("failed to start container: %s", err)
-
 		return postgresContainer, err
 	}
 
@@ -62,7 +61,6 @@ func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, err
 	if err != nil {
 		log.Fatalf("failed to get container host: %s", err)
 	}
-
 	mappedPort, err := postgresContainer.MappedPort(ctx, "5432")
 	if err != nil {
 		log.Fatalf("failed to get container port: %s", err)

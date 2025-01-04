@@ -6,7 +6,6 @@ import (
 )
 
 type AreaResultService interface {
-	Save(newAreaResult schemas.AreaResult)
 	FindAll() []schemas.AreaResult
 }
 
@@ -21,10 +20,6 @@ func NewAreaResultService(
 		repository: repository,
 	}
 	return &newService
-}
-
-func (service *areaResultService) Save(newAreaResult schemas.AreaResult) {
-	service.repository.Save(newAreaResult)
 }
 
 func (service *areaResultService) FindAll() []schemas.AreaResult {

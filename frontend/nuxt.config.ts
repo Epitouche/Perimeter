@@ -9,23 +9,6 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint", "@pinia/nuxt"],
 
-  icon: {
-    customCollections: [
-      {
-        prefix: "my-icons",
-        dir: "./assets/my-icons",
-      },
-    ],
-  },
-
-  app: {
-    head: {
-      titleTemplate: "Perimeter",
-      link: [
-        { rel: "icon", type: "image/x-icon", href: "/PerimeterIcon.png" },
-      ],
-    },
-  },
+  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint"],
 });

@@ -99,7 +99,6 @@ func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
 	var reactionResult schemas.Reaction
 	repo.db.Connection.Where(&schemas.Reaction{Id: area.ReactionId}).First(&reactionResult)
 	area.Reaction = reactionResult
-
 	if err.Error != nil {
 		println(err.Error)
 		return schemas.Area{}, fmt.Errorf("failed to find action by id: %w", err.Error)

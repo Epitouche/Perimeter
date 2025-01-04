@@ -11,112 +11,43 @@ import (
 	"area/schemas"
 )
 
-// Constructor
-
 type GithubService interface {
-	// Service interface functions
-	GetServiceActionInfo() []schemas.Action
-	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
-	// Service specific functions
-	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
-	GetUserInfo(accessToken string) (user schemas.User, err error)
-	// Actions functions
-	// Reactions functions
+	AuthGetServiceAccessToken(code string, path string) (schemas.GitHubTokenResponse, error)
+	GetUserInfo(accessToken string) (schemas.GithubUserInfo, error)
 }
 
 type githubService struct {
-	repository        repository.GithubRepository
-	serviceRepository repository.ServiceRepository
-	areaRepository    repository.AreaRepository
-	tokenRepository   repository.TokenRepository
-	actionName        []string
-	reactionName      []string
-	serviceInfo       schemas.Service
+	repository repository.GithubRepository
 }
 
 func NewGithubService(
-	repository repository.GithubRepository,
-	serviceRepository repository.ServiceRepository,
-	areaRepository repository.AreaRepository,
-	tokenRepository repository.TokenRepository,
+	githubTokenRepository repository.GithubRepository,
 ) GithubService {
 	return &githubService{
-		repository:        repository,
-		serviceRepository: serviceRepository,
-		areaRepository:    areaRepository,
-		tokenRepository:   tokenRepository,
-		serviceInfo: schemas.Service{
-			Name:        schemas.Github,
-			Description: "This service is a code repository service",
-		},
+		repository: githubTokenRepository,
 	}
 }
-
-// Service interface functions
-
-func (service *githubService) GetServiceInfo() schemas.Service {
-	return service.serviceInfo
-}
-
-func (service *githubService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
-}
-
-func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
-}
-
-func (service *githubService) FindActionbyName(
-	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *githubService) FindReactionbyName(
-	name string,
-) func(option json.RawMessage, idArea uint64) string {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *githubService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *githubService) GetReactionsName() []string {
-	return service.reactionName
-}
-
-// Service specific functions
 
 func (service *githubService) AuthGetServiceAccessToken(
 	code string,
-) (token schemas.Token, err error) {
+	path string,
+) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
-		return schemas.Token{}, schemas.ErrGithubClientIdNotSet
+		return schemas.GitHubTokenResponse{}, schemas.ErrGithubClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GITHUB_SECRET")
 	if clientSecret == "" {
-		return schemas.Token{}, schemas.ErrGithubSecretNotSet
+		return schemas.GitHubTokenResponse{}, schemas.ErrGithubSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+		return schemas.GitHubTokenResponse{}, schemas.ErrBackendPortNotSet
 	}
 
-	redirectURI := "http://localhost:8081/services/github"
+	redirectURI := "http://localhost:" + appPort + path
 
 	apiURL := "https://github.com/login/oauth/access_token"
 
@@ -128,7 +59,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	req.URL.RawQuery = data.Encode()
@@ -137,33 +68,27 @@ func (service *githubService) AuthGetServiceAccessToken(
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.GitHubTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf(
+		return schemas.GitHubTokenResponse{}, fmt.Errorf(
 			"unable to decode response because %w",
 			err,
 		)
 	}
 
 	resp.Body.Close()
-
-	token = schemas.Token{
-		Token: result.AccessToken,
-		// RefreshToken:  result.RefreshToken,
-		// ExpireAt: result.ExpiresIn,
-	}
-	return token, nil
+	return result, nil
 }
 
-func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+func (service *githubService) GetUserInfo(accessToken string) (schemas.GithubUserInfo, error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
-		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.GithubUserInfo{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	// Add the Authorization header
@@ -173,23 +98,15 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.GithubUserInfo{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	result := schemas.GithubUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
+		return schemas.GithubUserInfo{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
 	resp.Body.Close()
-
-	user = schemas.User{
-		Username: result.Login,
-		Email:    result.Email,
-	}
-	return user, nil
+	return result, nil
 }
-
-// Actions functions
-// Reactions functions

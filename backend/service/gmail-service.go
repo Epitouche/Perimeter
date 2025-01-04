@@ -15,23 +15,17 @@ import (
 	"area/schemas"
 )
 
-// Constructor
-
 type GmailService interface {
-	// Service interface functions
+	AuthGetServiceAccessToken(code string, path string) (schemas.GmailTokenResponse, error)
+	GetUserInfo(accessToken string) (result schemas.GmailUserInfo, err error)
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
+	FindReactionbyName(name string) func(option string, idArea uint64)
 	GetActionsName() []string
 	GetReactionsName() []string
+	GmailReactionSendMail(option string, idArea uint64)
 	// Token operations
-	// Service specific functions
-	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
-	GetUserInfo(accessToken string) (user schemas.User, err error)
-	// Actions functions
-	// Reactions functions
-	GmailReactionSendMail(option json.RawMessage, idArea uint64) string
 }
 
 type gmailService struct {
@@ -41,104 +35,39 @@ type gmailService struct {
 	tokenRepository   repository.TokenRepository
 	actionName        []string
 	reactionName      []string
-	serviceInfo       schemas.Service
 }
 
 func NewGmailService(
-	repository repository.GmailRepository,
+	githubTokenRepository repository.GmailRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
 	tokenRepository repository.TokenRepository,
 ) GmailService {
 	return &gmailService{
-		repository:        repository,
+		repository:        githubTokenRepository,
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
-		serviceInfo: schemas.Service{
-			Name:        schemas.Gmail,
-			Description: "This service is a mail service",
-		},
 	}
 }
-
-// Service interface functions
-
-func (service *gmailService) GetServiceInfo() schemas.Service {
-	return service.serviceInfo
-}
-
-func (service *gmailService) FindActionbyName(
-	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
-	switch name {
-	default:
-		return nil
-	}
-}
-
-func (service *gmailService) FindReactionbyName(
-	name string,
-) func(option json.RawMessage, idArea uint64) string {
-	switch name {
-	case string(schemas.SendMail):
-		println("SendMail")
-		return service.GmailReactionSendMail
-	default:
-		return nil
-	}
-}
-
-func (service *gmailService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *gmailService) GetReactionsName() []string {
-	return service.reactionName
-}
-
-func (service *gmailService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
-}
-
-func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
-	defaultValue := schemas.GmailReactionSendMailOption{
-		To:      "",
-		Subject: "",
-		Body:    "",
-	}
-	option, err := json.Marshal(defaultValue)
-	if err != nil {
-		println("error marshal timer option: " + err.Error())
-	}
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.SendMail),
-			Description: "Send an email",
-			Service:     service.serviceRepository.FindByName(schemas.Gmail),
-			Option:      option,
-		},
-	}
-}
-
-// Service specific functions
 
 func (service *gmailService) AuthGetServiceAccessToken(
 	code string,
-) (token schemas.Token, err error) {
+	path string,
+) (schemas.GmailTokenResponse, error) {
 	clientID := os.Getenv("GMAIL_CLIENT_ID")
 	if clientID == "" {
-		return schemas.Token{}, schemas.ErrGmailClientIdNotSet
+		return schemas.GmailTokenResponse{}, schemas.ErrGmailClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("GMAIL_SECRET")
 	if clientSecret == "" {
-		return schemas.Token{}, schemas.ErrGmailSecretNotSet
+		return schemas.GmailTokenResponse{}, schemas.ErrGmailSecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+		return schemas.GmailTokenResponse{}, schemas.ErrBackendPortNotSet
 	}
 
 	redirectURI := "http://localhost:8081/services/gmail"
@@ -154,7 +83,7 @@ func (service *gmailService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.GmailTokenResponse{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	req.URL.RawQuery = data.Encode()
@@ -163,30 +92,24 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.GmailTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	var result schemas.GmailTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf(
+		return schemas.GmailTokenResponse{}, fmt.Errorf(
 			"unable to decode response because %w",
 			err,
 		)
 	}
 
 	if (result.AccessToken == "") || (result.TokenType == "") {
-		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
+		return schemas.GmailTokenResponse{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
 	resp.Body.Close()
-
-	token = schemas.Token{
-		Token:        result.AccessToken,
-		RefreshToken: result.RefreshToken,
-		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
-	}
-	return token, nil
+	return result, nil
 }
 
 func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
@@ -250,50 +173,85 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 
 func (service *gmailService) GetUserInfo(
 	accessToken string,
-) (user schemas.User, err error) {
+) (result schemas.GmailUserInfo, err error) {
 	gmailProfile, err := GetUserGmailProfile(accessToken)
 	if err != nil {
-		return schemas.User{}, fmt.Errorf("unable to get gmail profile because %w", err)
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get gmail profile because %w", err)
 	}
 	googleProfile, err := GetUserGoogleProfile(accessToken)
 	if err != nil {
-		return schemas.User{}, fmt.Errorf("unable to get google profile because %w", err)
+		return schemas.GmailUserInfo{}, fmt.Errorf("unable to get google profile because %w", err)
 	}
+	result.Email = gmailProfile.EmailAddress
+	result.Login = googleProfile.Names[0].DisplayName
 
-	user = schemas.User{
-		Email:    gmailProfile.EmailAddress,
-		Username: googleProfile.Names[0].DisplayName,
-	}
-
-	return user, nil
+	return result, nil
 }
 
-// Actions functions
+func (service *gmailService) GetServiceActionInfo() []schemas.Action {
+	return []schemas.Action{}
+}
 
-// Reactions functions
+func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SendMail),
+			Description: "Send an email",
+			Service:     service.serviceRepository.FindByName(schemas.Gmail),
+			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+		},
+	}
+}
 
-func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idArea uint64) string {
+func (service *gmailService) FindActionbyName(
+	name string,
+) func(c chan string, option string, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *gmailService) FindReactionbyName(name string) func(option string, idArea uint64) {
+	switch name {
+	case string(schemas.SendMail):
+		println("SendMail")
+		return service.GmailReactionSendMail
+	default:
+		return nil
+	}
+}
+
+func (service *gmailService) GetActionsName() []string {
+	return service.actionName
+}
+
+func (service *gmailService) GetReactionsName() []string {
+	return service.reactionName
+}
+
+func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
-	println("gmail option: " + string(option))
+	println("gmail option: " + option)
 
-	err := json.Unmarshal(option, &optionJSON)
+	err := json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal gmail option: " + err.Error())
 		time.Sleep(time.Second)
-		return "Error unmarshal gmail option" + err.Error()
+		return
 	}
 
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
-		return "Error finding area" + err.Error()
+		return
 	}
 
 	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
-		return "Error: Token not found"
+		return
 	}
 
 	// TODO check if the email is valid or not
@@ -316,7 +274,7 @@ func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idAre
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return "Error creating request" + err.Error()
+		return
 	}
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
@@ -325,7 +283,7 @@ func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idAre
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error making request:", err)
-		return "Error making request:" + err.Error()
+		return
 	}
 	defer resp.Body.Close()
 
@@ -336,9 +294,8 @@ func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idAre
 			resp.Status,
 			string(respBody),
 		)
-		return "Failed to send email"
+		return
 	}
 
 	fmt.Println("Email sent successfully!")
-	return "Email sent successfully!"
 }

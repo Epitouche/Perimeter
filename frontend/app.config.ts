@@ -27,8 +27,5 @@ export default defineAppConfig({
       base: "mx-0",
       constrained: "max-w-[90%]",
     },
-    modal: {
-      rounded: "rounded-custom_border_radius",
-    },
   },
 });

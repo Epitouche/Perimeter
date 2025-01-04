@@ -15,7 +15,7 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(["my-icons:color-spotify", "my-icons:color-google"]);
+const apps = ref<string[]>(["i-logos-spotify-icon", "i-logos-google-icon"]);
 
 const handleSignUp = async () => {
   try {
@@ -134,7 +134,7 @@ const handleSignUp = async () => {
           <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
-          <UButton class="text-center text-[2.5rem] px-12" @click="handleSignUp"
+          <UButton @click="handleSignUp" class="text-center text-[2.5rem] px-12"
             >Sign up</UButton
           >
           <p class="text-xl">
