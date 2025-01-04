@@ -31,15 +31,13 @@ func NewAreaAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Param			payload	body		schemas.AreaMessage	true	"Area Payload"
 //	@Success		200		{object}	schemas.Response
 //	@Failure		500		{object}	schemas.ErrorResponse
-//	@Router			/area/ [post]
+//	@Router			/area [post]
 func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/", func(ctx *gin.Context) {
-		println("CreateArea API")
 		response, err := api.controller.CreateArea(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -65,7 +63,7 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 //	@Success		200	{object}	[]schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/area/ [get]
+//	@Router			/area [get]
 func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		response, err := api.controller.GetUserAreas(ctx)

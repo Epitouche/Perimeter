@@ -1,14 +1,19 @@
 package schemas
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type ServiceName string
 
 const (
 	Spotify        ServiceName = "spotify"
-	OpenWeatherMap ServiceName = "openWeatherMap"
+	Openweathermap ServiceName = "openweathermap"
 	Timer          ServiceName = "timer"
 	Gmail          ServiceName = "gmail"
+	Github         ServiceName = "github"
+	Dropbox        ServiceName = "dropbox"
 )
 
 type ServiceJSON struct {
@@ -22,6 +27,17 @@ type Service struct {
 	Id          uint64      `gorm:"primaryKey;autoIncrement"  json:"id,omitempty"`
 	Name        ServiceName `                                 json:"name"         binding:"required"`
 	Description string      `                                 json:"description"  binding:"required"`
-	CreatedAt   time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"createdAt"`
+	CreatedAt   time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdateAt    time.Time   `gorm:"default:CURRENT_TIMESTAMP" json:"update_at"`
+}
+
+// Errors Messages.
+var (
+	ErrNotOauthService = errors.New("service is not an oauth service")
+)
+
+type MobileTokenRequest struct {
+	AccessToken  string    `json:"accessToken"`
+	RefreshToken string    `json:"refreshToken"`
+	ExpiresIn    time.Time `json:"accessTokenExpirationDate"`
 }

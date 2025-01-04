@@ -1,101 +1,107 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "@/interfaces/serviceinfo";
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
 });
 
+interface ActionType {
+  id: number;
+  name: string;
+  description: string;
+  option?: string;
+}
+
 const route = useRoute();
-const router = useRouter();
-const serviceId = route.params.service;
+const serviceId = route.params.service as string;
 const token = useCookie("token");
 
-const actions = ref<any>(null);
+const isLoading = ref(true);
+const actions = ref<ActionType[] | null>(null);
 const error = ref<string | null>(null);
+const serviceInfo = ref<ServiceInfo | null>(null);
 
-const configIsOpen = ref<{ [key: number]: boolean }>({});
-const modifiedOptions = reactive<{
-  [key: number]: { [key: string]: string | number };
-}>({});
+const getServiceInfo = async () => {
+  if (!serviceId) return;
 
-const fetchActions = async () => {
+  isLoading.value = true;
   try {
     error.value = null;
-    actions.value = await $fetch("/api/workflow/actions", {
+    serviceInfo.value = await $fetch<ServiceInfo>("/api/servicebyid", {
+      method: "POST",
+      body: {
+        token: token.value,
+        serviceId,
+      },
+    });
+    console.log("serviceInfo: ", serviceInfo.value);
+  } catch (err) {
+    console.error("Error fetching service info:", err);
+    error.value = "Failed to load service information.";
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const fetchActions = async () => {
+  isLoading.value = true;
+  try {
+    error.value = null;
+    actions.value = await $fetch<ActionType[]>("/api/workflow/actions", {
       method: "POST",
       body: {
         token: token.value,
         service: serviceId,
       },
     });
-
-    actions.value.forEach((action: any) => {
-      modifiedOptions[action.id] = JSON.parse(action.option || "{}");
-    });
-
-    console.log("actions", actions.value);
   } catch (err) {
-    error.value = "Failed to load actions";
     console.error("Error fetching actions:", err);
+    error.value = "Failed to load actions.";
+  } finally {
+    isLoading.value = false;
   }
 };
 
 onMounted(() => {
+  getServiceInfo();
   fetchActions();
 });
-
-const openConfig = (actionId: number) => {
-  configIsOpen.value[actionId] = !configIsOpen.value[actionId] || false;
-};
-
-const parseOption = (option: string) => {
-  try {
-    return JSON.parse(option);
-  } catch (err) {
-    console.error("Invalid JSON format for option:", option, err);
-    return {};
-  }
-};
-
-const saveOptions = (actionId: number) => {
-  // Convert all values to numbers if they are numbers
-  for (const key in modifiedOptions[actionId]) {
-    console.log("key to int", key);
-    if (!isNaN(Number(modifiedOptions[actionId][key]))) {
-      continue;
-    }
-    modifiedOptions[actionId][key] = Number(modifiedOptions[actionId][key]);
-  }
-  router.push({
-    name: "workflow",
-    query: {
-      actionId: actionId,
-      actionOptions: JSON.stringify(modifiedOptions[actionId]),
-    },
-  });
-};
 </script>
 
 <template>
-  <div>
-    <h1>Service Actions Page</h1>
+  <div class="flex flex-col gap-20">
     <div v-if="error">
       <div>Error: {{ error }}</div>
     </div>
-    <div v-else-if="actions">
-      <div v-for="action in actions" :key="action.id">
-        <button @click="openConfig(action.id)">
-          {{ action.name }}
-        </button>
-        <div v-if="configIsOpen[action.id]">
-          <div>
-            <div v-for="(value, key) in parseOption(action.option)" :key="key">
-              <strong>{{ key }}:</strong>
-              <input v-model="modifiedOptions[action.id][key]" type="text" />
-            </div>
-            <button @click="saveOptions(action.id)">Save</button>
-          </div>
-        </div>
+    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
+    <UContainer
+      v-else-if="serviceInfo"
+      :ui="{ constrained: 'max-w-none' }"
+      :class="[`bg-custom_color-${serviceInfo.name}`, 'pt-16 pb-16']"
+    >
+      <div class="px-20">
+        <BackButton link="/workflow/actions" :is-white="true" />
       </div>
+      <div class="flex flex-col justify-center items-center gap-8">
+        <h1 class="text-8xl text-white font-custom_weight_title">
+          Add an action
+        </h1>
+        <UIcon
+          :name="`my-icons:white-${serviceInfo.name}`"
+          class="w-[8em] h-[8em]"
+        />
+        <h2 class="capitalize text-white text-7xl font-bold">
+          {{ serviceInfo.name }}
+        </h2>
+      </div>
+    </UContainer>
+    <div v-if="actions">
+      <ReActionCardContainer
+        type-name="action"
+        :types="actions"
+        :service-info="serviceInfo"
+      />
     </div>
   </div>
 </template>

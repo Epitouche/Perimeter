@@ -41,7 +41,7 @@ func NewReactionApi(
 //	@Success		200	{object}	[]schemas.Reaction
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/reaction/info/{id} [get]
+//	@Router			/reaction/info/:id [get]
 func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
