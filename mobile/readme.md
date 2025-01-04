@@ -19,6 +19,7 @@ sudo apt install -y nodejs npm
 ```
 
 #### Install openJDK
+
 ```bash
 sudo apt install -y openjdk-11-jdk
 ```
@@ -28,24 +29,26 @@ sudo apt install -y openjdk-11-jdk
 1. Download the Android Studio package from [Android Studio](https://developer.android.com/studio)
 
 2. Extract the tar.gz file:
+
 ```bash
 tar -xvzf android-studio-*.tar.gz
 sudo mv android-studio /opt/
 ```
 
 3. Launch Android Studio:
+
 ```bash
 /opt/android-studio/bin/studio.sh
 ```
 
 #### Install Required SDK Components
 
- - Open Android Studio and complete the setup wizard.
- - Install the following SDK components via SDK Manager:
-     - Android SDK
-     - Android SDK Platform-Tools
-     - Android Emulator
-     - One or more system images for the emulator
+- Open Android Studio and complete the setup wizard.
+- Install the following SDK components via SDK Manager:
+  - Android SDK
+  - Android SDK Platform-Tools
+  - Android Emulator
+  - One or more system images for the emulator
 
 #### Configure Environment variables
 
@@ -81,6 +84,7 @@ npx react-native init MyReactNativeApp
 ```bash
 npm run
 ```
+
 #### Build apk
 
 ```bash

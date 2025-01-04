@@ -20,20 +20,25 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedReaction, setSelectedReaction] = useState<any | null>(null);
-  const [selectedReactionOptions, setSelectedReactionOptions] = useState<{ [key: string]: any }>({});
+  const [selectedReactionOptions, setSelectedReactionOptions] = useState<{
+    [key: string]: any;
+  }>({});
   const { ipAddress, token } = useContext(AppContext);
-  const {actionId, actionOptions, serviceId} = route.params;
+  const { actionId, actionOptions, serviceId } = route.params;
 
   useEffect(() => {
     // Fetch actions from API
     const fetchServices = async () => {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/reaction/info/${serviceId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/reaction/info/${serviceId}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         const data = await response.json();
         if (Array.isArray(data)) {
           setServices(data);
@@ -61,9 +66,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       setFilteredServices(services);
     } else {
       setFilteredServices(
-        services.filter((service) =>
-          service.name.toLowerCase().includes(text.toLowerCase())
-        )
+        services.filter(service =>
+          service.name.toLowerCase().includes(text.toLowerCase()),
+        ),
       );
     }
   };
@@ -80,7 +85,7 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleOptionChange = (key: string, value: any, type: any) => {
-    setSelectedReactionOptions((prev) => ({
+    setSelectedReactionOptions(prev => ({
       ...prev,
       [key]: type === 'number' ? parseFloat(value) : value,
     }));
@@ -124,22 +129,34 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       <Text style={styles.title}>Choose reaction</Text>
       {selectedReaction ? (
         <View style={styles.optionsContainer}>
-          <Text style={styles.optionTitle}>Configure Options for {selectedReaction.name}</Text>
-          {Object.keys(selectedReactionOptions).map((key) => (
+          <Text style={styles.optionTitle}>
+            Configure Options for {selectedReaction.name}
+          </Text>
+          {Object.keys(selectedReactionOptions).map(key => (
             <View key={key} style={styles.optionRow}>
               <Text style={styles.optionLabel}>{key}</Text>
               <TextInput
                 style={styles.optionInput}
                 value={String(selectedReactionOptions[key])}
-                onChangeText={(text) => handleOptionChange(key, text, typeof selectedReactionOptions[key])}
+                onChangeText={text =>
+                  handleOptionChange(
+                    key,
+                    text,
+                    typeof selectedReactionOptions[key],
+                  )
+                }
                 keyboardType="default" // Adjust as needed
               />
             </View>
           ))}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveOptions}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSaveOptions}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.backButton} onPress={() => setSelectedReaction(null)}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setSelectedReaction(null)}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </View>
@@ -152,17 +169,18 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
             onChangeText={handleSearch}
           />
           <ScrollView contentContainerStyle={styles.servicesContainer}>
-            {filteredServices?.map((service) => (
+            {filteredServices?.map(service => (
               <TouchableOpacity
                 key={service.id}
                 style={styles.serviceBox}
-                onPress={() => handleActionPress(service)}
-              >
+                onPress={() => handleActionPress(service)}>
                 <Text style={styles.serviceText}>{service.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </>
