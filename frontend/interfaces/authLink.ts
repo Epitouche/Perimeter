@@ -1,4 +1,3 @@
 export interface OAuthLink {
-    authentication_url: string;
+  authentication_url: string;
 }
-  
