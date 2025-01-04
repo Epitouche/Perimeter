@@ -83,10 +83,10 @@ const ServicesScreen = (navigation: any) => {
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
-      const url = new URL(event.url).searchParams
-      const token = url.get('token')
-      const code = url.get('code')
-      const error = url.get('error')
+      const url = new URL(event.url).searchParams;
+      const token = url.get('token');
+      const code = url.get('code');
+      const error = url.get('error');
 
       if (code) {
         console.log('Received auth code:', code);
@@ -97,7 +97,7 @@ const ServicesScreen = (navigation: any) => {
         setToken(token);
       }
     }
-  }
+  };
   Linking.addEventListener('url', handleUrl);
 
   function connectService(service: string) {

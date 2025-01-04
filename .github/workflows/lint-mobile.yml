@@ -44,7 +44,7 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Run Formater
+      - name: Run Linter
         run: npx eslint --fix .
 
       - name: Commit changes

@@ -27,7 +27,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
       />
       <Button title="Connect" onPress={() => {
         setIpAddress(ipAddress);
-        navigation.navigate('Login')
+        navigation.navigate('Login');
       }} />
     </View>
   );
