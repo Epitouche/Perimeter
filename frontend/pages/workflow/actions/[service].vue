@@ -1,62 +1,63 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "@/interfaces/serviceinfo";
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
 });
 
-const route = useRoute();
-const serviceId = route.params.service;
-const token = useCookie("token");
-const isLoading = ref(true);
-const actions = ref<any>(null);
-const errorMessage = ref<string | null>(null);
+interface ActionType {
+  id: number;
+  name: string;
+  description: string;
+  option?: string;
+}
 
-const serviceInfo = ref<{ name: string } | null>(null);
+const route = useRoute();
+const serviceId = route.params.service as string;
+const token = useCookie("token");
+
+const isLoading = ref(true);
+const actions = ref<ActionType[] | null>(null);
+const error = ref<string | null>(null);
+const serviceInfo = ref<ServiceInfo | null>(null);
 
 const getServiceInfo = async () => {
-  if (serviceId) {
-    isLoading.value = true;
-    try {
-      errorMessage.value = null;
-      serviceInfo.value = await $fetch("/api/servicebyid", {
-        method: "POST",
-        body: {
-          token: token.value,
-          serviceId: serviceId,
-        },
-      });
-      // console.log("services", serviceInfo.value);
-    } catch (error: unknown) {
-      errorMessage.value = handleErrorStatus(error);
+  if (!serviceId) return;
 
-      if (errorMessage.value === "An unknown error occurred") {
-        console.error("An unknown error occurred", error);
-      }
-    } finally {
-      isLoading.value = false;
-    }
+  isLoading.value = true;
+  try {
+    error.value = null;
+    serviceInfo.value = await $fetch<ServiceInfo>("/api/servicebyid", {
+      method: "POST",
+      body: {
+        token: token.value,
+        serviceId,
+      },
+    });
+    console.log("serviceInfo: ", serviceInfo.value);
+  } catch (err) {
+    console.error("Error fetching service info:", err);
+    error.value = "Failed to load service information.";
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const fetchActions = async () => {
   isLoading.value = true;
   try {
-    errorMessage.value = null;
-    actions.value = await $fetch("/api/workflow/actions", {
+    error.value = null;
+    actions.value = await $fetch<ActionType[]>("/api/workflow/actions", {
       method: "POST",
       body: {
         token: token.value,
         service: serviceId,
       },
     });
-
-    console.log("actions", actions.value);
-  } catch (error: unknown) {
-    errorMessage.value = handleErrorStatus(error);
-
-    if (errorMessage.value === "An unknown error occurred") {
-      console.error("An unknown error occurred", error);
-    }
+  } catch (err) {
+    console.error("Error fetching actions:", err);
+    error.value = "Failed to load actions.";
   } finally {
     isLoading.value = false;
   }
@@ -70,8 +71,8 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-20">
-    <div v-if="errorMessage">
-      <div>Error: {{ errorMessage }}</div>
+    <div v-if="error">
+      <div>Error: {{ error }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
     <UContainer
@@ -95,17 +96,13 @@ onMounted(() => {
         </h2>
       </div>
     </UContainer>
-    <div v-if="errorMessage">
-      <div>Error: {{ errorMessage }}</div>
-    </div>
-    <div v-else-if="actions">
+    <div v-if="actions">
       <ReActionCardContainer
         type-name="action"
         :types="actions"
         :service-info="serviceInfo"
       />
     </div>
-    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
   </div>
 </template>
 

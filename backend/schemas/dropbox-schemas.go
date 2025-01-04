@@ -41,12 +41,6 @@ type DropboxUserInfo struct {
 	} `json:"root_info"`
 }
 
-type DropboxReactionSendMailOption struct {
-	To      string `json:"to"`
-	Subject string `json:"subject"`
-	Body    string `json:"body"`
-}
-
 // Errors Messages.
 var (
 	ErrDropboxSecretNotSet   = errors.New("DROPBOX_SECRET is not set")
