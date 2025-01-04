@@ -15,22 +15,28 @@ function formatName(name: string): string {
 </script>
 
 <template>
-  <UContainer 
-  :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
-    class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full">
+  <UContainer
+    :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
+    class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full"
+  >
     <div v-for="service in services" :key="service.id">
-      <NuxtLink 
-      :to="{
-        name: `workflow-${type}-service`,
-        params: { service: service.id },
-      }">
-        <UContainer 
-        :ui="{ padding: 'px-0', constrained: 'max-w-none' }" :class="[
-          `bg-custom_color-${service.name}`,
-          'flex flex-col justify-end items-center gap-10 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
-        ]">
+      <NuxtLink
+        :to="{
+          name: `workflow-${type}-service`,
+          params: { service: service.id },
+        }"
+      >
+        <UContainer
+          :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+          :class="[
+            `bg-custom_color-${service.name}`,
+            'flex flex-col justify-end items-center gap-10 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
+          ]"
+        >
           <UIcon :name="`my-icons:white-${service.name}`" />
-          <h2 class="clamp-2-lines capitalize text-5xl text-center break-words w-full">
+          <h2
+            class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
+          >
             {{ formatName(service.name) }}
           </h2>
         </UContainer>

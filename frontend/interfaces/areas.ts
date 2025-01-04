@@ -4,12 +4,12 @@ export interface Area {
     name: string;
     service: {
       name: string;
-    }
+    };
   };
   reaction: {
     name: string;
     service: {
       name: string;
-    }
+    };
   };
 }
