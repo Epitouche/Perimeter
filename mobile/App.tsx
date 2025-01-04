@@ -6,8 +6,7 @@ const App: React.FC = () => {
 
   return (
     <AppProvider>
-      <Navigation>
-      </Navigation>
+      <Navigation />
     </AppProvider>
   );
 };

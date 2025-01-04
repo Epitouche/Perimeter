@@ -16,7 +16,7 @@ const AreasScreen = ({ navigation }: Props) => {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, 
+        const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`,
           {
             method: 'GET',
             headers: {

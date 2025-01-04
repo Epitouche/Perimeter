@@ -30,7 +30,7 @@ async function HandleGithubLogin(setToken: any, navigation: any, ipAddress: stri
       } else {
         setToken(data.token);
         if (login)
-          navigation.navigate('AreaView');
+          {navigation.navigate('AreaView');}
       }
     } catch (error) {
       if ((error as Error).message != 'User cancelled flow') {

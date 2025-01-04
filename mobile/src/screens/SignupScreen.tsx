@@ -107,7 +107,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
-        inputMode='text'
+        inputMode="text"
         onChangeText={text => setUsername(text)}
       />
       {errors.username ? (
@@ -119,7 +119,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         placeholder="Enter email"
         placeholderTextColor="#aaa"
         value={email}
-        inputMode='email'
+        inputMode="email"
         onChangeText={text => setEmail(text)}
       />
       {errors.email ? (

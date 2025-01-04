@@ -1,28 +1,28 @@
-name: lint frontend
+name: format mobile
 
 on:
   pull_request:
     branches:
       - dev
-      - frontend
-      - frontend-feature/**
+      - mobile
+      - mobile-feature/**
   push:
     branches:
       - dev
-      - frontend
-      - frontend-feature/**
+      - mobile
+      - mobile-feature/**
 
 defaults:
   run:
-    working-directory: ./frontend
+    working-directory: ./mobile
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
   contents: write
 
 jobs:
-  run-frontend-linter:
-    name: Run Frontend linter
+  run-mobile-formatter:
+    name: Run Mobile formatter
     runs-on: self-hosted
 
     steps:
@@ -42,15 +42,15 @@ jobs:
           node-version: 20
 
       - name: Install Node.js dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
-      - name: Run Linter
-        run: npx eslint --fix --ignore-pattern .nuxt --ignore-pattern dist
+      - name: Run Formatter
+        run: npx prettier --write .
 
       - name: Commit changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "bot@github.com"
           git add . || echo "No changes to commit"
-          git commit -m "[UPD] Auto lint frontend files" || echo "No changes to commit"
+          git commit -m "[UPD] Auto format mobile files" || echo "No changes to commit"
           git push || echo "No changes to commit"

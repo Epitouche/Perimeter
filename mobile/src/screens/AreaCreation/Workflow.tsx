@@ -13,7 +13,7 @@ const WorkflowScreen = ({navigation}: {navigation : any}) => {
       <View style={styles.actionBox}>
         <Text style={styles.boxText}>Action</Text>
         <TouchableOpacity
-        onPress={() => navigation.navigate('AddActionScreen')} 
+        onPress={() => navigation.navigate('AddActionScreen')}
         style={styles.addButton}>
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>

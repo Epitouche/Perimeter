@@ -30,7 +30,7 @@ async function HandleSpotifyLogin(setToken: any, navigation: any, ipAddress: str
     } else {
       setToken(data.token);
       if (login)
-        navigation.navigate('AreaView');
+        {navigation.navigate('AreaView');}
     }
   } catch (error) {
     if ((error as Error).message != 'User cancelled flow') {
