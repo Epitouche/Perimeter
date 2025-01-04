@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   Linking,
   ActivityIndicator,
 } from 'react-native';
-import Svg, {Path} from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import BottomNavBar from './NavBar';
-import {AppContext} from '../context/AppContext';
+import { AppContext } from '../context/AppContext';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
@@ -19,7 +19,7 @@ import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 const ServicesScreen = (navigation: any) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { ipAddress, token, setToken} = useContext(AppContext);
+  const { ipAddress, token, setToken } = useContext(AppContext);
 
   const serviceIcons = {
     spotify: props => (
@@ -119,11 +119,11 @@ const ServicesScreen = (navigation: any) => {
     }
   }
 
-  const renderService = ({item}: {item: any}) => (
+  const renderService = ({ item }: { item: any }) => (
     <TouchableOpacity
-      style={[styles.serviceButton, {backgroundColor: '#2196F3'}]} // Default color for unknown services
+      style={[styles.serviceButton, { backgroundColor: '#2196F3' }]} // Default color for unknown services
       onPress={() => connectService(item.name)}>
-      {serviceIcons[item.name]?.({width: 36, height: 36}) || (
+      {serviceIcons[item.name]?.({ width: 36, height: 36 }) || (
         <Text style={styles.unknownIcon}>?</Text>
       )}
       <Text style={styles.serviceText}>{item.name}</Text>

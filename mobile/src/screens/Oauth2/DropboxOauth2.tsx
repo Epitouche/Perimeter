@@ -37,7 +37,9 @@ async function HandleDropboxLogin(
       console.error(data.error);
     } else {
       setToken(data.token);
-      if (login) {navigation.navigate('AreaView');}
+      if (login) {
+        navigation.navigate('AreaView');
+      }
     }
   } catch (error) {
     if ((error as Error).message != 'User cancelled flow') {

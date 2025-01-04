@@ -6,15 +6,15 @@ import { RootStackParamList } from '../../../App';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 
-const WorkflowScreen = ({navigation}: {navigation : any}) => {
+const WorkflowScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
       <View style={styles.actionBox}>
         <Text style={styles.boxText}>Action</Text>
         <TouchableOpacity
-        onPress={() => navigation.navigate('AddActionScreen')}
-        style={styles.addButton}>
+          onPress={() => navigation.navigate('AddActionScreen')}
+          style={styles.addButton}>
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>
       </View>

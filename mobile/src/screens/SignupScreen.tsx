@@ -85,7 +85,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           Alert.alert('Successfully registered, please login now');
         } else {
           console.error('Error:', response.status, ' | ', response.statusText);
-          Alert.alert('Error registering, please try again (Username or email might already be taken)');
+          Alert.alert(
+            'Error registering, please try again (Username or email might already be taken)',
+          );
         }
       } catch (error) {
         console.error('Error', error);

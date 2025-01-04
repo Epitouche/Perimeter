@@ -1,9 +1,9 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
-import Svg, {Path} from 'react-native-svg';
-import {NavigationProp} from '@react-navigation/native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
+import { NavigationProp } from '@react-navigation/native';
 
-const BottomNavBar = ({navigation}: {navigation: NavigationProp<any>}) => {
+const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
   return (
     <View style={styles.navbarContainer}>
       <TouchableOpacity
@@ -67,23 +67,23 @@ const BottomNavBar = ({navigation}: {navigation: NavigationProp<any>}) => {
 };
 
 const styles = StyleSheet.create({
-    navbarContainer: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      paddingVertical: 8,
-      backgroundColor: '#f0f0f0',
-      borderTopWidth: 1,
-      borderTopColor: '#d0d0d0',
-    },
-    navButton: {
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
+  navbarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 8,
+    backgroundColor: '#f0f0f0',
+    borderTopWidth: 1,
+    borderTopColor: '#d0d0d0',
+  },
+  navButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default BottomNavBar;
