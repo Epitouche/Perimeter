@@ -1,9 +1,9 @@
 export interface Workflow {
   id: number;
-  action_id: {
+  action: {
     name: string;
   };
-  reaction_id: {
+  reaction: {
     name: string;
   };
 }

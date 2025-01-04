@@ -1,6 +1,7 @@
 package schemas
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -11,12 +12,12 @@ type ActionJSON struct {
 
 // GithubToken represents the GithubToken entity in the database.
 type Action struct {
-	Id          uint64    `gorm:"primaryKey;autoIncrement"           json:"id,omitempty"`                         // Unique identifier for the action
-	Name        string    `                                          json:"name"              binding:"required"` // Name of the action
-	Description string    `                                          json:"description"       binding:"required"` // Description of the action
-	ServiceId   uint64    `                                          json:"-"`                                    // Foreign key for Service
-	Service     Service   `gorm:"foreignKey:ServiceId;references:Id" json:"service,omitempty" binding:"required"` // Service that the action belongs to
-	Option      string    `                                          json:"option"            binding:"required"` // Option for the action
-	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP"          json:"created_at"`                           // Time when the action was created
-	UpdateAt    time.Time `gorm:"default:CURRENT_TIMESTAMP"          json:"update_at"`                            // Time when the action was last updated
+	Id          uint64          `gorm:"primaryKey;autoIncrement"           json:"id,omitempty"`
+	Name        string          `                                          json:"name"              binding:"required"`
+	Description string          `                                          json:"description"       binding:"required"`
+	ServiceId   uint64          `                                          json:"-"` // Foreign key for Service
+	Service     Service         `gorm:"foreignKey:ServiceId;references:Id" json:"service,omitempty" binding:"required"`
+	Option      json.RawMessage `gorm:"type:jsonb"                         json:"option"            binding:"required"`
+	CreatedAt   time.Time       `gorm:"default:CURRENT_TIMESTAMP"          json:"createdAt"`
+	UpdateAt    time.Time       `gorm:"default:CURRENT_TIMESTAMP"          json:"update_at"`
 }

@@ -22,10 +22,10 @@ const fetchWorkflows = async () => {
     console.log("workflows: ", workflows.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
-
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }
+    console.log("error: ", error);
   }
 };
 
@@ -40,8 +40,8 @@ onMounted(() => {
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div v-else-if="workflows">
       <div v-for="workflow in workflows" :key="workflow.id">
-        {{ workflow.action_id.name }}
-        {{ workflow.reaction_id.name }}
+        {{ workflow.action.name }}
+        {{ workflow.reaction.name }}
       </div>
     </div>
   </div>

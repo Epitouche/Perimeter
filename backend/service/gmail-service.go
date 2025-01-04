@@ -22,16 +22,17 @@ type GmailService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
+	// Token operations
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
 	// Reactions functions
-	GmailReactionSendMail(option string, idArea uint64) string
+	GmailReactionSendMail(option json.RawMessage, idArea uint64) string
 }
 
 type gmailService struct {
@@ -70,7 +71,7 @@ func (service *gmailService) GetServiceInfo() schemas.Service {
 
 func (service *gmailService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
@@ -79,7 +80,7 @@ func (service *gmailService) FindActionbyName(
 
 func (service *gmailService) FindReactionbyName(
 	name string,
-) func(option string, idArea uint64) string {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 	case string(schemas.SendMail):
 		println("SendMail")
@@ -102,12 +103,21 @@ func (service *gmailService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
+	defaultValue := schemas.GmailReactionSendMailOption{
+		To:      "",
+		Subject: "",
+		Body:    "",
+	}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMail),
 			Description: "Send an email",
 			Service:     service.serviceRepository.FindByName(schemas.Gmail),
-			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
+			Option:      option,
 		},
 	}
 }
@@ -269,12 +279,12 @@ func (service *gmailService) GetUserInfo(
 
 // Reactions functions
 
-func (service *gmailService) GmailReactionSendMail(option string, idArea uint64) string {
+func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idArea uint64) string {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
-	println("gmail option: " + option)
+	println("gmail option: " + string(option))
 
-	err := json.Unmarshal([]byte(option), &optionJSON)
+	err := json.Unmarshal(option, &optionJSON)
 	if err != nil {
 		println("error unmarshal gmail option: " + err.Error())
 		time.Sleep(time.Second)

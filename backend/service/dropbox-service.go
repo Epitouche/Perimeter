@@ -20,8 +20,8 @@ type DropboxService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
@@ -71,19 +71,12 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.SendMail),
-			Description: "Send an email",
-			Service:     service.serviceRepository.FindByName(schemas.Dropbox),
-			Option:      "{\"to\":\"\",\"subject\":\"\",\"body\":\"\"}",
-		},
-	}
+	return []schemas.Reaction{}
 }
 
 func (service *dropboxService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
@@ -92,7 +85,7 @@ func (service *dropboxService) FindActionbyName(
 
 func (service *dropboxService) FindReactionbyName(
 	name string,
-) func(option string, idArea uint64) string {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 	default:
 		return nil

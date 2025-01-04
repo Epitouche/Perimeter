@@ -1,7 +1,12 @@
 <script setup lang="ts">
+interface Service {
+  id: number;
+  name: string;
+}
+
 defineProps<{
   type: string;
-  services: any[];
+  services: Service[];
 }>();
 
 function formatName(name: string): string {
