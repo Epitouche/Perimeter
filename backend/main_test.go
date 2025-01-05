@@ -30,7 +30,7 @@ func TestPingRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -62,7 +62,7 @@ func TestAboutJsonRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -104,7 +104,7 @@ func TestNotFoundRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -139,7 +139,7 @@ func TestGmailRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -177,7 +177,7 @@ func TestSpotifyRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -215,7 +215,7 @@ func TestGithubRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -253,7 +253,7 @@ func TestDropboxRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -291,7 +291,7 @@ func TestRegisterUserRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -315,7 +315,7 @@ func TestLoginUserRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -364,7 +364,7 @@ func TestLoginUserRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -391,7 +391,7 @@ func TestActionRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -438,7 +438,7 @@ func TestActionRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -483,7 +483,7 @@ func TestActionRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -531,7 +531,7 @@ func TestReactionRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -578,7 +578,7 @@ func TestReactionRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
@@ -623,7 +623,7 @@ func TestReactionRoute(t *testing.T) {
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 

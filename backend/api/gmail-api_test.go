@@ -11,13 +11,37 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"area/api"
-	"area/test"
+	"area/schemas"
 )
+
+type MockGmailController struct {
+	mock.Mock
+}
+
+func (m *MockGmailController) RedirectToService(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockGmailController) HandleServiceCallback(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockGmailController) HandleServiceCallbackMobile(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockGmailController) GetUserInfo(ctx *gin.Context) (schemas.UserCredentials, error) {
+	args := m.Called(ctx)
+	return args.Get(0).(schemas.UserCredentials), args.Error(1)
+}
 
 func TestGmailAPI(t *testing.T) {
 	t.Parallel()
 
-	mockController := new(test.MockController)
+	mockController := new(MockGmailController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 	api.NewGmailAPI(mockController, apiRoutes)

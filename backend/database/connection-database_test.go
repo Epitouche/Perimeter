@@ -23,7 +23,7 @@ func TestConnection(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
 	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 

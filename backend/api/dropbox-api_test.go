@@ -11,13 +11,46 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"area/api"
-	"area/test"
+	"area/schemas"
 )
+
+type MockDropboxController struct {
+	mock.Mock
+}
+
+func (m *MockDropboxController) RedirectToService(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockDropboxController) HandleServiceCallback(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockDropboxController) HandleServiceCallbackMobile(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockDropboxController) GetUserInfo(ctx *gin.Context) (schemas.UserCredentials, error) {
+	args := m.Called(ctx)
+	return args.Get(0).(schemas.UserCredentials), args.Error(1)
+}
+
+// DROPBOX CONTROLLER MOCK.
+
+func (m *MockDropboxController) GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error) {
+	args := m.Called(ctx)
+	userFile = args.Get(0).([]schemas.DropboxFile)
+	err = args.Error(1)
+	return userFile, err
+}
 
 func TestDropboxAPI(t *testing.T) {
 	t.Parallel()
 
-	mockController := new(test.MockController)
+	mockController := new(MockDropboxController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 	api.NewDropboxAPI(mockController, apiRoutes)

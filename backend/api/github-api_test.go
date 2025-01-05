@@ -11,13 +11,37 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"area/api"
-	"area/test"
+	"area/schemas"
 )
+
+type MockGithubController struct {
+	mock.Mock
+}
+
+func (m *MockGithubController) RedirectToService(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockGithubController) HandleServiceCallback(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockGithubController) HandleServiceCallbackMobile(ctx *gin.Context) (string, error) {
+	args := m.Called(ctx)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockGithubController) GetUserInfo(ctx *gin.Context) (schemas.UserCredentials, error) {
+	args := m.Called(ctx)
+	return args.Get(0).(schemas.UserCredentials), args.Error(1)
+}
 
 func TestGithubAPI(t *testing.T) {
 	t.Parallel()
 
-	mockController := new(test.MockController)
+	mockController := new(MockGithubController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 	api.NewGithubAPI(mockController, apiRoutes)
