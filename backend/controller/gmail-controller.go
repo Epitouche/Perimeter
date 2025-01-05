@@ -1,20 +1,18 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
-	"os"
 
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
 	"area/service"
-	"area/tools"
 )
 
 type GmailController interface {
-	RedirectToService(ctx *gin.Context, path string) (string, error)
+	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
+	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
@@ -41,36 +39,16 @@ func NewGmailController(
 
 func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
-	path string,
-) (string, error) {
-	clientID := os.Getenv("GMAIL_CLIENT_ID")
-	if clientID == "" {
-		return "", schemas.ErrGmailClientIdNotSet
-	}
-
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return "", schemas.ErrGmailSecretNotSet
-	}
-
-	// Generate the CSRF token
-	state, err := tools.GenerateCSRFToken()
+) (oauthURL string, err error) {
+	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
+		schemas.Gmail,
+		"https://accounts.google.com/o/oauth2/v2/auth",
+		"https://mail.google.com/ profile email",
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
 	}
-
-	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
-	ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
-
-	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:8081/services/gmail"
-	authURL := "https://accounts.google.com/o/oauth2/v2/auth" +
-		"?client_id=" + clientID +
-		"&response_type=code" +
-		"&scope=https://mail.google.com/ profile email" +
-		"&redirect_uri=" + redirectURI +
-		"&state=" + state
-	return authURL, nil
+	return oauthURL, nil
 }
 
 func (controller *gmailController) HandleServiceCallback(
@@ -98,75 +76,38 @@ func (controller *gmailController) HandleServiceCallback(
 	// }
 
 	authHeader := ctx.GetHeader("Authorization")
-	newUser := schemas.User{}
-	gmailToken := schemas.Token{}
-	var bearerToken string
 
-	gmailTokenResponse, err := controller.service.AuthGetServiceAccessToken(code, path)
+	bearer, err := controller.serviceService.HandleServiceCallback(
+		code,
+		authHeader,
+		schemas.Gmail,
+		controller.service.AuthGetServiceAccessToken,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
 	if err != nil {
-		return "", fmt.Errorf("unable to get access token because %w", err)
+		return "", fmt.Errorf("unable to handle service callback because %w", err)
 	}
-	gmailToken.Token = gmailTokenResponse.AccessToken
-	gmailToken.RefreshToken = gmailTokenResponse.RefreshToken
+	return bearer, nil
+}
 
-	if len(authHeader) > len("Bearer ") {
-		bearerToken = authHeader[len("Bearer "):]
-
-		newUser, err = controller.serviceUser.GetUserInfo(bearerToken)
-		if err != nil {
-			return "", fmt.Errorf("unable to get user info because %w", err)
-		}
-	} else {
-
-		userInfo, err := controller.service.GetUserInfo(gmailToken.Token)
-		if err != nil {
-			return "", fmt.Errorf("unable to get user info because %w", err)
-		}
-		newUser = schemas.User{
-			Username: userInfo.Login,
-			Email:    userInfo.Email,
-		}
-
-		bearerTokenLogin, _, err := controller.serviceUser.Login(newUser)
-		if err == nil {
-			return bearerTokenLogin, nil
-		}
-
-		bearerTokenRegister, newUserId, err := controller.serviceUser.Register(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to register user because %w", err)
-		}
-		bearerToken = bearerTokenRegister
-		newUser = controller.serviceUser.GetUserById(newUserId)
-	}
-
-	gmailService := controller.serviceService.FindByName(schemas.Gmail)
-
-	newgmailToken := schemas.Token{
-		Token:        gmailToken.Token,
-		RefreshToken: gmailToken.RefreshToken,
-		Service:      gmailService,
-		User:         newUser,
-	}
-
-	// Save the access token in the database
-	tokenId, err := controller.serviceToken.SaveToken(newgmailToken)
+func (controller *gmailController) HandleServiceCallbackMobile(
+	ctx *gin.Context,
+) (string, error) {
+	var credentials schemas.MobileTokenRequest
+	err := ctx.ShouldBind(&credentials)
 	if err != nil {
-		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
-		} else {
-			return "", fmt.Errorf("unable to save token because %w", err)
-		}
+		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
-
-	if len(authHeader) == 0 {
-		newUser.TokenId = tokenId
-
-		err = controller.serviceUser.UpdateUserInfo(newUser)
-		if err != nil {
-			return "", fmt.Errorf("unable to update user info because %w", err)
-		}
-	}
-	return bearerToken, nil
+	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		schemas.Gmail,
+		credentials,
+		controller.serviceUser,
+		controller.service.GetUserInfo,
+		controller.serviceToken,
+	)
+	return bearer, err
 }
 
 func (controller *gmailController) GetUserInfo(
@@ -191,6 +132,6 @@ func (controller *gmailController) GetUserInfo(
 	}
 
 	userInfo.Email = gmailUserInfo.Email
-	userInfo.Username = gmailUserInfo.Login
+	userInfo.Username = gmailUserInfo.Username
 	return userInfo, nil
 }

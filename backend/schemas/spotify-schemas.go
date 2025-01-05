@@ -1,6 +1,8 @@
 package schemas
 
-import "errors"
+import (
+	"errors"
+)
 
 type SpotifyAction string
 
@@ -11,9 +13,11 @@ const (
 )
 
 type SpotifyTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	Scope       string `json:"scope"`
-	TokenType   string `json:"token_type"`
+	AccessToken  string `json:"access_token"`
+	Scope        string `json:"scope"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int    `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type SpotifyErrorResponse struct {

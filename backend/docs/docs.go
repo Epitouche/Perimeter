@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/action/info/{id}": {
+        "/action/info/:id": {
             "get": {
                 "security": [
                     {
@@ -67,7 +67,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/area/": {
+        "/area": {
             "get": {
                 "security": [
                     {
@@ -115,9 +115,6 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "Bearer": []
-                    },
-                    {
                         "bearerAuth": []
                     }
                 ],
@@ -148,6 +145,166 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/auth": {
+            "get": {
+                "description": "give url to authenticate with dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give url to authenticate with dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.AuthenticationURL"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/auth/callback": {
+            "post": {
+                "description": "give url to authenticate with dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give url to authenticate with dropbox",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/auth/callback/mobile": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give url to authenticate with dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give url to authenticate with dropbox",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/info": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give user info of dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
@@ -228,12 +385,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/github/info/user": {
+        "/github/info": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -346,12 +500,54 @@ const docTemplate = `{
                 }
             }
         },
-        "/gmail/info/user": {
-            "get": {
+        "/gmail/auth/callback/mobile": {
+            "post": {
                 "security": [
                     {
-                        "Bearer": []
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give url to authenticate with gmail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gmail"
+                ],
+                "summary": "give url to authenticate with gmail",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/gmail/info": {
+            "get": {
+                "security": [
                     {
                         "bearerAuth": []
                     }
@@ -412,7 +608,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/reaction/info/{id}": {
+        "/reaction/info/:id": {
             "get": {
                 "security": [
                     {
@@ -467,12 +663,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/service/info/": {
+        "/service/info": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -496,6 +689,55 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/schemas.Service"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/service/info/:id": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "get service info of service id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Service"
+                ],
+                "summary": "get service info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Service"
                         }
                     },
                     "401": {
@@ -544,7 +786,7 @@ const docTemplate = `{
         },
         "/spotify/auth/callback": {
             "post": {
-                "description": "give url to authenticate with spotify",
+                "description": "give authentication token to web client",
                 "consumes": [
                     "application/json"
                 ],
@@ -554,7 +796,7 @@ const docTemplate = `{
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give url to authenticate with spotify",
+                "summary": "give authentication token to web client",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -588,12 +830,55 @@ const docTemplate = `{
                 }
             }
         },
-        "/spotify/info/user": {
+        "/spotify/auth/callback/mobile": {
+            "post": {
+                "description": "give authentication token to mobile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Spotify"
+                ],
+                "summary": "give authentication token to mobile",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/spotify/info": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -631,55 +916,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/info/all": {
+        "/user/info": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "give user info of user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "give user info of user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.UserAllInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/info/user": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -700,6 +939,46 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info/all": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserAllInfo"
                         }
                     },
                     "401": {
@@ -914,6 +1193,9 @@ const docTemplate = `{
         },
         "schemas.CodeCredentials": {
             "type": "object",
+            "required": [
+                "code"
+            ],
             "properties": {
                 "code": {
                     "type": "string"
@@ -1006,13 +1288,17 @@ const docTemplate = `{
                 "spotify",
                 "openWeatherMap",
                 "timer",
-                "gmail"
+                "gmail",
+                "github",
+                "dropbox"
             ],
             "x-enum-varnames": [
                 "Spotify",
                 "OpenWeatherMap",
                 "Timer",
-                "Gmail"
+                "Gmail",
+                "Github",
+                "Dropbox"
             ]
         },
         "schemas.Token": {

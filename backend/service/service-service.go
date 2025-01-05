@@ -1,8 +1,14 @@
 package service
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
+
 	"area/repository"
 	"area/schemas"
+	"area/tools"
 )
 
 type ServiceService interface {
@@ -11,23 +17,42 @@ type ServiceService interface {
 	GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error)
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	FindServiceByName(name string) schemas.Service
+	RedirectToServiceOauthPage(
+		serviceName schemas.ServiceName,
+		oauthUrl string,
+		scope string,
+	) (authURL string, err error)
+	HandleServiceCallback(
+		code string,
+		authorization string,
+		serviceName schemas.ServiceName,
+		authGetServiceAccessToken func(code string) (schemas.Token, error),
+		serviceUser UserService,
+		getUserInfo func(token string) (userInfo schemas.User, err error),
+		tokenService TokenService,
+	) (string, error)
+	HandleServiceCallbackMobile(
+		serviceName schemas.ServiceName,
+		credentials schemas.MobileTokenRequest,
+		serviceUser UserService,
+		getUserInfo func(token string) (userInfo schemas.User, err error),
+		tokenService TokenService,
+	) (string, error)
+	GetServiceById(serverId uint64) schemas.Service
 }
 
 type ServiceInterface interface {
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	GetServiceInfo() schemas.Service
 }
 
 type serviceService struct {
-	repository        repository.ServiceRepository
-	spotifyService    SpotifyService
-	timerService      TimerService
-	gmailService      GmailService
-	allService        []interface{}
-	allServiceSchemas []schemas.Service
+	repository repository.ServiceRepository
+	allService []interface{}
 }
 
 func NewServiceService(
@@ -35,43 +60,229 @@ func NewServiceService(
 	timerService TimerService,
 	spotifyService SpotifyService,
 	gmailService GmailService,
+	githubService GithubService,
+	dropboxService DropboxService,
+	openweathermapService OpenweathermapService,
 ) ServiceService {
 	newService := serviceService{
-		repository:     repository,
-		spotifyService: spotifyService,
-		timerService:   timerService,
-		gmailService:   gmailService,
-		allServiceSchemas: []schemas.Service{
-			{
-				Name:        schemas.Spotify,
-				Description: "This service is a music service",
-			},
-			// {
-			// 	Name:        schemas.OpenWeatherMap,
-			// 	Description: "This service is a weather service",
-			// },
-			{
-				Name:        schemas.Timer,
-				Description: "This service is a time service",
-			},
-			{
-				Name:        schemas.Gmail,
-				Description: "This service is a mail service",
-			},
+		repository: repository,
+		allService: []interface{}{
+			spotifyService,
+			timerService,
+			gmailService,
+			githubService,
+			dropboxService,
+			openweathermapService,
 		},
-		allService: []interface{}{spotifyService, timerService, gmailService},
 	}
 	newService.InitialSaveService()
 	return &newService
 }
 
 func (service *serviceService) InitialSaveService() {
-	for _, oneService := range service.allServiceSchemas {
-		serviceByName := service.repository.FindAllByName(oneService.Name)
+	for _, oneService := range service.allService {
+		serviceByName := service.repository.FindAllByName(
+			oneService.(ServiceInterface).GetServiceInfo().Name,
+		)
 		if len(serviceByName) == 0 {
-			service.repository.Save(oneService)
+			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
 		}
 	}
+}
+
+func (service *serviceService) RedirectToServiceOauthPage(
+	serviceName schemas.ServiceName,
+	oauthUrl string,
+	scope string,
+) (authURL string, err error) {
+	clientID := ""
+
+	switch serviceName {
+	case schemas.Spotify:
+		clientID = os.Getenv("SPOTIFY_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrSpotifyClientIdNotSet
+		}
+	case schemas.Gmail:
+		clientID = os.Getenv("GMAIL_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrGmailClientIdNotSet
+		}
+	case schemas.Github:
+		clientID = os.Getenv("GITHUB_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrGithubClientIdNotSet
+		}
+	case schemas.Dropbox:
+		clientID = os.Getenv("DROPBOX_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrDropboxClientIdNotSet
+		}
+	}
+	if clientID == "" {
+		return "", schemas.ErrNotOauthService
+	}
+
+	frontendPort := os.Getenv("FRONTEND_PORT")
+	if frontendPort == "" {
+		return "", schemas.ErrFrontendPortNotSet
+	}
+
+	// Generate the CSRF token
+	state, err := tools.GenerateCSRFToken()
+	if err != nil {
+		return "", fmt.Errorf("unable to generate CSRF token because %w", err)
+	}
+
+	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
+	// ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
+
+	// Construct the GitHub authorization URL
+	redirectURI := "http://localhost:" + frontendPort + "/services/" + string(serviceName)
+	authURL = oauthUrl +
+		"?client_id=" + clientID +
+		"&response_type=code" +
+		"&scope=" + scope +
+		"&redirect_uri=" + redirectURI +
+		"&state=" + state
+	return authURL, nil
+}
+
+func (service *serviceService) HandleServiceCallback(
+	code string,
+	authorization string,
+	serviceName schemas.ServiceName,
+	authGetServiceAccessToken func(code string) (schemas.Token, error),
+	serviceUser UserService,
+	getUserServiceInfo func(token string) (userInfo schemas.User, err error),
+	tokenService TokenService,
+) (string, error) {
+	authHeader := authorization
+	newUser := schemas.User{}
+	var bearerToken string
+
+	serviceToken, err := authGetServiceAccessToken(code)
+	if err != nil {
+		return "", fmt.Errorf("unable to get access token because %w", err)
+	}
+
+	if len(authHeader) > len("Bearer ") {
+		bearerToken = authHeader[len("Bearer "):]
+
+		newUser, err = serviceUser.GetUserInfo(bearerToken)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user info because %w", err)
+		}
+	} else {
+		userInfo, err := getUserServiceInfo(serviceToken.Token)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user info because %w", err)
+		}
+		newUser = schemas.User{
+			Username: userInfo.Username,
+			Email:    userInfo.Email,
+		}
+
+		bearerTokenLogin, _, err := serviceUser.Login(newUser)
+		if err == nil {
+			return bearerTokenLogin, nil
+		}
+
+		bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
+		if err != nil {
+			return "", fmt.Errorf("unable to register user because %w", err)
+		}
+		bearerToken = bearerTokenRegister
+		newUser = serviceUser.GetUserById(newUserId)
+	}
+
+	serviceService := service.FindByName(serviceName)
+
+	newServiceToken := schemas.Token{
+		Token:        serviceToken.Token,
+		RefreshToken: serviceToken.RefreshToken,
+		ExpireAt:     serviceToken.ExpireAt,
+		Service:      serviceService,
+		User:         newUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := tokenService.SaveToken(newServiceToken)
+	if err != nil {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	if len(authHeader) == 0 {
+		newUser.TokenId = tokenId
+
+		err = serviceUser.UpdateUserInfo(newUser)
+		if err != nil {
+			return "", fmt.Errorf("unable to update user info because %w", err)
+		}
+	}
+	return bearerToken, nil
+}
+
+func (service *serviceService) HandleServiceCallbackMobile(
+	serviceName schemas.ServiceName,
+	credentials schemas.MobileTokenRequest,
+	serviceUser UserService,
+	getUserInfo func(token string) (userInfo schemas.User, err error),
+	tokenService TokenService,
+) (string, error) {
+	newUser := schemas.User{}
+	var bearerToken string
+
+	userInfo, err := getUserInfo(credentials.AccessToken)
+	if err != nil {
+		return "", fmt.Errorf("unable to get user info because %w", err)
+	}
+	newUser = schemas.User{
+		Username: userInfo.Username,
+		Email:    userInfo.Email,
+	}
+
+	bearerTokenLogin, _, err := serviceUser.Login(newUser)
+	if err == nil {
+		return bearerTokenLogin, nil
+	}
+
+	bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to register user because %w", err)
+	}
+	bearerToken = bearerTokenRegister
+	newUser = serviceUser.GetUserById(newUserId)
+
+	actualService := service.FindByName(schemas.Gmail)
+
+	newServiceToken := schemas.Token{
+		Token:        credentials.AccessToken,
+		RefreshToken: credentials.RefreshToken,
+		ExpireAt:     credentials.ExpiresIn,
+		Service:      actualService,
+		User:         newUser,
+	}
+
+	// Save the access token in the database
+	tokenId, err := tokenService.SaveToken(newServiceToken)
+	if err != nil {
+		if errors.Is(err, schemas.ErrTokenAlreadyExists) {
+		} else {
+			return "", fmt.Errorf("unable to save token because %w", err)
+		}
+	}
+
+	newUser.TokenId = tokenId
+
+	err = serviceUser.UpdateUserInfo(newUser)
+	if err != nil {
+		return "", fmt.Errorf("unable to update user info because %w", err)
+	}
+	return bearerToken, nil
 }
 
 func (service *serviceService) FindAll() (allServices []schemas.Service) {
@@ -99,7 +310,7 @@ func (service *serviceService) GetServices() []interface{} {
 
 func (service *serviceService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	for _, service := range service.allService {
 		if service.(ServiceInterface).FindActionbyName(name) != nil {
 			return service.(ServiceInterface).FindActionbyName(name)
@@ -108,7 +319,9 @@ func (service *serviceService) FindActionbyName(
 	return nil
 }
 
-func (service *serviceService) FindReactionbyName(name string) func(option string, idArea uint64) {
+func (service *serviceService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) string {
 	for _, service := range service.allService {
 		if service.(ServiceInterface).FindReactionbyName(name) != nil {
 			return service.(ServiceInterface).FindReactionbyName(name)
@@ -123,4 +336,8 @@ func (service *serviceService) GetServicesInfo() (allService []schemas.Service, 
 
 func (service *serviceService) FindServiceByName(name string) schemas.Service {
 	return service.repository.FindByName(schemas.ServiceName(name))
+}
+
+func (service *serviceService) GetServiceById(id uint64) schemas.Service {
+	return service.repository.FindById(id)
 }

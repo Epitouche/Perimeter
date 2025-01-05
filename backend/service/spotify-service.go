@@ -4,24 +4,32 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"area/repository"
 	"area/schemas"
 )
 
+// Constructor
+
 type SpotifyService interface {
-	AuthGetServiceAccessToken(code string) (schemas.SpotifyTokenResponse, error)
-	GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error)
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64)
-	SpotifyReactionPlayMusic(option string, idArea uint64)
+	// Service interface functions
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	GetActionsName() []string
 	GetReactionsName() []string
+	// Service specific functions
+	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
+	GetUserInfo(accessToken string) (user schemas.User, err error)
+	// Actions functions
+	// Reactions functions
+	SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64) string
 }
 
 type spotifyService struct {
@@ -31,6 +39,7 @@ type spotifyService struct {
 	tokenRepository   repository.TokenRepository
 	actionsName       []string
 	reactionsName     []string
+	serviceInfo       schemas.Service
 }
 
 func NewSpotifyService(
@@ -44,25 +53,87 @@ func NewSpotifyService(
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
+		serviceInfo: schemas.Service{
+			Name:        schemas.Spotify,
+			Description: "This service is a music service",
+		},
 	}
 }
 
+// Service interface functions
+
+func (service *spotifyService) GetServiceInfo() schemas.Service {
+	return service.serviceInfo
+}
+
+func (service *spotifyService) FindActionbyName(
+	name string,
+) func(c chan string, option json.RawMessage, idArea uint64) {
+	switch name {
+	default:
+		return nil
+	}
+}
+
+func (service *spotifyService) FindReactionbyName(
+	name string,
+) func(option json.RawMessage, idArea uint64) string {
+	switch name {
+	case string(schemas.PlayMusic):
+		return service.SpotifyReactionPlayMusic
+	default:
+		return nil
+	}
+}
+
+func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
+	// service.actionsName = append(service.actionsName, )
+	return []schemas.Action{}
+}
+
+func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
+	defaultValue := struct{}{}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.PlayMusic),
+			Description: "This reaction will play music",
+			Service:     service.serviceRepository.FindByName(schemas.Spotify),
+			Option:      option,
+		},
+	}
+}
+
+func (service *spotifyService) GetActionsName() []string {
+	return service.actionsName
+}
+
+func (service *spotifyService) GetReactionsName() []string {
+	return service.reactionsName
+}
+
+// Service specific functions
+
 func (service *spotifyService) AuthGetServiceAccessToken(
 	code string,
-) (schemas.SpotifyTokenResponse, error) {
+) (token schemas.Token, err error) {
 	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	if clientID == "" {
-		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifyClientIdNotSet
+		return schemas.Token{}, schemas.ErrSpotifyClientIdNotSet
 	}
 
 	clientSecret := os.Getenv("SPOTIFY_SECRET")
 	if clientSecret == "" {
-		return schemas.SpotifyTokenResponse{}, schemas.ErrSpotifySecretNotSet
+		return schemas.Token{}, schemas.ErrSpotifySecretNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
 	if appPort == "" {
-		return schemas.SpotifyTokenResponse{}, schemas.ErrBackendPortNotSet
+		return schemas.Token{}, schemas.ErrBackendPortNotSet
 	}
 
 	redirectURI := "http://localhost:8081/services/spotify"
@@ -76,7 +147,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf(
+		return schemas.Token{}, fmt.Errorf(
 			"unable to create request because %w",
 			err,
 		)
@@ -89,13 +160,23 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		println("Status code", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Printf("body: %+v\n", body)
+		return schemas.Token{}, fmt.Errorf(
+			"unable to get token because %v",
+			resp.Status,
+		)
 	}
 
 	var result schemas.SpotifyTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.SpotifyTokenResponse{}, fmt.Errorf(
+		return schemas.Token{}, fmt.Errorf(
 			"unable to decode response because %w",
 			err,
 		)
@@ -103,18 +184,25 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 
 	if result.AccessToken == "" {
 		fmt.Printf("Token exchange failed. Response body: %v\n", resp.Body)
-		return schemas.SpotifyTokenResponse{}, schemas.ErrAccessTokenNotFoundInResponse
+		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
 	resp.Body.Close()
-	return result, nil
+
+	token = schemas.Token{
+		Token:        result.AccessToken,
+		RefreshToken: result.RefreshToken,
+		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
+	}
+
+	return token, nil
 }
 
-func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyUserInfo, error) {
+func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.User, err error) {
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/me", nil)
 	if err != nil {
-		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to create request because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	// Add the Authorization header
@@ -126,20 +214,20 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to make request because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		errorResponse := schemas.SpotifyErrorResponse{}
 		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
 		if err != nil {
-			return schemas.SpotifyUserInfo{}, fmt.Errorf(
+			return schemas.User{}, fmt.Errorf(
 				"unable to decode error response because %w",
 				err,
 			)
 		}
 		resp.Body.Close()
-		return schemas.SpotifyUserInfo{}, fmt.Errorf(
+		return schemas.User{}, fmt.Errorf(
 			"unable to get user info because %v %v",
 			errorResponse.Error.Status,
 			errorResponse.Error.Message,
@@ -149,42 +237,37 @@ func (service *spotifyService) GetUserInfo(accessToken string) (schemas.SpotifyU
 	result := schemas.SpotifyUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.SpotifyUserInfo{}, fmt.Errorf("unable to decode response because %w", err)
+		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
 	resp.Body.Close()
-	return result, nil
-}
 
-func (service *spotifyService) FindActionbyName(
-	name string,
-) func(c chan string, option string, idArea uint64) {
-	switch name {
-	default:
-		return nil
+	user = schemas.User{
+		Username: result.DisplayName,
+		Email:    result.Email,
 	}
+
+	return user, nil
 }
 
-func (service *spotifyService) FindReactionbyName(name string) func(option string, idArea uint64) {
-	switch name {
-	case string(schemas.PlayMusic):
-		return service.SpotifyReactionPlayMusic
-	default:
-		return nil
-	}
-}
+// Actions functions
 
-func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea uint64) {
+// Reactions functions
+
+func (service *spotifyService) SpotifyReactionPlayMusic(
+	option json.RawMessage,
+	idArea uint64,
+) string {
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
-		return
+		return "Error finding area:" + err.Error()
 	}
 
 	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
-		return
+		return "Error: Token not found"
 	}
 
 	apiURL := "https://api.spotify.com/v1/me/player/play"
@@ -200,7 +283,7 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return
+		return "Error creating request:" + err.Error()
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token.Token)
@@ -210,34 +293,10 @@ func (service *spotifyService) SpotifyReactionPlayMusic(option string, idArea ui
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error making request:", err)
-		return
+		return "Error making request:" + err.Error()
 	}
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)
-}
-
-func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
-	// service.actionsName = append(service.actionsName, )
-	return []schemas.Action{}
-}
-
-func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
-	return []schemas.Reaction{
-		{
-			Name:        string(schemas.PlayMusic),
-			Description: "This reaction will play music",
-			Service:     service.serviceRepository.FindByName(schemas.Spotify),
-			Option:      "{}",
-		},
-	}
-}
-
-func (service *spotifyService) GetActionsName() []string {
-	return service.actionsName
-}
-
-func (service *spotifyService) GetReactionsName() []string {
-	return service.reactionsName
+	return "Response Status:" + resp.Status
 }
