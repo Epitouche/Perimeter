@@ -59,6 +59,9 @@ func NewGmailService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Gmail,
 			Description: "This service is a mail service",
+			Oauth:       true,
+			Color:       "#E60000",
+			Icon:        "https://api.iconify.design/mdi:gmail.svg?color=%23FFFFFF",
 		},
 	}
 }
