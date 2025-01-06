@@ -197,7 +197,10 @@ func (service *serviceService) HandleServiceCallback(
 			return "", fmt.Errorf("unable to register user because %w", err)
 		}
 		bearerToken = bearerTokenRegister
-		newUser = serviceUser.GetUserById(newUserId)
+		newUser, err = serviceUser.GetUserById(newUserId)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user by id because %w", err)
+		}
 	}
 
 	serviceService := service.FindByName(serviceName)
@@ -259,7 +262,10 @@ func (service *serviceService) HandleServiceCallbackMobile(
 		return "", fmt.Errorf("unable to register user because %w", err)
 	}
 	bearerToken = bearerTokenRegister
-	newUser = serviceUser.GetUserById(newUserId)
+	newUser, err = serviceUser.GetUserById(newUserId)
+	if err != nil {
+		return "", fmt.Errorf("unable to get user by id because %w", err)
+	}
 
 	actualService := service.FindByName(serviceName)
 

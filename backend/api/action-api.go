@@ -9,14 +9,15 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type ActionApi struct {
 	controller controller.ActionController
 }
 
-func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterGroup) *ActionApi {
-	apiRoutes = apiRoutes.Group("/action", middlewares.AuthorizeJWT())
+func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *ActionApi {
+	apiRoutes = apiRoutes.Group("/action", middlewares.AuthorizeJWT(serviceUser))
 	api := ActionApi{
 		controller: controller,
 	}

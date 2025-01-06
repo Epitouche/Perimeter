@@ -300,7 +300,11 @@ func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idAre
 		return "Error finding area" + err.Error()
 	}
 
-	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token" + err.Error()
+	}
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
 		return "Error: Token not found"

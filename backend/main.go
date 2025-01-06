@@ -162,18 +162,18 @@ func setupRouter() *gin.Engine {
 	areaResultController := controller.NewAreaResultController(areaResultService)
 
 	// API routes
-	api.NewActionApi(actionController, apiRoutes)
-	api.NewReactionApi(reactionController, apiRoutes)
+	api.NewActionApi(actionController, apiRoutes, userService)
+	api.NewReactionApi(reactionController, apiRoutes, userService)
 	api.NewTokenApi(tokenController)
 
 	ping(apiRoutes)
 	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)
-	api.NewUserApi(userController, apiRoutes)
-	api.NewSpotifyAPI(spotifyController, apiRoutes)
-	api.NewGmailAPI(gmailController, apiRoutes)
-	api.NewGithubAPI(githubController, apiRoutes)
-	api.NewDropboxAPI(dropboxController, apiRoutes)
-	api.NewAreaAPI(areaController, apiRoutes)
+	api.NewUserApi(userController, apiRoutes, userService)
+	api.NewSpotifyAPI(spotifyController, apiRoutes, userService)
+	api.NewGmailAPI(gmailController, apiRoutes, userService)
+	api.NewGithubAPI(githubController, apiRoutes, userService)
+	api.NewDropboxAPI(dropboxController, apiRoutes, userService)
+	api.NewAreaAPI(areaController, apiRoutes, userService)
 	api.NewAreaResultAPI(areaResultController, apiRoutes)
 
 	// basic about.json route

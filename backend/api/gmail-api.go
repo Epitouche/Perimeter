@@ -8,13 +8,14 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type GmailAPI struct {
 	controller controller.GmailController
 }
 
-func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGroup) *GmailAPI {
+func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *GmailAPI {
 	apiRoutes = apiRoutes.Group("/gmail")
 	api := GmailAPI{
 		controller: controller,
@@ -22,7 +23,7 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
 	api.HandleServiceCallbackMobile(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }
