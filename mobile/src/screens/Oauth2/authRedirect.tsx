@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../Navigation/navigate';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'authRedirect'>;
 
-const AuthRedirectScreen: React.FC<Props> = ({navigation, route}) => {
+const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

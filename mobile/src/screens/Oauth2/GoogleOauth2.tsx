@@ -3,7 +3,12 @@ import { GMAIL_MOBILE_CLIENT_ID, GMAIL_SECRET } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
-async function HandleGoogleLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
+async function HandleGoogleLogin(
+  setToken: any,
+  navigation: any,
+  ipAddress: string,
+  login: boolean = false,
+) {
   const config: AuthConfiguration = {
     clientId: GMAIL_MOBILE_CLIENT_ID,
     clientSecret: GMAIL_SECRET,
@@ -20,7 +25,10 @@ async function HandleGoogleLogin(setToken: any, navigation: any, ipAddress: stri
     // console.log('result', result);
     let data;
     if (login) {
-      data = await handleCallback(`http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`, result);
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`,
+        result,
+      );
     } else {
       setToken(result.accessToken);
       // TODO: call route when loging in from myServices page (waiting for back to be done)
@@ -29,8 +37,9 @@ async function HandleGoogleLogin(setToken: any, navigation: any, ipAddress: stri
       console.error(data.error);
     } else {
       setToken(data.token);
-      if (login)
+      if (login) {
         navigation.navigate('AreaView');
+      }
     }
   } catch (error) {
     if ((error as Error).message != 'User cancelled flow') {

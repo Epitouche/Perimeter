@@ -19,4 +19,11 @@ export default defineNuxtConfig({
       },
     ],
   },
+
+  app: {
+    head: {
+      titleTemplate: "Perimeter",
+      link: [{ rel: "icon", type: "image/x-icon", href: "/PerimeterIcon.png" }],
+    },
+  },
 });

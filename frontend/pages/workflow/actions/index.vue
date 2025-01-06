@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ServiceInfo } from "@/interfaces/serviceinfo";
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
 
 definePageMeta({
   layout: "nonavbar",
@@ -19,6 +19,7 @@ const searchQuery = ref<string>("");
 const fetchServices = async () => {
   try {
     errorMessage.value = null;
+    const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
     const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
       method: "POST",
       body: {
