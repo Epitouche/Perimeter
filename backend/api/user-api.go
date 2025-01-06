@@ -15,7 +15,11 @@ type UserApi struct {
 	controller controller.UserController
 }
 
-func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *UserApi {
+func NewUserApi(
+	controller controller.UserController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *UserApi {
 	apiRoutes = apiRoutes.Group("/user")
 	api := UserApi{
 		controller: controller,

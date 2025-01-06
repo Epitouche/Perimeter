@@ -15,7 +15,11 @@ type GithubAPI struct {
 	controller controller.GithubController
 }
 
-func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *GithubAPI {
+func NewGithubAPI(
+	controller controller.GithubController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *GithubAPI {
 	apiRoutes = apiRoutes.Group("/github")
 	api := GithubAPI{
 		controller: controller,

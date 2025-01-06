@@ -75,7 +75,9 @@ func (repo *actionRepository) FindByName(actionName string) (actions []schemas.A
 	return actions, nil
 }
 
-func (repo *actionRepository) FindByServiceId(serviceId uint64) (actions []schemas.Action, err error) {
+func (repo *actionRepository) FindByServiceId(
+	serviceId uint64,
+) (actions []schemas.Action, err error) {
 	errDatabase := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
 		Find(&actions)
 
