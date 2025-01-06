@@ -18,7 +18,7 @@ async function HandleGoogleLogin(setToken: any, navigation: any, ipAddress: stri
     let data;
     if (login) {
       // If logging in, send the tokens to your backend for further processing
-      data = await handleCallback(`http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`, { idToken, accessToken });
+      data = await handleCallback(`http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`, { userInfo });
     } else {
       // If not logging in, just set the token
       setToken(accessToken);

@@ -11,6 +11,7 @@ const App: React.FC = () => {
       webClientId: GMAIL_CLIENT_ID,
       offlineAccess: true,
       forceCodeForRefreshToken: true,
+      scopes: ['profile', 'email'],
     });
   });
 
