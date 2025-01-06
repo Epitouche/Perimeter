@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"area/controller"
-	"area/middlewares"
 	"area/schemas"
 )
 
@@ -23,7 +22,7 @@ func NewServiceApi(
 	api := ServiceApi{
 		controller: controller,
 	}
-	apiRoutes = apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutes = apiRoutes.Group("/info")
 	api.GetServicesInfo(apiRoutes)
 	api.GetServiceInfoById(apiRoutes)
 	return &api
