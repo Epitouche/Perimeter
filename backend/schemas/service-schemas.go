@@ -8,12 +8,12 @@ import (
 type ServiceName string
 
 const (
-	Spotify        ServiceName = "spotify"
-	Openweathermap ServiceName = "openweathermap"
-	Timer          ServiceName = "timer"
-	Gmail          ServiceName = "gmail"
-	Github         ServiceName = "github"
-	Dropbox        ServiceName = "dropbox"
+	Spotify        ServiceName = "Spotify"
+	Openweathermap ServiceName = "OpenWeatherMap"
+	Timer          ServiceName = "Timer"
+	Gmail          ServiceName = "Gmail"
+	Github         ServiceName = "Github"
+	Dropbox        ServiceName = "Dropbox"
 )
 
 type ServiceJSON struct {
