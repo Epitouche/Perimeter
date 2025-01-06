@@ -86,7 +86,7 @@ const ServicesScreen = (navigation: any) => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         const userResponse = await fetch(
           `http://${ipAddress}:8080/api/v1/user/info/all`,
@@ -95,9 +95,9 @@ const ServicesScreen = (navigation: any) => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-         console.log('User response:', userResponse);
+        console.log('User response:', userResponse);
         const serviceData = await serviceResponse.json();
         const userData = await userResponse.json();
 
@@ -134,18 +134,18 @@ const ServicesScreen = (navigation: any) => {
   };
   Linking.addEventListener('url', handleUrl);
 
-  const renderService = ({item}: {item: any}) => {
+  const renderService = ({ item }: { item: any }) => {
     const isConnected = connectedServices.includes(item.name);
 
     return (
       <TouchableOpacity
         style={[
           styles.serviceButton,
-          {backgroundColor: isConnected ? '#2196F3' : '#B0BEC5'},
+          { backgroundColor: isConnected ? '#2196F3' : '#B0BEC5' },
         ]}
         onPress={isConnected ? () => connectService(item.name) : undefined}
         disabled={!isConnected}>
-        {serviceIcons[item.name]?.({width: 36, height: 36}) || (
+        {serviceIcons[item.name]?.({ width: 36, height: 36 }) || (
           <Text style={styles.unknownIcon}>?</Text>
         )}
         <Text style={styles.serviceText}>{item.name}</Text>
