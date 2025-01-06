@@ -107,10 +107,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
 
     return (
       <TouchableOpacity
-        style={[
-          styles.serviceButton,
-          { backgroundColor: item.color},
-        ]}
+        style={[styles.serviceButton, { backgroundColor: item.color }]}
         onPress={!isConnected ? () => connectService(item.name) : undefined}>
         <SvgFromUri uri={item.icon} width={50} height={50} />
         <Text style={styles.serviceText}>{item.name}</Text>
