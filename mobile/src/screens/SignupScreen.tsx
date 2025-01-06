@@ -85,7 +85,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           Alert.alert('Successfully registered, please login now');
         } else {
           console.error('Error:', response.status, ' | ', response.statusText);
-          Alert.alert('Error registering, please try again (Username or email might already be taken)');
+          Alert.alert(
+            'Error registering, please try again (Username or email might already be taken)',
+          );
         }
       } catch (error) {
         console.error('Error', error);
@@ -107,7 +109,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
-        inputMode='text'
+        inputMode="text"
         onChangeText={text => setUsername(text)}
       />
       {errors.username ? (
@@ -119,7 +121,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         placeholder="Enter email"
         placeholderTextColor="#aaa"
         value={email}
-        inputMode='email'
+        inputMode="email"
         onChangeText={text => setEmail(text)}
       />
       {errors.email ? (

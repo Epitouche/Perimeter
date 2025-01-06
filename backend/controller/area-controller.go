@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 
 	"area/schemas"
@@ -9,7 +11,7 @@ import (
 
 type AreaController interface {
 	CreateArea(ctx *gin.Context) (string, error)
-	GetUserAreas(ctx *gin.Context) ([]schemas.Area, error)
+	GetUserAreas(ctx *gin.Context) (areaList []schemas.Area, err error)
 }
 
 type areaController struct {
@@ -23,10 +25,15 @@ func NewAreaController(service service.AreaService) AreaController {
 }
 
 func (controller *areaController) CreateArea(ctx *gin.Context) (string, error) {
-	println("CreateArea Controller")
 	return controller.service.CreateArea(ctx)
 }
 
-func (controller *areaController) GetUserAreas(ctx *gin.Context) ([]schemas.Area, error) {
-	return controller.service.GetUserAreas(ctx)
+func (controller *areaController) GetUserAreas(
+	ctx *gin.Context,
+) (areaList []schemas.Area, err error) {
+	areaList, err = controller.service.GetUserAreas(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("can't get user areas: %w", err)
+	}
+	return areaList, nil
 }

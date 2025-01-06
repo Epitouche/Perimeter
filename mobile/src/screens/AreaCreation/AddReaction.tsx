@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,19 +8,19 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../Navigation/navigate';
-import {AppContext} from '../../context/AppContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Navigation/navigate';
+import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddReactionScreen'>;
 
-const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
+const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [services, setServices] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const {ipAddress, token} = useContext(AppContext);
-  const {actionId, actionOptions } = route.params;
+  const { ipAddress, token } = useContext(AppContext);
+  const { actionId, actionOptions } = route.params;
 
   useEffect(() => {
     // Fetch actionas from API
@@ -92,7 +92,13 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
           <TouchableOpacity
             key={service.id}
             style={styles.serviceBox}
-            onPress={() => navigation.navigate('SelectReactionScreen', { actionId:actionId, actionOptions: actionOptions, serviceId: service.id})}>
+            onPress={() =>
+              navigation.navigate('SelectReactionScreen', {
+                actionId: actionId,
+                actionOptions: actionOptions,
+                serviceId: service.id,
+              })
+            }>
             <Text style={styles.serviceText}>{service.name}</Text>
           </TouchableOpacity>
         ))}

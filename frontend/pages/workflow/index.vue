@@ -16,27 +16,27 @@ const showPageContent = ref(true);
 const isLoading = ref(false);
 
 const onCreate = async () => {
-  // console.log("actionId:", websiteStore.actionId);
-  // console.log("actionOptions:", websiteStore.actionOptions);
-  // console.log("reactionId:", websiteStore.reactionId);
-  // console.log("reactionOptions:", websiteStore.reactionOptions);
+  console.log("actionId:", websiteStore.actionId);
+  console.log("actionOptions:", websiteStore.actionOptions);
+  console.log("reactionId:", websiteStore.reactionId);
+  console.log("reactionOptions:", websiteStore.reactionOptions);
 
-  createdMessage.value = "Workflow created successfully!";
-  showPageContent.value = false;
+  error.value = null;
 
   try {
-    error.value = null;
     const response = await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
         token: token.value,
-        actionOptions: JSON.stringify(websiteStore.actionOptions),
+        actionOptions: websiteStore.actionOptions,
         actionId: websiteStore.actionId,
-        reactionOptions: JSON.stringify(websiteStore.reactionOptions),
+        reactionOptions: websiteStore.reactionOptions,
         reactionId: websiteStore.reactionId,
       },
     });
     console.log("response:", response);
+    createdMessage.value = "Workflow created successfully!";
+    showPageContent.value = false;
     setTimeout(() => {
       createdMessage.value = null;
       showPageContent.value = true;
@@ -44,11 +44,14 @@ const onCreate = async () => {
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
   } catch (error: unknown) {
+    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
-
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }
+    alert("An error occurred while creating the workflow, please try again");
+    websiteStore.resetWorkflowPage();
+    router.push("/workflow");
   }
 };
 
@@ -56,6 +59,19 @@ const onCancel = () => {
   websiteStore.resetWorkflowPage();
   router.push("/workflow");
 };
+
+function validateOptions(
+  options: Record<string, unknown>,
+): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(options).map(([key, value]) => {
+      if (typeof value === "string" && !isNaN(Number(value))) {
+        return [key, Number(value)];
+      }
+      return [key, value];
+    }),
+  );
+}
 
 onMounted(() => {
   isLoading.value = true;
@@ -77,42 +93,51 @@ onMounted(() => {
   };
 
   const actionId = getQueryParam(route.query.actionId);
-  const reactionId = getQueryParam(route.query.reactionId);
 
   if (actionId) {
     websiteStore.actionId = actionId;
-    try {
-      websiteStore.actionOptions = JSON.parse(
-        route.query.actionOptions ? String(route.query.actionOptions) : "{}",
-      );
-    } catch (err) {
-      console.error(
-        "Failed to parse actionOptions:",
-        route.query.actionOptions,
-        err,
-      );
-      websiteStore.actionOptions = {};
+    const actionOptionsString = getQueryParam(route.query.actionOptions);
+    let actionOptions = {};
+
+    if (actionOptionsString) {
+      try {
+        actionOptions = JSON.parse(actionOptionsString);
+      } catch (err) {
+        console.error(
+          "Failed to parse actionOptions:",
+          actionOptionsString,
+          err,
+        );
+        actionOptions = {};
+      }
     }
+    actionOptions = validateOptions(actionOptions);
+    websiteStore.actionOptions = actionOptions;
     websiteStore.actionServiceId = getQueryParam(route.query.actionServiceId);
     websiteStore.onActionSelected();
   }
 
+  const reactionId = getQueryParam(route.query.reactionId);
+
   if (reactionId) {
     websiteStore.reactionId = reactionId;
-    try {
-      websiteStore.reactionOptions = JSON.parse(
-        route.query.reactionOptions
-          ? String(route.query.reactionOptions)
-          : "{}",
-      );
-    } catch (err) {
-      console.error(
-        "Failed to parse reactionOptions:",
-        route.query.reactionOptions,
-        err,
-      );
-      websiteStore.reactionOptions = {};
+    const reactionOptionsString = getQueryParam(route.query.reactionOptions);
+    let reactionOptions = {};
+
+    if (reactionOptionsString) {
+      try {
+        reactionOptions = JSON.parse(reactionOptionsString);
+      } catch (err) {
+        console.error(
+          "Failed to parse reactionOptions:",
+          reactionOptionsString,
+          err,
+        );
+        reactionOptions = {};
+      }
     }
+    reactionOptions = validateOptions(reactionOptions);
+    websiteStore.reactionOptions = reactionOptions;
     websiteStore.reactionServiceId = getQueryParam(
       route.query.reactionServiceId,
     );

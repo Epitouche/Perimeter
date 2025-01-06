@@ -72,6 +72,7 @@ func (service *userService) Register(
 ) (jwtToken string, userID uint64, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	fmt.Printf("%+v\n", userWiththisEmail)
+
 	if len(userWiththisEmail) != 0 {
 		// return service.Login(newUser)
 		return "", 0, schemas.ErrEmailAlreadyExist
@@ -90,7 +91,7 @@ func (service *userService) Register(
 	newUser.Id = service.repository.FindByUserName(newUser.Username)[0].Id
 
 	return service.serviceJWT.GenerateToken(
-		fmt.Sprint(newUser.Id),
+		strconv.FormatUint(newUser.Id, 10),
 		newUser.Username,
 		false,
 	), service.repository.FindByUserName(newUser.Username)[0].Id, nil

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   Linking,
   ActivityIndicator,
 } from 'react-native';
-import Svg, {Path} from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import BottomNavBar from './NavBar';
-import {AppContext} from '../context/AppContext';
+import { AppContext } from '../context/AppContext';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
@@ -117,10 +117,10 @@ const ServicesScreen = (navigation: any) => {
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
-      const url = new URL(event.url).searchParams
-      const token = url.get('token')
-      const code = url.get('code')
-      const error = url.get('error')
+      const url = new URL(event.url).searchParams;
+      const token = url.get('token');
+      const code = url.get('code');
+      const error = url.get('error');
 
       if (code) {
         console.log('Received auth code:', code);
@@ -131,7 +131,7 @@ const ServicesScreen = (navigation: any) => {
         setToken(token);
       }
     }
-  }
+  };
   Linking.addEventListener('url', handleUrl);
 
   const renderService = ({item}: {item: any}) => {

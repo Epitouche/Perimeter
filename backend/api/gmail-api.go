@@ -64,7 +64,6 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		gmail_token, err := api.controller.HandleServiceCallback(
 			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})

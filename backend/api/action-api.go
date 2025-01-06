@@ -42,6 +42,7 @@ func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterG
 func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
+
 		idInt, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
@@ -50,6 +51,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 
 			return
 		}
+
 		response, err := api.controller.GetActionsInfo(idInt)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -58,6 +60,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }

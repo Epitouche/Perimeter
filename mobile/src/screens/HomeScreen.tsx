@@ -1,19 +1,13 @@
-import React, {useContext} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  TextInput,
-  StyleSheet,
-} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../Navigation/navigate';
+import React, { useContext } from 'react';
+import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-const HomeScreen: React.FC<Props> = ({navigation}) => {
-  const {ipAddress, setIpAddress} = useContext(AppContext);
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  const { ipAddress, setIpAddress } = useContext(AppContext);
 
   return (
     <View style={styles.container}>
@@ -25,10 +19,13 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
         onChangeText={setIpAddress}
         keyboardType="numeric"
       />
-      <Button title="Connect" onPress={() => {
-        setIpAddress(ipAddress);
-        navigation.navigate('Login')
-      }} />
+      <Button
+        title="Connect"
+        onPress={() => {
+          setIpAddress(ipAddress);
+          navigation.navigate('Login');
+        }}
+      />
     </View>
   );
 };

@@ -1,24 +1,24 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import type { OAuthLink } from "~/interfaces/authLink";
+
 defineProps<{
   apps: {
     name: string;
-    color: string;
     icon: string;
   }[];
 }>();
 
-interface OAuthLink {
-  authentication_url: string;
-}
-
 const tokenCookie = useCookie("token");
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+const services = ref<ServiceInfo[]>([]);
 
-let serviceNames: string[] = [];
+let serviceConnected: string[] = [];
 
 onMounted(() => {
   servicesConnectionInfos();
+  fetchServices();
 });
 
 async function servicesConnectionInfos() {
@@ -37,9 +37,9 @@ async function servicesConnectionInfos() {
       Array.isArray((response as { tokens: unknown }).tokens)
     ) {
       const tokens = (
-        response as { tokens: Array<{ service_id: { name: string } }> }
+        response as { tokens: Array<{ service: { name: string } }> }
       ).tokens;
-      serviceNames = tokens.map((token) => token.service_id.name);
+      serviceConnected = tokens.map((token) => token.service.name);
       isLoading.value = false;
     } else {
       console.error("Response does not contain valid tokens.");
@@ -52,6 +52,25 @@ async function servicesConnectionInfos() {
     }
   }
 }
+
+const fetchServices = async () => {
+  try {
+    errorMessage.value = null;
+    const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
+      method: "POST",
+      body: {
+        token: tokenCookie.value,
+      },
+    });
+    services.value = result;
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+
+    if (errorMessage.value === "An unknown error occurred") {
+      console.error("An unknown error occurred", error);
+    }
+  }
+};
 
 const authApiCall = async (label: string) => {
   try {
@@ -75,14 +94,17 @@ const authApiCall = async (label: string) => {
 
 const handleClick = (label: string) => {
   const normalizedLabel = label.toLowerCase();
+  const serviceNames = services.value.map((service) =>
+    service.name.toLowerCase(),
+  );
   if (
-    serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
+    serviceConnected.map((name) => name.toLowerCase()).includes(normalizedLabel)
   ) {
     //disconnectService(label);
   } else {
     const apiLink = `http://server:8080/api/v1/${normalizedLabel}/auth/`;
 
-    if (normalizedLabel === "spotify" || normalizedLabel === "gmail") {
+    if (serviceNames.includes(normalizedLabel)) {
       authApiCall(apiLink);
     } else {
       console.log(`${label} unknown icon clicked`);
@@ -91,10 +113,17 @@ const handleClick = (label: string) => {
 };
 
 const getServiceStateText = (appName: string) => {
-  const isConnected = serviceNames.includes(appName.toLowerCase());
+  if (["openweathermap", "timer"].includes(appName.toLowerCase())) {
+    return `Automatically connected`;
+  }
+
+  const isConnected = serviceConnected.includes(appName.toLowerCase());
   const message = isConnected ? `Disconnect ${appName}` : `Connect ${appName}`;
-  console.log(`Rendering state for ${appName}: ${message}`);
   return message;
+};
+
+const isSpecialCase = (appName: string) => {
+  return ["openweathermap", "timer"].includes(appName.toLowerCase());
 };
 </script>
 
@@ -104,8 +133,10 @@ const getServiceStateText = (appName: string) => {
       v-for="(app, index) in apps"
       :key="index"
       :icon="app.icon"
-      class="app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105"
-      :style="{ backgroundColor: app.color }"
+      :class="[
+        `bg-custom_color-${app.name}`,
+        `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`,
+      ]"
       @click="handleClick(app.name)"
     >
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
@@ -116,8 +147,12 @@ const getServiceStateText = (appName: string) => {
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
         :class="{
-          'bg-black text-white': serviceNames.includes(app.name.toLowerCase()),
-          'bg-white text-black': !serviceNames.includes(app.name.toLowerCase()),
+          'bg-black text-white':
+            isSpecialCase(app.name) ||
+            serviceConnected.includes(app.name.toLowerCase()),
+          'bg-white text-black':
+            !isSpecialCase(app.name) &&
+            !serviceConnected.includes(app.name.toLowerCase()),
         }"
       >
         {{ getServiceStateText(app.name) }}

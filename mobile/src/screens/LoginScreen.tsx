@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -9,25 +9,24 @@ import {
   Alert,
 } from 'react-native';
 import 'url-search-params-polyfill';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../Navigation/navigate';
-import {AppContext} from '../context/AppContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../Navigation/navigate';
+import { AppContext } from '../context/AppContext';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
-import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';  
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-const LoginScreen: React.FC<Props> = ({navigation, route}) => {
+const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({username: '', password: ''});
-  const {ipAddress, setToken, setService} = useContext(AppContext);
+  const [errors, setErrors] = useState({ username: '', password: '' });
+  const { ipAddress, setToken, setService } = useContext(AppContext);
 
   const handleLogin = async () => {
     let hasError = false;
-    const newErrors = {username: '', password: ''};
+    const newErrors = { username: '', password: '' };
 
     if (!username) {
       newErrors.username = 'Username is required';
@@ -49,7 +48,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, password}),
+            body: JSON.stringify({ username, password }),
           },
         );
 
@@ -121,13 +120,13 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => {
             setService('Google');
             HandleGoogleLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
-            source={{uri: 'https://img.icons8.com/color/50/google-logo.png'}}
+            source={{ uri: 'https://img.icons8.com/color/50/google-logo.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
@@ -137,7 +136,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
             HandleGithubLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
-            source={{uri: 'https://img.icons8.com/ios-glyphs/50/github.png'}}
+            source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
@@ -147,7 +146,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
             HandleSpotifyLogin(setToken, navigation, ipAddress);
           }}>
           <Image
-            source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
+            source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>

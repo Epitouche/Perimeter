@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,18 +8,18 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../App';
-import {AppContext} from '../../context/AppContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../App';
+import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddActionScreen'>;
 
-const AddActionScreen: React.FC<Props> = ({navigation}) => {
+const AddActionScreen: React.FC<Props> = ({ navigation }) => {
   const [services, setServices] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const {ipAddress, token} = useContext(AppContext);
+  const { ipAddress, token } = useContext(AppContext);
 
   useEffect(() => {
     // Fetch services from API

@@ -27,6 +27,7 @@ func NewDropboxAPI(
 	api.HandleServiceCallbackMobile(apiRoutes)
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
 	api.GetUserInfo(apiRoutesInfo)
+	api.GetUserFile(apiRoutesInfo)
 	return &api
 }
 
@@ -65,10 +66,7 @@ func (api *DropboxAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Router			/dropbox/auth/callback [post]
 func (api *DropboxAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
-		dropbox_token, err := api.controller.HandleServiceCallback(
-			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
-		)
+		dropbox_token, err := api.controller.HandleServiceCallback(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
@@ -91,14 +89,13 @@ func (api *DropboxAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Router			/dropbox/auth/callback/mobile [post]
 func (api *DropboxAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		token, err := api.controller.HandleServiceCallbackMobile(
-			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
-		)
+		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
 		} else {
-			ctx.JSON(http.StatusOK, &schemas.JWT{Token: token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: spotify_token})
 		}
 	})
 }
@@ -118,6 +115,29 @@ func (api *DropboxAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 func (api *DropboxAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
+		} else {
+			ctx.JSON(http.StatusOK, userInfo)
+		}
+	})
+}
+
+// GetUserInfo godoc
+//
+//	@Summary		give user info of dropbox
+//	@Description	give user info of dropbox
+//	@Tags			Dropbox
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Success		200	{object}	[]schemas.DropboxFile
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/dropbox/info [get]
+func (api *DropboxAPI) GetUserFile(apiRoutes *gin.RouterGroup) {
+	apiRoutes.GET("/file", func(ctx *gin.Context) {
+		userInfo, err := api.controller.GetUserFile(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {

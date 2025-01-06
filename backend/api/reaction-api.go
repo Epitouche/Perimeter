@@ -52,6 +52,7 @@ func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		response, err := api.controller.GetReactionsInfo(idInt)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -59,6 +60,7 @@ func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }

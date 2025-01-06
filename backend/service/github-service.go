@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,8 +18,8 @@ type GithubService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
@@ -72,7 +73,7 @@ func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
 
 func (service *githubService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
@@ -81,7 +82,7 @@ func (service *githubService) FindActionbyName(
 
 func (service *githubService) FindReactionbyName(
 	name string,
-) func(option string, idArea uint64) string {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 	default:
 		return nil
@@ -126,7 +127,9 @@ func (service *githubService) AuthGetServiceAccessToken(
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
 
-	req, err := http.NewRequest("POST", apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -160,8 +163,10 @@ func (service *githubService) AuthGetServiceAccessToken(
 }
 
 func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.github.com/user", nil)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}

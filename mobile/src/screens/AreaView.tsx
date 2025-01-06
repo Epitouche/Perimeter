@@ -1,5 +1,11 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomNavBar from './NavBar';
@@ -16,14 +22,12 @@ const AreasScreen = ({ navigation }: Props) => {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, 
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         const data = await response.json();
         setAreas(data);
       } catch (error) {
@@ -52,12 +56,16 @@ const AreasScreen = ({ navigation }: Props) => {
         {areas.map((area, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.areaBox, { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' }]} // Dynamic colors
+            style={[
+              styles.areaBox,
+              { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' },
+            ]} // Dynamic colors
             // onPress={() => navigation.navigate('AreaDetails', { area })}
           >
-            <Text style={styles.areaText}>{
-              `${area.action_id.name} ~ ${area.reaction_id.name}`
-            }</Text>
+            <Text
+              style={
+                styles.areaText
+              }>{`${area.action_id.name} ~ ${area.reaction_id.name}`}</Text>
             <View style={styles.iconsContainer}>
               <MaterialCommunityIcons
                 name={area.action_id.service_id.name.toLowerCase()}

@@ -17,9 +17,9 @@ const (
 )
 
 type ServiceJSON struct {
-	Name     ServiceName    `json:"name"`
-	Action   []ActionJSON   `json:"actions"`
-	Reaction []ReactionJSON `json:"reactions"`
+	Name     ServiceName    `json:"name"`      // Name of the service
+	Action   []ActionJSON   `json:"actions"`   // List of actions for the service
+	Reaction []ReactionJSON `json:"reactions"` // List of reactions for the service
 }
 
 // GithubToken represents the GithubToken entity in the database.

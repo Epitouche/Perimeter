@@ -48,6 +48,7 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, &schemas.JWT{
 			Token: token,
 		})
@@ -76,6 +77,7 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusCreated, &schemas.JWT{
 			Token: token,
 		})

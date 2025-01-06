@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "@/interfaces/serviceinfo";
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -7,8 +9,9 @@ definePageMeta({
 const token = useCookie("token");
 
 const errorMessage = ref<string | null>(null);
-const services = ref<any[]>([]);
-const filteredServices = ref<any[]>([]);
+
+const services = ref<ServiceInfo[]>([]);
+const filteredServices = ref<ServiceInfo[]>([]);
 const isLoading = ref(true);
 
 const searchQuery = ref<string>("");
@@ -16,7 +19,7 @@ const searchQuery = ref<string>("");
 const fetchServices = async () => {
   try {
     errorMessage.value = null;
-    const result = await $fetch<any[]>("/api/workflow/services", {
+    const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
       method: "POST",
       body: {
         token: token.value,
