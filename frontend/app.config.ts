@@ -9,7 +9,7 @@ export default defineAppConfig({
         },
       },
       variant: {
-        ghost: 'focus-visible:ring-0'
+        ghost: "focus-visible:ring-0",
       },
       default: {
         color: "black",
@@ -34,12 +34,12 @@ export default defineAppConfig({
       rounded: "rounded-custom_border_radius",
     },
     tooltip: {
-      default:{
+      default: {
         openDelay: 600,
       },
       popper: {
         placement: "auto",
-      }
-    }
+      },
+    },
   },
 });
