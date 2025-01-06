@@ -18,8 +18,9 @@ import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 
 const ServicesScreen = (navigation: any) => {
   const [services, setServices] = useState([]);
+  const [connectedServices, setConnectedServices] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const { ipAddress, token, setToken} = useContext(AppContext);
+  const { ipAddress, token, setToken } = useContext(AppContext);
 
   const serviceIcons = {
     spotify: props => (
@@ -56,20 +57,53 @@ const ServicesScreen = (navigation: any) => {
     ),
   };
 
+  function connectService(service: string) {
+    switch (service) {
+      case 'spotify':
+        HandleSpotifyLogin(setToken, navigation, ipAddress, false, token);
+        break;
+      case 'gmail':
+        HandleGoogleLogin(setToken, navigation, ipAddress);
+        break;
+      case 'dropbox':
+        HandleDropboxLogin(setToken, navigation, ipAddress);
+        break;
+      case 'github':
+        HandleGithubLogin(setToken, navigation, ipAddress);
+        break;
+      default:
+        break;
+    }
+  }
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch(
+        const serviceResponse = await fetch(
           `http://${ipAddress}:8080/api/v1/service/info`,
           {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
-        const data = await response.json();
-        setServices(data);
+        const userResponse = await fetch(
+          `http://${ipAddress}:8080/api/v1/user/info/all`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+         console.log('User response:', userResponse);
+        const serviceData = await serviceResponse.json();
+        const userData = await userResponse.json();
+
+        setServices(serviceData);
+        const connected = userData.tokens.map(token => token.service_id.name);
+        setConnectedServices(connected);
       } catch (error) {
         console.error('Error fetching services:', error);
       } finally {
@@ -100,35 +134,24 @@ const ServicesScreen = (navigation: any) => {
   }
   Linking.addEventListener('url', handleUrl);
 
-  function connectService(service: string) {
-    switch (service) {
-      case 'spotify':
-        HandleSpotifyLogin(setToken, navigation, ipAddress);
-        break;
-      case 'gmail':
-        HandleGoogleLogin(setToken, navigation, ipAddress);
-        break;
-      case 'dropbox':
-        HandleDropboxLogin(setToken, navigation, ipAddress);
-        break;
-      case 'github':
-        HandleGithubLogin(setToken, navigation, ipAddress);
-        break;
-      default:
-        break;
-    }
-  }
+  const renderService = ({item}: {item: any}) => {
+    const isConnected = connectedServices.includes(item.name);
 
-  const renderService = ({item}: {item: any}) => (
-    <TouchableOpacity
-      style={[styles.serviceButton, {backgroundColor: '#2196F3'}]} // Default color for unknown services
-      onPress={() => connectService(item.name)}>
-      {serviceIcons[item.name]?.({width: 36, height: 36}) || (
-        <Text style={styles.unknownIcon}>?</Text>
-      )}
-      <Text style={styles.serviceText}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+    return (
+      <TouchableOpacity
+        style={[
+          styles.serviceButton,
+          {backgroundColor: isConnected ? '#2196F3' : '#B0BEC5'},
+        ]}
+        onPress={isConnected ? () => connectService(item.name) : undefined}
+        disabled={!isConnected}>
+        {serviceIcons[item.name]?.({width: 36, height: 36}) || (
+          <Text style={styles.unknownIcon}>?</Text>
+        )}
+        <Text style={styles.serviceText}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   if (loading) {
     return (

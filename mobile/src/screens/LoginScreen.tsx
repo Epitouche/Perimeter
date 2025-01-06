@@ -144,7 +144,7 @@ const LoginScreen: React.FC<Props> = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => {
             setService('Spotify');
-            HandleSpotifyLogin(setToken, navigation, ipAddress ,true);
+            HandleSpotifyLogin(setToken, navigation, ipAddress);
           }}>
           <Image
             source={{uri: 'https://img.icons8.com/color/50/spotify.png'}}
