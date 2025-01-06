@@ -1,19 +1,21 @@
 package repository
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 
 	"area/schemas"
 )
 
 type ServiceRepository interface {
-	Save(service schemas.Service)
-	Update(service schemas.Service)
-	Delete(service schemas.Service)
-	FindAll() []schemas.Service
-	FindAllByName(name schemas.ServiceName) []schemas.Service
-	FindByName(name schemas.ServiceName) schemas.Service
-	FindById(id uint64) schemas.Service
+	Save(service schemas.Service) error
+	Update(service schemas.Service) error
+	Delete(service schemas.Service) error
+	FindAll() (services []schemas.Service, err error)
+	FindAllByName(name schemas.ServiceName) (services []schemas.Service, err error)
+	FindByName(name schemas.ServiceName) (service schemas.Service, err error)
+	FindById(id uint64) (service schemas.Service, err error)
 }
 
 type serviceRepository struct {
@@ -32,59 +34,58 @@ func NewServiceRepository(conn *gorm.DB) ServiceRepository {
 	}
 }
 
-func (repo *serviceRepository) Save(service schemas.Service) {
-	err := repo.db.Connection.Create(&service)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) Save(service schemas.Service) error {
+	err := repo.db.Connection.Create(&service).Error
+	if err != nil {
+		return fmt.Errorf("failed to save service: %w", err)
 	}
+	return nil
 }
 
-func (repo *serviceRepository) Update(service schemas.Service) {
-	err := repo.db.Connection.Save(&service)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) Update(service schemas.Service) error {
+	err := repo.db.Connection.Save(&service).Error
+	if err != nil {
+		return fmt.Errorf("failed to update service: %w", err)
 	}
+	return nil
 }
 
-func (repo *serviceRepository) Delete(service schemas.Service) {
-	err := repo.db.Connection.Delete(&service)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) Delete(service schemas.Service) error {
+	err := repo.db.Connection.Delete(&service).Error
+	if err != nil {
+		return fmt.Errorf("failed to delete service: %w", err)
 	}
+	return nil
 }
 
-func (repo *serviceRepository) FindAll() []schemas.Service {
-	var service []schemas.Service
-	err := repo.db.Connection.Find(&service)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) FindAll() (services []schemas.Service, err error) {
+	err = repo.db.Connection.Find(&services).Error
+	if err != nil {
+		return services, fmt.Errorf("failed to get all services: %w", err)
 	}
-	return service
+	return services, nil
 }
 
-func (repo *serviceRepository) FindAllByName(name schemas.ServiceName) []schemas.Service {
-	var services []schemas.Service
-	err := repo.db.Connection.Where(&schemas.Service{Name: name}).Find(&services)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) FindAllByName(name schemas.ServiceName) (services []schemas.Service, err error) {
+	err = repo.db.Connection.Where(&schemas.Service{Name: name}).Find(&services).Error
+	if err != nil {
+		return services, fmt.Errorf("failed to get all services by name: %w", err)
 	}
-	return services
+	return services, nil
 }
 
-func (repo *serviceRepository) FindByName(name schemas.ServiceName) schemas.Service {
-	var services schemas.Service
-	err := repo.db.Connection.Where(&schemas.Service{Name: name}).First(&services)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) FindByName(name schemas.ServiceName) (service schemas.Service, err error) {
+	err = repo.db.Connection.Where(&schemas.Service{Name: name}).First(&service).Error
+	if err != nil {
+		return service, fmt.Errorf("failed to get service by name: %w", err)
 	}
-	return services
+	return service, nil
 }
 
-func (repo *serviceRepository) FindById(id uint64) schemas.Service {
-	var service schemas.Service
-	err := repo.db.Connection.Where(&schemas.Service{Id: id}).First(&service)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *serviceRepository) FindById(id uint64) (service schemas.Service, err error) {
+	err = repo.db.Connection.Where(&schemas.Service{Id: id}).First(&service).Error
+	if err != nil {
+		return service, fmt.Errorf("failed to get service by id: %w", err)
 	}
-	return service
+	return service, nil
 }

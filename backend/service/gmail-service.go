@@ -119,7 +119,7 @@ func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
 		{
 			Name:        string(schemas.SendMail),
 			Description: "Send an email",
-			Service:     service.serviceRepository.FindByName(schemas.Gmail),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}

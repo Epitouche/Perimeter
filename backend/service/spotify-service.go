@@ -106,7 +106,7 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 		{
 			Name:        string(schemas.PlayMusic),
 			Description: "This reaction will play music",
-			Service:     service.serviceRepository.FindByName(schemas.Spotify),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}

@@ -132,13 +132,13 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 		{
 			Name:        string(schemas.SpecificWeather),
 			Description: "This action is a specific weather action",
-			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Service:     service.serviceInfo,
 			Option:      optionSpecificWeather,
 		},
 		{
 			Name:        string(schemas.SpecificTemperature),
 			Description: "This action is a specific temperature action",
-			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Service:     service.serviceInfo,
 			Option:      optionSpecificTemperature,
 		},
 	}
@@ -161,13 +161,13 @@ func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reactio
 		{
 			Name:        string(schemas.CurrentWeather),
 			Description: "This reaction is a current weather reaction",
-			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 		{
 			Name:        string(schemas.CurrentTemperature),
 			Description: "This reaction is a current teamperature reaction",
-			Service:     service.serviceRepository.FindByName(schemas.Openweathermap),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}

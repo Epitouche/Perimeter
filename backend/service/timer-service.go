@@ -95,7 +95,7 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 		{
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
-			Service:     service.serviceRepository.FindByName(schemas.Timer),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
@@ -112,7 +112,7 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 		{
 			Name:        string(schemas.GiveTime),
 			Description: "This reaction is a give time reaction",
-			Service:     service.serviceRepository.FindByName(schemas.Timer),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
