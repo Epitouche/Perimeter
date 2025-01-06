@@ -8,6 +8,7 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type SpotifyAPI struct {
@@ -17,6 +18,7 @@ type SpotifyAPI struct {
 func NewSpotifyAPI(
 	controller controller.SpotifyController,
 	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
 ) *SpotifyAPI {
 	apiRoutes = apiRoutes.Group("/spotify")
 	api := SpotifyAPI{
@@ -25,7 +27,7 @@ func NewSpotifyAPI(
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
 	api.HandleServiceCallbackMobile(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }

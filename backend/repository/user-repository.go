@@ -1,19 +1,21 @@
 package repository
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 
 	"area/schemas"
 )
 
 type UserRepository interface {
-	Save(user schemas.User)
-	Update(user schemas.User)
-	Delete(user schemas.User)
-	FindAll() []schemas.User
-	FindByEmail(email string) []schemas.User
-	FindByUserName(username string) []schemas.User
-	FindById(id uint64) schemas.User
+	Save(user schemas.User) (err error)
+	Update(user schemas.User) (err error)
+	Delete(user schemas.User) (err error)
+	FindAll() (users []schemas.User, err error)
+	FindByEmail(email string) (users []schemas.User, err error)
+	FindByUserName(username string) (users []schemas.User, err error)
+	FindById(id uint64) (user schemas.User, err error)
 }
 
 // Define a struct that embeds `*schemas.Database` and implements `UserRepository`.
@@ -33,59 +35,58 @@ func NewUserRepository(conn *gorm.DB) UserRepository {
 	}
 }
 
-func (repo *userRepository) Save(user schemas.User) {
-	err := repo.db.Connection.Create(&user)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) Save(user schemas.User) (err error) {
+	err = repo.db.Connection.Create(&user).Error
+	if err != nil {
+		return fmt.Errorf("failed to save user: %w", err)
 	}
+	return nil
 }
 
-func (repo *userRepository) Update(user schemas.User) {
-	err := repo.db.Connection.Save(&user)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) Update(user schemas.User) (err error) {
+	err = repo.db.Connection.Save(&user).Error
+	if err != nil {
+		return fmt.Errorf("failed to update user: %w", err)
 	}
+	return nil
 }
 
-func (repo *userRepository) Delete(user schemas.User) {
-	err := repo.db.Connection.Delete(&user)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) Delete(user schemas.User) (err error) {
+	err = repo.db.Connection.Delete(&user).Error
+	if err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
 	}
+	return nil
 }
 
-func (repo *userRepository) FindAll() []schemas.User {
-	var users []schemas.User
-	err := repo.db.Connection.Find(&users)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) FindAll() (users []schemas.User, err error) {
+	err = repo.db.Connection.Find(&users).Error
+	if err != nil {
+		return users, fmt.Errorf("failed to find all users: %w", err)
 	}
-	return users
+	return users, nil
 }
 
-func (repo *userRepository) FindByEmail(email string) []schemas.User {
-	var users []schemas.User
-	err := repo.db.Connection.Where(&schemas.User{Email: email}).Find(&users)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) FindByEmail(email string) (users []schemas.User, err error) {
+	err = repo.db.Connection.Where(&schemas.User{Email: email}).Find(&users).Error
+	if err != nil {
+		return users, fmt.Errorf("failed to find user by email: %w", err)
 	}
-	return users
+	return users, nil
 }
 
-func (repo *userRepository) FindByUserName(username string) []schemas.User {
-	var users []schemas.User
-	err := repo.db.Connection.Where(&schemas.User{Username: username}).Find(&users)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) FindByUserName(username string) (users []schemas.User, err error) {
+	err = repo.db.Connection.Where(&schemas.User{Username: username}).Find(&users).Error
+	if err != nil {
+		return users, fmt.Errorf("failed to find user by username: %w", err)
 	}
-	return users
+	return users, nil
 }
 
-func (repo *userRepository) FindById(id uint64) schemas.User {
-	var users schemas.User
-	err := repo.db.Connection.Where(&schemas.User{Id: id}).First(&users)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *userRepository) FindById(id uint64) (user schemas.User, err error) {
+	err = repo.db.Connection.Where(&schemas.User{Id: id}).First(&user).Error
+	if err != nil {
+		return user, fmt.Errorf("failed to find user by id: %w", err)
 	}
-	return users
+	return user, nil
 }
