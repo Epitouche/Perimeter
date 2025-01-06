@@ -67,7 +67,7 @@ onMounted(() => {
 
 <template>
   <UContainer
-    :ui="{ padding: 'px-0', constrained: 'max-w-full' }"
+    :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
     class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full"
   >
     <div v-for="type in props.types" :key="type.id">

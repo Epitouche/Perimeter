@@ -1,5 +1,6 @@
 export interface Area {
   id: number;
+  createdAt: string;
   action: {
     name: string;
     service: {
