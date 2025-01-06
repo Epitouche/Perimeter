@@ -4,11 +4,11 @@ import "errors"
 
 type AboutJSON struct {
 	Client struct {
-		Host string `json:"host"`
+		Host string `json:"host"` // Hostname of the client
 	} `json:"client"`
 	Server struct {
-		CurrentTime string        `json:"current_time"`
-		Services    []ServiceJSON `json:"services"`
+		CurrentTime string        `json:"current_time"` // Current time of the server in  Epoch Unix Time Stamp format
+		Services    []ServiceJSON `json:"services"`     // List of services
 	} `json:"server"`
 }
 

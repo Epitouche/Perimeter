@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"area/schemas"
 	"area/service"
 )
@@ -22,5 +24,9 @@ func NewReactionController(service service.ReactionService) ReactionController {
 func (controller *reactionController) GetReactionsInfo(
 	id uint64,
 ) (response []schemas.Reaction, err error) {
-	return controller.service.GetReactionsInfo(id)
+	response, err = controller.service.GetReactionsInfo(id)
+	if err != nil {
+		return nil, fmt.Errorf("can't get reactions info: %w", err)
+	}
+	return response, nil
 }

@@ -131,6 +131,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	if error != nil {
 		return "", fmt.Errorf("can't save area: %w", error)
 	}
+
 	newArea.Id = id
 	service.InitArea(newArea)
 	return "Area created successfully", nil
@@ -159,6 +160,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				println("action not found")
 				return
 			}
+
 			if area.Enable {
 				action(channelArea, area.ActionOption, area.Id)
 			}
@@ -176,7 +178,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			if err != nil {
 				return
 			}
+
 			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
+
 			if area.Enable {
 				resultAction := <-channelArea
 				resultReaction := reaction(area.ReactionOption, area.Id)

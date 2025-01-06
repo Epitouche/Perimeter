@@ -2,40 +2,23 @@ package test
 
 import (
 	"context"
-	"log"
 	"os"
+	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, error) {
-	host := os.Getenv("DB_HOST")
-	if host == "" {
-		panic("DB_HOST is not set")
-	}
-
-	port := os.Getenv("DB_PORT")
-	if port == "" {
-		panic("DB_PORT is not set")
-	}
+func CreatePostgresContainer(t *testing.T, ctx context.Context) (testcontainers.Container, error) {
+	t.Helper()
 
 	user := os.Getenv("POSTGRES_USER")
-	if user == "" {
-		panic("POSTGRES_USER is not set")
-	}
-
 	password := os.Getenv("POSTGRES_PASSWORD")
-	if password == "" {
-		panic("POSTGRES_PASSWORD is not set")
-	}
-
 	dbname := os.Getenv("POSTGRES_DB")
-	if dbname == "" {
-		panic("POSTGRES_DB is not set")
-	}
 
 	// Create a new container with PostgreSQL
 	dbName := dbname
@@ -52,20 +35,17 @@ func CreatePostgresContainer(ctx context.Context) (testcontainers.Container, err
 				WithOccurrence(2).
 				WithStartupTimeout(20*time.Second)),
 	)
-	if err != nil {
-		log.Printf("failed to start container: %s", err)
+	require.NoError(t, err, "failed to create Postgres container")
+	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
-		return postgresContainer, err
-	}
-
-	host, err = postgresContainer.Host(ctx)
+	host, err := postgresContainer.Host(ctx)
 	if err != nil {
-		log.Fatalf("failed to get container host: %s", err)
+		t.Fatalf("failed to get container host: %s", err)
 	}
 
 	mappedPort, err := postgresContainer.MappedPort(ctx, "5432")
 	if err != nil {
-		log.Fatalf("failed to get container port: %s", err)
+		t.Fatalf("failed to get container port: %s", err)
 	}
 
 	os.Setenv("DB_HOST", host)

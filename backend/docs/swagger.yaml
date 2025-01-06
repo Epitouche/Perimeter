@@ -1,64 +1,86 @@
 definitions:
   schemas.Action:
     properties:
-      createdAt:
+      created_at:
+        description: Time when the action was created
         type: string
       description:
+        description: Description of the action
         type: string
       id:
+        description: Unique identifier for the action
         type: integer
       name:
+        description: Name of the action
         type: string
       option:
+        description: Option for the action
         type: string
-      service_id:
-        $ref: '#/definitions/schemas.Service'
+      service:
+        allOf:
+        - $ref: '#/definitions/schemas.Service'
+        description: Service that the action belongs to
       update_at:
+        description: Time when the action was last updated
         type: string
     required:
     - description
     - name
     - option
-    - service_id
+    - service
     type: object
   schemas.Area:
     properties:
-      action_id:
-        $ref: '#/definitions/schemas.Action'
+      action:
+        allOf:
+        - $ref: '#/definitions/schemas.Action'
+        description: Action that the area belongs to
       action_option:
+        description: Action option
         type: string
-      createdAt:
+      created_at:
+        description: Time when the area was created
         type: string
       enable:
+        description: Enable or disable the area
         type: boolean
       id:
+        description: Unique identifier for the area
         type: integer
-      reaction_id:
-        $ref: '#/definitions/schemas.Reaction'
+      reaction:
+        allOf:
+        - $ref: '#/definitions/schemas.Reaction'
+        description: Reaction that the area belongs to
       reaction_option:
+        description: Reaction option
         type: string
       update_at:
+        description: Time when the area was last updated
         type: string
-      user_id:
-        $ref: '#/definitions/schemas.User'
+      user:
+        allOf:
+        - $ref: '#/definitions/schemas.User'
+        description: User that the area belongs to
     required:
-    - action_id
+    - action
     - action_option
-    - reaction_id
+    - reaction
     - reaction_option
-    - user_id
+    - user
     type: object
   schemas.AreaMessage:
     properties:
       action_id:
-        description: Foreign key for Action
+        description: Unique identifier for the action
         type: integer
       action_option:
+        description: Action option
         type: string
       reaction_id:
-        description: Foreign key for Reaction
+        description: Unique identifier for the reaction
         type: integer
       reaction_option:
+        description: Reaction option
         type: string
     required:
     - action_option
@@ -88,25 +110,33 @@ definitions:
     type: object
   schemas.Reaction:
     properties:
-      createdAt:
+      created_at:
+        description: Time when the reaction was created
         type: string
       description:
+        description: Description of the reaction
         type: string
       id:
+        description: Unique identifier for the reaction
         type: integer
       name:
+        description: Name of the reaction
         type: string
       option:
+        description: Option for the reaction
         type: string
-      service_id:
-        $ref: '#/definitions/schemas.Service'
+      service:
+        allOf:
+        - $ref: '#/definitions/schemas.Service'
+        description: Service that the reaction belongs to
       update_at:
+        description: Time when the reaction was last updated
         type: string
     required:
     - description
     - name
     - option
-    - service_id
+    - service
     type: object
   schemas.Response:
     properties:
@@ -115,7 +145,7 @@ definitions:
     type: object
   schemas.Service:
     properties:
-      createdAt:
+      created_at:
         type: string
       description:
         type: string
@@ -132,7 +162,7 @@ definitions:
   schemas.ServiceName:
     enum:
     - spotify
-    - openWeatherMap
+    - openweathermap
     - timer
     - gmail
     - github
@@ -140,37 +170,50 @@ definitions:
     type: string
     x-enum-varnames:
     - Spotify
-    - OpenWeatherMap
+    - Openweathermap
     - Timer
     - Gmail
     - Github
     - Dropbox
   schemas.Token:
     properties:
-      createdAt:
+      created_at:
+        description: Time when the token was created
         type: string
-      expireAt:
+      expire_at:
+        description: Time when the token expires
         type: string
       id:
+        description: Unique identifier for the token
         type: integer
       refresh_token:
+        description: Refresh token
         type: string
-      service_id:
-        $ref: '#/definitions/schemas.Service'
+      service:
+        allOf:
+        - $ref: '#/definitions/schemas.Service'
+        description: Service that the token belongs to
       token:
+        description: Token
         type: string
-      updateAt:
+      update_at:
+        description: Time when the token was last updated
         type: string
-      user_id:
-        $ref: '#/definitions/schemas.User'
+      user:
+        allOf:
+        - $ref: '#/definitions/schemas.User'
+        description: User that the token belongs to
     type: object
   schemas.User:
     properties:
-      createdAt:
+      created_at:
+        description: Time when the user was created
         type: string
       email:
+        description: Email of the user
         type: string
       id:
+        description: Unique identifier for the user
         type: integer
       password:
         description: can be null for Oauth2.0 users
@@ -179,8 +222,10 @@ definitions:
         description: Foreign key for LinkURL
         type: integer
       updated_at:
+        description: Time when the user was last updated
         type: string
       username:
+        description: Username of the user
         type: string
     required:
     - email
@@ -189,17 +234,22 @@ definitions:
   schemas.UserAllInfo:
     properties:
       tokens:
+        description: List of tokens
         items:
           $ref: '#/definitions/schemas.Token'
         type: array
       user:
-        $ref: '#/definitions/schemas.User'
+        allOf:
+        - $ref: '#/definitions/schemas.User'
+        description: User
     type: object
   schemas.UserCredentials:
     properties:
       email:
+        description: Email of the user
         type: string
       username:
+        description: Username of the user
         type: string
     type: object
 info:
@@ -440,6 +490,36 @@ paths:
       summary: give url to authenticate with github
       tags:
       - Github
+  /github/auth/callback/mobile:
+    post:
+      consumes:
+      - application/json
+      description: give authentication token to mobile
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give authentication token to mobile
+      tags:
+      - Spotify
   /github/info:
     get:
       consumes:
@@ -518,7 +598,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: give url to authenticate with gmail
+      description: give authentication token to mobile
       parameters:
       - description: Callback Payload
         in: body
@@ -526,6 +606,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       produces:
       - application/json
       responses:
@@ -537,11 +621,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      security:
-      - bearerAuth: []
-      summary: give url to authenticate with gmail
+      summary: give authentication token to mobile
       tags:
-      - Gmail
+      - Spotify
   /gmail/info:
     get:
       consumes:
@@ -849,8 +931,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.JWT'
-        "401":
-          description: Unauthorized
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token
@@ -878,12 +960,12 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/schemas.JWT'
-        "401":
-          description: Unauthorized
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token

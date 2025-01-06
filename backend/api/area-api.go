@@ -45,6 +45,7 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, &schemas.Response{
 			Message: response,
 		})
@@ -73,6 +74,7 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }

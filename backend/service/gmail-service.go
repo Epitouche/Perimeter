@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -152,7 +153,9 @@ func (service *gmailService) AuthGetServiceAccessToken(
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest("POST", apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -190,9 +193,11 @@ func (service *gmailService) AuthGetServiceAccessToken(
 }
 
 func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest(
-		"GET",
+	req, err := http.NewRequestWithContext(ctx,
+		http.MethodGet,
 		"https://gmail.googleapis.com/gmail/v1/users/me/profile",
 		nil,
 	)
@@ -220,9 +225,9 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 }
 
 func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err error) {
+	ctx := context.Background()
 	// Create a new HTTP request
-	req, err := http.NewRequest(
-		"GET",
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
 		"https://people.googleapis.com/v1/people/me?personFields=names",
 		nil,
 	)
@@ -244,6 +249,7 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 	if err != nil {
 		return schemas.GoogleProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
+
 	resp.Body.Close()
 	return result, nil
 }
@@ -255,6 +261,7 @@ func (service *gmailService) GetUserInfo(
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to get gmail profile because %w", err)
 	}
+
 	googleProfile, err := GetUserGoogleProfile(accessToken)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to get google profile because %w", err)
@@ -313,11 +320,19 @@ func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idAre
 
 	body := fmt.Sprintf(`{"raw": "%s"}`, raw)
 
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer([]byte(body)))
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		apiURL,
+		bytes.NewBuffer([]byte(body)),
+	)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request" + err.Error()
 	}
+
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
 
@@ -327,6 +342,7 @@ func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idAre
 		fmt.Println("Error making request:", err)
 		return "Error making request:" + err.Error()
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {

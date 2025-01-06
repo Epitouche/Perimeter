@@ -61,6 +61,7 @@ func (api *ServiceApi) GetServicesInfo(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }
@@ -89,6 +90,7 @@ func (api *ServiceApi) GetServiceInfoById(apiRoutes *gin.RouterGroup) {
 
 			return
 		}
+
 		response, err := api.controller.GetServiceInfoById(idInt)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -97,6 +99,7 @@ func (api *ServiceApi) GetServiceInfoById(apiRoutes *gin.RouterGroup) {
 
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }

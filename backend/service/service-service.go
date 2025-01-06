@@ -119,6 +119,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 			return "", schemas.ErrDropboxClientIdNotSet
 		}
 	}
+
 	if clientID == "" {
 		return "", schemas.ErrNotOauthService
 	}
