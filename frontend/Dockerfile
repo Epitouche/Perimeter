@@ -11,7 +11,7 @@ FROM dependencies AS build
 
 COPY ./ ./
 
-# RUN npm run build
+RUN npm run build
 
 FROM build AS run
 
@@ -27,4 +27,4 @@ EXPOSE 8081
 # CMD [ "npx", "serve", ".public" ]
 # CMD [ "npx", "serve", ".output/public" ]
 # CMD ["node", "./server/index.mjs"]
-CMD ["npx", "nuxt", "dev"]
+CMD ["sh", "start.sh"]
