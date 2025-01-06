@@ -46,6 +46,9 @@ func NewTimerService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Timer,
 			Description: "This service is a time service",
+			Oauth:       false,
+			Color:       "#BB00FF",
+			Icon:        "https://api.iconify.design/mdi:clock.svg?color=%23FFFFFF",
 		},
 	}
 }

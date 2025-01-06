@@ -64,6 +64,9 @@ func NewOpenweathermapService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Openweathermap,
 			Description: "This service is a weather service",
+			Oauth:       false,
+			Color:       "#946500",
+			Icon:        "https://api.iconify.design/mdi:weather-cloudy.svg?color=%23FFFFFF",
 		},
 	}
 }

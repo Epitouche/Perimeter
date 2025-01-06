@@ -56,6 +56,9 @@ func NewDropboxService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Dropbox,
 			Description: "This service is a file storage service",
+			Oauth:       true,
+			Color:       "#001DDA",
+			Icon:        "https://api.iconify.design/mdi:dropbox.svg?color=%23FFFFFF",
 		},
 	}
 }
