@@ -20,7 +20,6 @@ const fetchServices = async () => {
   try {
     errorMessage.value = null;
     const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
-    const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
       method: "POST",
       body: {
         token: token.value,
