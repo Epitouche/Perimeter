@@ -8,20 +8,25 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type UserApi struct {
 	controller controller.UserController
 }
 
-func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup) *UserApi {
+func NewUserApi(
+	controller controller.UserController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *UserApi {
 	apiRoutes = apiRoutes.Group("/user")
 	api := UserApi{
 		controller: controller,
 	}
 	api.Login(apiRoutes)
 	api.Register(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	api.GetUserAllInfo(apiRoutesInfo)
 	return &api

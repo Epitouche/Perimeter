@@ -8,6 +8,7 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type DropboxAPI struct {
@@ -17,6 +18,7 @@ type DropboxAPI struct {
 func NewDropboxAPI(
 	controller controller.DropboxController,
 	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
 ) *DropboxAPI {
 	apiRoutes = apiRoutes.Group("/dropbox")
 	api := DropboxAPI{
@@ -25,7 +27,7 @@ func NewDropboxAPI(
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
 	api.HandleServiceCallbackMobile(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	api.GetUserFile(apiRoutesInfo)
 	return &api

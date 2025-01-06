@@ -81,9 +81,12 @@ func NewServiceService(
 
 func (service *serviceService) InitialSaveService() {
 	for _, oneService := range service.allService {
-		serviceByName := service.repository.FindAllByName(
+		serviceByName, err := service.repository.FindAllByName(
 			oneService.(ServiceInterface).GetServiceInfo().Name,
 		)
+		if err != nil {
+			println(fmt.Errorf("unable to find service by name because %w", err))
+		}
 		if len(serviceByName) == 0 {
 			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
 		}
@@ -194,7 +197,10 @@ func (service *serviceService) HandleServiceCallback(
 			return "", fmt.Errorf("unable to register user because %w", err)
 		}
 		bearerToken = bearerTokenRegister
-		newUser = serviceUser.GetUserById(newUserId)
+		newUser, err = serviceUser.GetUserById(newUserId)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user by id because %w", err)
+		}
 	}
 
 	serviceService := service.FindByName(serviceName)
@@ -256,7 +262,10 @@ func (service *serviceService) HandleServiceCallbackMobile(
 		return "", fmt.Errorf("unable to register user because %w", err)
 	}
 	bearerToken = bearerTokenRegister
-	newUser = serviceUser.GetUserById(newUserId)
+	newUser, err = serviceUser.GetUserById(newUserId)
+	if err != nil {
+		return "", fmt.Errorf("unable to get user by id because %w", err)
+	}
 
 	actualService := service.FindByName(serviceName)
 
@@ -287,11 +296,18 @@ func (service *serviceService) HandleServiceCallbackMobile(
 }
 
 func (service *serviceService) FindAll() (allServices []schemas.Service) {
-	return service.repository.FindAll()
+	allServices, err := service.repository.FindAll()
+	if err != nil {
+		fmt.Println("Error when get all services")
+	}
+	return allServices
 }
 
 func (service *serviceService) GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error) {
-	allServices := service.repository.FindAll()
+	allServices, err := service.repository.FindAll()
+	if err != nil {
+		fmt.Println("Error when get all services")
+	}
 	for _, oneService := range allServices {
 		println(oneService.Name)
 		allServicesJSON = append(allServicesJSON, schemas.ServiceJSON{
@@ -302,7 +318,11 @@ func (service *serviceService) GetAllServices() (allServicesJSON []schemas.Servi
 }
 
 func (service *serviceService) FindByName(serviceName schemas.ServiceName) schemas.Service {
-	return service.repository.FindByName(serviceName)
+	foundService, err := service.repository.FindByName(serviceName)
+	if err != nil {
+		fmt.Println("Error when get service by name")
+	}
+	return foundService
 }
 
 func (service *serviceService) GetServices() []interface{} {
@@ -332,13 +352,21 @@ func (service *serviceService) FindReactionbyName(
 }
 
 func (service *serviceService) GetServicesInfo() (allService []schemas.Service, err error) {
-	return service.repository.FindAll(), nil
+	return service.repository.FindAll()
 }
 
 func (service *serviceService) FindServiceByName(name string) schemas.Service {
-	return service.repository.FindByName(schemas.ServiceName(name))
+	services, err := service.repository.FindByName(schemas.ServiceName(name))
+	if err != nil {
+		fmt.Println("Error when get service by name")
+	}
+	return services
 }
 
 func (service *serviceService) GetServiceById(id uint64) schemas.Service {
-	return service.repository.FindById(id)
+	foundService, err := service.repository.FindById(id)
+	if err != nil {
+		fmt.Println("Error when get service by id")
+	}
+	return foundService
 }

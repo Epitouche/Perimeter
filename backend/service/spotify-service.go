@@ -106,7 +106,7 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 		{
 			Name:        string(schemas.PlayMusic),
 			Description: "This reaction will play music",
-			Service:     service.serviceRepository.FindByName(schemas.Spotify),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
@@ -277,7 +277,14 @@ func (service *spotifyService) SpotifyReactionPlayMusic(
 		return "Error finding area:" + err.Error()
 	}
 
-	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token:" + err.Error()
+	}
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
 		return "Error: Token not found"
