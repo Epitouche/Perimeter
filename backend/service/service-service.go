@@ -62,6 +62,7 @@ func NewServiceService(
 	gmailService GmailService,
 	githubService GithubService,
 	dropboxService DropboxService,
+	discordService DiscordService,
 	openweathermapService OpenweathermapService,
 ) ServiceService {
 	newService := serviceService{
@@ -72,6 +73,7 @@ func NewServiceService(
 			gmailService,
 			githubService,
 			dropboxService,
+			discordService,
 			openweathermapService,
 		},
 	}
@@ -120,6 +122,11 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		clientID = os.Getenv("DROPBOX_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrDropboxClientIdNotSet
+		}
+	case schemas.Discord:
+		clientID = os.Getenv("DISCORD_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrDiscordClientIdNotSet
 		}
 	}
 
