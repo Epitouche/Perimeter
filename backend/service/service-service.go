@@ -258,7 +258,7 @@ func (service *serviceService) HandleServiceCallbackMobile(
 	bearerToken = bearerTokenRegister
 	newUser = serviceUser.GetUserById(newUserId)
 
-	actualService := service.FindByName(schemas.Gmail)
+	actualService := service.FindByName(serviceName)
 
 	newServiceToken := schemas.Token{
 		Token:        credentials.AccessToken,
