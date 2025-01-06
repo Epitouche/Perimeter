@@ -11,7 +11,7 @@ import {
 import BottomNavBar from './NavBar';
 import { AppContext } from '../context/AppContext';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
-import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
+import { HandleDiscordLogin } from './Oauth2/DiscordOauth2';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -32,7 +32,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
         HandleSpotifyLogin(setToken, navigation, ipAddress, false, token);
         break;
       case 'gmail':
-        HandleGoogleLogin(setToken, navigation, ipAddress);
+        HandleDiscordLogin(setToken, navigation, ipAddress);
         break;
       case 'dropbox':
         HandleDropboxLogin(setToken, navigation, ipAddress);
