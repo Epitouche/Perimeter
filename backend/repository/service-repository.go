@@ -66,7 +66,9 @@ func (repo *serviceRepository) FindAll() (services []schemas.Service, err error)
 	return services, nil
 }
 
-func (repo *serviceRepository) FindAllByName(name schemas.ServiceName) (services []schemas.Service, err error) {
+func (repo *serviceRepository) FindAllByName(
+	name schemas.ServiceName,
+) (services []schemas.Service, err error) {
 	err = repo.db.Connection.Where(&schemas.Service{Name: name}).Find(&services).Error
 	if err != nil {
 		return services, fmt.Errorf("failed to get all services by name: %w", err)
@@ -74,7 +76,9 @@ func (repo *serviceRepository) FindAllByName(name schemas.ServiceName) (services
 	return services, nil
 }
 
-func (repo *serviceRepository) FindByName(name schemas.ServiceName) (service schemas.Service, err error) {
+func (repo *serviceRepository) FindByName(
+	name schemas.ServiceName,
+) (service schemas.Service, err error) {
 	err = repo.db.Connection.Where(&schemas.Service{Name: name}).First(&service).Error
 	if err != nil {
 		return service, fmt.Errorf("failed to get service by name: %w", err)

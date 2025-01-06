@@ -15,7 +15,11 @@ type GmailAPI struct {
 	controller controller.GmailController
 }
 
-func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *GmailAPI {
+func NewGmailAPI(
+	controller controller.GmailController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *GmailAPI {
 	apiRoutes = apiRoutes.Group("/gmail")
 	api := GmailAPI{
 		controller: controller,

@@ -94,8 +94,13 @@ func (repo *tokenRepository) FindByUserId(userID uint64) (tokens []schemas.Token
 	return tokens, nil
 }
 
-func (repo *tokenRepository) FindByUserIdAndServiceId(id uint64, serviceId uint64) (token schemas.Token, err error) {
-	err = repo.db.Connection.Where(&schemas.Token{UserId: id, ServiceId: serviceId}).First(&token).Error
+func (repo *tokenRepository) FindByUserIdAndServiceId(
+	id uint64,
+	serviceId uint64,
+) (token schemas.Token, err error) {
+	err = repo.db.Connection.Where(&schemas.Token{UserId: id, ServiceId: serviceId}).
+		First(&token).
+		Error
 	if err != nil {
 		return token, fmt.Errorf("failed to find token by user id and service id: %w", err)
 	}

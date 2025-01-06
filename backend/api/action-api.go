@@ -16,7 +16,11 @@ type ActionApi struct {
 	controller controller.ActionController
 }
 
-func NewActionApi(controller controller.ActionController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *ActionApi {
+func NewActionApi(
+	controller controller.ActionController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *ActionApi {
 	apiRoutes = apiRoutes.Group("/action", middlewares.AuthorizeJWT(serviceUser))
 	api := ActionApi{
 		controller: controller,
