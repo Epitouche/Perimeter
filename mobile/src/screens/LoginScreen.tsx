@@ -15,7 +15,6 @@ import { AppContext } from '../context/AppContext';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
-import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -144,7 +143,7 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Spotify');
-            HandleSpotifyLogin(setToken, navigation, ipAddress, true);
+            HandleSpotifyLogin(setToken, navigation, ipAddress);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}

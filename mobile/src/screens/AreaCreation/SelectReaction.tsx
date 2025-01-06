@@ -27,7 +27,6 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const { actionId, actionOptions, serviceId } = route.params;
 
   useEffect(() => {
-    // Fetch actions from API
     const fetchServices = async () => {
       try {
         const response = await fetch(
@@ -77,7 +76,7 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
     setSelectedReaction(action);
     if (action.option) {
       console.log('Action Options:', action.option);
-      const parsedOptions = JSON.parse(action.option);
+      const parsedOptions = action.option;
       setSelectedReactionOptions(parsedOptions);
     } else {
       setSelectedReactionOptions({});
@@ -101,12 +100,14 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        action_id: actionId,
-        action_option: JSON.stringify(actionOptions),
-        reaction_id: selectedReaction.id,
-        reaction_options: JSON.stringify(selectedReactionOptions),
-      }),
+      body: JSON.parse(
+        JSON.stringify({
+          action_id: actionId,
+          action_option: JSON.stringify(actionOptions),
+          reaction_id: selectedReaction.id,
+          reaction_options: JSON.stringify(selectedReactionOptions),
+        }),
+      ),
     });
     const data = await res.json();
     console.log('Area Creation:', data);
@@ -123,6 +124,13 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
     );
   }
+
+  const formatText = (text: string): string => {
+    return text
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
 
   return (
     <View style={styles.container}>
@@ -174,7 +182,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                 key={service.id}
                 style={styles.serviceBox}
                 onPress={() => handleActionPress(service)}>
-                <Text style={styles.serviceText}>{service.name}</Text>
+                <Text style={styles.serviceText}>
+                  {formatText(service.name)}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -204,6 +214,7 @@ const styles = StyleSheet.create({
   searchBar: {
     width: '100%',
     backgroundColor: '#f0f0f0',
+    color: '#000',
     borderRadius: 10,
     padding: 10,
     fontSize: 18,

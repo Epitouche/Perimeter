@@ -7,7 +7,8 @@ async function HandleSpotifyLogin(
   setToken: any,
   navigation: any,
   ipAddress: string,
-  login: boolean = false,
+  login: boolean = true,
+  bearerToken: string = '',
 ) {
   const config: AuthConfiguration = {
     clientId: SPOTIFY_CLIENT_ID,
@@ -22,7 +23,6 @@ async function HandleSpotifyLogin(
 
   try {
     const result = await authorize(config);
-    // console.log('result', result);
     let data;
     if (login) {
       data = await handleCallback(
@@ -30,8 +30,10 @@ async function HandleSpotifyLogin(
         result,
       );
     } else {
-      setToken(result.accessToken);
-      // TODO: call route when loging in from myServices page (waiting for back to be done)
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback`,
+        result,
+      );
     }
     if (data.error) {
       console.error(data.error);
