@@ -82,7 +82,6 @@ func (repo *areaRepository) FindByUserId(userID uint64) (areas []schemas.Area, e
 		Preload("Reaction.Service").
 		Where(&schemas.Area{UserId: userID}).
 		Find(&areas).Error
-
 	if err != nil {
 		panic(fmt.Errorf("failed to find areas by user id: %w", err))
 	}
