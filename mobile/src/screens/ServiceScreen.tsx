@@ -105,6 +105,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
   const renderService = ({ item }: { item: any }) => {
     const isConnected = connectedServices.includes(item.name);
 
+    console.log(item)
     return (
       <TouchableOpacity
         style={[
@@ -115,7 +116,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
         <SvgFromUri uri={item.icon} width={50} height={50} />
         <Text style={styles.serviceText}>{item.name}</Text>
         <Text style={styles.serviceText}>
-          {isConnected ? 'Connected' : 'Not Connected'}
+          {isConnected || !item.oauth ? 'Connected' : 'Not Connected'}
         </Text>
       </TouchableOpacity>
     );
