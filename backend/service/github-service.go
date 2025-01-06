@@ -53,6 +53,9 @@ func NewGithubService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Github,
 			Description: "This service is a code repository service",
+			Oauth:       true,
+			Color:       "#000000",
+			Icon:        "https://api.iconify.design/mdi:github.svg?color=%23FFFFFF",
 		},
 	}
 }

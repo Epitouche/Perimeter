@@ -57,6 +57,9 @@ func NewSpotifyService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Spotify,
 			Description: "This service is a music service",
+			Oauth:       true,
+			Color:       "#1DC000",
+			Icon:        "https://api.iconify.design/mdi:spotify.svg?color=%23FFFFFF",
 		},
 	}
 }
