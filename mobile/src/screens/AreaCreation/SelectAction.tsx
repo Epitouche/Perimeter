@@ -115,7 +115,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
       .replace(/^./, str => str.toUpperCase())
       .trim();
   };
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choose action</Text>
@@ -166,7 +166,9 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
                 key={service.id}
                 style={styles.serviceBox}
                 onPress={() => handleActionPress(service)}>
-                <Text style={styles.serviceText}>{formatText(service.name)}</Text>
+                <Text style={styles.serviceText}>
+                  {formatText(service.name)}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

@@ -105,7 +105,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
   const renderService = ({ item }: { item: any }) => {
     const isConnected = connectedServices.includes(item.name);
 
-    console.log(item)
+    console.log(item);
     return (
       <TouchableOpacity
         style={[styles.serviceButton, { backgroundColor: item.color }]}

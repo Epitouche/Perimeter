@@ -102,7 +102,7 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
       <Text style={styles.title}>Add action</Text>
       <TextInput
         style={styles.searchBar}
-        placeholderTextColor='#bbbbbb'
+        placeholderTextColor="#bbbbbb"
         placeholder="Search services"
         value={search}
         onChangeText={handleSearch}
@@ -114,9 +114,10 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
             style={[
               styles.serviceBox,
               {
-                backgroundColor: (connectedServices.includes(service.name) || !service.oauth)
-                  ? service.color
-                  : '#d3d3d3',
+                backgroundColor:
+                  connectedServices.includes(service.name) || !service.oauth
+                    ? service.color
+                    : '#d3d3d3',
               },
             ]}
             onPress={() =>
@@ -125,7 +126,9 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
                 serviceId: service.id,
               })
             }
-            disabled={!(connectedServices.includes(service.name) || !service.oauth)}>
+            disabled={
+              !(connectedServices.includes(service.name) || !service.oauth)
+            }>
             <Text style={styles.serviceText}>{formatText(service.name)}</Text>
           </TouchableOpacity>
         ))}

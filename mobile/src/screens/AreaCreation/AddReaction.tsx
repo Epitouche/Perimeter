@@ -104,7 +104,7 @@ const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       <TextInput
         style={styles.searchBar}
         placeholder="Search services"
-        placeholderTextColor='#bbbbbb'
+        placeholderTextColor="#bbbbbb"
         value={search}
         onChangeText={handleSearch}
       />

@@ -100,12 +100,14 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.parse(JSON.stringify({
-        action_id: actionId,
-        action_option: JSON.stringify(actionOptions),
-        reaction_id: selectedReaction.id,
-        reaction_options: JSON.stringify(selectedReactionOptions),
-      })),
+      body: JSON.parse(
+        JSON.stringify({
+          action_id: actionId,
+          action_option: JSON.stringify(actionOptions),
+          reaction_id: selectedReaction.id,
+          reaction_options: JSON.stringify(selectedReactionOptions),
+        }),
+      ),
     });
     const data = await res.json();
     console.log('Area Creation:', data);
@@ -180,7 +182,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                 key={service.id}
                 style={styles.serviceBox}
                 onPress={() => handleActionPress(service)}>
-                <Text style={styles.serviceText}>{formatText(service.name)}</Text>
+                <Text style={styles.serviceText}>
+                  {formatText(service.name)}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
