@@ -16,7 +16,6 @@ import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
-import SvgUri from 'react-native-svg-uri';
 import { SvgFromUri } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ServicesScreen'>;
