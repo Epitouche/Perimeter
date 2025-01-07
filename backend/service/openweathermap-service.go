@@ -21,29 +21,29 @@ type OpenweathermapService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(
 		name string,
-	) func(channel chan string, option schemas.JSONRawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option schemas.JSONRawMessage, idArea uint64) string
+	) func(channel chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
 	// Actions functions
 	OpenweathermapActionSpecificWeather(
 		channel chan string,
-		option schemas.JSONRawMessage,
+		option json.RawMessage,
 		idArea uint64,
 	)
 	OpenweathermapActionSpecificTemperature(
 		channel chan string,
-		option schemas.JSONRawMessage,
+		option json.RawMessage,
 		idArea uint64,
 	)
 	// Reactions functions
 	OpenweathermapReactionCurrentWeather(
-		option schemas.JSONRawMessage,
+		option json.RawMessage,
 		idArea uint64,
 	) string
 	OpenweathermapReactionCurrentTemperature(
-		option schemas.JSONRawMessage,
+		option json.RawMessage,
 		idArea uint64,
 	) string
 }
@@ -81,7 +81,7 @@ func (service *openweathermapService) GetServiceInfo() schemas.Service {
 
 func (service *openweathermapService) FindActionbyName(
 	name string,
-) func(channel chan string, option schemas.JSONRawMessage, idArea uint64) {
+) func(channel chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	case string(schemas.SpecificWeather):
 		return service.OpenweathermapActionSpecificWeather
@@ -94,7 +94,7 @@ func (service *openweathermapService) FindActionbyName(
 
 func (service *openweathermapService) FindReactionbyName(
 	name string,
-) func(option schemas.JSONRawMessage, idArea uint64) string {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 
 	case string(schemas.CurrentWeather):
@@ -300,7 +300,7 @@ func getWeatherOfCoodinate(coordinates struct {
 
 func (service *openweathermapService) OpenweathermapActionSpecificWeather(
 	channel chan string,
-	option schemas.JSONRawMessage,
+	option json.RawMessage,
 	idArea uint64,
 ) {
 	optionJSON := schemas.OpenweathermapActionSpecificWeather{}
@@ -333,7 +333,7 @@ func (service *openweathermapService) OpenweathermapActionSpecificWeather(
 
 func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
 	channel chan string,
-	option schemas.JSONRawMessage,
+	option json.RawMessage,
 	idArea uint64,
 ) {
 	optionJSON := schemas.OpenweathermapActionSpecificTemperature{}
@@ -367,7 +367,7 @@ func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
 // Reactions functions
 
 func (service *openweathermapService) OpenweathermapReactionCurrentWeather(
-	option schemas.JSONRawMessage,
+	option json.RawMessage,
 	idArea uint64,
 ) string {
 	optionJSON := schemas.OpenweathermapReactionOption{}
@@ -396,7 +396,7 @@ func (service *openweathermapService) OpenweathermapReactionCurrentWeather(
 }
 
 func (service *openweathermapService) OpenweathermapReactionCurrentTemperature(
-	option schemas.JSONRawMessage,
+	option json.RawMessage,
 	idArea uint64,
 ) string {
 	optionJSON := schemas.OpenweathermapReactionOption{}
