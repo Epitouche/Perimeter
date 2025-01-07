@@ -85,3 +85,57 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 		ctx.JSON(http.StatusOK, response)
 	})
 }
+
+// UpdateUserArea godoc
+//
+//	@Summary		update user area
+//	@Description	update user area list
+//	@Tags			Area
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.Area
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/area [put]
+func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
+	apiRoutes.PUT("/", func(ctx *gin.Context) {
+		response, err := api.controller.UpdateUserArea(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, response)
+	})
+}
+
+// DeleteUserArea godoc
+//
+//	@Summary		delete user area
+//	@Description	delete user area list
+//	@Tags			Area
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.Area
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/area [delete]
+func (api *AreaApi) DeleteUserArea(apiRoutes *gin.RouterGroup) {
+	apiRoutes.DELETE("/", func(ctx *gin.Context) {
+		response, err := api.controller.DeleteUserArea(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, response)
+	})
+}

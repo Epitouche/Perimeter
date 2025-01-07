@@ -21,8 +21,8 @@ type MicrosoftService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option schemas.JSONRawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option schemas.JSONRawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
@@ -31,7 +31,7 @@ type MicrosoftService interface {
 	// Actions functions
 	// Reactions functions
 	MicrosoftReactionSendMail(
-		option json.RawMessage,
+		option schemas.JSONRawMessage,
 		idArea uint64,
 	) string
 }
@@ -106,7 +106,7 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 
 func (service *microsoftService) FindActionbyName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option schemas.JSONRawMessage, idArea uint64) {
 	switch name {
 	default:
 		return nil
@@ -115,7 +115,7 @@ func (service *microsoftService) FindActionbyName(
 
 func (service *microsoftService) FindReactionbyName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option schemas.JSONRawMessage, idArea uint64) string {
 	switch name {
 	case string(schemas.SendMicrosoftMail):
 		return service.MicrosoftReactionSendMail
@@ -242,7 +242,7 @@ func (service *microsoftService) GetUserInfo(
 }
 
 func (service *microsoftService) MicrosoftReactionSendMail(
-	option json.RawMessage,
+	option schemas.JSONRawMessage,
 	idArea uint64,
 ) string {
 	// Parse the options

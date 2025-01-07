@@ -85,7 +85,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //
 //	@Summary		give authentication token to mobile
 //	@Description	give authentication token to mobile
-//	@Tags			Spotify
+//	@Tags			Github
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
