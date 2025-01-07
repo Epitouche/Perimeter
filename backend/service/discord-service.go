@@ -80,19 +80,25 @@ func (service *discordService) GetServiceActionInfo() []schemas.Action {
 func (service *discordService) GetServiceReactionInfo() []schemas.Reaction {
 	service.reactionName = append(service.reactionName, string(schemas.SendMessage))
 	defaultValue := schemas.DiscordReactionSendMessageOptions{
-		User:   "",
+		User:    "",
 		Message: "",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
 		fmt.Println("Error marshalling default options:", err)
 	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Discord,
+	)
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMessage),
 			Description: "Send a message to a user in Discord.",
-			Service:    service.serviceInfo,
-			Option:    option,
+			Service:     service.serviceInfo,
+			Option:      option,
 		},
 	}
 }
@@ -237,74 +243,97 @@ func (service *discordService) DiscordReactionSendMessage(
 	option json.RawMessage,
 	idArea uint64,
 ) string {
-	// Parse options
+	// Parse the options
 	optionJson := schemas.DiscordReactionSendMessageOptions{}
 	err := json.Unmarshal(option, &optionJson)
 	if err != nil {
 		fmt.Println("Error unmarshalling options:", err)
-		time.Sleep(time.Second)
 		return "Error unmarshalling options: " + err.Error()
 	}
 
-	// Find area
+	// Retrieve the area
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
-		return "Error finding area:" + err.Error()
+		return "Error finding area: " + err.Error()
 	}
 
-	// Find token
+	// Retrieve the token
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,
 	)
 	if err != nil {
 		fmt.Println("Error finding token:", err)
-		return "Error finding token:" + err.Error()
+		return "Error finding token: " + err.Error()
 	}
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
 		return "Error: Token not found"
 	}
 
-	// Create the API URL
-	apiUrl := fmt.Sprintf("https://discord.com/api/v10/channels/%s/messages", optionJson.User)
+	// Step 1: Create a DM channel
+	apiUrl := "https://discord.com/api/v10/users/@me/channels"
+	body := map[string]string{"recipient_id": optionJson.User}
+	bodyJson, _ := json.Marshal(body)
 
-	// Prepare the request body
-	body := map[string]string{"content": optionJson.Message}
-	bodyJson, err := json.Marshal(body)
-	if err != nil {
-		fmt.Println("Error marshalling request body:", err)
-		return "Error marshalling request body:" + err.Error()
-	}
-
-	// Create the HTTP request
 	req, err := http.NewRequest(http.MethodPost, apiUrl, bytes.NewBuffer(bodyJson))
 	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return "Error creating request:" + err.Error()
+		fmt.Println("Error creating DM channel request:", err)
+		return "Error creating DM channel request: " + err.Error()
 	}
 
-	// Set headers
-	req.Header.Set("Authorization", "Bot "+token.Token)
+	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
 
-	// Send the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error making request:", err)
-		return "Error making request:" + err.Error()
+		fmt.Println("Error making DM channel request:", err)
+		return "Error making DM channel request: " + err.Error()
 	}
 	defer resp.Body.Close()
 
-	// Check response status
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		fmt.Printf("Discord API returned an error: %s\n", string(bodyBytes))
-		return fmt.Sprintf("Discord API error: %s", resp.Status)
+		fmt.Println("Error creating DM channel:", string(bodyBytes))
+		return "Error creating DM channel: " + string(bodyBytes)
 	}
 
-	fmt.Println("Message sent successfully!")
+	var dmResponse struct {
+		ID string `json:"id"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&dmResponse); err != nil {
+		fmt.Println("Error decoding DM channel response:", err)
+		return "Error decoding DM channel response: " + err.Error()
+	}
+
+	// Step 2: Send the message to the DM channel
+	messageUrl := fmt.Sprintf("https://discord.com/api/v10/channels/%s/messages", dmResponse.ID)
+	messageBody := map[string]string{"content": optionJson.Message}
+	messageJson, _ := json.Marshal(messageBody)
+
+	msgReq, err := http.NewRequest(http.MethodPost, messageUrl, bytes.NewBuffer(messageJson))
+	if err != nil {
+		fmt.Println("Error creating message request:", err)
+		return "Error creating message request: " + err.Error()
+	}
+
+	msgReq.Header.Set("Authorization", "Bearer "+token.Token)
+	msgReq.Header.Set("Content-Type", "application/json")
+
+	msgResp, err := client.Do(msgReq)
+	if err != nil {
+		fmt.Println("Error sending message:", err)
+		return "Error sending message: " + err.Error()
+	}
+	defer msgResp.Body.Close()
+
+	if msgResp.StatusCode != http.StatusOK && msgResp.StatusCode != http.StatusCreated {
+		bodyBytes, _ := io.ReadAll(msgResp.Body)
+		fmt.Println("Error sending message:", string(bodyBytes))
+		return "Error sending message: " + string(bodyBytes)
+	}
+
 	return "Message sent successfully!"
 }

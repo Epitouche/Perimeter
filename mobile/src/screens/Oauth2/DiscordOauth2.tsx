@@ -13,7 +13,7 @@ async function HandleDiscordLogin(
     clientId: DISCORD_CLIENT_ID,
     clientSecret: DISCORD_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['identify', 'email'],
+    scopes: ['identify', 'email', 'messages.read'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://discord.com/oauth2/authorize',
       tokenEndpoint: 'https://discord.com/api/oauth2/token',
