@@ -1,9 +1,11 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,6 +30,10 @@ type DiscordService interface {
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
 	// Reactions functions
+	DiscordReactionSendMessage(
+		option json.RawMessage,
+		idArea uint64,
+	) string
 }
 
 type discordService struct {
@@ -72,7 +78,23 @@ func (service *discordService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *discordService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
+	service.reactionName = append(service.reactionName, string(schemas.SendMessage))
+	defaultValue := schemas.DiscordReactionSendMessageOptions{
+		User:   "",
+		Message: "",
+	}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		fmt.Println("Error marshalling default options:", err)
+	}
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SendMessage),
+			Description: "Send a message to a user in Discord.",
+			Service:    service.serviceInfo,
+			Option:    option,
+		},
+	}
 }
 
 func (service *discordService) FindActionbyName(
@@ -88,6 +110,8 @@ func (service *discordService) FindReactionbyName(
 	name string,
 ) func(option json.RawMessage, idArea uint64) string {
 	switch name {
+	case string(schemas.SendMessage):
+		return service.DiscordReactionSendMessage
 	default:
 		return nil
 	}
@@ -207,4 +231,80 @@ func (service *discordService) GetUserInfo(
 	}
 
 	return user, nil
+}
+
+func (service *discordService) DiscordReactionSendMessage(
+	option json.RawMessage,
+	idArea uint64,
+) string {
+	// Parse options
+	optionJson := schemas.DiscordReactionSendMessageOptions{}
+	err := json.Unmarshal(option, &optionJson)
+	if err != nil {
+		fmt.Println("Error unmarshalling options:", err)
+		time.Sleep(time.Second)
+		return "Error unmarshalling options: " + err.Error()
+	}
+
+	// Find area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return "Error finding area:" + err.Error()
+	}
+
+	// Find token
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token:" + err.Error()
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return "Error: Token not found"
+	}
+
+	// Create the API URL
+	apiUrl := fmt.Sprintf("https://discord.com/api/v10/channels/%s/messages", optionJson.User)
+
+	// Prepare the request body
+	body := map[string]string{"content": optionJson.Message}
+	bodyJson, err := json.Marshal(body)
+	if err != nil {
+		fmt.Println("Error marshalling request body:", err)
+		return "Error marshalling request body:" + err.Error()
+	}
+
+	// Create the HTTP request
+	req, err := http.NewRequest(http.MethodPost, apiUrl, bytes.NewBuffer(bodyJson))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return "Error creating request:" + err.Error()
+	}
+
+	// Set headers
+	req.Header.Set("Authorization", "Bot "+token.Token)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return "Error making request:" + err.Error()
+	}
+	defer resp.Body.Close()
+
+	// Check response status
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		fmt.Printf("Discord API returned an error: %s\n", string(bodyBytes))
+		return fmt.Sprintf("Discord API error: %s", resp.Status)
+	}
+
+	fmt.Println("Message sent successfully!")
+	return "Message sent successfully!"
 }
