@@ -1,38 +1,41 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GMAIL_MOBILE_CLIENT_ID, GMAIL_SECRET } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
-async function HandleGoogleLogin(
+async function HandleMicrosoftLogin(
   setToken: any,
   navigation: any,
   ipAddress: string,
   login: boolean = false,
 ) {
   const config: AuthConfiguration = {
-    clientId: GMAIL_MOBILE_CLIENT_ID,
-    clientSecret: GMAIL_SECRET,
+    clientId: '8aac36d6-6dc2-4848-8ee9-bcf3abf420cf',
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['profile', 'email'],
+    scopes: ['Mail.ReadWrite', 'User.Read', 'Mail.Send', 'offline_access'],
     serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
-      tokenEndpoint: 'https://accounts.google.com/o/oauth2/token',
+      authorizationEndpoint:
+        'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      tokenEndpoint:
+        'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     },
   };
 
   try {
     const result = await authorize(config);
-    // console.log('result', result);
+    console.log('result', result);
     let data;
     if (login) {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`,
+        `http://${ipAddress}:8080/api/v1/microsoft/auth/callback/mobile`,
         result,
       );
     } else {
-      setToken(result.accessToken);
-      // TODO: call route when loging in from myServices page (waiting for back to be done)
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/microsoft/auth/callback`,
+        result,
+      );
     }
+
     if (data.error) {
       console.error(data.error);
     } else {
@@ -42,11 +45,11 @@ async function HandleGoogleLogin(
       }
     }
   } catch (error) {
-    if ((error as Error).message != 'User cancelled flow') {
+    if ((error as Error).message !== 'User cancelled flow') {
       console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }
   }
 }
 
-export { HandleGoogleLogin };
+export { HandleMicrosoftLogin };

@@ -70,7 +70,7 @@ func compareMaps(map1, map2 map[string]interface{}) bool {
 }
 
 func (service *areaService) CreateArea(result schemas.AreaMessage, token string) (string, error) {
-	var actionOption, reactionOption schemas.JSONRawMessage
+	var actionOption, reactionOption json.RawMessage
 
 	if err := json.Unmarshal(result.ActionOption, &actionOption); err != nil {
 		return "", fmt.Errorf("can't unmarshal action option: %w", err)
