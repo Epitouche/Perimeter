@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"area/repository"
 	"area/schemas"
@@ -14,7 +15,7 @@ type AreaService interface {
 	InitArea(areaStartValue schemas.Area)
 	AreaExist(id uint64) bool
 	GetUserAreas(token string) ([]schemas.Area, error)
-	UpdateUserArea(token string) (updatedArea schemas.Area, err error)
+	UpdateUserArea(token string, areaToUpdate schemas.Area) (updatedArea schemas.Area, err error)
 }
 
 type areaService struct {
@@ -51,6 +52,20 @@ func (service *areaService) FindAll() (areas []schemas.Area, err error) {
 		return areas, fmt.Errorf("error when get all areas: %w", err)
 	}
 	return areas, nil
+}
+
+// compareMaps compares two maps for equality
+func compareMaps(map1, map2 map[string]interface{}) bool {
+	if len(map1) != len(map2) {
+		return false
+	}
+	for key, value1 := range map1 {
+		value2, ok := map2[key]
+		if !ok || reflect.TypeOf(value1) != reflect.TypeOf(value2) {
+			return false
+		}
+	}
+	return true
 }
 
 func (service *areaService) CreateArea(result schemas.AreaMessage, token string) (string, error) {
