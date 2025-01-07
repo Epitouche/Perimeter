@@ -482,7 +482,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Spotify"
+                    "Github"
                 ],
                 "summary": "give authentication token to mobile",
                 "parameters": [
@@ -643,7 +643,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Spotify"
+                    "Gmail"
                 ],
                 "summary": "give authentication token to mobile",
                 "parameters": [

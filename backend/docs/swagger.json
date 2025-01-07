@@ -471,7 +471,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Spotify"
+                    "Github"
                 ],
                 "summary": "give authentication token to mobile",
                 "parameters": [
@@ -632,7 +632,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Spotify"
+                    "Gmail"
                 ],
                 "summary": "give authentication token to mobile",
                 "parameters": [

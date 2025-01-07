@@ -581,7 +581,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: give authentication token to mobile
       tags:
-      - Spotify
+      - Github
   /github/info:
     get:
       consumes:
@@ -685,7 +685,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: give authentication token to mobile
       tags:
-      - Spotify
+      - Gmail
   /gmail/info:
     get:
       consumes:
