@@ -99,13 +99,12 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: 
-        JSON.stringify({
-          action_id: actionId,
-          action_option: actionOptions,
-          reaction_id: selectedReaction.id,
-          reaction_option: selectedReactionOptions,
-        }),
+      body: JSON.stringify({
+        action_id: actionId,
+        action_option: actionOptions,
+        reaction_id: selectedReaction.id,
+        reaction_option: selectedReactionOptions,
+      }),
     });
     const data = await res.json();
     console.log('Area Creation:', data);
