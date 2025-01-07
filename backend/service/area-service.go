@@ -132,6 +132,8 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		User:           user,
 		ActionOption:   result.ActionOption,
 		ReactionOption: result.ReactionOption,
+		Title:          result.Title,
+		Description:    result.Description,
 		Enable:         true,
 		Action:         areaAction,
 		Reaction:       areaReaction,
