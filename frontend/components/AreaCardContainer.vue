@@ -54,7 +54,7 @@ onMounted(() => {
       <UContainer
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         :class="[
-          `bg-custom_color-${area.action.service.name}`,
+          `bg-[${area.action.service.color}]`,
           'flex justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]',
         ]"
         @click="toggleAreaModal(area.id)"
@@ -69,7 +69,7 @@ onMounted(() => {
       <UModal
         v-model="areaIsOpen[area.id]"
         :ui="{
-          background: `bg-custom_color-${area.action.service.name}`,
+          background: `bg-[${area.action.service.color}]`,
           width: 'w-2/5',
           base: 'relative flex flex-col gap-14 text-5xl font-semibold text-white pl-20 pr-12 py-10',
         }"
@@ -81,17 +81,17 @@ onMounted(() => {
             class="self-end w-fit"
             @click="toggleAreaModal(area.id)"
           >
-            <UIcon name="i-bytesize-close" class="w-10 h-10 p-0" />
+          <img :src="area.action.service.icon" :alt="area.action.service.name" class="w-10 h-10 p-0">
           </UButton>
         </div>
         <div class="capitalize self-start flex flex-row items-center gap-5">
-          <UIcon name="i-bytesize-ban" class="w-16 h-16 p-0" />
+          <img :src="area.action.service.icon" :alt="area.action.service.name" class="w-16 h-16 p-0">
           <p>
             {{ area.action.service.name }}: {{ formatName(area.action.name) }}
           </p>
         </div>
         <div class="capitalize self-start flex flex-row items-center gap-5">
-          <UIcon name="i-bytesize-ban" class="w-16 h-16 p-0" />
+          <img :src="area.reaction.service.icon" :alt="area.reaction.service.name" class="w-16 h-16 p-0">
           <p>
             {{ area.reaction.service.name }}:
             {{ formatName(area.reaction.name) }}
@@ -111,7 +111,7 @@ onMounted(() => {
       <UModal
         v-model="confirmDeletionIsOpen[area.id]"
         :ui="{
-          base: `relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width border-custom_color-${area.action.service.name}`,
+          base: `relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width border-[${area.action.service.color}]`,
         }"
       >
         <h2 class="text-4xl font-semibold">
@@ -121,7 +121,7 @@ onMounted(() => {
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
           <UButton
             :class="[
-              `text-custom_color-${area.action.service.name} !border-custom_color-${area.action.service.name}`,
+              `text-[${area.action.service.color}] !border-[${area.action.service.color}]`,
               'bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5',
             ]"
             @click="cancelDeletion(area.id)"
@@ -129,7 +129,7 @@ onMounted(() => {
           >
           <UButton
             :class="[
-              `bg-custom_color-${area.action.service.name}`,
+              `bg-[${area.action.service.color}]`,
               'text-white text-2xl font-semibold py-3 px-5',
             ]"
             @click="onDelete(area.id)"

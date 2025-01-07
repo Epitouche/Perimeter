@@ -40,7 +40,7 @@ const clearTokenAndLogout = () => {
 
     <div class="ml-auto relative">
       <button
-        class="h-[4em] w-[4em] bg-gray-300 rounded-full border-custom_border_width border-black cursor-pointer"
+        class="h-[4em] w-[4em] bg-gray-300 rounded-full border-custom_border_width border-custom_color-border cursor-pointer"
         @click="toggleMenu"
       />
       <div
@@ -50,7 +50,7 @@ const clearTokenAndLogout = () => {
         <div class="menu-header flex items-center justify-between gap-[1em]">
           <span class="font-[400] text-[1em]">Username</span>
           <div
-            class="h-[3em] w-[3em] bg-gray-300 rounded-full border-custom_border_width border-black"
+            class="h-[3em] w-[3em] bg-gray-300 rounded-full border-custom_border_width border-custom_color-border"
           />
         </div>
 

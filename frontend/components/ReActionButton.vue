@@ -12,7 +12,7 @@ const { isSelected } = toRefs(props);
 
 const token = useCookie("token");
 
-const serviceInfo = ref<{ name: string } | null>(null);
+const serviceInfo = ref<{ name: string, color: string, icon: string } | null>(null);
 const error = ref<string | null>(null);
 
 const getServiceInfo = async () => {
@@ -26,7 +26,7 @@ const getServiceInfo = async () => {
           serviceId: serviceId.value,
         },
       });
-      // console.log("services", serviceInfo.value);
+      console.log("services", serviceInfo.value);
     } catch (err) {
       console.error("Error fetching services:", err);
     }
@@ -53,17 +53,14 @@ watch(
     v-if="isSelected"
     :class="[
       'flex flex-row justify-evenly items-center py-12 px-12 gap-10 rounded-3xl w-full',
-      serviceInfo ? `bg-custom_color-${serviceInfo.name}` : 'bg-black',
+      serviceInfo ? `bg-[${serviceInfo.color}]` : 'bg-black',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
   >
-    <!-- <div class="flex justify-center items-center bg-black"> -->
-    <UIcon
-      :name="serviceInfo ? `my-icons:white-${serviceInfo.name}` : ''"
+    <img
+      :src="serviceInfo ? `${serviceInfo.icon}` : ''" :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class=""
-    />
-    <!-- w-[7em] h-[9em] bg-pink-500 -->
-    <!-- </div> -->
+    >
     <h2
       :class="[
         'text-white text-8xl font-custom_weight_title',
