@@ -1,7 +1,7 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
-import { MICROSOFT_MOBILE_ID } from '@env'
+import { MICROSOFT_MOBILE_ID } from '@env';
 
 async function HandleMicrosoftLogin(
   setToken: any,
