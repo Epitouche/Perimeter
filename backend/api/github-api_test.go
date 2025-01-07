@@ -12,6 +12,7 @@ import (
 
 	"area/api"
 	"area/schemas"
+	"area/test"
 )
 
 type MockGithubController struct {
@@ -44,7 +45,8 @@ func TestGithubAPI(t *testing.T) {
 	mockController := new(MockGithubController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
-	api.NewGithubAPI(mockController, apiRoutes)
+	mockUserService := new(test.MockUserService)
+	api.NewGithubAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
 		t.Parallel()

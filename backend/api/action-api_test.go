@@ -12,6 +12,7 @@ import (
 
 	"area/api"
 	"area/schemas"
+	"area/test"
 )
 
 type MockActionController struct {
@@ -29,7 +30,8 @@ func TestGetActionsInfo(t *testing.T) {
 	mockController := new(MockActionController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
-	api.NewActionApi(mockController, apiRoutes) // Assuming NewActionApi registers routes
+	mockUserService := new(test.MockUserService)
+	api.NewActionApi(mockController, apiRoutes, mockUserService)
 
 	// t.Run("Success", func(t *testing.T) {
 	// 	mockActions := []schemas.Action{
