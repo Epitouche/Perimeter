@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SearchBar from "@/components/SearchBar.vue";
-import type { ServiceInfo } from '~/interfaces/serviceinfo';
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
 
 definePageMeta({
   middleware: "auth",
@@ -11,7 +11,7 @@ const services = ref<ServiceInfo[]>([]);
 const tokenCookie = useCookie("token");
 
 onMounted(() => {
-  fetchServices()
+  fetchServices();
 });
 
 const fetchServices = async () => {
@@ -40,15 +40,14 @@ const apps = computed(() =>
   services.value.map((service) => ({
     name: service.name,
     icon: `my-icons:white-${service.name}`,
-  }))
+  })),
 );
 
 const filteredApps = computed(() => {
   return apps.value.filter((app) =>
-    app.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    app.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   );
 });
-
 </script>
 
 <template>

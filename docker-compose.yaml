@@ -5,6 +5,7 @@ services:
       context: ./mobile
       target: build-apk
       dockerfile: Dockerfile
+    container_name: client_mobile
     volumes:
       - shared_apk:/app/public/apk
     env_file:
@@ -17,6 +18,7 @@ services:
       context: ./frontend
       target: run
       dockerfile: Dockerfile
+    container_name: client_web
     depends_on:
       client_mobile:
         condition: service_started
@@ -32,7 +34,8 @@ services:
       - app-networks
 
   database:
-    image: postgres:17
+    image: postgres:17-alpine
+    container_name: database
     volumes:
       - database-data:/var/lib/postgresql/data
     environment:
@@ -58,6 +61,7 @@ services:
       context: ./backend
       target: run
       dockerfile: Dockerfile
+    container_name: server
     depends_on:
       database:
         condition: service_healthy

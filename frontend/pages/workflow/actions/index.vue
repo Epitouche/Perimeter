@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ServiceInfo } from '~/interfaces/serviceinfo';
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
 
 definePageMeta({
   layout: "nonavbar",

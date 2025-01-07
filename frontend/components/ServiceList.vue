@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ServiceInfo } from '~/interfaces/serviceinfo';
-import type { OAuthLink } from '~/interfaces/authLink';
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import type { OAuthLink } from "~/interfaces/authLink";
 
 defineProps<{
   apps: {
@@ -17,8 +17,8 @@ const services = ref<ServiceInfo[]>([]);
 let serviceConnected: string[] = [];
 
 onMounted(() => {
-  servicesConnectionInfos()
-  fetchServices()
+  servicesConnectionInfos();
+  fetchServices();
 });
 
 async function servicesConnectionInfos() {
@@ -30,13 +30,17 @@ async function servicesConnectionInfos() {
       },
     });
 
-    if (typeof response === "object" &&
-        response !== null &&
-        "tokens" in response &&
-        Array.isArray((response as { tokens: unknown }).tokens)) {
-          const tokens = (response as { tokens: Array<{ service: { name: string } }> }).tokens;    
-          serviceConnected = tokens.map((token) => token.service.name);
-          isLoading.value = false;
+    if (
+      typeof response === "object" &&
+      response !== null &&
+      "tokens" in response &&
+      Array.isArray((response as { tokens: unknown }).tokens)
+    ) {
+      const tokens = (
+        response as { tokens: Array<{ service: { name: string } }> }
+      ).tokens;
+      serviceConnected = tokens.map((token) => token.service.name);
+      isLoading.value = false;
     } else {
       console.error("Response does not contain valid tokens.");
       return [];
@@ -90,8 +94,12 @@ const authApiCall = async (label: string) => {
 
 const handleClick = (label: string) => {
   const normalizedLabel = label.toLowerCase();
-  const serviceNames = services.value.map((service) => service.name.toLowerCase());
-  if (serviceConnected.map((name) => name.toLowerCase()).includes(normalizedLabel)) {
+  const serviceNames = services.value.map((service) =>
+    service.name.toLowerCase(),
+  );
+  if (
+    serviceConnected.map((name) => name.toLowerCase()).includes(normalizedLabel)
+  ) {
     //disconnectService(label);
   } else {
     const apiLink = `http://server:8080/api/v1/${normalizedLabel}/auth/`;
@@ -117,7 +125,6 @@ const getServiceStateText = (appName: string) => {
 const isSpecialCase = (appName: string) => {
   return ["openweathermap", "timer"].includes(appName.toLowerCase());
 };
-
 </script>
 
 <template>
@@ -126,7 +133,10 @@ const isSpecialCase = (appName: string) => {
       v-for="(app, index) in apps"
       :key="index"
       :icon="app.icon"
-      :class="[`bg-custom_color-${app.name}`, `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`]"
+      :class="[
+        `bg-custom_color-${app.name}`,
+        `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`,
+      ]"
       @click="handleClick(app.name)"
     >
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
@@ -137,8 +147,12 @@ const isSpecialCase = (appName: string) => {
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
         :class="{
-          'bg-black text-white': isSpecialCase(app.name) || serviceConnected.includes(app.name.toLowerCase()),
-          'bg-white text-black': !isSpecialCase(app.name) && !serviceConnected.includes(app.name.toLowerCase()),
+          'bg-black text-white':
+            isSpecialCase(app.name) ||
+            serviceConnected.includes(app.name.toLowerCase()),
+          'bg-white text-black':
+            !isSpecialCase(app.name) &&
+            !serviceConnected.includes(app.name.toLowerCase()),
         }"
       >
         {{ getServiceStateText(app.name) }}

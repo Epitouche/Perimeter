@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -56,6 +57,9 @@ func NewSpotifyService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Spotify,
 			Description: "This service is a music service",
+			Oauth:       true,
+			Color:       "#1DC000",
+			Icon:        "https://api.iconify.design/mdi:spotify.svg?color=%23FFFFFF",
 		},
 	}
 }
@@ -98,11 +102,17 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Spotify,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.PlayMusic),
 			Description: "This reaction will play music",
-			Service:     service.serviceRepository.FindByName(schemas.Spotify),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
@@ -145,7 +155,9 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest("POST", apiURL, nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf(
 			"unable to create request because %w",
@@ -199,8 +211,14 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 }
 
 func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+	ctx := context.Background()
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/me", nil)
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		"https://api.spotify.com/v1/me",
+		nil,
+	)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -226,6 +244,7 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 				err,
 			)
 		}
+
 		resp.Body.Close()
 		return schemas.User{}, fmt.Errorf(
 			"unable to get user info because %v %v",
@@ -264,7 +283,14 @@ func (service *spotifyService) SpotifyReactionPlayMusic(
 		return "Error finding area:" + err.Error()
 	}
 
-	token := service.tokenRepository.FindByUserIdAndServiceId(area.UserId, area.Reaction.ServiceId)
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token:" + err.Error()
+	}
 	if token.Token == "" {
 		fmt.Println("Error: Token not found")
 		return "Error: Token not found"
@@ -279,8 +305,14 @@ func (service *spotifyService) SpotifyReactionPlayMusic(
 		},
 		"position_ms": 0
 	}`
+	ctx := context.Background()
 
-	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer([]byte(body)))
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPut,
+		apiURL,
+		bytes.NewBuffer([]byte(body)),
+	)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "Error creating request:" + err.Error()
@@ -295,6 +327,7 @@ func (service *spotifyService) SpotifyReactionPlayMusic(
 		fmt.Println("Error making request:", err)
 		return "Error making request:" + err.Error()
 	}
+
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)

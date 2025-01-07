@@ -385,6 +385,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/github/auth/callback/mobile": {
+            "post": {
+                "description": "give authentication token to mobile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Spotify"
+                ],
+                "summary": "give authentication token to mobile",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/github/info": {
             "get": {
                 "security": [
@@ -502,12 +548,7 @@ const docTemplate = `{
         },
         "/gmail/auth/callback/mobile": {
             "post": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "give url to authenticate with gmail",
+                "description": "give authentication token to mobile",
                 "consumes": [
                     "application/json"
                 ],
@@ -515,9 +556,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Gmail"
+                    "Spotify"
                 ],
-                "summary": "give url to authenticate with gmail",
+                "summary": "give authentication token to mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -527,6 +568,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.CodeCredentials"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1029,8 +1076,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/schemas.JWT"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -1072,14 +1119,14 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/schemas.JWT"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -1095,28 +1142,39 @@ const docTemplate = `{
                 "description",
                 "name",
                 "option",
-                "service_id"
+                "service"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the action was created",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Description of the action",
                     "type": "string"
                 },
                 "id": {
+                    "description": "Unique identifier for the action",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Name of the action",
                     "type": "string"
                 },
                 "option": {
+                    "description": "Option for the action",
                     "type": "string"
                 },
-                "service_id": {
-                    "$ref": "#/definitions/schemas.Service"
+                "service": {
+                    "description": "Service that the action belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Service"
+                        }
+                    ]
                 },
                 "update_at": {
+                    "description": "Time when the action was last updated",
                     "type": "string"
                 }
             }
@@ -1124,39 +1182,60 @@ const docTemplate = `{
         "schemas.Area": {
             "type": "object",
             "required": [
-                "action_id",
+                "action",
                 "action_option",
-                "reaction_id",
+                "reaction",
                 "reaction_option",
-                "user_id"
+                "user"
             ],
             "properties": {
-                "action_id": {
-                    "$ref": "#/definitions/schemas.Action"
+                "action": {
+                    "description": "Action that the area belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Action"
+                        }
+                    ]
                 },
                 "action_option": {
+                    "description": "Action option",
                     "type": "string"
                 },
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the area was created",
                     "type": "string"
                 },
                 "enable": {
+                    "description": "Enable or disable the area",
                     "type": "boolean"
                 },
                 "id": {
+                    "description": "Unique identifier for the area",
                     "type": "integer"
                 },
-                "reaction_id": {
-                    "$ref": "#/definitions/schemas.Reaction"
+                "reaction": {
+                    "description": "Reaction that the area belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Reaction"
+                        }
+                    ]
                 },
                 "reaction_option": {
+                    "description": "Reaction option",
                     "type": "string"
                 },
                 "update_at": {
+                    "description": "Time when the area was last updated",
                     "type": "string"
                 },
-                "user_id": {
-                    "$ref": "#/definitions/schemas.User"
+                "user": {
+                    "description": "User that the area belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    ]
                 }
             }
         },
@@ -1168,17 +1247,19 @@ const docTemplate = `{
             ],
             "properties": {
                 "action_id": {
-                    "description": "Foreign key for Action",
+                    "description": "Unique identifier for the action",
                     "type": "integer"
                 },
                 "action_option": {
+                    "description": "Action option",
                     "type": "string"
                 },
                 "reaction_id": {
-                    "description": "Foreign key for Reaction",
+                    "description": "Unique identifier for the reaction",
                     "type": "integer"
                 },
                 "reaction_option": {
+                    "description": "Reaction option",
                     "type": "string"
                 }
             }
@@ -1224,28 +1305,39 @@ const docTemplate = `{
                 "description",
                 "name",
                 "option",
-                "service_id"
+                "service"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the reaction was created",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Description of the reaction",
                     "type": "string"
                 },
                 "id": {
+                    "description": "Unique identifier for the reaction",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "Name of the reaction",
                     "type": "string"
                 },
                 "option": {
+                    "description": "Option for the reaction",
                     "type": "string"
                 },
-                "service_id": {
-                    "$ref": "#/definitions/schemas.Service"
+                "service": {
+                    "description": "Service that the reaction belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Service"
+                        }
+                    ]
                 },
                 "update_at": {
+                    "description": "Time when the reaction was last updated",
                     "type": "string"
                 }
             }
@@ -1265,7 +1357,7 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "description": {
@@ -1286,7 +1378,7 @@ const docTemplate = `{
             "type": "string",
             "enum": [
                 "spotify",
-                "openWeatherMap",
+                "openweathermap",
                 "timer",
                 "gmail",
                 "github",
@@ -1294,7 +1386,7 @@ const docTemplate = `{
             ],
             "x-enum-varnames": [
                 "Spotify",
-                "OpenWeatherMap",
+                "Openweathermap",
                 "Timer",
                 "Gmail",
                 "Github",
@@ -1304,29 +1396,45 @@ const docTemplate = `{
         "schemas.Token": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the token was created",
                     "type": "string"
                 },
-                "expireAt": {
+                "expire_at": {
+                    "description": "Time when the token expires",
                     "type": "string"
                 },
                 "id": {
+                    "description": "Unique identifier for the token",
                     "type": "integer"
                 },
                 "refresh_token": {
+                    "description": "Refresh token",
                     "type": "string"
                 },
-                "service_id": {
-                    "$ref": "#/definitions/schemas.Service"
+                "service": {
+                    "description": "Service that the token belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Service"
+                        }
+                    ]
                 },
                 "token": {
+                    "description": "Token",
                     "type": "string"
                 },
-                "updateAt": {
+                "update_at": {
+                    "description": "Time when the token was last updated",
                     "type": "string"
                 },
-                "user_id": {
-                    "$ref": "#/definitions/schemas.User"
+                "user": {
+                    "description": "User that the token belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    ]
                 }
             }
         },
@@ -1337,13 +1445,16 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the user was created",
                     "type": "string"
                 },
                 "email": {
+                    "description": "Email of the user",
                     "type": "string"
                 },
                 "id": {
+                    "description": "Unique identifier for the user",
                     "type": "integer"
                 },
                 "password": {
@@ -1355,9 +1466,11 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
+                    "description": "Time when the user was last updated",
                     "type": "string"
                 },
                 "username": {
+                    "description": "Username of the user",
                     "type": "string"
                 }
             }
@@ -1366,13 +1479,19 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "tokens": {
+                    "description": "List of tokens",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/schemas.Token"
                     }
                 },
                 "user": {
-                    "$ref": "#/definitions/schemas.User"
+                    "description": "User",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    ]
                 }
             }
         },
@@ -1380,9 +1499,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "Email of the user",
                     "type": "string"
                 },
                 "username": {
+                    "description": "Username of the user",
                     "type": "string"
                 }
             }

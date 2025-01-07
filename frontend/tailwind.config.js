@@ -23,6 +23,11 @@ module.exports = {
     "border-custom_color-dropbox",
     "border-custom_color-timer",
     "border-custom_color-openWeatherMap",
+    "text-custom_color-spotify",
+    "text-custom_color-gmail",
+    "text-custom_color-dropbox",
+    "text-custom_color-timer",
+    "text-custom_color-openWeatherMap",
   ],
   theme: {
     extend: {
@@ -33,6 +38,7 @@ module.exports = {
           text: "#000000", // Black
           text_link: "#4187FF", // Blue
           text_other: "#878787", // Dark grey
+          text_delete: "#FC0005", // Red
           border: "#000000", // Black
           input: "#F4F4F4", // Light grey
           gmail: "#E60000", // Red

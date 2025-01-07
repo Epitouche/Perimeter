@@ -67,7 +67,7 @@ onMounted(() => {
 
 <template>
   <UContainer
-    :ui="{ padding: 'px-0', constrained: 'max-w-full' }"
+    :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
     class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full"
   >
     <div v-for="type in props.types" :key="type.id">
@@ -75,7 +75,7 @@ onMounted(() => {
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         :class="[
           `bg-custom_color-${props.serviceInfo?.name}`,
-          'basis-1/4 flex flex-col justify-evenly items-center gap-4 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
+          'flex flex-col justify-evenly items-center gap-4 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
         ]"
         @click="openConfig(type.id)"
       >
