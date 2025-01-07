@@ -112,6 +112,50 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "update user area list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "update user area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.Area"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -265,6 +309,49 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/file": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give user info of dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.DropboxFile"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
@@ -1145,36 +1232,28 @@ const docTemplate = `{
                 "service"
             ],
             "properties": {
-                "created_at": {
-                    "description": "Time when the action was created",
+                "createdAt": {
                     "type": "string"
                 },
                 "description": {
-                    "description": "Description of the action",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Unique identifier for the action",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "Name of the action",
                     "type": "string"
                 },
                 "option": {
-                    "description": "Option for the action",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "service": {
-                    "description": "Service that the action belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Service"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Service"
                 },
                 "update_at": {
-                    "description": "Time when the action was last updated",
                     "type": "string"
                 }
             }
@@ -1190,52 +1269,37 @@ const docTemplate = `{
             ],
             "properties": {
                 "action": {
-                    "description": "Action that the area belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Action"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Action"
                 },
                 "action_option": {
-                    "description": "Action option",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
-                "created_at": {
-                    "description": "Time when the area was created",
+                "createdAt": {
                     "type": "string"
                 },
                 "enable": {
-                    "description": "Enable or disable the area",
                     "type": "boolean"
                 },
                 "id": {
-                    "description": "Unique identifier for the area",
                     "type": "integer"
                 },
                 "reaction": {
-                    "description": "Reaction that the area belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Reaction"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Reaction"
                 },
                 "reaction_option": {
-                    "description": "Reaction option",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "update_at": {
-                    "description": "Time when the area was last updated",
                     "type": "string"
                 },
                 "user": {
-                    "description": "User that the area belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.User"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.User"
                 }
             }
         },
@@ -1247,20 +1311,24 @@ const docTemplate = `{
             ],
             "properties": {
                 "action_id": {
-                    "description": "Unique identifier for the action",
+                    "description": "Foreign key for Action",
                     "type": "integer"
                 },
                 "action_option": {
-                    "description": "Action option",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "reaction_id": {
-                    "description": "Unique identifier for the reaction",
+                    "description": "Foreign key for Reaction",
                     "type": "integer"
                 },
                 "reaction_option": {
-                    "description": "Reaction option",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -1279,6 +1347,32 @@ const docTemplate = `{
             ],
             "properties": {
                 "code": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.DropboxFile": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "destination": {
+                    "type": "string"
+                },
+                "file_count": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_open": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }
@@ -1309,35 +1403,27 @@ const docTemplate = `{
             ],
             "properties": {
                 "created_at": {
-                    "description": "Time when the reaction was created",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Description of the reaction",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Unique identifier for the reaction",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "Name of the reaction",
                     "type": "string"
                 },
                 "option": {
-                    "description": "Option for the reaction",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "service": {
-                    "description": "Service that the reaction belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Service"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Service"
                 },
                 "update_at": {
-                    "description": "Time when the reaction was last updated",
                     "type": "string"
                 }
             }
@@ -1353,14 +1439,23 @@ const docTemplate = `{
         "schemas.Service": {
             "type": "object",
             "required": [
+                "color",
                 "description",
-                "name"
+                "icon",
+                "name",
+                "oauth"
             ],
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "icon": {
                     "type": "string"
                 },
                 "id": {
@@ -1368,6 +1463,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "$ref": "#/definitions/schemas.ServiceName"
+                },
+                "oauth": {
+                    "type": "boolean"
                 },
                 "update_at": {
                     "type": "string"
@@ -1377,12 +1475,12 @@ const docTemplate = `{
         "schemas.ServiceName": {
             "type": "string",
             "enum": [
-                "spotify",
-                "openweathermap",
-                "timer",
-                "gmail",
-                "github",
-                "dropbox"
+                "Spotify",
+                "OpenWeatherMap",
+                "Timer",
+                "Gmail",
+                "Github",
+                "Dropbox"
             ],
             "x-enum-varnames": [
                 "Spotify",
