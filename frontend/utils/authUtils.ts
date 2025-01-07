@@ -1,7 +1,7 @@
 // ~/utils/authUtils.ts
-import type { Ref } from 'vue';
-import type { ServiceInfo } from '~/interfaces/serviceinfo';
-import type { OAuthLink } from '~/interfaces/authLink';
+import type { Ref } from "vue";
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import type { OAuthLink } from "~/interfaces/authLink";
 
 export const authApiCall = async (label: string) => {
   try {
@@ -25,7 +25,7 @@ export const handleClick = (
   serviceConnected?: Ref<string[]>,
 ) => {
   const serviceNames = services.value.map((service) => service.name);
-  
+
   if (serviceConnected && serviceConnected.value.includes(label)) {
     //disconnectService(label);
   } else {
