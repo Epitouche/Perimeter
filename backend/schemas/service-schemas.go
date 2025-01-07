@@ -14,7 +14,7 @@ const (
 	Gmail          ServiceName = "Gmail"
 	Github         ServiceName = "Github"
 	Dropbox        ServiceName = "Dropbox"
-	Discord        ServiceName = "Discord"
+	Microsoft      ServiceName = "Microsoft"
 )
 
 type ServiceJSON struct {

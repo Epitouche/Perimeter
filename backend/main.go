@@ -60,7 +60,7 @@ func setupRouter() *gin.Engine {
 	gmailRepository := repository.NewGmailRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
 	dropboxRepository := repository.NewDropboxRepository(databaseConnection)
-	discordRepository := repository.NewDiscordRepository(databaseConnection)
+	microsoftRepository := repository.NewMicrosoftRepository(databaseConnection)
 	timerRepository := repository.NewTimerRepository(databaseConnection)
 	openweathermapRepository := repository.NewOpenweathermapRepository(databaseConnection)
 	userRepository := repository.NewUserRepository(databaseConnection)
@@ -96,8 +96,8 @@ func setupRouter() *gin.Engine {
 		areaRepository,
 		tokenRepository,
 	)
-	discordService := service.NewDiscordService(
-		discordRepository,
+	microsoftService := service.NewMicrosoftService(
+		microsoftRepository,
 		serviceRepository,
 		areaRepository,
 		tokenRepository,
@@ -116,7 +116,7 @@ func setupRouter() *gin.Engine {
 		gmailService,
 		githubService,
 		dropboxService,
-		discordService,
+		microsoftService,
 		openweathermapService,
 	)
 	actionService := service.NewActionService(actionRepository, serviceService)
@@ -157,8 +157,8 @@ func setupRouter() *gin.Engine {
 		tokenService,
 		serviceService,
 	)
-	discordController := controller.NewDiscordController(
-		discordService,
+	microsoftController := controller.NewMicrosoftController(
+		microsoftService,
 		userService,
 		tokenService,
 		serviceService,
@@ -187,7 +187,7 @@ func setupRouter() *gin.Engine {
 	api.NewGmailAPI(gmailController, apiRoutes, userService)
 	api.NewGithubAPI(githubController, apiRoutes, userService)
 	api.NewDropboxAPI(dropboxController, apiRoutes, userService)
-	api.NewDiscordAPI(discordController, apiRoutes, userService)
+	api.NewMicrosoftAPI(microsoftController, apiRoutes, userService)
 	api.NewAreaAPI(areaController, apiRoutes, userService)
 	api.NewAreaResultAPI(areaResultController, apiRoutes)
 

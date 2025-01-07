@@ -9,27 +9,27 @@ import (
 	"area/service"
 )
 
-type DiscordController interface {
+type MicrosoftController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
-type discordController struct {
-	service        service.DiscordService
+type microsoftController struct {
+	service        service.MicrosoftService
 	serviceUser    service.UserService
 	serviceToken   service.TokenService
 	serviceService service.ServiceService
 }
 
-func NewDiscordController(
-	service service.DiscordService,
+func NewMicrosoftController(
+	service service.MicrosoftService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
 	serviceService service.ServiceService,
-) DiscordController {
-	return &discordController{
+) MicrosoftController {
+	return &microsoftController{
 		service:        service,
 		serviceUser:    serviceUser,
 		serviceToken:   serviceToken,
@@ -37,12 +37,12 @@ func NewDiscordController(
 	}
 }
 
-func (controller *discordController) RedirectToService(
+func (controller *microsoftController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthURL string, err error) {
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
-		schemas.Discord,
-		"https://discord.com/api/oauth2/authorize",
+		schemas.Microsoft,
+		"https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
 		"identify email",
 	)
 	if err != nil {
@@ -51,7 +51,7 @@ func (controller *discordController) RedirectToService(
 	return oauthURL, nil
 }
 
-func (controller *discordController) HandleServiceCallback(
+func (controller *microsoftController) HandleServiceCallback(
 	ctx *gin.Context,
 ) (string, error) {
 	var credentials schemas.CodeCredentials
@@ -91,7 +91,7 @@ func (controller *discordController) HandleServiceCallback(
 	return bearer, nil
 }
 
-func (controller *discordController) HandleServiceCallbackMobile(
+func (controller *microsoftController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
 ) (string, error) {
 	var credentials schemas.MobileTokenRequest
@@ -100,7 +100,7 @@ func (controller *discordController) HandleServiceCallbackMobile(
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
-		schemas.Discord,
+		schemas.Microsoft,
 		credentials,
 		controller.serviceUser,
 		controller.service.GetUserInfo,
@@ -109,7 +109,7 @@ func (controller *discordController) HandleServiceCallbackMobile(
 	return bearer, err
 }
 
-func (controller *discordController) GetUserInfo(
+func (controller *microsoftController) GetUserInfo(
 	ctx *gin.Context,
 ) (userInfo schemas.UserCredentials, err error) {
 	println("get user info")

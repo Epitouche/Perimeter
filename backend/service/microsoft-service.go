@@ -17,7 +17,7 @@ import (
 
 // Constructor
 
-type DiscordService interface {
+type MicrosoftService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
@@ -30,14 +30,14 @@ type DiscordService interface {
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
 	// Reactions functions
-	DiscordReactionSendMessage(
+	MicrosoftReactionSendMail(
 		option json.RawMessage,
 		idArea uint64,
 	) string
 }
 
-type discordService struct {
-	repository        repository.DiscordRepository
+type microsoftService struct {
+	repository        repository.MicrosoftRepository
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
@@ -46,20 +46,20 @@ type discordService struct {
 	serviceInfo       schemas.Service
 }
 
-func NewDiscordService(
-	githubTokenRepository repository.DiscordRepository,
+func NewMicrosoftService(
+	githubTokenRepository repository.MicrosoftRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
 	tokenRepository repository.TokenRepository,
-) DiscordService {
-	return &discordService{
+) MicrosoftService {
+	return &microsoftService{
 		repository:        githubTokenRepository,
 		serviceRepository: serviceRepository,
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
 		serviceInfo: schemas.Service{
-			Name:        schemas.Discord,
-			Description: "This service is a messaging platform.",
+			Name:        schemas.Microsoft,
+			Description: "This service is used to interact with Microsoft services",
 			Oauth:       true,
 			Color:       "#001DDA",
 			Icon:        "https://api.iconify.design/mdi:discord.svg?color=%23FFFFFF",
@@ -69,41 +69,42 @@ func NewDiscordService(
 
 // Service interface functions
 
-func (service *discordService) GetServiceInfo() schemas.Service {
+func (service *microsoftService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
-func (service *discordService) GetServiceActionInfo() []schemas.Action {
+func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 	return []schemas.Action{}
 }
 
-func (service *discordService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionName = append(service.reactionName, string(schemas.SendMessage))
-	defaultValue := schemas.DiscordReactionSendMessageOptions{
-		User:    "",
-		Message: "",
+func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
+	service.reactionName = append(service.reactionName, string(schemas.SendMicrosoftMail))
+	defaultValue := schemas.MicrosoftReactionSendMailOptions{
+		Subject:   "",
+		Body:      "",
+		Recipient: "",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
 		fmt.Println("Error marshalling default options:", err)
 	}
 	service.serviceInfo, err = service.serviceRepository.FindByName(
-		schemas.Discord,
+		schemas.Microsoft,
 	)
 	if err != nil {
 		println("error find service by name: " + err.Error())
 	}
 	return []schemas.Reaction{
 		{
-			Name:        string(schemas.SendMessage),
-			Description: "Send a message to a user in Discord.",
+			Name:        string(schemas.SendMicrosoftMail),
+			Description: "Send a message to a user in Discord",
 			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
 }
 
-func (service *discordService) FindActionbyName(
+func (service *microsoftService) FindActionbyName(
 	name string,
 ) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
@@ -112,28 +113,28 @@ func (service *discordService) FindActionbyName(
 	}
 }
 
-func (service *discordService) FindReactionbyName(
+func (service *microsoftService) FindReactionbyName(
 	name string,
 ) func(option json.RawMessage, idArea uint64) string {
 	switch name {
-	case string(schemas.SendMessage):
-		return service.DiscordReactionSendMessage
+	case string(schemas.SendMicrosoftMail):
+		return service.MicrosoftReactionSendMail
 	default:
 		return nil
 	}
 }
 
-func (service *discordService) GetActionsName() []string {
+func (service *microsoftService) GetActionsName() []string {
 	return service.actionName
 }
 
-func (service *discordService) GetReactionsName() []string {
+func (service *microsoftService) GetReactionsName() []string {
 	return service.reactionName
 }
 
 // Service specific functions
 
-func (service *discordService) AuthGetServiceAccessToken(
+func (service *microsoftService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
 	clientID := os.Getenv("DISCORD_CLIENT_ID")
@@ -199,53 +200,54 @@ func (service *discordService) AuthGetServiceAccessToken(
 	return token, nil
 }
 
-func (service *discordService) GetUserInfo(
+func (service *microsoftService) GetUserInfo(
 	accessToken string,
 ) (user schemas.User, err error) {
 	ctx := context.Background()
 
-	// Create a new HTTP request
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
-		"https://discord.com/api/v8/users/@me",
-		nil,
-	)
+	url := "https://graph.microsoft.com/v1.0/me"
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
-	// Add the Authorization header
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
-	// Make the request using the default HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
+	defer resp.Body.Close()
 
-	result := schemas.DropboxUserInfo{}
+	if resp.StatusCode != http.StatusOK {
+		return schemas.User{}, fmt.Errorf("failed to fetch user info: %s", resp.Status)
+	}
+
+	var result schemas.MicrosoftUserInfo
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	resp.Body.Close()
-
 	user = schemas.User{
-		Email:    result.Email,
-		Username: result.Name.DisplayName,
+		Email:    result.Mail,
+		Username: result.DisplayName,
+	}
+	if user.Email == "" {
+		user.Email = result.UserPrincipalName
 	}
 
 	return user, nil
 }
 
-func (service *discordService) DiscordReactionSendMessage(
+func (service *microsoftService) MicrosoftReactionSendMail(
 	option json.RawMessage,
 	idArea uint64,
 ) string {
 	// Parse the options
-	optionJson := schemas.DiscordReactionSendMessageOptions{}
-	err := json.Unmarshal(option, &optionJson)
+	options := schemas.MicrosoftReactionSendMailOptions{}
+	err := json.Unmarshal(option, &options)
 	if err != nil {
 		fmt.Println("Error unmarshalling options:", err)
 		return "Error unmarshalling options: " + err.Error()
@@ -272,68 +274,59 @@ func (service *discordService) DiscordReactionSendMessage(
 		return "Error: Token not found"
 	}
 
-	// Step 1: Create a DM channel
-	apiUrl := "https://discord.com/api/v10/users/@me/channels"
-	body := map[string]string{"recipient_id": optionJson.User}
-	bodyJson, _ := json.Marshal(body)
+	// Microsoft Graph API URL for sending mail
+	apiURL := "https://graph.microsoft.com/v1.0/me/sendMail"
 
-	req, err := http.NewRequest(http.MethodPost, apiUrl, bytes.NewBuffer(bodyJson))
-	if err != nil {
-		fmt.Println("Error creating DM channel request:", err)
-		return "Error creating DM channel request: " + err.Error()
+	// Construct the email payload
+	payload := map[string]interface{}{
+		"message": map[string]interface{}{
+			"subject": options.Subject,
+			"body": map[string]string{
+				"contentType": "Text",
+				"content":     options.Body,
+			},
+			"toRecipients": []map[string]map[string]string{
+				{
+					"emailAddress": {
+						"address": options.Recipient,
+					},
+				},
+			},
+		},
 	}
 
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Println("Error marshalling email payload:", err)
+		return "Error marshalling email payload: " + err.Error()
+	}
+
+	// Create the HTTP request
+	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		fmt.Println("Error creating HTTP request:", err)
+		return "Error creating HTTP request: " + err.Error()
+	}
+
+	// Add headers
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
 
+	// Send the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error making DM channel request:", err)
-		return "Error making DM channel request: " + err.Error()
+		fmt.Println("Error sending email request:", err)
+		return "Error sending email request: " + err.Error()
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	// Check the response
+	if resp.StatusCode != http.StatusAccepted {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		fmt.Println("Error creating DM channel:", string(bodyBytes))
-		return "Error creating DM channel: " + string(bodyBytes)
+		fmt.Println("Error sending email:", string(bodyBytes))
+		return "Error sending email: " + string(bodyBytes)
 	}
 
-	var dmResponse struct {
-		ID string `json:"id"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&dmResponse); err != nil {
-		fmt.Println("Error decoding DM channel response:", err)
-		return "Error decoding DM channel response: " + err.Error()
-	}
-
-	// Step 2: Send the message to the DM channel
-	messageUrl := fmt.Sprintf("https://discord.com/api/v10/channels/%s/messages", dmResponse.ID)
-	messageBody := map[string]string{"content": optionJson.Message}
-	messageJson, _ := json.Marshal(messageBody)
-
-	msgReq, err := http.NewRequest(http.MethodPost, messageUrl, bytes.NewBuffer(messageJson))
-	if err != nil {
-		fmt.Println("Error creating message request:", err)
-		return "Error creating message request: " + err.Error()
-	}
-
-	msgReq.Header.Set("Authorization", "Bearer "+token.Token)
-	msgReq.Header.Set("Content-Type", "application/json")
-
-	msgResp, err := client.Do(msgReq)
-	if err != nil {
-		fmt.Println("Error sending message:", err)
-		return "Error sending message: " + err.Error()
-	}
-	defer msgResp.Body.Close()
-
-	if msgResp.StatusCode != http.StatusOK && msgResp.StatusCode != http.StatusCreated {
-		bodyBytes, _ := io.ReadAll(msgResp.Body)
-		fmt.Println("Error sending message:", string(bodyBytes))
-		return "Error sending message: " + string(bodyBytes)
-	}
-
-	return "Message sent successfully!"
+	return "Email sent successfully!"
 }

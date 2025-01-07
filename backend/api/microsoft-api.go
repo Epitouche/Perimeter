@@ -11,17 +11,17 @@ import (
 	"area/service"
 )
 
-type DiscordAPI struct {
-	controller controller.DiscordController
+type MicrosoftAPI struct {
+	controller controller.MicrosoftController
 }
 
-func NewDiscordAPI(
-	controller controller.DiscordController,
+func NewMicrosoftAPI(
+	controller controller.MicrosoftController,
 	apiRoutes *gin.RouterGroup,
 	serviceUser service.UserService,
-) *DiscordAPI {
-	apiRoutes = apiRoutes.Group("/discord")
-	api := DiscordAPI{
+) *MicrosoftAPI {
+	apiRoutes = apiRoutes.Group("/microsoft")
+	api := MicrosoftAPI{
 		controller: controller,
 	}
 	api.RedirectToService(apiRoutes)
@@ -42,7 +42,7 @@ func NewDiscordAPI(
 //	@Success		200	{object}	schemas.AuthenticationURL
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/dropbox/auth [get]
-func (api *DiscordAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
+func (api *MicrosoftAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx)
 		if err != nil {
@@ -65,7 +65,7 @@ func (api *DiscordAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Success		200				{object}	schemas.JWT
 //	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/dropbox/auth/callback [post]
-func (api *DiscordAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
+func (api *MicrosoftAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		dropbox_token, err := api.controller.HandleServiceCallback(ctx)
 		if err != nil {
@@ -88,7 +88,7 @@ func (api *DiscordAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Success		200		{object}	schemas.JWT
 //	@Failure		500		{object}	schemas.ErrorResponse
 //	@Router			/dropbox/auth/callback/mobile [post]
-func (api *DiscordAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
+func (api *MicrosoftAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
 		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
@@ -116,7 +116,7 @@ func (api *DiscordAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/dropbox/info [get]
-func (api *DiscordAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
+func (api *MicrosoftAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {

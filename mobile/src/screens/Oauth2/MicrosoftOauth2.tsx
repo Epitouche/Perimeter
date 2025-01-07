@@ -1,22 +1,25 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { DISCORD_CLIENT_ID, DISCORD_SECRET } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
-async function HandleDiscordLogin(
+async function HandleMicrosoftLogin(
   setToken: any,
   navigation: any,
   ipAddress: string,
   login: boolean = false,
 ) {
   const config: AuthConfiguration = {
-    clientId: DISCORD_CLIENT_ID,
-    clientSecret: DISCORD_SECRET,
+    clientId: '8aac36d6-6dc2-4848-8ee9-bcf3abf420cf',
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['identify', 'email', 'messages.read'],
+    scopes: [
+      'Mail.ReadWrite',
+      'User.Read',
+      'Mail.Send',
+      'offline_access',
+    ],
     serviceConfiguration: {
-      authorizationEndpoint: 'https://discord.com/oauth2/authorize',
-      tokenEndpoint: 'https://discord.com/api/oauth2/token',
+      authorizationEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      tokenEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     },
   };
 
@@ -26,12 +29,12 @@ async function HandleDiscordLogin(
     let data;
     if (login) {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/discord/auth/callback/mobile`,
+        `http://${ipAddress}:8080/api/v1/microsoft/auth/callback/mobile`,
         result,
       );
     } else {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/discord/auth/callback`,
+        `http://${ipAddress}:8080/api/v1/microsoft/auth/callback`,
         result,
       );
     }
@@ -52,4 +55,4 @@ async function HandleDiscordLogin(
   }
 }
 
-export { HandleDiscordLogin };
+export { HandleMicrosoftLogin };
