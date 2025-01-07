@@ -178,16 +178,19 @@ onMounted(() => {
         </h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
-          <ReActionButton title="Action" link="/workflow/actions" :is-disabled="false"
+          <ReActionButton
+title="Action" link="/workflow/actions" :is-disabled="false"
             :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)"
             :type-name="websiteStore.actionName" />
-          <div :class="[
+          <div
+:class="[
             'bg-black min-w-4 min-h-28',
             websiteStore.reactionButtonisDisabled
               ? 'bg-opacity-60'
               : 'bg-opacity-100',
           ]" />
-          <ReActionButton title="Reaction" link="/workflow/reactions"
+          <ReActionButton
+title="Reaction" link="/workflow/reactions"
             :is-disabled="websiteStore.reactionButtonisDisabled" :is-selected="websiteStore.reactionIsSelected"
             :service-id="Number(websiteStore.reactionServiceId)" :type-name="websiteStore.reactionName" />
         </div>

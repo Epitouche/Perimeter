@@ -79,7 +79,8 @@ watch(
     ]">
       {{ title }}
     </h2>
-    <UButton :disabled="isDisabled" :to="link" :ui="{ rounded: 'rounded-2xl' }" :class="[
+    <UButton
+:disabled="isDisabled" :to="link" :ui="{ rounded: 'rounded-2xl' }" :class="[
       'text-black bg-white text-5xl font-extrabold px-10 py-3',
       isDisabled ? '!text-opacity-60' : 'text-opacity-100',
     ]">Add</UButton>
