@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"area/service"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type TimerController interface{}

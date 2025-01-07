@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"area/docs"
+	"github.com/Epitouche/Perimeter/docs"
 )
 
 func TestSwaggerInfo(t *testing.T) {

@@ -10,6 +10,8 @@ type AreaMessage struct {
 	ActionId       uint64          `                  json:"action_id"` // Foreign key for Action
 	ReactionOption json.RawMessage `gorm:"type:jsonb" json:"reaction_option" binding:"required"`
 	ReactionId     uint64          `                  json:"reaction_id"` // Foreign key for Reaction
+	Title          string          `                  json:"title"           binding:"required"`
+	Description    string          `                  json:"description"     binding:"required"`
 }
 
 type Area struct {
@@ -23,6 +25,8 @@ type Area struct {
 	ReactionId     uint64          `                                           json:"-"` // Foreign key for Reaction
 	Reaction       Reaction        `gorm:"foreignKey:ReactionId;references:Id" json:"reaction,omitempty" binding:"required"`
 	Enable         bool            `gorm:"default:true"                        json:"enable"`
+	Title          string          `                                           json:"title"              binding:"required"`
+	Description    string          `                                           json:"description"        binding:"required"`
 	CreatedAt      time.Time       `gorm:"default:CURRENT_TIMESTAMP"           json:"createdAt"`
 	UpdateAt       time.Time       `gorm:"default:CURRENT_TIMESTAMP"           json:"update_at"`
 }

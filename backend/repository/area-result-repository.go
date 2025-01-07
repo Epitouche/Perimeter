@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type AreaResultRepository interface {
