@@ -8,14 +8,19 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type AreaApi struct {
 	controller controller.AreaController
 }
 
-func NewAreaAPI(controller controller.AreaController, apiRoutes *gin.RouterGroup) *AreaApi {
-	apiRoutes = apiRoutes.Group("/area", middlewares.AuthorizeJWT())
+func NewAreaAPI(
+	controller controller.AreaController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *AreaApi {
+	apiRoutes = apiRoutes.Group("/area", middlewares.AuthorizeJWT(serviceUser))
 	api := AreaApi{
 		controller: controller,
 	}
@@ -45,6 +50,7 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, &schemas.Response{
 			Message: response,
 		})
@@ -73,6 +79,7 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }

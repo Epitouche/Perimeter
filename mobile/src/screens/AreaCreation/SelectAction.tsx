@@ -27,7 +27,6 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
   const serviceId = route.params?.serviceId;
 
   useEffect(() => {
-    // Fetch actions from API
     const fetchServices = async () => {
       try {
         const response = await fetch(
@@ -77,7 +76,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
     setSelectedAction(action);
     if (action.option) {
       console.log('Action Options:', action.option);
-      const parsedOptions = JSON.parse(action.option);
+      const parsedOptions = action.option;
       setSelectedActionOptions(parsedOptions);
     } else {
       setSelectedActionOptions({});
@@ -109,6 +108,13 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
     );
   }
+
+  const formatText = (text: string): string => {
+    return text
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
 
   return (
     <View style={styles.container}>
@@ -160,7 +166,9 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
                 key={service.id}
                 style={styles.serviceBox}
                 onPress={() => handleActionPress(service)}>
-                <Text style={styles.serviceText}>{service.name}</Text>
+                <Text style={styles.serviceText}>
+                  {formatText(service.name)}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -189,7 +197,8 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     width: '100%',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f9f9f9',
+    color: '#000',
     borderRadius: 10,
     padding: 10,
     fontSize: 18,

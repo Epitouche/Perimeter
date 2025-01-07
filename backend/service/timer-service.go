@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -45,6 +46,9 @@ func NewTimerService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Timer,
 			Description: "This service is a time service",
+			Oauth:       false,
+			Color:       "#BB00FF",
+			Icon:        "https://api.iconify.design/mdi:clock.svg?color=%23FFFFFF",
 		},
 	}
 }
@@ -87,11 +91,17 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Timer,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Action{
 		{
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
-			Service:     service.serviceRepository.FindByName(schemas.Timer),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
@@ -104,11 +114,17 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Timer,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.GiveTime),
 			Description: "This reaction is a give time reaction",
-			Service:     service.serviceRepository.FindByName(schemas.Timer),
+			Service:     service.serviceInfo,
 			Option:      option,
 		},
 	}
@@ -127,7 +143,8 @@ func (service *timerService) GetReactionsName() []string {
 func getActualTime() (schemas.TimeApiResponse, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
-	req, err := http.NewRequest("GET", apiURL, nil)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
 	if err != nil {
 		return schemas.TimeApiResponse{}, schemas.ErrCreateRequest
 	}

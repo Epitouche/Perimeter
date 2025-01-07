@@ -1,6 +1,9 @@
 package schemas
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 type DropboxAction string
 
@@ -49,4 +52,24 @@ var (
 
 type DropboxMobileTokenRequest struct {
 	Token string `json:"token"`
+}
+
+type DropboxFile struct {
+	Created     time.Time `json:"created"`
+	Destination string    `json:"destination"`
+	FileCount   int       `json:"file_count"`
+	ID          string    `json:"id"`
+	IsOpen      bool      `json:"is_open"`
+	Title       string    `json:"title"`
+	URL         string    `json:"url"`
+}
+
+type DropboxListFileRequestsV2Result struct {
+	Cursor       string        `json:"cursor"`
+	FileRequests []DropboxFile `json:"file_requests"`
+	HasMore      bool          `json:"has_more"`
+}
+
+type DropboxCountFileRequestsResult struct {
+	FileRequestCount uint64 `json:"file_request_count"`
 }

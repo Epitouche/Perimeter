@@ -12,7 +12,7 @@ import (
 )
 
 type AreaService interface {
-	FindAll() []schemas.Area
+	FindAll() (areas []schemas.Area, err error)
 	CreateArea(ctx *gin.Context) (string, error)
 	InitArea(areaStartValue schemas.Area)
 	AreaExist(id uint64) bool
@@ -61,8 +61,12 @@ func NewAreaService(
 	return &newService
 }
 
-func (service *areaService) FindAll() []schemas.Area {
-	return service.repository.FindAll()
+func (service *areaService) FindAll() (areas []schemas.Area, err error) {
+	areas, err = service.repository.FindAll()
+	if err != nil {
+		return areas, fmt.Errorf("error when get all areas: %w", err)
+	}
+	return areas, nil
 }
 
 func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
@@ -92,8 +96,14 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 		return "", fmt.Errorf("can't get user info: %w", err)
 	}
 
-	areaAction := service.actionService.FindById(result.ActionId)
-	areaReaction := service.reactionService.FindById(result.ReactionId)
+	areaAction, err := service.actionService.FindById(result.ActionId)
+	if err != nil {
+		return "", fmt.Errorf("can't find action by id: %w", err)
+	}
+	areaReaction, err := service.reactionService.FindById(result.ReactionId)
+	if err != nil {
+		return "", fmt.Errorf("can't find reaction by id: %w", err)
+	}
 
 	// check if the json key are the same as default areaAction.Option, json value can be different
 	var defaultActionOption, providedActionOption map[string]interface{}
@@ -131,6 +141,7 @@ func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	if error != nil {
 		return "", fmt.Errorf("can't save area: %w", error)
 	}
+
 	newArea.Id = id
 	service.InitArea(newArea)
 	return "Area created successfully", nil
@@ -159,6 +170,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				println("action not found")
 				return
 			}
+
 			if area.Enable {
 				action(channelArea, area.ActionOption, area.Id)
 			}
@@ -176,7 +188,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			if err != nil {
 				return
 			}
+
 			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
+
 			if area.Enable {
 				resultAction := <-channelArea
 				resultReaction := reaction(area.ReactionOption, area.Id)
@@ -199,6 +213,9 @@ func (service *areaService) GetUserAreas(ctx *gin.Context) ([]schemas.Area, erro
 	if err != nil {
 		return nil, fmt.Errorf("can't get user info: %w", err)
 	}
-	areas := service.repository.FindByUserId(user.Id)
+	areas, err := service.repository.FindByUserId(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("can't find areas by user id: %w", err)
+	}
 	return areas, nil
 }

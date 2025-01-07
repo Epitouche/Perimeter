@@ -1,8 +1,13 @@
-export async function handleCallback(callbackUrl: string, authResult: any) {
+export async function handleCallback(
+  callbackUrl: string,
+  authResult: any,
+  bearer: string = '',
+) {
   const result = await fetch(callbackUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...(bearer && { Authorization: `Bearer ${bearer}` }),
     },
     body: JSON.stringify(authResult),
   });

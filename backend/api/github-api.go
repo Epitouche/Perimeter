@@ -8,13 +8,18 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type GithubAPI struct {
 	controller controller.GithubController
 }
 
-func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterGroup) *GithubAPI {
+func NewGithubAPI(
+	controller controller.GithubController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *GithubAPI {
 	apiRoutes = apiRoutes.Group("/github")
 	api := GithubAPI{
 		controller: controller,
@@ -22,7 +27,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
 	api.HandleServiceCallbackMobile(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }
@@ -65,7 +70,6 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		github_token, err := api.controller.HandleServiceCallback(
 			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{

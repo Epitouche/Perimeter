@@ -8,13 +8,18 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type GmailAPI struct {
 	controller controller.GmailController
 }
 
-func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGroup) *GmailAPI {
+func NewGmailAPI(
+	controller controller.GmailController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *GmailAPI {
 	apiRoutes = apiRoutes.Group("/gmail")
 	api := GmailAPI{
 		controller: controller,
@@ -22,7 +27,7 @@ func NewGmailAPI(controller controller.GmailController, apiRoutes *gin.RouterGro
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
 	api.HandleServiceCallbackMobile(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }
@@ -64,7 +69,6 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		gmail_token, err := api.controller.HandleServiceCallback(
 			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})

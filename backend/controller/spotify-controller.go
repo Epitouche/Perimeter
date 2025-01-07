@@ -41,7 +41,7 @@ func (controller *spotifyController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthUrl string, err error) {
 	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
-		schemas.Gmail,
+		schemas.Spotify,
 		"https://accounts.spotify.com/authorize",
 		"user-read-private user-read-email user-modify-playback-state",
 	)

@@ -9,6 +9,7 @@ import (
 	"area/controller"
 	"area/middlewares"
 	"area/schemas"
+	"area/service"
 )
 
 type ReactionApi struct {
@@ -18,8 +19,9 @@ type ReactionApi struct {
 func NewReactionApi(
 	controller controller.ReactionController,
 	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
 ) *ReactionApi {
-	apiRoutes = apiRoutes.Group("/reaction", middlewares.AuthorizeJWT())
+	apiRoutes = apiRoutes.Group("/reaction", middlewares.AuthorizeJWT(serviceUser))
 	api := ReactionApi{
 		controller: controller,
 	}
@@ -52,6 +54,7 @@ func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		response, err := api.controller.GetReactionsInfo(idInt)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -59,6 +62,7 @@ func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, response)
 	})
 }

@@ -1,0 +1,21 @@
+# vscode
+.vscode
+
+# docs
+README.md
+
+# git
+.gitignore
+
+# docker
+.dockerignore
+Dockerfile
+
+# air
+.air.toml
+
+# scripts
+**/*.sh
+
+# test output
+**/*.out
