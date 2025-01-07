@@ -102,6 +102,10 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(schemas.Spotify) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.PlayMusic),

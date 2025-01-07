@@ -20,7 +20,8 @@
 				"premparihar.gotestexplorer",
 				"aleksandra.go-group-imports",
 				"Cardinal90.multi-cursor-case-preserve",
-				"cweijan.vscode-postgresql-client2" // pgadmin client
+				"cweijan.vscode-postgresql-client2", // pgadmin client
+				"mhutchie.git-graph"
 			]
 		}
 	},

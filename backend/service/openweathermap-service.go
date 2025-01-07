@@ -128,18 +128,25 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
+
+	service.serviceInfo, err = service.serviceRepository.FindByName(schemas.Openweathermap) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Action{
 		{
 			Name:        string(schemas.SpecificWeather),
 			Description: "This action is a specific weather action",
 			Service:     service.serviceInfo,
-			Option:      optionSpecificWeather,
+
+			Option: optionSpecificWeather,
 		},
 		{
 			Name:        string(schemas.SpecificTemperature),
 			Description: "This action is a specific temperature action",
 			Service:     service.serviceInfo,
-			Option:      optionSpecificTemperature,
+
+			Option: optionSpecificTemperature,
 		},
 	}
 }
@@ -156,6 +163,10 @@ func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reactio
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(schemas.Openweathermap) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
 	}
 	return []schemas.Reaction{
 		{
