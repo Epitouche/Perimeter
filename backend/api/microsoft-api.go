@@ -11,17 +11,17 @@ import (
 	"area/service"
 )
 
-type GmailAPI struct {
-	controller controller.GmailController
+type MicrosoftAPI struct {
+	controller controller.MicrosoftController
 }
 
-func NewGmailAPI(
-	controller controller.GmailController,
+func NewMicrosoftAPI(
+	controller controller.MicrosoftController,
 	apiRoutes *gin.RouterGroup,
 	serviceUser service.UserService,
-) *GmailAPI {
-	apiRoutes = apiRoutes.Group("/gmail")
-	api := GmailAPI{
+) *MicrosoftAPI {
+	apiRoutes = apiRoutes.Group("/microsoft")
+	api := MicrosoftAPI{
 		controller: controller,
 	}
 	api.RedirectToService(apiRoutes)
@@ -34,15 +34,15 @@ func NewGmailAPI(
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with gmail
-//	@Description	give url to authenticate with gmail
-//	@Tags			Gmail
+//	@Summary		give url to authenticate with dropbox
+//	@Description	give url to authenticate with dropbox
+//	@Tags			Dropbox
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	schemas.AuthenticationURL
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/gmail/auth [get]
-func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
+//	@Router			/dropbox/auth [get]
+func (api *MicrosoftAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx)
 		if err != nil {
@@ -55,45 +55,46 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with gmail
-//	@Description	give url to authenticate with gmail
-//	@Tags			Gmail
+//	@Summary		give url to authenticate with dropbox
+//	@Description	give url to authenticate with dropbox
+//	@Tags			Dropbox
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
 //	@Param			Authorization	header		string					false	"Bearer token"
 //	@Success		200				{object}	schemas.JWT
 //	@Failure		500				{object}	schemas.ErrorResponse
-//	@Router			/gmail/auth/callback [post]
-func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
+//	@Router			/dropbox/auth/callback [post]
+func (api *MicrosoftAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
-		gmail_token, err := api.controller.HandleServiceCallback(
-			ctx,
-		)
+		dropbox_token, err := api.controller.HandleServiceCallback(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
-			ctx.JSON(http.StatusOK, &schemas.JWT{Token: gmail_token})
+			ctx.JSON(http.StatusOK, &schemas.JWT{Token: dropbox_token})
 		}
 	})
 }
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give authentication token to mobile
-//	@Description	give authentication token to mobile
-//	@Tags			Gmail
+//	@Summary		give url to authenticate with dropbox
+//	@Description	give url to authenticate with dropbox
+//	@Tags			Dropbox
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
-//	@Param			Authorization	header		string					false	"Bearer token"
-//	@Success		200				{object}	schemas.JWT
-//	@Failure		500				{object}	schemas.ErrorResponse
-//	@Router			/gmail/auth/callback/mobile [post]
-func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
+//	@Security		bearerAuth
+//	@Param			payload	body		schemas.CodeCredentials	true	"Callback Payload"
+//	@Success		200		{object}	schemas.JWT
+//	@Failure		500		{object}	schemas.ErrorResponse
+//	@Router			/dropbox/auth/callback/mobile [post]
+func (api *MicrosoftAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
 		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
+			println("--------------------")
+			println(err.Error())
+			println("--------------------")
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
 			})
@@ -105,17 +106,17 @@ func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of gmail
-//	@Description	give user info of gmail
-//	@Tags			Gmail
+//	@Summary		give user info of dropbox
+//	@Description	give user info of dropbox
+//	@Tags			Dropbox
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.UserCredentials
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/gmail/info [get]
-func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
+//	@Router			/dropbox/info [get]
+func (api *MicrosoftAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {

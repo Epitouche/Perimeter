@@ -136,7 +136,7 @@ func (api *DropboxAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 //	@Success		200	{object}	[]schemas.DropboxFile
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/dropbox/info [get]
+//	@Router			/dropbox/file [get]
 func (api *DropboxAPI) GetUserFile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/file", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserFile(ctx)

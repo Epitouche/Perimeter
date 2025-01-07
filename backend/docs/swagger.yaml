@@ -1,27 +1,21 @@
 definitions:
   schemas.Action:
     properties:
-      created_at:
-        description: Time when the action was created
+      createdAt:
         type: string
       description:
-        description: Description of the action
         type: string
       id:
-        description: Unique identifier for the action
         type: integer
       name:
-        description: Name of the action
         type: string
       option:
-        description: Option for the action
-        type: string
+        items:
+          type: integer
+        type: array
       service:
-        allOf:
-        - $ref: '#/definitions/schemas.Service'
-        description: Service that the action belongs to
+        $ref: '#/definitions/schemas.Service'
       update_at:
-        description: Time when the action was last updated
         type: string
     required:
     - description
@@ -32,35 +26,27 @@ definitions:
   schemas.Area:
     properties:
       action:
-        allOf:
-        - $ref: '#/definitions/schemas.Action'
-        description: Action that the area belongs to
+        $ref: '#/definitions/schemas.Action'
       action_option:
-        description: Action option
-        type: string
-      created_at:
-        description: Time when the area was created
+        items:
+          type: integer
+        type: array
+      createdAt:
         type: string
       enable:
-        description: Enable or disable the area
         type: boolean
       id:
-        description: Unique identifier for the area
         type: integer
       reaction:
-        allOf:
-        - $ref: '#/definitions/schemas.Reaction'
-        description: Reaction that the area belongs to
+        $ref: '#/definitions/schemas.Reaction'
       reaction_option:
-        description: Reaction option
-        type: string
+        items:
+          type: integer
+        type: array
       update_at:
-        description: Time when the area was last updated
         type: string
       user:
-        allOf:
-        - $ref: '#/definitions/schemas.User'
-        description: User that the area belongs to
+        $ref: '#/definitions/schemas.User'
     required:
     - action
     - action_option
@@ -71,17 +57,19 @@ definitions:
   schemas.AreaMessage:
     properties:
       action_id:
-        description: Unique identifier for the action
+        description: Foreign key for Action
         type: integer
       action_option:
-        description: Action option
-        type: string
+        items:
+          type: integer
+        type: array
       reaction_id:
-        description: Unique identifier for the reaction
+        description: Foreign key for Reaction
         type: integer
       reaction_option:
-        description: Reaction option
-        type: string
+        items:
+          type: integer
+        type: array
     required:
     - action_option
     - reaction_option
@@ -98,6 +86,23 @@ definitions:
     required:
     - code
     type: object
+  schemas.DropboxFile:
+    properties:
+      created:
+        type: string
+      destination:
+        type: string
+      file_count:
+        type: integer
+      id:
+        type: string
+      is_open:
+        type: boolean
+      title:
+        type: string
+      url:
+        type: string
+    type: object
   schemas.ErrorResponse:
     properties:
       error:
@@ -111,26 +116,20 @@ definitions:
   schemas.Reaction:
     properties:
       created_at:
-        description: Time when the reaction was created
         type: string
       description:
-        description: Description of the reaction
         type: string
       id:
-        description: Unique identifier for the reaction
         type: integer
       name:
-        description: Name of the reaction
         type: string
       option:
-        description: Option for the reaction
-        type: string
+        items:
+          type: integer
+        type: array
       service:
-        allOf:
-        - $ref: '#/definitions/schemas.Service'
-        description: Service that the reaction belongs to
+        $ref: '#/definitions/schemas.Service'
       update_at:
-        description: Time when the reaction was last updated
         type: string
     required:
     - description
@@ -145,28 +144,37 @@ definitions:
     type: object
   schemas.Service:
     properties:
+      color:
+        type: string
       created_at:
         type: string
       description:
+        type: string
+      icon:
         type: string
       id:
         type: integer
       name:
         $ref: '#/definitions/schemas.ServiceName'
+      oauth:
+        type: boolean
       update_at:
         type: string
     required:
+    - color
     - description
+    - icon
     - name
+    - oauth
     type: object
   schemas.ServiceName:
     enum:
-    - spotify
-    - openweathermap
-    - timer
-    - gmail
-    - github
-    - dropbox
+    - Spotify
+    - OpenWeatherMap
+    - Timer
+    - Gmail
+    - Github
+    - Dropbox
     type: string
     x-enum-varnames:
     - Spotify
@@ -289,6 +297,31 @@ paths:
       tags:
       - Action
   /area:
+    delete:
+      consumes:
+      - application/json
+      description: delete user area list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Area'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: delete user area
+      tags:
+      - Area
     get:
       consumes:
       - application/json
@@ -341,6 +374,31 @@ paths:
       security:
       - bearerAuth: []
       summary: create area
+      tags:
+      - Area
+    put:
+      consumes:
+      - application/json
+      description: update user area list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Area'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: update user area
       tags:
       - Area
   /dropbox/auth:
@@ -418,6 +476,33 @@ paths:
       security:
       - bearerAuth: []
       summary: give url to authenticate with dropbox
+      tags:
+      - Dropbox
+  /dropbox/file:
+    get:
+      consumes:
+      - application/json
+      description: give user info of dropbox
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.DropboxFile'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of dropbox
       tags:
       - Dropbox
   /dropbox/info:
@@ -519,7 +604,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: give authentication token to mobile
       tags:
-      - Spotify
+      - Github
   /github/info:
     get:
       consumes:
@@ -623,7 +708,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: give authentication token to mobile
       tags:
-      - Spotify
+      - Gmail
   /gmail/info:
     get:
       consumes:

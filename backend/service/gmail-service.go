@@ -288,7 +288,10 @@ func (service *gmailService) GetUserInfo(
 
 // Reactions functions
 
-func (service *gmailService) GmailReactionSendMail(option json.RawMessage, idArea uint64) string {
+func (service *gmailService) GmailReactionSendMail(
+	option json.RawMessage,
+	idArea uint64,
+) string {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
 	println("gmail option: " + string(option))

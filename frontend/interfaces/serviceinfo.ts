@@ -3,4 +3,6 @@ export interface ServiceInfo {
   name: string;
   color: string;
   icon: string;
+  description: string;
+  oauth: boolean;
 }
