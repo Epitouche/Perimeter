@@ -11,6 +11,7 @@ This API provides authentication and user information retrieval features for mul
   - [Table of Contents](#table-of-contents)
   - [Main Document](#main-document)
   - [Swagger](#swagger)
+  - [Godoc](#godoc)
   - [Endpoints](#endpoints)
     - [General Routes](#general-routes)
       - [`GET /ping`](#get-ping)
@@ -44,10 +45,40 @@ This API provides authentication and user information retrieval features for mul
 ## Swagger
 
 to access swagger local documentation
+
+install swag:
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
 launch the server and go to the next url:
 [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
 [swagger golang](https://github.com/swaggo/swag)
+
+---
+
+## Godoc
+
+to access godoc local documentation
+
+install godoc:
+
+```bash
+go install golang.org/x/tools/cmd/godoc@latest
+```
+
+launch the godoc server
+
+```bash
+godoc -http :8080
+```
+
+and go to the next url:
+[http://localhost:8080/pkg/github.com/Epitouche/Perimeter/](http://localhost:8080/pkg/github.com/Epitouche/Perimeter/)
+
+[godoc golang](https://go.dev/blog/godoc)
 
 ---
 
