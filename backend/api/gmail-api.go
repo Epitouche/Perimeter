@@ -82,7 +82,7 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //
 //	@Summary		give authentication token to mobile
 //	@Description	give authentication token to mobile
-//	@Tags			Spotify
+//	@Tags			Gmail
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"
