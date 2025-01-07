@@ -57,7 +57,12 @@ func TestAreaAPI(t *testing.T) {
 		responseRecorder := httptest.NewRecorder()
 		ctx := context.Background()
 
-		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/api/github.com/Epitouche/Perimeter/", nil)
+		req, _ := http.NewRequestWithContext(
+			ctx,
+			http.MethodPost,
+			"/api/github.com/Epitouche/Perimeter/",
+			nil,
+		)
 		router.ServeHTTP(responseRecorder, req)
 
 		assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
