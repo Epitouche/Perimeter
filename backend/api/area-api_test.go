@@ -60,7 +60,7 @@ func TestAreaAPI(t *testing.T) {
 		req, _ := http.NewRequestWithContext(
 			ctx,
 			http.MethodPost,
-			"/api/github.com/Epitouche/Perimeter/",
+			"/api/area/",
 			nil,
 		)
 		router.ServeHTTP(responseRecorder, req)
