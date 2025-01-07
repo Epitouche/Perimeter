@@ -12,6 +12,8 @@ type AboutJSON struct {
 	} `json:"server"`
 }
 
+type JSONRawMessage []byte
+
 const (
 	EmailMinimumLength    = 4
 	UsernameMinimumLength = 4
