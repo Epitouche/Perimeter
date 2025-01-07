@@ -22,7 +22,8 @@
 				"Tyriar.lorem-ipsum",
 				"ZaferAYAN.lorem-picsum",
 				"Cardinal90.multi-cursor-case-preserve",
-				"cweijan.vscode-postgresql-client2" // pgadmin client
+				"cweijan.vscode-postgresql-client2", // pgadmin client
+				"mhutchie.git-graph"
 			]
 		}
 	},
