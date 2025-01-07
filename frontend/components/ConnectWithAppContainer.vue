@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
-import { fetchServices } from "~/utils/fetchServices"
+import { fetchServices } from "~/utils/fetchServices";
 
 defineProps<{
   apps: string[];
@@ -31,7 +31,6 @@ const filteredServices = computed(() =>
       name: service.name,
     })),
 );
-
 </script>
 
 <template>

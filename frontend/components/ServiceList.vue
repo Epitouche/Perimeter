@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
-import { fetchServices } from "~/utils/fetchServices"
+import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
 
 defineProps<{
@@ -57,8 +57,8 @@ async function servicesConnectionInfos() {
 const loadServices = async () => {
   try {
     errorMessage.value = null;
-      services.value = await fetchServices();
-      console.log("services", services.value);
+    services.value = await fetchServices();
+    console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading services:", error);
@@ -81,14 +81,11 @@ const getServiceStateText = (appName: string) => {
 };
 
 const getServiceDetails = (appName: string) =>
-  serviceDetails.value.find(
-    (service) => service.name === appName,
-  );
+  serviceDetails.value.find((service) => service.name === appName);
 
 const onClick = (label: string) => {
   handleClick(label, services, serviceConnected);
 };
-
 </script>
 
 <template>
@@ -107,8 +104,8 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20 mt-4"
-      >
-      
+      />
+
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
         app.name
       }}</span>
@@ -117,10 +114,8 @@ const onClick = (label: string) => {
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
         :class="{
-          'bg-black text-white':
-            serviceConnected.includes(app.name),
-          'bg-white text-black':
-            !serviceConnected.includes(app.name),
+          'bg-black text-white': serviceConnected.includes(app.name),
+          'bg-white text-black': !serviceConnected.includes(app.name),
         }"
       >
         {{ getServiceStateText(app.name) }}
