@@ -5,8 +5,11 @@ export default defineAppConfig({
       color: {
         black: {
           solid:
-            "shadow-sm text-white dark:text-gray-900 bg-gray-900 dark:bg-white focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 disabled:opacity-100 disabled:bg-white disabled:text-black aria-disabled:opacity-100 aria-disabled:bg-white aria-disabled:text-black hover:none",
+            "shadow-sm text-white dark:text-gray-900 bg-gray-900 dark:bg-white focus-visible:ring-inset focus-visible:ring-0 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 disabled:opacity-100 disabled:bg-white disabled:text-black aria-disabled:opacity-100 aria-disabled:bg-white aria-disabled:text-black hover:none",
         },
+      },
+      variant: {
+        ghost: "focus-visible:ring-0",
       },
       default: {
         color: "black",
@@ -29,6 +32,14 @@ export default defineAppConfig({
     },
     modal: {
       rounded: "rounded-custom_border_radius",
+    },
+    tooltip: {
+      default: {
+        openDelay: 600,
+      },
+      popper: {
+        placement: "auto",
+      },
     },
   },
 });

@@ -12,6 +12,7 @@ import (
 
 	"area/api"
 	"area/schemas"
+	"area/test"
 )
 
 type MockDropboxController struct {
@@ -55,7 +56,8 @@ func TestDropboxAPI(t *testing.T) {
 	mockController := new(MockDropboxController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
-	api.NewDropboxAPI(mockController, apiRoutes)
+	mockUserService := new(test.MockUserService)
+	api.NewDropboxAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
 		t.Parallel()

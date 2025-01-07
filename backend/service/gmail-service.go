@@ -115,6 +115,12 @@ func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Gmail,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMail),

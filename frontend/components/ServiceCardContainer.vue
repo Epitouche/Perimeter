@@ -16,7 +16,7 @@ function formatName(name: string): string {
 
 <template>
   <UContainer
-    :ui="{ padding: 'px-0', constrained: 'max-w-full' }"
+    :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
     class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full"
   >
     <div v-for="service in services" :key="service.id">
@@ -30,7 +30,7 @@ function formatName(name: string): string {
           :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
           :class="[
             `bg-custom_color-${service.name}`,
-            'basis-1/4 flex flex-col justify-end items-center gap-10 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
+            'flex flex-col justify-end items-center gap-10 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
           ]"
         >
           <UIcon :name="`my-icons:white-${service.name}`" />

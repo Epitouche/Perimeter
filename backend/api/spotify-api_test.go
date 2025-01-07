@@ -12,6 +12,7 @@ import (
 
 	"area/api"
 	"area/schemas"
+	"area/test"
 )
 
 type MockSpotifyController struct {
@@ -44,7 +45,8 @@ func TestSpotifyAPI(t *testing.T) {
 	mockController := new(MockSpotifyController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
-	api.NewSpotifyAPI(mockController, apiRoutes)
+	mockUserService := new(test.MockUserService)
+	api.NewSpotifyAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
 		t.Parallel()
