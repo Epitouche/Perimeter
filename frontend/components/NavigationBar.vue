@@ -18,8 +18,8 @@ const clearTokenAndLogout = () => {
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         class="h-[4em] w-[4em]"
-      />
-      <span class="font-black text-[2em]">Perimeter</span>
+      >
+      <span class="font-black text-[2.5em]">Perimeter</span>
     </div>
 
     <div class="nav-links">
@@ -85,7 +85,7 @@ const clearTokenAndLogout = () => {
 .nav-link {
   color: black;
   text-decoration: none;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 

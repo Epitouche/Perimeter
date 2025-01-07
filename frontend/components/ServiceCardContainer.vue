@@ -1,12 +1,9 @@
 <script setup lang="ts">
-interface Service {
-  id: number;
-  name: string;
-}
+import type { ServiceInfo } from "@/interfaces/serviceinfo";
 
 defineProps<{
   type: string;
-  services: Service[];
+  services: ServiceInfo[];
 }>();
 
 function formatName(name: string): string {
@@ -28,14 +25,12 @@ function formatName(name: string): string {
       >
         <UContainer
           :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-          :class="[
-            `bg-custom_color-${service.name}`,
-            'flex flex-col justify-end items-center gap-10 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
-          ]"
+          class="flex flex-col justify-end items-center gap-5 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius overflow-hidden w-[5em] h-[4.5em]"
+          :style="{ backgroundColor: service.color }"
         >
-          <UIcon :name="`my-icons:white-${service.name}`" />
+          <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0">
           <h2
-            class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
+            class="clamp-1-line capitalize text-5xl text-center break-words w-full hover-expand-text"
           >
             {{ formatName(service.name) }}
           </h2>
@@ -53,15 +48,22 @@ function formatName(name: string): string {
   size-adjust: 0%;
 }
 
-.clamp-2-lines {
+.clamp-1-line {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: clip;
+  text-overflow: ellipsis;
   word-break: break-word;
   white-space: normal;
-  font-family: ellipsis-font;
+  transition: all 1.0s ease-in-out;
+}
+
+.hover-expand-text:hover {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+  white-space: normal;
 }
 </style>

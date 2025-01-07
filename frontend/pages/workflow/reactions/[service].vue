@@ -84,11 +84,9 @@ onMounted(() => {
       <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
-    <UContainer
-      v-else-if="serviceInfo"
-      :ui="{ constrained: 'max-w-none' }"
-      :class="[`bg-custom_color-${serviceInfo.name}`, 'py-20']"
-    >
+    <UContainer 
+    v-else-if="serviceInfo" :ui="{ constrained: 'max-w-none' }"
+      class="py-20" :style="{ backgroundColor: serviceInfo.color }">
       <div class="px-20">
         <BackButton link="/workflow/reactions" :is-white="true" />
       </div>
@@ -96,10 +94,10 @@ onMounted(() => {
         <h1 class="text-8xl text-white font-custom_weight_title">
           Add a reaction
         </h1>
-        <UIcon
-          :name="`my-icons:white-${serviceInfo.name}`"
-          class="w-[9em] h-[9em]"
-        />
+        <img 
+        :src="serviceInfo.icon" :alt="serviceInfo.name"
+          class="w-[8em] h-[8em]"
+        >
         <h2 class="capitalize text-white text-7xl font-bold pt-8">
           {{ serviceInfo.name }}
         </h2>
@@ -109,11 +107,7 @@ onMounted(() => {
       <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="reactions">
-      <ReActionCardContainer
-        type-name="reaction"
-        :types="reactions"
-        :service-info="serviceInfo"
-      />
+      <ReActionCardContainer type-name="reaction" :types="reactions" :service-info="serviceInfo" />
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
   </div>
