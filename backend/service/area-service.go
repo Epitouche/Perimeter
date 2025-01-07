@@ -71,7 +71,6 @@ func (service *areaService) FindAll() (areas []schemas.Area, err error) {
 
 func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
 	var result schemas.AreaMessage
-
 	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
 	if err != nil {
 		println(fmt.Errorf("can't bind credentials: %w", err))

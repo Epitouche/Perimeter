@@ -14,7 +14,6 @@ type DiscordController interface {
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
-	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error)
 }
 
 type discordController struct {
@@ -138,29 +137,4 @@ func (controller *discordController) GetUserInfo(
 	userInfo.Email = discordUserInfo.Email
 	userInfo.Username = discordUserInfo.Username
 	return userInfo, nil
-}
-
-func (controller *discordController) GetUserFile(
-	ctx *gin.Context,
-) (userFile []schemas.DropboxFile, err error) {
-	authHeader := ctx.GetHeader("Authorization")
-	tokenString := authHeader[len("Bearer "):]
-
-	user, err := controller.serviceUser.GetUserInfo(tokenString)
-	if err != nil {
-		return userFile, fmt.Errorf("unable to get user info because %w", err)
-	}
-
-	DropboxToken, err := controller.serviceToken.GetTokenById(user.Id)
-	if err != nil {
-		return userFile, fmt.Errorf("unable to get token because %w", err)
-	}
-
-	dropboxFile, err := controller.service.GetUserFileList(DropboxToken.Token)
-	if err != nil {
-		return userFile, fmt.Errorf("unable to get user info because %w", err)
-	}
-
-	userFile = dropboxFile
-	return userFile, nil
 }

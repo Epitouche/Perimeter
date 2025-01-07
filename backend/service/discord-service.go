@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 	"time"
 
 	"area/repository"
@@ -27,7 +26,6 @@ type DiscordService interface {
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
-	GetUserFileList(userDropboxToken string) (fileList []schemas.DropboxFile, err error)
 	// Actions functions
 	// Reactions functions
 }
@@ -108,12 +106,12 @@ func (service *discordService) GetReactionsName() []string {
 func (service *discordService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("DROPBOX_CLIENT_ID")
+	clientID := os.Getenv("DISCORD_CLIENT_ID")
 	if clientID == "" {
 		return schemas.Token{}, schemas.ErrDropboxClientIdNotSet
 	}
 
-	clientSecret := os.Getenv("DROPBOX_SECRET")
+	clientSecret := os.Getenv("DISCORD_SECRET")
 	if clientSecret == "" {
 		return schemas.Token{}, schemas.ErrDropboxSecretNotSet
 	}
@@ -123,9 +121,9 @@ func (service *discordService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrBackendPortNotSet
 	}
 
-	redirectURI := "http://localhost:8081/services/dropbox"
+	redirectURI := "http://localhost:8081/services/discord"
 
-	apiURL := "https://api.dropboxapi.com/oauth2/token"
+	apiURL := "https://discord.com/api/v8/oauth2/token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
@@ -210,76 +208,3 @@ func (service *discordService) GetUserInfo(
 
 	return user, nil
 }
-
-func (service *discordService) GetUserFileList(
-	userDropboxToken string,
-) (fileList []schemas.DropboxFile, err error) {
-	ctx := context.Background()
-
-	reqBody := `{"limit": 100}`
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/list_v2",
-		strings.NewReader(reqBody),
-	)
-	if err != nil {
-		return fileList, fmt.Errorf("unable to create request because %w", err)
-	}
-
-	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
-
-	// Make the request using the default HTTP client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return fileList, fmt.Errorf("unable to make request because %w", err)
-	}
-
-	result := schemas.DropboxListFileRequestsV2Result{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return fileList, fmt.Errorf("unable to decode response because %w", err)
-	}
-
-	resp.Body.Close()
-
-	fileList = append(fileList, result.FileRequests...)
-
-	return fileList, nil
-}
-
-func (service *discordService) GetUserFileCount(
-	userDropboxToken string,
-) (numberFile uint64, err error) {
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/count", nil,
-	)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to create request because %w", err)
-	}
-
-	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
-
-	// Make the request using the default HTTP client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to make request because %w", err)
-	}
-
-	result := schemas.DropboxCountFileRequestsResult{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to decode response because %w", err)
-	}
-
-	resp.Body.Close()
-
-	numberFile = result.FileRequestCount
-	return numberFile, nil
-}
-
-// Actions functions
-
-// Reactions functions

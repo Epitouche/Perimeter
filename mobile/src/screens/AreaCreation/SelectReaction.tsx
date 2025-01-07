@@ -93,21 +93,19 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleSaveOptions = async () => {
     console.log('Selected Action:', selectedReaction);
     console.log('Configured Options:', selectedReactionOptions);
-
     const res = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.parse(
+      body: 
         JSON.stringify({
           action_id: actionId,
-          action_option: JSON.stringify(actionOptions),
+          action_option: actionOptions,
           reaction_id: selectedReaction.id,
-          reaction_options: JSON.stringify(selectedReactionOptions),
+          reaction_option: selectedReactionOptions,
         }),
-      ),
     });
     const data = await res.json();
     console.log('Area Creation:', data);

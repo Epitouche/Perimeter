@@ -29,7 +29,6 @@ func NewDiscordAPI(
 	api.HandleServiceCallbackMobile(apiRoutes)
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
-	api.GetUserFile(apiRoutesInfo)
 	return &api
 }
 
@@ -120,29 +119,6 @@ func (api *DiscordAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 func (api *DiscordAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
-		} else {
-			ctx.JSON(http.StatusOK, userInfo)
-		}
-	})
-}
-
-// GetUserInfo godoc
-//
-//	@Summary		give user info of dropbox
-//	@Description	give user info of dropbox
-//	@Tags			Dropbox
-//	@Accept			json
-//	@Produce		json
-//	@Security		bearerAuth
-//	@Success		200	{object}	[]schemas.DropboxFile
-//	@Failure		401	{object}	schemas.ErrorResponse
-//	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/dropbox/info [get]
-func (api *DiscordAPI) GetUserFile(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/file", func(ctx *gin.Context) {
-		userInfo, err := api.controller.GetUserFile(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
