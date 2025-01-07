@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
-import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
+import { HandleMicrosoftLogin } from './Oauth2/MicrosoftOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -123,10 +123,10 @@ const LoginScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Google');
-            HandleGoogleLogin(setToken, navigation, ipAddress, true);
+            HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
-            source={{ uri: 'https://img.icons8.com/color/50/google-logo.png' }}
+            source={{ uri: 'https://img.icons8.com/color/50/microsoft.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>

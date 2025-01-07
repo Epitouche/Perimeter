@@ -65,15 +65,15 @@ const AreasScreen = ({ navigation }: Props) => {
             <Text
               style={
                 styles.areaText
-              }>{`${area.action_id.name} ~ ${area.reaction_id.name}`}</Text>
+              }>{`${area.action.name} ~ ${area.reaction.name}`}</Text>
             <View style={styles.iconsContainer}>
               <MaterialCommunityIcons
-                name={area.action_id.service_id.name.toLowerCase()}
+                name={area.action.service.name.toLowerCase()}
                 size={24}
                 color="white"
               />
               <MaterialCommunityIcons
-                name={area.reaction_id.service_id.name.toLowerCase()}
+                name={area.reaction.service.name.toLowerCase()}
                 size={24}
                 color="white"
               />

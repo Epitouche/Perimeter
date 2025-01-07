@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -17,8 +18,8 @@ type ServiceService interface {
 	GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error)
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
-	FindActionbyName(name string) func(c chan string, option schemas.JSONRawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option schemas.JSONRawMessage, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	FindServiceByName(name string) schemas.Service
 	RedirectToServiceOauthPage(
 		serviceName schemas.ServiceName,
@@ -45,8 +46,8 @@ type ServiceService interface {
 }
 
 type ServiceInterface interface {
-	FindActionbyName(name string) func(c chan string, option schemas.JSONRawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option schemas.JSONRawMessage, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetServiceInfo() schemas.Service
 }
 
@@ -62,6 +63,7 @@ func NewServiceService(
 	gmailService GmailService,
 	githubService GithubService,
 	dropboxService DropboxService,
+	microsoftService MicrosoftService,
 	openweathermapService OpenweathermapService,
 ) ServiceService {
 	newService := serviceService{
@@ -72,6 +74,7 @@ func NewServiceService(
 			gmailService,
 			githubService,
 			dropboxService,
+			microsoftService,
 			openweathermapService,
 		},
 	}
@@ -120,6 +123,11 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		clientID = os.Getenv("DROPBOX_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrDropboxClientIdNotSet
+		}
+	case schemas.Microsoft:
+		clientID = os.Getenv("DISCORD_CLIENT_ID")
+		if clientID == "" {
+			return "", schemas.ErrMicrosoftClientIdNotSet
 		}
 	}
 
@@ -333,7 +341,7 @@ func (service *serviceService) GetServices() []interface{} {
 
 func (service *serviceService) FindActionbyName(
 	name string,
-) func(c chan string, option schemas.JSONRawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	for _, service := range service.allService {
 		if service.(ServiceInterface).FindActionbyName(name) != nil {
 			return service.(ServiceInterface).FindActionbyName(name)
@@ -344,7 +352,7 @@ func (service *serviceService) FindActionbyName(
 
 func (service *serviceService) FindReactionbyName(
 	name string,
-) func(option schemas.JSONRawMessage, idArea uint64) string {
+) func(option json.RawMessage, idArea uint64) string {
 	for _, service := range service.allService {
 		if service.(ServiceInterface).FindReactionbyName(name) != nil {
 			return service.(ServiceInterface).FindReactionbyName(name)
