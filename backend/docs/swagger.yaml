@@ -297,6 +297,31 @@ paths:
       tags:
       - Action
   /area:
+    delete:
+      consumes:
+      - application/json
+      description: delete user area list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Area'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: delete user area
+      tags:
+      - Area
     get:
       consumes:
       - application/json
@@ -361,9 +386,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/schemas.Area'
-            type: array
+            $ref: '#/definitions/schemas.Area'
         "401":
           description: Unauthorized
           schema:
