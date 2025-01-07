@@ -12,8 +12,7 @@ module.exports = {
     "./nuxt.config.{js,ts}",
     "./app.config.{js,ts,mjs}",
   ],
-  safelist: [
-  ],
+  safelist: [],
   theme: {
     extend: {
       colors: {

@@ -12,7 +12,9 @@ const { isSelected } = toRefs(props);
 
 const token = useCookie("token");
 
-const serviceInfo = ref<{ name: string, color: string, icon: string } | null>(null);
+const serviceInfo = ref<{ name: string; color: string; icon: string } | null>(
+  null,
+);
 const error = ref<string | null>(null);
 
 const getServiceInfo = async () => {
@@ -58,9 +60,10 @@ watch(
     ]"
   >
     <img
-      :src="serviceInfo ? `${serviceInfo.icon}` : ''" :alt="serviceInfo ? `${serviceInfo.name}` : ''"
+      :src="serviceInfo ? `${serviceInfo.icon}` : ''"
+      :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class=""
-    >
+    />
     <h2
       :class="[
         'text-white text-8xl font-custom_weight_title',
