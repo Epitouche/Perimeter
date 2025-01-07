@@ -1,7 +1,7 @@
 package api
 
 import (
-	"area/controller"
+	"github.com/Epitouche/Perimeter/controller"
 )
 
 type TimerAPI struct {

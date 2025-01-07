@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
-	"area/controller"
+	"github.com/Epitouche/Perimeter/controller"
 )
 
 type AreaResultApi struct {
