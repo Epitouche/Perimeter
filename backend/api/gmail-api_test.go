@@ -12,6 +12,7 @@ import (
 
 	"area/api"
 	"area/schemas"
+	"area/test"
 )
 
 type MockGmailController struct {
@@ -44,7 +45,8 @@ func TestGmailAPI(t *testing.T) {
 	mockController := new(MockGmailController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
-	api.NewGmailAPI(mockController, apiRoutes)
+	mockUserService := new(test.MockUserService)
+	api.NewGmailAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
 		t.Parallel()

@@ -12,6 +12,7 @@ import (
 
 	"area/api"
 	"area/schemas"
+	"area/test"
 )
 
 type MockAreaController struct {
@@ -35,7 +36,8 @@ func TestAreaAPI(t *testing.T) {
 	apiRoutes := router.Group("/api")
 
 	mockController := new(MockAreaController)
-	api.NewAreaAPI(mockController, apiRoutes)
+	mockUserService := new(test.MockUserService)
+	api.NewAreaAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestCreateAreaNoToken", func(t *testing.T) {
 		t.Parallel()
