@@ -16,6 +16,7 @@ type AreaService interface {
 	AreaExist(id uint64) bool
 	GetUserAreas(token string) ([]schemas.Area, error)
 	UpdateUserArea(token string, areaToUpdate schemas.Area) (updatedArea schemas.Area, err error)
+	DeleteUserArea(token string, areaToDelete schemas.Area) (updatedArea schemas.Area, err error)
 }
 
 type areaService struct {
@@ -233,6 +234,33 @@ func (service *areaService) UpdateUserArea(
 	}
 	if containsArea(userArea, areaToUpdateDatabase) {
 		err = service.repository.Update(areaToUpdate)
+		if err != nil {
+			return updatedArea, fmt.Errorf("can't update area: %w", err)
+		}
+		return areaToUpdateDatabase, nil
+	} else {
+		return updatedArea, fmt.Errorf("area not found")
+	}
+}
+
+func (service *areaService) DeleteUserArea(
+	token string,
+	areaToDelete schemas.Area,
+) (updatedArea schemas.Area, err error) {
+	user, err := service.serviceUser.GetUserInfo(token)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't get user info: %w", err)
+	}
+	userArea, err := service.repository.FindByUserId(user.Id)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+	}
+	areaToUpdateDatabase, err := service.repository.FindById(areaToDelete.Id)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+	}
+	if containsArea(userArea, areaToUpdateDatabase) {
+		err = service.repository.Delete(areaToDelete)
 		if err != nil {
 			return updatedArea, fmt.Errorf("can't update area: %w", err)
 		}

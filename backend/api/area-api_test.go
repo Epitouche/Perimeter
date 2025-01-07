@@ -29,6 +29,16 @@ func (m *MockAreaController) GetUserAreas(ctx *gin.Context) ([]schemas.Area, err
 	return args.Get(0).([]schemas.Area), args.Error(1)
 }
 
+func (m *MockAreaController) UpdateUserArea(ctx *gin.Context) (newArea schemas.Area, err error) {
+	args := m.Called(ctx)
+	return args.Get(0).(schemas.Area), args.Error(1)
+}
+
+func (m *MockAreaController) DeleteUserArea(ctx *gin.Context) (newArea schemas.Area, err error) {
+	args := m.Called(ctx)
+	return args.Get(0).(schemas.Area), args.Error(1)
+}
+
 func TestAreaAPI(t *testing.T) {
 	t.Parallel()
 

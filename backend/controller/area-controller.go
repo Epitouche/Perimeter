@@ -13,6 +13,8 @@ import (
 type AreaController interface {
 	CreateArea(ctx *gin.Context) (string, error)
 	GetUserAreas(ctx *gin.Context) (areaList []schemas.Area, err error)
+	UpdateUserArea(ctx *gin.Context) (newArea schemas.Area, err error)
+	DeleteUserArea(ctx *gin.Context) (newArea schemas.Area, err error)
 }
 
 type areaController struct {
@@ -65,6 +67,26 @@ func (controller *areaController) UpdateUserArea(
 	authHeader := ctx.GetHeader("Authorization")
 	token := authHeader[len("Bearer "):]
 	newArea, err = controller.service.UpdateUserArea(token, result)
+	if err != nil {
+		return newArea, fmt.Errorf("can't get user areas: %w", err)
+	}
+	return newArea, nil
+}
+
+func (controller *areaController) DeleteUserArea(
+	ctx *gin.Context,
+) (newArea schemas.Area, err error) {
+	var result schemas.Area
+
+	err = json.NewDecoder(ctx.Request.Body).Decode(&result)
+	if err != nil {
+		println(fmt.Errorf("can't bind credentials: %w", err))
+		return newArea, fmt.Errorf("can't bind credentials: %w", err)
+	}
+
+	authHeader := ctx.GetHeader("Authorization")
+	token := authHeader[len("Bearer "):]
+	newArea, err = controller.service.DeleteUserArea(token, result)
 	if err != nil {
 		return newArea, fmt.Errorf("can't get user areas: %w", err)
 	}
