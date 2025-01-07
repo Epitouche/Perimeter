@@ -1,6 +1,7 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
+import { MICROSOFT_MOBILE_ID } from '@env'
 
 async function HandleMicrosoftLogin(
   setToken: any,
@@ -9,7 +10,7 @@ async function HandleMicrosoftLogin(
   login: boolean = false,
 ) {
   const config: AuthConfiguration = {
-    clientId: '8aac36d6-6dc2-4848-8ee9-bcf3abf420cf',
+    clientId: MICROSOFT_MOBILE_ID,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
     scopes: ['Mail.ReadWrite', 'User.Read', 'Mail.Send', 'offline_access'],
     serviceConfiguration: {
