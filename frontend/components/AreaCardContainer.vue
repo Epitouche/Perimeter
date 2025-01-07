@@ -85,7 +85,7 @@ onMounted(() => {
               :src="area.action.service.icon"
               :alt="area.action.service.name"
               class="w-10 h-10 p-0"
-            />
+            >
           </UButton>
         </div>
         <div class="capitalize self-start flex flex-row items-center gap-5">
@@ -93,7 +93,7 @@ onMounted(() => {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-16 h-16 p-0"
-          />
+          >
           <p>
             {{ area.action.service.name }}: {{ formatName(area.action.name) }}
           </p>
@@ -103,7 +103,7 @@ onMounted(() => {
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-16 h-16 p-0"
-          />
+          >
           <p>
             {{ area.reaction.service.name }}:
             {{ formatName(area.reaction.name) }}

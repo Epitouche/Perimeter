@@ -63,7 +63,7 @@ watch(
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class=""
-    />
+    >
     <h2
       :class="[
         'text-white text-8xl font-custom_weight_title',
