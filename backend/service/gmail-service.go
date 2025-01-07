@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 // Constructor

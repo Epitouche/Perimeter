@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"area/database"
-	"area/test"
+	"github.com/Epitouche/Perimeter/database"
+	"github.com/Epitouche/Perimeter/test"
 )
 
 func TestConnection(t *testing.T) {

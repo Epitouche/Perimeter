@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"area/api"
-	"area/schemas"
-	"area/test"
+	"github.com/Epitouche/Perimeter/api"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/test"
 )
 
 type MockAreaController struct {
@@ -57,7 +57,7 @@ func TestAreaAPI(t *testing.T) {
 		responseRecorder := httptest.NewRecorder()
 		ctx := context.Background()
 
-		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/api/area/", nil)
+		req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/api/github.com/Epitouche/Perimeter/", nil)
 		router.ServeHTTP(responseRecorder, req)
 
 		assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)

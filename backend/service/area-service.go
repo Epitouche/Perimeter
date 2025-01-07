@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type AreaService interface {
