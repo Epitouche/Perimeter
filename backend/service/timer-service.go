@@ -200,7 +200,10 @@ func (service *timerService) TimerActionSpecificHour(
 
 // Reactions functions
 
-func (service *timerService) TimerReactionGiveTime(option schemas.JSONRawMessage, idArea uint64) string {
+func (service *timerService) TimerReactionGiveTime(
+	option schemas.JSONRawMessage,
+	idArea uint64,
+) string {
 	actualTimeApi, err := getActualTime()
 	if err != nil {
 		println("error get actual time" + err.Error())

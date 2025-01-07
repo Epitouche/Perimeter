@@ -19,7 +19,9 @@ type OpenweathermapService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(channel chan string, option schemas.JSONRawMessage, idArea uint64)
+	FindActionbyName(
+		name string,
+	) func(channel chan string, option schemas.JSONRawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option schemas.JSONRawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
