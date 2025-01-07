@@ -54,7 +54,6 @@ func (service *areaService) FindAll() (areas []schemas.Area, err error) {
 }
 
 func (service *areaService) CreateArea(result schemas.AreaMessage, token string) (string, error) {
-
 	var actionOption, reactionOption json.RawMessage
 
 	if err := json.Unmarshal(result.ActionOption, &actionOption); err != nil {
@@ -201,7 +200,10 @@ func (service *areaService) GetUserAreas(token string) ([]schemas.Area, error) {
 	return areas, nil
 }
 
-func (service *areaService) UpdateUserArea(token string, areaToUpdate schemas.Area) (updatedArea schemas.Area, err error) {
+func (service *areaService) UpdateUserArea(
+	token string,
+	areaToUpdate schemas.Area,
+) (updatedArea schemas.Area, err error) {
 	user, err := service.serviceUser.GetUserInfo(token)
 	if err != nil {
 		return updatedArea, fmt.Errorf("can't get user info: %w", err)
