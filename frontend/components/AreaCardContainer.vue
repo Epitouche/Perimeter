@@ -90,12 +90,12 @@ onMounted(() => {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          />
+          >
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          />
+          >
         </div>
       </UContainer>
       <UModal
@@ -125,7 +125,7 @@ onMounted(() => {
               :src="area.action.service.icon"
               :alt="area.action.service.name"
               class="w-16 h-16 p-0"
-            />
+            >
             />
             <p>
               <b>{{ area.action.service.name }}</b
@@ -139,7 +139,7 @@ onMounted(() => {
               :src="area.reaction.service.icon"
               :alt="area.reaction.service.name"
               class="w-16 h-16 p-0"
-            />
+            >
             />
             <p>
               <b>{{ area.reaction.service.name }}</b
