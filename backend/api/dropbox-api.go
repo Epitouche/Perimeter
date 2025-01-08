@@ -30,6 +30,7 @@ func NewDropboxAPI(
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	api.GetUserFile(apiRoutesInfo)
+	api.GetUserFolder(apiRoutesInfo)
 	return &api
 }
 
@@ -133,13 +134,36 @@ func (api *DropboxAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
-//	@Success		200	{object}	[]schemas.DropboxFile
+//	@Success		200	{object}	[]string
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/dropbox/file [get]
 func (api *DropboxAPI) GetUserFile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/file", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserFile(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
+		} else {
+			ctx.JSON(http.StatusOK, userInfo)
+		}
+	})
+}
+
+// GetUserInfo godoc
+//
+//	@Summary		give user info of dropbox
+//	@Description	give user info of dropbox
+//	@Tags			Dropbox
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Success		200	{object}	[]string
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/dropbox/folder [get]
+func (api *DropboxAPI) GetUserFolder(apiRoutes *gin.RouterGroup) {
+	apiRoutes.GET("/folder", func(ctx *gin.Context) {
+		userInfo, err := api.controller.GetUserFolder(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{Error: err.Error()})
 		} else {
