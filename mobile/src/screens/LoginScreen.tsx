@@ -155,8 +155,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           onPress={() => {
             setService('Google');
             HandleGoogleLogin(setToken, navigation, ipAddress, true);
-          }
-        }>
+          }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/50/google-logo.png' }}
             style={styles.socialIcon}
