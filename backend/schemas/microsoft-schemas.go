@@ -26,8 +26,8 @@ type MicrosoftTokenResponse struct {
 
 // error messages
 var (
-	ErrMicrosoftClientIdNotSet = errors.New("DISCORD_CLIENT_ID is not set")
-	ErrMicrosoftSecretNotSet   = errors.New("DISCORD_SECRET is not set")
+	ErrMicrosoftClientIdNotSet = errors.New("MICROSOFT_CLIENT_ID is not set")
+	ErrMicrosoftSecretNotSet   = errors.New("MICROSOFT_SECRET is not set")
 )
 
 type MicrosoftUserInfo struct {

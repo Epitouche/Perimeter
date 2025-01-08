@@ -128,13 +128,13 @@ func (controller *microsoftController) GetUserInfo(
 		return userInfo, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	discordUserInfo, err := controller.service.GetUserInfo(token.Token)
+	microsoftUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
 		println("error 3")
 		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userInfo.Email = discordUserInfo.Email
-	userInfo.Username = discordUserInfo.Username
+	userInfo.Email = microsoftUserInfo.Email
+	userInfo.Username = microsoftUserInfo.Username
 	return userInfo, nil
 }

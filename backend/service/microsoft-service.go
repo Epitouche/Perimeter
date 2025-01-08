@@ -98,7 +98,7 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMicrosoftMail),
-			Description: "Send a message to a user in Discord",
+			Description: "Send a mail using Microsoft services",
 			Service:     service.serviceInfo,
 			Option:      option,
 		},
