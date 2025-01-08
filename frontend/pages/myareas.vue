@@ -29,6 +29,8 @@ const fetchAreas = async () => {
     areas.value = result;
     filteredAreas.value = result;
     console.log("areas: ", areas.value);
+    console.log("filteredAreas: ", filteredAreas.value);
+    console.log("filteredAreas.length: ", filteredAreas.value.length); /////////////////////////
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
@@ -104,16 +106,30 @@ onMounted(() => {
           </template>
         </UDropdown>
       </div>
-      <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
-      <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
-      <div
-        v-else-if="filteredAreas.length"
-        class="w-full overflow-y-scroll max-h-[64vh]"
-      >
+      <div v-if="isLoading" class="text-xl font-semibold">
+        <p>Loading...</p>
+      </div>
+      <div v-else-if="errorMessage">
+        <p>Error: {{ errorMessage }}</p>
+      </div>
+      <div v-else-if="filteredAreas.length === 0" class="w-full">
+        <p>No areas found, create some!</p>
+      </div>
+      <div v-else class="w-full overflow-y-scroll max-h-[64vh]">
         <AreaCardContainer :areas="filteredAreas" />
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+p {
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+  color: black;
+  font-weight: 600;
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+</style>

@@ -96,6 +96,10 @@ onMounted(() => {
 
   if (actionId) {
     websiteStore.actionId = actionId;
+    const actionName = getQueryParam(route.query.actionName);
+    if (actionName) {
+      websiteStore.actionName = actionName;
+    }
     const actionOptionsString = getQueryParam(route.query.actionOptions);
     let actionOptions = {};
 
@@ -121,6 +125,10 @@ onMounted(() => {
 
   if (reactionId) {
     websiteStore.reactionId = reactionId;
+    const reactionName = getQueryParam(route.query.reactionName);
+    if (reactionName) {
+      websiteStore.reactionName = reactionName;
+    }
     const reactionOptionsString = getQueryParam(route.query.reactionOptions);
     let reactionOptions = {};
 
@@ -181,6 +189,7 @@ onMounted(() => {
             :is-disabled="false"
             :is-selected="websiteStore.actionIsSelected"
             :service-id="Number(websiteStore.actionServiceId)"
+            :type-name="websiteStore.actionName"
           />
           <div
             :class="[
@@ -196,6 +205,7 @@ onMounted(() => {
             :is-disabled="websiteStore.reactionButtonisDisabled"
             :is-selected="websiteStore.reactionIsSelected"
             :service-id="Number(websiteStore.reactionServiceId)"
+            :type-name="websiteStore.reactionName"
           />
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">

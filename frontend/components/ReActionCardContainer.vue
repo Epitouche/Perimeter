@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
-
-interface Type {
-  id: number;
-  name: string;
-  description: string;
-  option?: string | object;
-}
+import type { Type } from "@/interfaces/type";
 
 const props = defineProps<{
   typeName: string;
@@ -43,7 +37,7 @@ const openConfig = (typeId: number) => {
   configIsOpen[typeId] = !configIsOpen[typeId];
 };
 
-const onSubmit = (typeId: number) => {
+const onSubmit = (typeId: number, typeTitle: string) => {
   const modifiedOptions = { ...state[typeId] };
 
   router.push({
@@ -52,6 +46,7 @@ const onSubmit = (typeId: number) => {
       [`${props.typeName}Id`]: typeId,
       [`${props.typeName}Options`]: JSON.stringify(modifiedOptions),
       [`${props.typeName}ServiceId`]: props.serviceInfo?.id,
+      [`${props.typeName}Name`]: typeTitle,
     },
   });
 };
@@ -73,31 +68,30 @@ onMounted(() => {
     <div v-for="type in props.types" :key="type.id">
       <UContainer
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        :class="[
-          `bg-custom_color-${props.serviceInfo?.name}`,
-          'flex flex-col justify-evenly items-center gap-4 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]',
-        ]"
+        class="flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
+        :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
         @click="openConfig(type.id)"
       >
         <h2
-          class="clamp-2-lines capitalize text-4xl text-center break-words w-full"
+          class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
         >
           {{ formatString(type.name) }}
         </h2>
-        <p class="text-2xl">{{ type.description }}</p>
+        <p class="text-3xl">{{ type.description }}</p>
       </UContainer>
 
       <UModal
         v-model="configIsOpen[type.id]"
         :ui="{
-          base: `relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width border-custom_color-${props.serviceInfo?.name}`,
+          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
         }"
+        :style="{ borderColor: props.serviceInfo?.color || 'black' }"
       >
         <template #default>
           <UForm
             :state="state[type.id]"
             class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
-            @submit.prevent="onSubmit(type.id)"
+            @submit.prevent="onSubmit(type.id, type.name)"
           >
             <h2 class="text-center text-6xl font-semibold pb-2">
               {{ formatString(type.name) }}
