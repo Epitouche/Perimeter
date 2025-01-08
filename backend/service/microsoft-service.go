@@ -265,6 +265,8 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 	idArea uint64,
 ) {
 	println("MicrosoftActionReceiveMail")
+
+	// Fetch area information
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		println("error finding area: " + err.Error())
@@ -272,9 +274,10 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
+	// Fetch user token
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
-		area.Reaction.ServiceId,
+		area.Action.ServiceId,
 	)
 	if err != nil || token.Token == "" {
 		println("error retrieving token or token not found")
@@ -282,7 +285,8 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	apiURL := "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$orderby=receivedDateTime%20desc&$top=1"
+	// API endpoint for the 10 latest emails
+	apiURL := "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$orderby=receivedDateTime%20desc&$top=10"
 
 	ctx := context.Background()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
@@ -294,24 +298,28 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
+	// Send the HTTP request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		println("error making request: " + err.Error())
 		time.Sleep(time.Minute)
 		return
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
 		time.Sleep(time.Minute)
-		resp.Body.Close()
 		return
 	}
 
+	// Parse the response
 	var emailResponse struct {
 		Value []struct {
-			ID      string `json:"id"`
-			Subject string `json:"subject"`
-			From    struct {
+			ID               string `json:"id"`
+			Subject          string `json:"subject"`
+			From             struct {
 				EmailAddress struct {
 					Address string `json:"address"`
 				} `json:"emailAddress"`
@@ -320,23 +328,33 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		} `json:"value"`
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
-	resp.Body.Close()
+	// print headers
+	for key, value := range resp.Header {
+		println("Header: ", key, value)
+	}
+	bodyBytes, _ := io.ReadAll(resp.Body)
+	println("Raw response: ", string(bodyBytes)) // Debugging: Print raw response
+
+	err = json.Unmarshal(bodyBytes, &emailResponse)
 	if err != nil {
 		println("error decoding response: " + err.Error())
 		time.Sleep(time.Minute)
 		return
 	}
 
-	if len(emailResponse.Value) > 0 {
-		latestEmail := emailResponse.Value[0]
-		response := fmt.Sprintf("New email received from %s: %s",
-			latestEmail.From.EmailAddress.Address,
-			latestEmail.Subject,
+	// Iterate over the 10 latest emails and print them for debugging
+	for _, email := range emailResponse.Value {
+		debugMessage := fmt.Sprintf(
+			"Email ID: %s\nFrom: %s\nSubject: %s\nReceived: %s\n",
+			email.ID,
+			email.From.EmailAddress.Address,
+			email.Subject,
+			email.ReceivedDateTime,
 		)
+		println(debugMessage)
 
-		println(response)
-		channel <- response
+		// Send email details to the channel
+		channel <- debugMessage
 	}
 
 	time.Sleep(time.Minute)
