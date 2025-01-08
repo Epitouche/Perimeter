@@ -13,8 +13,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"area/schemas"
-	"area/test"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/test"
 )
 
 func TestMain(m *testing.M) {
