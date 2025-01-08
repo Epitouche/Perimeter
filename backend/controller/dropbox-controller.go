@@ -152,11 +152,13 @@ func (controller *dropboxController) GetUserFile(
 		return userFile, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	dropboxFile, err := controller.service.GetUserFileList(DropboxToken.Token)
+	dropboxAllFolderAndFileList, err := controller.service.GetUserAllFolderAndFileList(
+		DropboxToken.Token,
+	)
 	if err != nil {
 		return userFile, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userFile = dropboxFile
+	userFile = controller.service.GetUserFileList(dropboxAllFolderAndFileList)
 	return userFile, nil
 }
