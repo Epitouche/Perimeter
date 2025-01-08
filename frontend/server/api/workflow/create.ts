@@ -10,6 +10,11 @@ export default defineEventHandler(async (event) => {
       !params.reactionOptions ||
       !params.reactionId
     ) {
+      console.log("params.token", params.token);
+      console.log("params.actionOptions", params.actionOptions);
+      console.log("params.actionId", params.actionId);
+      console.log("params.reactionOptions", params.reactionOptions);
+      console.log("params.reactionId", params.reactionId);
       throw createError({
         statusCode: 400,
         message: "Missing parameters",
