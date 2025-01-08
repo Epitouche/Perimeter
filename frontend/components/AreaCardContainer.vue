@@ -66,26 +66,32 @@ onMounted(() => {
 </script>
 
 <template>
-  <UContainer :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
+  <UContainer
+:ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
     class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full">
     <div v-for="area in areas" :key="area.id">
-      <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+      <UContainer
+:ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)">
         <h2 class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full">
           {{ formatName(area.action.name) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
-          <img :src="area.action.service.icon" :alt="area.action.service.name"
+          <img
+:src="area.action.service.icon" :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12">
-          <img :src="area.reaction.service.icon" :alt="area.reaction.service.name"
+          <img
+:src="area.reaction.service.icon" :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12">
         </div>
       </UContainer>
-      <UModal v-model="areaIsOpen[area.id]" :ui="{
+      <UModal
+v-model="areaIsOpen[area.id]" :ui="{
         width: 'w-2/5',
       }">
-        <div class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+        <div
+class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }">
           <div class="flex flex-row justify-between pb-2 w-full">
             <h2 class="text-6xl text-center w-full"><b>Temp title</b></h2>
@@ -110,14 +116,16 @@ onMounted(() => {
             <b>Description</b>: Desc will go here
           </p>
           <UTooltip text="Delete" class="self-end w-fit">
-            <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
+            <UButton
+variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
               @click="onDelete(area)">
               <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
             </UButton>
           </UTooltip>
         </div>
       </UModal>
-      <UModal v-model="confirmDeletionIsOpen[area.id]" :ui="{
+      <UModal
+v-model="confirmDeletionIsOpen[area.id]" :ui="{
         base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
       }" :style="{ borderColor: area.action.service.color }">
         <h2 class="text-4xl font-semibold">
@@ -125,11 +133,13 @@ onMounted(() => {
         </h2>
         <p class="text-2xl">This action cannot be undone!</p>
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
-          <UButton class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
+          <UButton
+class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
             borderColor: area.action.service.color,
             color: area.action.service.color,
           }" @click="cancelDeletion(area.id)">Cancel</UButton>
-          <UButton class="text-white text-2xl font-semibold py-3 px-5"
+          <UButton
+class="text-white text-2xl font-semibold py-3 px-5"
             :style="{ backgroundColor: area.action.service.color }" @click="onDelete(area)">Delete</UButton>
         </div>
       </UModal>
