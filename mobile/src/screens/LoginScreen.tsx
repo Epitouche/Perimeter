@@ -15,6 +15,7 @@ import { AppContext } from '../context/AppContext';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleMicrosoftLogin } from './Oauth2/MicrosoftOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
+import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -122,7 +123,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity
           onPress={() => {
-            setService('Google');
+            setService('Microsoft');
             HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
@@ -147,6 +148,17 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}
+            style={styles.socialIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setService('Google');
+            HandleGoogleLogin(setToken, navigation, ipAddress, true);
+          }
+        }>
+          <Image
+            source={{ uri: 'https://img.icons8.com/color/50/google-logo.png' }}
             style={styles.socialIcon}
           />
         </TouchableOpacity>
