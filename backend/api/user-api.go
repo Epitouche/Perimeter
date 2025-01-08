@@ -29,6 +29,8 @@ func NewUserApi(
 	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	api.GetUserAllInfo(apiRoutesInfo)
+	api.UpdateUserInfo(apiRoutesInfo)
+	api.DeleteUserInfo(apiRoutesInfo)
 	return &api
 }
 
@@ -103,7 +105,7 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 //	@Router			/user/info [get]
 func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
-		usetInfo, err := api.controller.GetUserInfo(ctx)
+		usetInfo, err := api.controller.GetUser(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
@@ -129,6 +131,56 @@ func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 func (api *UserApi) GetUserAllInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/all", func(ctx *gin.Context) {
 		usetInfo, err := api.controller.GetUserAllInfo(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusOK, usetInfo)
+		}
+	})
+}
+
+// GetUserAllInfo godoc
+//
+//	@Summary		give user info of user
+//	@Description	give user info of user
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.User
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/user/info/ [put]
+func (api *UserApi) UpdateUserInfo(apiRoutes *gin.RouterGroup) {
+	apiRoutes.PUT("/", func(ctx *gin.Context) {
+		usetInfo, err := api.controller.UpdateUser(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusOK, usetInfo)
+		}
+	})
+}
+
+// GetUserAllInfo godoc
+//
+//	@Summary		give user info of user
+//	@Description	give user info of user
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Success		200	{object}	schemas.User
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/user/info/ [delete]
+func (api *UserApi) DeleteUserInfo(apiRoutes *gin.RouterGroup) {
+	apiRoutes.DELETE("/", func(ctx *gin.Context) {
+		usetInfo, err := api.controller.DeleteUser(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
