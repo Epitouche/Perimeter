@@ -3,33 +3,23 @@ import { handleError } from "~/utils/handleErrors";
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);
-    if (
-      !params.token ||
-      !params.actionOptions ||
-      !params.actionId ||
-      !params.reactionOptions ||
-      !params.reactionId
-    ) {
+    if (!params.token) {
       throw createError({
         statusCode: 400,
         message: "Missing parameters",
       });
     }
+
     const response = await $fetch(`http://server:8080/api/v1/area`, {
-      method: "POST",
+      method: "GET",
       headers: {
         Authorization: "Bearer " + params.token,
-      },
-      body: {
-        action_option: params.actionOptions,
-        action_id: Number(params.actionId),
-        reaction_option: params.reactionOptions,
-        reaction_id: Number(params.reactionId),
       },
     });
     return response;
   } catch (error: unknown) {
-    console.log("error", error);
+    console.log("error: ", error);
+    console.error(error);
     handleError(error);
   }
 });

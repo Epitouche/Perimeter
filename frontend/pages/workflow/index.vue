@@ -184,22 +184,6 @@ onMounted(() => {
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
           <ReActionButton
-<<<<<<< HEAD
-title="Action" link="/workflow/actions" :is-disabled="false"
-            :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)"
-            :type-name="websiteStore.actionName" />
-          <div
-:class="[
-            'bg-black min-w-4 min-h-28',
-            websiteStore.reactionButtonisDisabled
-              ? 'bg-opacity-60'
-              : 'bg-opacity-100',
-          ]" />
-          <ReActionButton
-title="Reaction" link="/workflow/reactions"
-            :is-disabled="websiteStore.reactionButtonisDisabled" :is-selected="websiteStore.reactionIsSelected"
-            :service-id="Number(websiteStore.reactionServiceId)" :type-name="websiteStore.reactionName" />
-=======
             title="Action"
             link="/workflow/actions"
             :is-disabled="false"
@@ -223,7 +207,6 @@ title="Reaction" link="/workflow/reactions"
             :service-id="Number(websiteStore.reactionServiceId)"
             :type-name="websiteStore.reactionName"
           />
->>>>>>> a84a488dd4dddd43b7c5f104d077b5416c30e7dd
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
           <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate"
