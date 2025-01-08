@@ -80,10 +80,16 @@ onMounted(() => {
           {{ formatName(area.action.name) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
-          <img :src="area.action.service.icon" :alt="area.action.service.name"
-            class="w-24 h-24 p-0 absolute top-1 left-12">
-          <img :src="area.reaction.service.icon" :alt="area.reaction.service.name"
-            class="w-24 h-24 p-0 absolute bottom-0 right-12">
+          <img
+            :src="area.action.service.icon"
+            :alt="area.action.service.name"
+            class="w-24 h-24 p-0 absolute top-1 left-12"
+          >
+          <img
+            :src="area.reaction.service.icon"
+            :alt="area.reaction.service.name"
+            class="w-24 h-24 p-0 absolute bottom-0 right-12"
+          >
         </div>
       </UContainer>
       <UModal v-model="areaIsOpen[area.id]" :ui="{
@@ -97,14 +103,28 @@ onMounted(() => {
               <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
             </UButton>
           </div>
-          <div class="capitalize self-start flex flex-row items-center text-5xl gap-5">
-            <img :src="area.action.service.icon" :alt="area.action.service.name" class="w-16 h-16 p-0">
+          <div
+            class="capitalize self-start flex flex-row items-center text-5xl gap-5"
+          >
+            <img
+              :src="area.action.service.icon"
+              :alt="area.action.service.name"
+              class="w-16 h-16 p-0"
+            >
+            />
             <p>
               <b>{{ area.action.service.name }}</b>: {{ formatName(area.action.name) }}
             </p>
           </div>
-          <div class="capitalize self-start flex flex-row items-center text-5xl gap-5">
-            <img :src="area.reaction.service.icon" :alt="area.reaction.service.name" class="w-16 h-16 p-0">
+          <div
+            class="capitalize self-start flex flex-row items-center text-5xl gap-5"
+          >
+            <img
+              :src="area.reaction.service.icon"
+              :alt="area.reaction.service.name"
+              class="w-16 h-16 p-0"
+            >
+            />
             <p>
               <b>{{ area.reaction.service.name }}</b>:
               {{ formatName(area.reaction.name) }}
