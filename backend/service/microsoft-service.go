@@ -317,9 +317,9 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 	// Parse the response
 	var emailResponse struct {
 		Value []struct {
-			ID               string `json:"id"`
-			Subject          string `json:"subject"`
-			From             struct {
+			ID      string `json:"id"`
+			Subject string `json:"subject"`
+			From    struct {
 				EmailAddress struct {
 					Address string `json:"address"`
 				} `json:"emailAddress"`
