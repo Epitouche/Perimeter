@@ -102,7 +102,7 @@ onMounted(() => {
       <UModal
         v-model="areaIsOpen[area.id]"
         :ui="{
-          width: 'w-2/5',
+          width: 'w-1/2',
         }"
       >
         <div
@@ -119,38 +119,15 @@ onMounted(() => {
               <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
             </UButton>
           </div>
-          <div
-            class="capitalize self-start flex flex-row items-center text-5xl gap-5"
-          >
-            <img
-              :src="area.action.service.icon"
-              :alt="area.action.service.name"
-              class="w-16 h-16 p-0"
-            >
-            />
-            <p>
-              <b>{{ area.action.service.name }}</b
-              >: {{ formatName(area.action.name) }}
-            </p>
+
+          <UpdateAreaDropdown :type="area.action" />
+          <UpdateAreaDropdown :type="area.reaction" />
+
+          <div>
+            <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
+            <p class="text-4xl">Desc will go here</p>
           </div>
-          <div
-            class="capitalize self-start flex flex-row items-center text-5xl gap-5"
-          >
-            <img
-              :src="area.reaction.service.icon"
-              :alt="area.reaction.service.name"
-              class="w-16 h-16 p-0"
-            >
-            />
-            <p>
-              <b>{{ area.reaction.service.name }}</b
-              >:
-              {{ formatName(area.reaction.name) }}
-            </p>
-          </div>
-          <p class="self-start text-5xl">
-            <b>Description</b>: Desc will go here
-          </p>
+
           <UTooltip text="Delete" class="self-end w-fit">
             <UButton
               variant="ghost"
