@@ -47,7 +47,9 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
         const userData = await userResponse.json();
         console.log('Services:', response);
         const data = await response.json();
-        const connected = userData.tokens.map(token => token.service.name);
+        const connected = userData.tokens.map(
+          (token: { service: { name: string } }) => token.service.name,
+        );
         setConnectedServices(connected);
         if (Array.isArray(data)) {
           setServices(data);

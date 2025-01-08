@@ -31,7 +31,7 @@ async function HandleSpotifyLogin(
       );
     } else {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback`,
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/`,
         result,
       );
     }
@@ -44,7 +44,7 @@ async function HandleSpotifyLogin(
       }
     }
   } catch (error) {
-    if ((error as Error).message != 'User cancelled flow') {
+    if ((error as Error).message !== 'User cancelled flow') {
       console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }
