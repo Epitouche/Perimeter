@@ -177,8 +177,8 @@ func (service *dropboxService) GetUserInfo(
 	ctx := context.Background()
 
 	// Create a new HTTP request
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
-		"https://api.dropboxapi.com/2/users/get_account",
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.dropboxapi.com/2/users/get_current_account",
 		nil,
 	)
 	if err != nil {
