@@ -36,6 +36,7 @@ type ServiceService interface {
 		tokenService TokenService,
 	) (string, error)
 	HandleServiceCallbackMobile(
+		authorization string,
 		serviceName schemas.ServiceName,
 		credentials schemas.MobileTokenRequest,
 		serviceUser UserService,
@@ -244,37 +245,49 @@ func (service *serviceService) HandleServiceCallback(
 }
 
 func (service *serviceService) HandleServiceCallbackMobile(
+	authorization string,
 	serviceName schemas.ServiceName,
 	credentials schemas.MobileTokenRequest,
 	serviceUser UserService,
 	getUserInfo func(token string) (userInfo schemas.User, err error),
 	tokenService TokenService,
 ) (string, error) {
+	authHeader := authorization
 	newUser := schemas.User{}
 	var bearerToken string
+	var err error
 
-	userInfo, err := getUserInfo(credentials.AccessToken)
-	if err != nil {
-		return "", fmt.Errorf("unable to get user info because %w", err)
-	}
-	newUser = schemas.User{
-		Username: userInfo.Username,
-		Email:    userInfo.Email,
-	}
+	if len(authHeader) > len("Bearer ") {
+		bearerToken = authHeader[len("Bearer "):]
 
-	bearerTokenLogin, _, err := serviceUser.Login(newUser)
-	if err == nil {
-		return bearerTokenLogin, nil
-	}
+		newUser, err = serviceUser.GetUserInfo(bearerToken)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user info because %w", err)
+		}
+	} else {
+		userInfo, err := getUserInfo(credentials.AccessToken)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user info because %w", err)
+		}
+		newUser = schemas.User{
+			Username: userInfo.Username,
+			Email:    userInfo.Email,
+		}
 
-	bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
-	if err != nil {
-		return "", fmt.Errorf("unable to register user because %w", err)
-	}
-	bearerToken = bearerTokenRegister
-	newUser, err = serviceUser.GetUserById(newUserId)
-	if err != nil {
-		return "", fmt.Errorf("unable to get user by id because %w", err)
+		bearerTokenLogin, _, err := serviceUser.Login(newUser)
+		if err == nil {
+			return bearerTokenLogin, nil
+		}
+
+		bearerTokenRegister, newUserId, err := serviceUser.Register(newUser)
+		if err != nil {
+			return "", fmt.Errorf("unable to register user because %w", err)
+		}
+		bearerToken = bearerTokenRegister
+		newUser, err = serviceUser.GetUserById(newUserId)
+		if err != nil {
+			return "", fmt.Errorf("unable to get user by id because %w", err)
+		}
 	}
 
 	actualService := service.FindByName(serviceName)
@@ -296,11 +309,13 @@ func (service *serviceService) HandleServiceCallbackMobile(
 		}
 	}
 
-	newUser.TokenId = tokenId
+	if len(authHeader) == 0 {
+		newUser.TokenId = tokenId
 
-	err = serviceUser.UpdateUserInfo(newUser)
-	if err != nil {
-		return "", fmt.Errorf("unable to update user info because %w", err)
+		err = serviceUser.UpdateUserInfo(newUser)
+		if err != nil {
+			return "", fmt.Errorf("unable to update user info because %w", err)
+		}
 	}
 	return bearerToken, nil
 }
