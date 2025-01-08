@@ -164,7 +164,9 @@ func (controller *dropboxController) GetUserFile(
 		return userFile, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userFile = controller.service.GetPathDisplayDropboxEntry(controller.service.GetUserFileList(dropboxAllFolderAndFileList))
+	userFile = controller.service.GetPathDisplayDropboxEntry(
+		controller.service.GetUserFileList(dropboxAllFolderAndFileList),
+	)
 
 	return userFile, nil
 }
@@ -192,7 +194,9 @@ func (controller *dropboxController) GetUserFolder(
 		return userFile, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userFile = controller.service.GetPathDisplayDropboxEntry(controller.service.GetUserFolderList(dropboxAllFolderAndFileList))
+	userFile = controller.service.GetPathDisplayDropboxEntry(
+		controller.service.GetUserFolderList(dropboxAllFolderAndFileList),
+	)
 
 	return userFile, nil
 }
