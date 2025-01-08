@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
       },
       body: {
         id: params.areaId,
-      }
+      },
     });
     return response;
   } catch (error: unknown) {
