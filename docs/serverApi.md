@@ -10,7 +10,10 @@ This API provides authentication and user information retrieval features for mul
   - [Overview](#overview)
   - [Table of Contents](#table-of-contents)
   - [Main Document](#main-document)
-  - [Swagger](#swagger)
+  - [Online Documentation](#online-documentation)
+  - [Local Documentation](#local-documentation)
+    - [Swagger](#swagger)
+    - [Godoc](#godoc)
   - [Endpoints](#endpoints)
     - [General Routes](#general-routes)
       - [`GET /ping`](#get-ping)
@@ -41,13 +44,33 @@ This API provides authentication and user information retrieval features for mul
 
 [main documentation](../README.md)
 
-## Swagger
+## Online Documentation
+
+## Local Documentation
+
+### Swagger
 
 to access swagger local documentation
 launch the server and go to the next url:
 [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
 [swagger golang](https://github.com/swaggo/swag)
+
+---
+
+### Godoc
+
+to access swagger local documentation
+launch the godoc server:
+
+```bash
+godoc -http :8080
+```
+
+and go to the next url:
+[http://localhost:8080/pkg/area](http://localhost:8080/pkg/area)
+
+[godoc](https://golang.org/x/tools/cmd/godoc)
 
 ---
 
