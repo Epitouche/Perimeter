@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"area/repository"
-	"area/schemas"
-	"area/tools"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/tools"
 )
 
 type ServiceService interface {
@@ -125,7 +125,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 			return "", schemas.ErrDropboxClientIdNotSet
 		}
 	case schemas.Microsoft:
-		clientID = os.Getenv("DISCORD_CLIENT_ID")
+		clientID = os.Getenv("MICROSOFT_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrMicrosoftClientIdNotSet
 		}

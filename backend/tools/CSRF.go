@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type CSRF interface {
