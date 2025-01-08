@@ -27,7 +27,11 @@ const loadServices = async () => {
 };
 
 const filteredApps = computed(() => {
+<<<<<<< HEAD
   return services.value.filter((app) => app.name.includes(searchQuery.value));
+=======
+  return apps.value.filter((app) => app.name.includes(searchQuery.value));
+>>>>>>> 98d551aff1be050c8373e016b5152a9a30ee9f0d
 });
 </script>
 
