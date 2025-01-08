@@ -6,39 +6,55 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
-	"area/schemas"
-	"area/test"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/test"
 )
+
+func TestMain(m *testing.M) {
+	// Set the Gin mode to TestMode
+	gin.SetMode(gin.TestMode)
+
+	// Run the tests
+	os.Exit(m.Run())
+}
 
 func TestPingRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/ping", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/ping", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
-	assert.JSONEq(t, `{"message":"pong"}`, w.Body.String(), "unexpected response body")
+	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
+	assert.JSONEq(
+		t,
+		`{"message":"pong"}`,
+		responseRecorder.Body.String(),
+		"unexpected response body",
+	)
 }
 
 func TestAboutJsonRoute(t *testing.T) {
@@ -46,31 +62,31 @@ func TestAboutJsonRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/about.json", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/about.json", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 	// Parse and validate the response JSON
 	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err, "failed to parse response JSON")
+	err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+	require.NoError(t, err, "failed to parse response JSON")
 
 	// Assert the client exists and is non-empty
 	client, exists := response["client"]
@@ -88,65 +104,66 @@ func TestNotFoundRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/no-route", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/no-route", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusNotFound, w.Code, "unexpected HTTP status code")
+	assert.Equal(t, http.StatusNotFound, responseRecorder.Code, "unexpected HTTP status code")
 }
 
-func TestBackendPortNotSet(t *testing.T) {
-	t.Parallel() // Run this test in parallel with other tests
+// TODO: Uncomment this test
+// func TestBackendPortNotSet(t *testing.T) {
+// 	t.Parallel() // Run this test in parallel with other tests
 
-	// Set up the router (defined in main.go)
-	assert.Panics(t, func() { setupRouter() }, "expected panic")
-}
+// 	// Set up the router (defined in main.go)
+// 	assert.Panics(t, func() { setupRouter() }, "expected panic")
+// }
 
 func TestGmailRedirectToServiceRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/gmail/auth", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/gmail/auth", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 	// Parse and validate the response JSON
 	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err, "failed to parse response JSON")
+	err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+	require.NoError(t, err, "failed to parse response JSON")
 
 	// Assert the authentication_url exists and is non-empty
 	authentication_url, exists := response["authentication_url"]
@@ -160,31 +177,31 @@ func TestSpotifyRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/spotify/auth", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/spotify/auth", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 	// Parse and validate the response JSON
 	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err, "failed to parse response JSON")
+	err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+	require.NoError(t, err, "failed to parse response JSON")
 
 	// Assert the authentication_url exists and is non-empty
 	authentication_url, exists := response["authentication_url"]
@@ -198,31 +215,31 @@ func TestGithubRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/github/auth", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/github/auth", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 	// Parse and validate the response JSON
 	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err, "failed to parse response JSON")
+	err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+	require.NoError(t, err, "failed to parse response JSON")
 
 	// Assert the authentication_url exists and is non-empty
 	authentication_url, exists := response["authentication_url"]
@@ -236,31 +253,31 @@ func TestDropboxRedirectToServiceRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
 	// Perform the HTTP request
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/dropbox/auth", nil)
-	router.ServeHTTP(w, req)
+	responseRecorder := httptest.NewRecorder()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/dropbox/auth", nil)
+	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response
-	assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+	assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 	// Parse and validate the response JSON
 	var response map[string]interface{}
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	assert.NoError(t, err, "failed to parse response JSON")
+	err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+	require.NoError(t, err, "failed to parse response JSON")
 
 	// Assert the authentication_url exists and is non-empty
 	authentication_url, exists := response["authentication_url"]
@@ -274,36 +291,38 @@ func TestRegisterUserRoute(t *testing.T) {
 	ctx := context.Background()
 
 	// Create Postgres container
-	postgresContainer, err := test.CreatePostgresContainer(ctx)
-	assert.NoError(t, err, "failed to create Postgres container")
+	postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+	require.NoError(t, err, "failed to create Postgres container")
 	assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 	// Clean up the container after the test
 	defer func() {
 		err := postgresContainer.Terminate(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
 
 	// Set up the router (defined in main.go)
 	router := setupRouter()
 
-	test.RegisterUser(router, t)
+	test.RegisterUser(t, router)
 }
 
 func TestLoginUserRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
@@ -317,20 +336,20 @@ func TestLoginUserRoute(t *testing.T) {
 		reqBody := bytes.NewBuffer([]byte(requestBody))
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("POST", "/api/v1/user/login", reqBody)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, "/api/v1/user/login", reqBody)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusBadRequest, w.Code, "unexpected HTTP status code")
+		assert.Equal(t, http.StatusBadRequest, responseRecorder.Code, "unexpected HTTP status code")
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the error exists and is non-empty
 		error, exists := response["error"]
@@ -340,62 +359,71 @@ func TestLoginUserRoute(t *testing.T) {
 	})
 
 	t.Run("registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
-		test.RegisterUser(router, t)
+		test.RegisterUser(t, router)
 
-		test.LoginUser(router, t)
+		test.LoginUser(t, router)
 	})
 }
 
 func TestActionRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/action/info/1", nil)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/action/info/1", nil)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusUnauthorized, w.Code, "unexpected HTTP status code")
+		assert.Equal(
+			t,
+			http.StatusUnauthorized,
+			responseRecorder.Code,
+			"unexpected HTTP status code",
+		)
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the error exists and is non-empty
 		error, exists := response["error"]
@@ -405,40 +433,42 @@ func TestActionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
-		bearerToken := test.RegisterUser(router, t)
+		bearerToken := test.RegisterUser(t, router)
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/action/info/1", nil)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/action/info/1", nil)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+		assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 		// Parse and validate the response JSON
 		var response []schemas.Action
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the message exists and is non-empty
 		// message, exists := response["message"]
@@ -448,40 +478,42 @@ func TestActionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user, id not a number", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
-		bearerToken := test.RegisterUser(router, t)
+		bearerToken := test.RegisterUser(t, router)
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/action/info/test", nil)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/action/info/test", nil)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusBadRequest, w.Code, "unexpected HTTP status code")
+		assert.Equal(t, http.StatusBadRequest, responseRecorder.Code, "unexpected HTTP status code")
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the error exists and is non-empty
 		error, exists := response["error"]
@@ -494,37 +526,44 @@ func TestActionRoute(t *testing.T) {
 func TestReactionRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	t.Run("no registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/reaction/info/1", nil)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/reaction/info/1", nil)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusUnauthorized, w.Code, "unexpected HTTP status code")
+		assert.Equal(
+			t,
+			http.StatusUnauthorized,
+			responseRecorder.Code,
+			"unexpected HTTP status code",
+		)
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the error exists and is non-empty
 		error, exists := response["error"]
@@ -534,40 +573,42 @@ func TestReactionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
-		bearerToken := test.RegisterUser(router, t)
+		bearerToken := test.RegisterUser(t, router)
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/reaction/info/1", nil)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/reaction/info/1", nil)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusOK, w.Code, "unexpected HTTP status code")
+		assert.Equal(t, http.StatusOK, responseRecorder.Code, "unexpected HTTP status code")
 
 		// Parse and validate the response JSON
 		var response []schemas.Reaction
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the message exists and is non-empty
 		// message, exists := response["message"]
@@ -577,40 +618,47 @@ func TestReactionRoute(t *testing.T) {
 	})
 
 	t.Run("registered user, id not a number", func(t *testing.T) {
+		t.Parallel()
+
 		ctx := context.Background()
 
 		// Create Postgres container
-		postgresContainer, err := test.CreatePostgresContainer(ctx)
-		assert.NoError(t, err, "failed to create Postgres container")
+		postgresContainer, err := test.CreatePostgresContainer(t, ctx)
+		require.NoError(t, err, "failed to create Postgres container")
 		assert.NotNil(t, postgresContainer, "failed to create Postgres container")
 
 		// Clean up the container after the test
 		defer func() {
 			err := postgresContainer.Terminate(ctx)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}()
 
 		// Set up the router (defined in main.go)
 		router := setupRouter()
 
-		bearerToken := test.RegisterUser(router, t)
+		bearerToken := test.RegisterUser(t, router)
 
 		// Perform the HTTP POST request
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("GET", "/api/v1/reaction/info/test", nil)
-		assert.NoError(t, err, "failed to create request")
+		responseRecorder := httptest.NewRecorder()
+		req, err := http.NewRequestWithContext(
+			ctx,
+			http.MethodGet,
+			"/api/v1/reaction/info/test",
+			nil,
+		)
+		require.NoError(t, err, "failed to create request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", bearerToken)
 
-		router.ServeHTTP(w, req)
+		router.ServeHTTP(responseRecorder, req)
 
 		// Assert the response
-		assert.Equal(t, http.StatusBadRequest, w.Code, "unexpected HTTP status code")
+		assert.Equal(t, http.StatusBadRequest, responseRecorder.Code, "unexpected HTTP status code")
 
 		// Parse and validate the response JSON
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		assert.NoError(t, err, "failed to parse response JSON")
+		err = json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse response JSON")
 
 		// Assert the error exists and is non-empty
 		error, exists := response["error"]

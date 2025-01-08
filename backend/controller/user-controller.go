@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"area/schemas"
-	"area/service"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type UserController interface {
@@ -59,22 +59,15 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	}
 
 	if len(credentials.Username) < schemas.UsernameMinimumLength {
-		return "", fmt.Errorf(
-			"username must be at least %d characters long",
-			schemas.UsernameMinimumLength,
-		)
+		return "", schemas.ErrUsernameTooShort
 	}
+
 	if len(credentials.Password) < schemas.PasswordMinimumLength {
-		return "", fmt.Errorf(
-			"password must be at least %d characters long",
-			schemas.PasswordMinimumLength,
-		)
+		return "", schemas.ErrPasswordTooShort
 	}
+
 	if len(credentials.Email) < schemas.EmailMinimumLength {
-		return "", fmt.Errorf(
-			"email must be at least %d characters long",
-			schemas.EmailMinimumLength,
-		)
+		return "", schemas.ErrEmailTooShort
 	}
 
 	newUser := schemas.User{
@@ -82,6 +75,7 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 		Email:    credentials.Email,
 		Password: credentials.Password,
 	}
+
 	token, _, err := controller.userService.Register(newUser)
 	if err != nil {
 		return "", fmt.Errorf("can't register user: %w", err)
@@ -113,12 +107,12 @@ func (controller *userController) GetUserAllInfo(
 
 	user, err := controller.userService.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.UserAllInfo{}, fmt.Errorf("unable to get user info because %w", err)
+		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	tokens, err := controller.tokenService.GetTokenByUserId(user.Id)
 	if err != nil {
-		return schemas.UserAllInfo{}, fmt.Errorf("unable to get tokens info because %w", err)
+		return userInfo, fmt.Errorf("unable to get tokens info because %w", err)
 	}
 
 	userInfo.User = user

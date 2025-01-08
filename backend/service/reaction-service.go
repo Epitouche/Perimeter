@@ -1,14 +1,14 @@
 package service
 
 import (
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type ReactionService interface {
-	FindAll() []schemas.Reaction
+	FindAll() (reactions []schemas.Reaction, err error)
 	SaveAllReaction()
-	FindById(reactionId uint64) schemas.Reaction
+	FindById(reactionId uint64) (reaction schemas.Reaction, err error)
 	GetReactionsInfo(id uint64) (response []schemas.Reaction, err error)
 	GetAllServicesByServiceId(serviceId uint64) (reactionJSON []schemas.ReactionJSON)
 }
@@ -34,14 +34,21 @@ func NewReactionService(
 	return newService
 }
 
-func (service *reactionService) FindAll() []schemas.Reaction {
-	return service.repository.FindAll()
+func (service *reactionService) FindAll() (reactions []schemas.Reaction, err error) {
+	reactions, err = service.repository.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	return reactions, nil
 }
 
 func (service *reactionService) GetAllServicesByServiceId(
 	serviceId uint64,
 ) (reactionJSON []schemas.ReactionJSON) {
-	allRectionForService := service.repository.FindByServiceId(serviceId)
+	allRectionForService, err := service.repository.FindByServiceId(serviceId)
+	if err != nil {
+		println("Error when get all reactions by service id")
+	}
 	for _, oneReaction := range allRectionForService {
 		reactionJSON = append(reactionJSON, schemas.ReactionJSON{
 			Name:        oneReaction.Name,
@@ -56,7 +63,10 @@ func (service *reactionService) SaveAllReaction() {
 		if serviceReaction, ok := services.(ServiceReaction); ok {
 			reactions := serviceReaction.GetServiceReactionInfo()
 			for _, reaction := range reactions {
-				reactionByName := service.repository.FindByName(reaction.Name)
+				reactionByName, err := service.repository.FindByName(reaction.Name)
+				if err != nil {
+					println("Error when find reaction by name")
+				}
 				if len(reactionByName) == 0 {
 					service.repository.Save(reaction)
 				}
@@ -67,12 +77,20 @@ func (service *reactionService) SaveAllReaction() {
 	}
 }
 
-func (service *reactionService) FindById(reactionId uint64) schemas.Reaction {
-	return service.repository.FindById(reactionId)
+func (service *reactionService) FindById(reactionId uint64) (reaction schemas.Reaction, err error) {
+	reaction, err = service.repository.FindById(reactionId)
+	if err != nil {
+		return reaction, err
+	}
+	return reaction, nil
 }
 
 func (service *reactionService) GetReactionsInfo(
 	id uint64,
 ) (response []schemas.Reaction, err error) {
-	return service.repository.FindByServiceId(id), nil
+	response, err = service.repository.FindByServiceId(id)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }

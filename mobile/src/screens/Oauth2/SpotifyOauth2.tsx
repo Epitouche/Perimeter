@@ -3,7 +3,13 @@ import { SPOTIFY_CLIENT_ID, SPOTIFY_SECRET } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
-async function HandleSpotifyLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
+async function HandleSpotifyLogin(
+  setToken: any,
+  navigation: any,
+  ipAddress: string,
+  login: boolean = true,
+  bearerToken: string = '',
+) {
   const config: AuthConfiguration = {
     clientId: SPOTIFY_CLIENT_ID,
     clientSecret: SPOTIFY_SECRET,
@@ -17,23 +23,28 @@ async function HandleSpotifyLogin(setToken: any, navigation: any, ipAddress: str
 
   try {
     const result = await authorize(config);
-    // console.log('result', result);
     let data;
     if (login) {
-      data = await handleCallback(`http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`, result);
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
+        result,
+      );
     } else {
-      setToken(result.accessToken);
-      // TODO: call route when loging in from myServices page (waiting for back to be done)
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/`,
+        result,
+      );
     }
     if (data.error) {
       console.error(data.error);
     } else {
       setToken(data.token);
-      if (login)
+      if (login) {
         navigation.navigate('AreaView');
+      }
     }
   } catch (error) {
-    if ((error as Error).message != 'User cancelled flow') {
+    if ((error as Error).message !== 'User cancelled flow') {
       console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }

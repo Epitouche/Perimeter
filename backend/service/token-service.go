@@ -1,12 +1,13 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type TokenService interface {
@@ -32,7 +33,10 @@ func NewTokenService(repository repository.TokenRepository) TokenService {
 func (service *tokenService) SaveToken(
 	token schemas.Token,
 ) (tokenID uint64, err error) {
-	tokens := service.repository.FindByToken(token.Token)
+	tokens, err := service.repository.FindByToken(token.Token)
+	if err != nil {
+		return 0, err
+	}
 	for _, t := range tokens {
 		if t.Token == token.Token {
 			return t.Id, schemas.ErrTokenAlreadyExists
@@ -40,7 +44,10 @@ func (service *tokenService) SaveToken(
 	}
 
 	service.repository.Save(token)
-	tokens = service.repository.FindByToken(token.Token)
+	tokens, err = service.repository.FindByToken(token.Token)
+	if err != nil {
+		return 0, err
+	}
 
 	for _, t := range tokens {
 		if t.Token == token.Token {
@@ -51,8 +58,10 @@ func (service *tokenService) SaveToken(
 }
 
 func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
+	ctx := context.Background()
+
 	// Create a new HTTP request
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.github.com/user", nil)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to create request because %w", err)
 	}
@@ -78,11 +87,19 @@ func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserI
 }
 
 func (service *tokenService) GetTokenById(id uint64) (schemas.Token, error) {
-	return service.repository.FindById(id), nil
+	token, err := service.repository.FindById(id)
+	if err != nil {
+		return schemas.Token{}, err
+	}
+	return token, nil
 }
 
 func (service *tokenService) GetTokenByUserId(userID uint64) ([]schemas.Token, error) {
-	return service.repository.FindByUserId(userID), nil
+	tokens, err := service.repository.FindByUserId(userID)
+	if err != nil {
+		return nil, err
+	}
+	return tokens, nil
 }
 
 func (service *tokenService) Update(token schemas.Token) error {
@@ -96,5 +113,9 @@ func (service *tokenService) Delete(token schemas.Token) error {
 }
 
 func (service *tokenService) FindAll() []schemas.Token {
-	return service.repository.FindAll()
+	tokens, err := service.repository.FindAll()
+	if err != nil {
+		return nil
+	}
+	return tokens
 }

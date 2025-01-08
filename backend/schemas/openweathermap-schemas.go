@@ -21,15 +21,15 @@ const (
 type WeatherCondition string
 
 const (
-	// Thunderstorm
+	// Thunderstorm.
 	Thunderstorm WeatherCondition = "Thunderstorm"
-	// Drizzle
+	// Drizzle.
 	Drizzle WeatherCondition = "Drizzle"
-	// Rain
+	// Rain.
 	Rain WeatherCondition = "Rain"
-	// Snow
+	// Snow.
 	Snow WeatherCondition = "Snow"
-	// Atmosphere
+	// Atmosphere.
 	Mist    WeatherCondition = "Mist"
 	Smoke   WeatherCondition = "Smoke"
 	Haze    WeatherCondition = "Haze"
@@ -39,9 +39,9 @@ const (
 	Ash     WeatherCondition = "Ash"
 	Squall  WeatherCondition = "Squall"
 	Tornado WeatherCondition = "Tornado"
-	// Clear
+	// Clear.
 	Clear WeatherCondition = "Clear"
-	// Clouds
+	// Clouds.
 	Clouds WeatherCondition = "Clouds"
 )
 
@@ -55,7 +55,7 @@ type OpenweathermapActionSpecificTemperature struct {
 	Temperature float64 `json:"temperature"`
 }
 
-// all reaction options schema
+// all reaction options schema.
 type OpenweathermapReactionOption struct {
 	City string `json:"city"`
 }

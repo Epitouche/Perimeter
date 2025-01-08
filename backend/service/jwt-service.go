@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -8,7 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type JWTService interface {
@@ -72,7 +73,7 @@ func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) 
 	result, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Signing method validation
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		// Return the secret signing key
 		return []byte(jwtSrv.secretKey), nil
@@ -91,12 +92,12 @@ func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userID uint
 		if jti, ok := claims["jti"].(string); ok {
 			id, err := strconv.ParseUint(jti, 10, 64)
 			if err != nil {
-				return 0, fmt.Errorf("jti claim is not a float64")
+				return 0, errors.New("jti claim is not a float64")
 			}
 			return id, nil
 		}
-		return 0, fmt.Errorf("jti claim is not a float64")
+		return 0, errors.New("jti claim is not a float64")
 	} else {
-		return 0, fmt.Errorf("invalid token")
+		return 0, errors.New("invalid token")
 	}
 }

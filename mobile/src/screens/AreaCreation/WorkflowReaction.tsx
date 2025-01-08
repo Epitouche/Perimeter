@@ -3,25 +3,34 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowReactionScreen'>;
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'WorkflowReactionScreen'
+>;
 
-const WorkflowReactionScreen = ({navigation, route}: Props) => {
-  const { actionId, actionOptions} = route.params;
+const WorkflowReactionScreen = ({ navigation, route }: Props) => {
+  const { actionId, actionOptions } = route.params;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
       <View style={styles.reactionBox}>
         <Text style={styles.boxText}>Action</Text>
-        <TouchableOpacity
-        style={styles.addButtonDisabled}>
+        <TouchableOpacity style={styles.addButtonDisabled}>
           <Text style={styles.addTextDisabled}>Add</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.line} />
       <View style={styles.actionBox}>
         <Text style={styles.boxText}>Reaction</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddReactionScreen', { actionId: actionId, actionOptions: actionOptions})}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            navigation.navigate('AddReactionScreen', {
+              actionId: actionId,
+              actionOptions: actionOptions,
+            })
+          }>
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>
       </View>

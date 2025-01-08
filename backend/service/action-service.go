@@ -3,14 +3,14 @@ package service
 import (
 	"fmt"
 
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type ActionService interface {
-	FindAll() []schemas.Action
+	FindAll() (actions []schemas.Action, err error)
 	SaveAllAction()
-	FindById(actionId uint64) schemas.Action
+	FindById(actionId uint64) (action schemas.Action, err error)
 	GetActionsInfo(id uint64) (response []schemas.Action, err error)
 	GetAllServicesByServiceId(serviceId uint64) (actionJSON []schemas.ActionJSON)
 }
@@ -37,14 +37,21 @@ func NewActionService(
 	return newActionService
 }
 
-func (service *actionService) FindAll() []schemas.Action {
-	return service.repository.FindAll()
+func (service *actionService) FindAll() (actions []schemas.Action, err error) {
+	actions, err = service.repository.FindAll()
+	if err != nil {
+		return actions, fmt.Errorf("error when get all actions: %w", err)
+	}
+	return actions, nil
 }
 
 func (service *actionService) GetAllServicesByServiceId(
 	serviceId uint64,
 ) (actionJSON []schemas.ActionJSON) {
-	allActionForService := service.repository.FindByServiceId(serviceId)
+	allActionForService, err := service.repository.FindByServiceId(serviceId)
+	if err != nil {
+		fmt.Println("Error when get all actions by service id")
+	}
 	for _, oneAction := range allActionForService {
 		actionJSON = append(actionJSON, schemas.ActionJSON{
 			Name:        oneAction.Name,
@@ -60,7 +67,10 @@ func (service *actionService) SaveAllAction() {
 		if serviceAction, ok := services.(ServiceAction); ok {
 			actions := serviceAction.GetServiceActionInfo()
 			for _, action := range actions {
-				actionByName := service.repository.FindByName(action.Name)
+				actionByName, err := service.repository.FindByName(action.Name)
+				if err != nil {
+					fmt.Println("Error when get action by name")
+				}
 				if len(actionByName) == 0 {
 					service.repository.Save(action)
 				}
@@ -71,10 +81,18 @@ func (service *actionService) SaveAllAction() {
 	}
 }
 
-func (service *actionService) FindById(actionId uint64) schemas.Action {
-	return service.repository.FindById(actionId)
+func (service *actionService) FindById(actionId uint64) (action schemas.Action, err error) {
+	action, err = service.repository.FindById(actionId)
+	if err != nil {
+		return action, fmt.Errorf("error when get action by id: %w", err)
+	}
+	return action, nil
 }
 
 func (service *actionService) GetActionsInfo(id uint64) (response []schemas.Action, err error) {
-	return service.repository.FindByServiceId(id), nil
+	response, err = service.repository.FindByServiceId(id)
+	if err != nil {
+		return response, fmt.Errorf("error when get actions info: %w", err)
+	}
+	return response, nil
 }

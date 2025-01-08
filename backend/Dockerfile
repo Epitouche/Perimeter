@@ -22,12 +22,12 @@ COPY ./ .
 
 CMD ["go", "test", "-v"]
 
-FROM alpine:3.15 AS run
+FROM alpine:3.21 AS run
 
 WORKDIR /app
 
-COPY --from=build /app/area .
+COPY --from=build /app/Perimeter .
 
 EXPOSE 8080
 
-CMD ["/app/area"]
+CMD ["/app/Perimeter"]

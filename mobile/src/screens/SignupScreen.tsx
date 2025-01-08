@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
 import { HandleGithubLogin } from './Oauth2/GithubOauth2';
-import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
+import { HandleMicrosoftLogin } from './Oauth2/MicrosoftOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
@@ -85,7 +85,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           Alert.alert('Successfully registered, please login now');
         } else {
           console.error('Error:', response.status, ' | ', response.statusText);
-          Alert.alert('Error registering, please try again (Username or email might already be taken)');
+          Alert.alert(
+            'Error registering, please try again (Username or email might already be taken)',
+          );
         }
       } catch (error) {
         console.error('Error', error);
@@ -107,7 +109,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
-        inputMode='text'
+        inputMode="text"
         onChangeText={text => setUsername(text)}
       />
       {errors.username ? (
@@ -119,7 +121,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         placeholder="Enter email"
         placeholderTextColor="#aaa"
         value={email}
-        inputMode='email'
+        inputMode="email"
         onChangeText={text => setEmail(text)}
       />
       {errors.email ? (
@@ -159,7 +161,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Google');
-            HandleGoogleLogin(setToken, navigation, ipAddress, true);
+            HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/48/google-logo.png' }}
@@ -179,7 +181,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             setService('Spotify');
-            HandleSpotifyLogin(setToken, navigation, ipAddress, true);
+            HandleSpotifyLogin(setToken, navigation, ipAddress);
           }}>
           <Image
             source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}

@@ -1,24 +1,23 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import { fetchServices } from "~/utils/fetchServices";
+import { handleClick } from "~/utils/authUtils";
+
 defineProps<{
   apps: {
     name: string;
-    color: string;
-    icon: string;
   }[];
 }>();
-
-interface OAuthLink {
-  authentication_url: string;
-}
 
 const tokenCookie = useCookie("token");
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
-
-let serviceNames: string[] = [];
+const services = ref<ServiceInfo[]>([]);
+const serviceConnected = ref<string[]>([]);
 
 onMounted(() => {
   servicesConnectionInfos();
+  loadServices();
 });
 
 async function servicesConnectionInfos() {
@@ -37,9 +36,11 @@ async function servicesConnectionInfos() {
       Array.isArray((response as { tokens: unknown }).tokens)
     ) {
       const tokens = (
-        response as { tokens: Array<{ service_id: { name: string } }> }
+        response as { tokens: Array<{ service: { name: string } }> }
       ).tokens;
-      serviceNames = tokens.map((token) => token.service_id.name);
+      serviceConnected.value = tokens.map((token) => token.service.name);
+      console.log("tokens: ", tokens);
+      console.log("serviceConnected", serviceConnected);
       isLoading.value = false;
     } else {
       console.error("Response does not contain valid tokens.");
@@ -53,48 +54,37 @@ async function servicesConnectionInfos() {
   }
 }
 
-const authApiCall = async (label: string) => {
+const loadServices = async () => {
   try {
-    const response = await $fetch<OAuthLink>("/api/auth/service/redirect", {
-      method: "POST",
-      body: {
-        link: label,
-      },
-    });
-    navigateTo(response.authentication_url, { external: true });
-    return response;
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error(err.message);
-    } else {
-      console.error("Unexpected error:", err);
-    }
-    throw err;
+    errorMessage.value = null;
+    services.value = await fetchServices();
+    console.log("services", services.value);
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error loading services:", error);
   }
 };
 
-const handleClick = (label: string) => {
-  const normalizedLabel = label.toLowerCase();
-  if (
-    serviceNames.map((name) => name.toLowerCase()).includes(normalizedLabel)
-  ) {
-    //disconnectService(label);
-  } else {
-    const apiLink = `http://server:8080/api/v1/${normalizedLabel}/auth/`;
-
-    if (normalizedLabel === "spotify" || normalizedLabel === "gmail") {
-      authApiCall(apiLink);
-    } else {
-      console.log(`${label} unknown icon clicked`);
-    }
-  }
-};
+const serviceDetails = computed(() =>
+  services.value.map((service) => ({
+    name: service.name,
+    color: service.color,
+    icon: service.icon,
+    oauth: service.oauth,
+  })),
+);
 
 const getServiceStateText = (appName: string) => {
-  const isConnected = serviceNames.includes(appName.toLowerCase());
+  const isConnected = serviceConnected.value.includes(appName);
   const message = isConnected ? `Disconnect ${appName}` : `Connect ${appName}`;
-  console.log(`Rendering state for ${appName}: ${message}`);
   return message;
+};
+
+const getServiceDetails = (appName: string) =>
+  serviceDetails.value.find((service) => service.name === appName);
+
+const onClick = (label: string) => {
+  handleClick(label, services, serviceConnected);
 };
 </script>
 
@@ -103,11 +93,19 @@ const getServiceStateText = (appName: string) => {
     <UButton
       v-for="(app, index) in apps"
       :key="index"
-      :icon="app.icon"
-      class="app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105"
-      :style="{ backgroundColor: app.color }"
-      @click="handleClick(app.name)"
+      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
+      :class="[
+        `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`,
+      ]"
+      @click="onClick(app.name)"
     >
+      <img
+        v-if="getServiceDetails(app.name)?.icon"
+        :src="getServiceDetails(app.name)?.icon"
+        alt=""
+        class="w-20 h-20 mt-4"
+      />
+
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
         app.name
       }}</span>
@@ -116,8 +114,8 @@ const getServiceStateText = (appName: string) => {
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
         :class="{
-          'bg-black text-white': serviceNames.includes(app.name.toLowerCase()),
-          'bg-white text-black': !serviceNames.includes(app.name.toLowerCase()),
+          'bg-black text-white': serviceConnected.includes(app.name),
+          'bg-white text-black': !serviceConnected.includes(app.name),
         }"
       >
         {{ getServiceStateText(app.name) }}

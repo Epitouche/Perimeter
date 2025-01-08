@@ -5,6 +5,7 @@ const props = defineProps<{
   isDisabled: boolean;
   isSelected: boolean;
   serviceId: number | null;
+  typeName: string;
 }>();
 
 const { serviceId } = toRefs(props);
@@ -12,7 +13,9 @@ const { isSelected } = toRefs(props);
 
 const token = useCookie("token");
 
-const serviceInfo = ref<{ name: string } | null>(null);
+const serviceInfo = ref<{ name: string; color: string; icon: string } | null>(
+  null,
+);
 const error = ref<string | null>(null);
 
 const getServiceInfo = async () => {
@@ -26,7 +29,7 @@ const getServiceInfo = async () => {
           serviceId: serviceId.value,
         },
       });
-      // console.log("services", serviceInfo.value);
+      console.log("services", serviceInfo.value);
     } catch (err) {
       console.error("Error fetching services:", err);
     }
@@ -35,6 +38,7 @@ const getServiceInfo = async () => {
 
 onMounted(() => {
   getServiceInfo();
+  console.log("typeName:", props.typeName);
 });
 
 watch(
@@ -53,24 +57,22 @@ watch(
     v-if="isSelected"
     :class="[
       'flex flex-row justify-evenly items-center py-12 px-12 gap-10 rounded-3xl w-full',
-      serviceInfo ? `bg-custom_color-${serviceInfo.name}` : 'bg-black',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
+    :style="{ backgroundColor: serviceInfo ? serviceInfo.color : 'black' }"
   >
-    <!-- <div class="flex justify-center items-center bg-black"> -->
-    <UIcon
-      :name="serviceInfo ? `my-icons:white-${serviceInfo.name}` : ''"
-      class=""
+    <img
+      :src="serviceInfo ? `${serviceInfo.icon}` : ''"
+      :alt="serviceInfo ? `${serviceInfo.name}` : ''"
+      class="w-16 h-16 p-0"
     />
-    <!-- w-[7em] h-[9em] bg-pink-500 -->
-    <!-- </div> -->
     <h2
       :class="[
-        'text-white text-8xl font-custom_weight_title',
+        'text-white text-7xl font-custom_weight_title',
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
       ]"
     >
-      {{ serviceInfo ? serviceInfo.name : "" }}
+      {{ typeName }}
     </h2>
   </div>
 

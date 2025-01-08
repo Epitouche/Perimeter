@@ -2,19 +2,19 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import BottomNavBar from '../NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 
-const WorkflowScreen = ({navigation}: {navigation : any}) => {
+const WorkflowScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
       <View style={styles.actionBox}>
         <Text style={styles.boxText}>Action</Text>
         <TouchableOpacity
-        onPress={() => navigation.navigate('AddActionScreen')} 
-        style={styles.addButton}>
+          onPress={() => navigation.navigate('AddActionScreen')}
+          style={styles.addButton}>
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>
       </View>

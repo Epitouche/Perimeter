@@ -10,8 +10,10 @@ definitions:
       name:
         type: string
       option:
-        type: string
-      service_id:
+        items:
+          type: integer
+        type: array
+      service:
         $ref: '#/definitions/schemas.Service'
       update_at:
         type: string
@@ -19,34 +21,38 @@ definitions:
     - description
     - name
     - option
-    - service_id
+    - service
     type: object
   schemas.Area:
     properties:
-      action_id:
+      action:
         $ref: '#/definitions/schemas.Action'
       action_option:
-        type: string
+        items:
+          type: integer
+        type: array
       createdAt:
         type: string
       enable:
         type: boolean
       id:
         type: integer
-      reaction_id:
+      reaction:
         $ref: '#/definitions/schemas.Reaction'
       reaction_option:
-        type: string
+        items:
+          type: integer
+        type: array
       update_at:
         type: string
-      user_id:
+      user:
         $ref: '#/definitions/schemas.User'
     required:
-    - action_id
+    - action
     - action_option
-    - reaction_id
+    - reaction
     - reaction_option
-    - user_id
+    - user
     type: object
   schemas.AreaMessage:
     properties:
@@ -54,12 +60,16 @@ definitions:
         description: Foreign key for Action
         type: integer
       action_option:
-        type: string
+        items:
+          type: integer
+        type: array
       reaction_id:
         description: Foreign key for Reaction
         type: integer
       reaction_option:
-        type: string
+        items:
+          type: integer
+        type: array
     required:
     - action_option
     - reaction_option
@@ -76,6 +86,23 @@ definitions:
     required:
     - code
     type: object
+  schemas.DropboxFile:
+    properties:
+      created:
+        type: string
+      destination:
+        type: string
+      file_count:
+        type: integer
+      id:
+        type: string
+      is_open:
+        type: boolean
+      title:
+        type: string
+      url:
+        type: string
+    type: object
   schemas.ErrorResponse:
     properties:
       error:
@@ -88,7 +115,7 @@ definitions:
     type: object
   schemas.Reaction:
     properties:
-      createdAt:
+      created_at:
         type: string
       description:
         type: string
@@ -97,8 +124,10 @@ definitions:
       name:
         type: string
       option:
-        type: string
-      service_id:
+        items:
+          type: integer
+        type: array
+      service:
         $ref: '#/definitions/schemas.Service'
       update_at:
         type: string
@@ -106,7 +135,7 @@ definitions:
     - description
     - name
     - option
-    - service_id
+    - service
     type: object
   schemas.Response:
     properties:
@@ -115,62 +144,84 @@ definitions:
     type: object
   schemas.Service:
     properties:
-      createdAt:
+      color:
+        type: string
+      created_at:
         type: string
       description:
+        type: string
+      icon:
         type: string
       id:
         type: integer
       name:
         $ref: '#/definitions/schemas.ServiceName'
+      oauth:
+        type: boolean
       update_at:
         type: string
     required:
+    - color
     - description
+    - icon
     - name
+    - oauth
     type: object
   schemas.ServiceName:
     enum:
-    - spotify
-    - openWeatherMap
-    - timer
-    - gmail
-    - github
-    - dropbox
-    type: string
-    x-enum-varnames:
     - Spotify
     - OpenWeatherMap
     - Timer
     - Gmail
     - Github
     - Dropbox
+    type: string
+    x-enum-varnames:
+    - Spotify
+    - Openweathermap
+    - Timer
+    - Gmail
+    - Github
+    - Dropbox
   schemas.Token:
     properties:
-      createdAt:
+      created_at:
+        description: Time when the token was created
         type: string
-      expireAt:
+      expire_at:
+        description: Time when the token expires
         type: string
       id:
+        description: Unique identifier for the token
         type: integer
       refresh_token:
+        description: Refresh token
         type: string
-      service_id:
-        $ref: '#/definitions/schemas.Service'
+      service:
+        allOf:
+        - $ref: '#/definitions/schemas.Service'
+        description: Service that the token belongs to
       token:
+        description: Token
         type: string
-      updateAt:
+      update_at:
+        description: Time when the token was last updated
         type: string
-      user_id:
-        $ref: '#/definitions/schemas.User'
+      user:
+        allOf:
+        - $ref: '#/definitions/schemas.User'
+        description: User that the token belongs to
     type: object
   schemas.User:
     properties:
-      createdAt:
+      created_at:
+        description: Time when the user was created
         type: string
       email:
+        description: Email of the user
         type: string
       id:
+        description: Unique identifier for the user
         type: integer
       password:
         description: can be null for Oauth2.0 users
@@ -179,8 +230,10 @@ definitions:
         description: Foreign key for LinkURL
         type: integer
       updated_at:
+        description: Time when the user was last updated
         type: string
       username:
+        description: Username of the user
         type: string
     required:
     - email
@@ -189,17 +242,22 @@ definitions:
   schemas.UserAllInfo:
     properties:
       tokens:
+        description: List of tokens
         items:
           $ref: '#/definitions/schemas.Token'
         type: array
       user:
-        $ref: '#/definitions/schemas.User'
+        allOf:
+        - $ref: '#/definitions/schemas.User'
+        description: User
     type: object
   schemas.UserCredentials:
     properties:
       email:
+        description: Email of the user
         type: string
       username:
+        description: Username of the user
         type: string
     type: object
 info:
@@ -239,6 +297,31 @@ paths:
       tags:
       - Action
   /area:
+    delete:
+      consumes:
+      - application/json
+      description: delete user area list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Area'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: delete user area
+      tags:
+      - Area
     get:
       consumes:
       - application/json
@@ -291,6 +374,31 @@ paths:
       security:
       - bearerAuth: []
       summary: create area
+      tags:
+      - Area
+    put:
+      consumes:
+      - application/json
+      description: update user area list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Area'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - Bearer: []
+      - bearerAuth: []
+      summary: update user area
       tags:
       - Area
   /dropbox/auth:
@@ -370,6 +478,33 @@ paths:
       summary: give url to authenticate with dropbox
       tags:
       - Dropbox
+  /dropbox/file:
+    get:
+      consumes:
+      - application/json
+      description: give user info of dropbox
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.DropboxFile'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of dropbox
+      tags:
+      - Dropbox
   /dropbox/info:
     get:
       consumes:
@@ -438,6 +573,36 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: give url to authenticate with github
+      tags:
+      - Github
+  /github/auth/callback/mobile:
+    post:
+      consumes:
+      - application/json
+      description: give authentication token to mobile
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give authentication token to mobile
       tags:
       - Github
   /github/info:
@@ -518,7 +683,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: give url to authenticate with gmail
+      description: give authentication token to mobile
       parameters:
       - description: Callback Payload
         in: body
@@ -526,6 +691,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       produces:
       - application/json
       responses:
@@ -537,9 +706,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      security:
-      - bearerAuth: []
-      summary: give url to authenticate with gmail
+      summary: give authentication token to mobile
       tags:
       - Gmail
   /gmail/info:
@@ -849,8 +1016,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.JWT'
-        "401":
-          description: Unauthorized
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token
@@ -878,12 +1045,12 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/schemas.JWT'
-        "401":
-          description: Unauthorized
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token

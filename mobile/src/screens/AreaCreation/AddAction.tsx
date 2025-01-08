@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,21 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../App';
-import {AppContext} from '../../context/AppContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Navigation/navigate';
+import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddActionScreen'>;
 
-const AddActionScreen: React.FC<Props> = ({navigation}) => {
+const AddActionScreen: React.FC<Props> = ({ navigation }) => {
+  const [connectedServices, setConnectedServices] = useState<string[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const {ipAddress, token} = useContext(AppContext);
+  const { ipAddress, token } = useContext(AppContext);
 
   useEffect(() => {
-    // Fetch services from API
     const fetchServices = async () => {
       try {
         const response = await fetch(
@@ -34,8 +34,23 @@ const AddActionScreen: React.FC<Props> = ({navigation}) => {
             },
           },
         );
+        const userResponse = await fetch(
+          `http://${ipAddress}:8080/api/v1/user/info/all`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const userData = await userResponse.json();
         console.log('Services:', response);
         const data = await response.json();
+        const connected = userData.tokens.map(
+          (token: { service: { name: string } }) => token.service.name,
+        );
+        setConnectedServices(connected);
         if (Array.isArray(data)) {
           setServices(data);
           setFilteredServices(data);
@@ -77,11 +92,19 @@ const AddActionScreen: React.FC<Props> = ({navigation}) => {
     );
   }
 
+  const formatText = (text: string): string => {
+    return text
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add action</Text>
       <TextInput
         style={styles.searchBar}
+        placeholderTextColor="#bbbbbb"
         placeholder="Search services"
         value={search}
         onChangeText={handleSearch}
@@ -90,13 +113,25 @@ const AddActionScreen: React.FC<Props> = ({navigation}) => {
         {filteredServices?.map(service => (
           <TouchableOpacity
             key={service.id}
-            style={styles.serviceBox}
+            style={[
+              styles.serviceBox,
+              {
+                backgroundColor:
+                  connectedServices.includes(service.name) || !service.oauth
+                    ? service.color
+                    : '#d3d3d3',
+              },
+            ]}
             onPress={() =>
+              (connectedServices.includes(service.name) || !service.oauth) &&
               navigation.navigate('SelectActionScreen', {
                 serviceId: service.id,
               })
+            }
+            disabled={
+              !(connectedServices.includes(service.name) || !service.oauth)
             }>
-            <Text style={styles.serviceText}>{service.name}</Text>
+            <Text style={styles.serviceText}>{formatText(service.name)}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -124,6 +159,7 @@ const styles = StyleSheet.create({
   searchBar: {
     width: '100%',
     backgroundColor: '#f0f0f0',
+    color: '#000',
     borderRadius: 10,
     padding: 10,
     fontSize: 18,
@@ -140,7 +176,6 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 20,
-    backgroundColor: '#add8e6',
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,

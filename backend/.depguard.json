@@ -1,0 +1,60 @@
+{
+    "rules": [
+        {
+            "allowed": [
+                "github.com/Epitouche/Perimeter/api",
+                "github.com/Epitouche/Perimeter/test",
+                "github.com/Epitouche/Perimeter/service",
+                "github.com/Epitouche/Perimeter/controller",
+                "github.com/Epitouche/Perimeter/middlewares",
+                "github.com/swaggo/files",
+                "github.com/swaggo/gin-swagger",
+                "github.com/stretchr/testify/require",
+                "github.com/stretchr/testify/assert",
+                "github.com/stretchr/testify/mock"
+            ],
+            "packages": [
+                "api_test"
+            ]
+        },
+        {
+            "allowed": [
+                "github.com/gin-gonic/gin",
+                "github.com/stretchr/testify/assert",
+                "github.com/stretchr/testify/require"
+            ],
+            "packages": [
+                "test"
+            ]
+        },
+        {
+            "allowed": [
+                "github.com/Epitouche/Perimeter/docs",
+                "github.com/Epitouche/Perimeter/api",
+                "github.com/Epitouche/Perimeter/service",
+                "github.com/Epitouche/Perimeter/controller",
+                "github.com/Epitouche/Perimeter/middlewares"
+            ],
+            "packages": [
+                "main"
+            ]
+        },
+        {
+            "allowed": [
+                "github.com/Epitouche/Perimeter/controller",
+                "github.com/Epitouche/Perimeter/middlewares"
+            ],
+            "packages": [
+                "api"
+            ]
+        },
+        {
+            "allowed": [
+                "github.com/Epitouche/Perimeter/schmas"
+            ],
+            "packages": [
+                "tools"
+            ]
+        }
+    ]
+}

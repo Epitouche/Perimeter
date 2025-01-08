@@ -5,17 +5,17 @@ import (
 
 	"gorm.io/gorm"
 
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type AreaRepository interface {
-	SaveArea(action schemas.Area) (areaID uint64, err error)
-	Save(action schemas.Area)
-	Update(action schemas.Area)
-	Delete(action schemas.Area)
-	FindAll() []schemas.Area
-	FindByUserId(userID uint64) []schemas.Area
-	FindById(id uint64) (schemas.Area, error)
+	SaveArea(area schemas.Area) (areaID uint64, err error)
+	Save(area schemas.Area) error
+	Update(area schemas.Area) error
+	Delete(area schemas.Area) error
+	FindAll() (areas []schemas.Area, err error)
+	FindByUserId(userID uint64) (areas []schemas.Area, err error)
+	FindById(id uint64) (area schemas.Area, err error)
 }
 
 type areaRepository struct {
@@ -43,56 +43,54 @@ func (repo *areaRepository) SaveArea(action schemas.Area) (areaID uint64, err er
 	return action.Id, nil
 }
 
-func (repo *areaRepository) Save(action schemas.Area) {
+func (repo *areaRepository) Save(action schemas.Area) error {
 	err := repo.db.Connection.Create(&action)
 	if err.Error != nil {
-		panic(err.Error)
+		return fmt.Errorf("failed to save area: %w", err.Error)
 	}
+	return nil
 }
 
-func (repo *areaRepository) Update(action schemas.Area) {
+func (repo *areaRepository) Update(action schemas.Area) error {
 	err := repo.db.Connection.Save(&action)
 	if err.Error != nil {
-		panic(err.Error)
+		return fmt.Errorf("failed to update area: %w", err.Error)
 	}
+	return nil
 }
 
-func (repo *areaRepository) Delete(action schemas.Area) {
+func (repo *areaRepository) Delete(action schemas.Area) error {
 	err := repo.db.Connection.Delete(&action)
 	if err.Error != nil {
-		panic(err.Error)
+		return fmt.Errorf("failed to delete area: %w", err.Error)
 	}
+	return nil
 }
 
-func (repo *areaRepository) FindAll() []schemas.Area {
-	var action []schemas.Area
-	err := repo.db.Connection.Preload("Service").Find(&action)
-	if err.Error != nil {
-		panic(err.Error)
+func (repo *areaRepository) FindAll() (areas []schemas.Area, err error) {
+	err = repo.db.Connection.Preload("Service").Find(&areas).Error
+	if err != nil {
+		return areas, fmt.Errorf("failed to find all areas: %w", err)
 	}
-	return action
+	return areas, nil
 }
 
-func (repo *areaRepository) FindByUserId(userID uint64) []schemas.Area {
-	var areas []schemas.Area
-
-	err := repo.db.Connection.
+func (repo *areaRepository) FindByUserId(userID uint64) (areas []schemas.Area, err error) {
+	err = repo.db.Connection.
 		Preload("User").
 		Preload("Action.Service").
 		Preload("Reaction.Service").
 		Where(&schemas.Area{UserId: userID}).
-		Find(&areas)
-
-	if err.Error != nil {
-		panic(fmt.Errorf("failed to find areas by user id: %w", err.Error))
+		Find(&areas).Error
+	if err != nil {
+		panic(fmt.Errorf("failed to find areas by user id: %w", err))
 	}
 
-	return areas
+	return areas, nil
 }
 
-func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
-	var area schemas.Area
-	err := repo.db.Connection.Where(&schemas.Area{Id: id}).First(&area)
+func (repo *areaRepository) FindById(id uint64) (area schemas.Area, err error) {
+	err = repo.db.Connection.Where(&schemas.Area{Id: id}).First(&area).Error
 	var actionResult schemas.Action
 	repo.db.Connection.Where(&schemas.Action{Id: area.ActionId}).First(&actionResult)
 	area.Action = actionResult
@@ -100,9 +98,8 @@ func (repo *areaRepository) FindById(id uint64) (schemas.Area, error) {
 	repo.db.Connection.Where(&schemas.Reaction{Id: area.ReactionId}).First(&reactionResult)
 	area.Reaction = reactionResult
 
-	if err.Error != nil {
-		println(err.Error)
-		return schemas.Area{}, fmt.Errorf("failed to find action by id: %w", err.Error)
+	if err != nil {
+		return area, fmt.Errorf("failed to find action by id: %w", err)
 	}
 	return area, nil
 }

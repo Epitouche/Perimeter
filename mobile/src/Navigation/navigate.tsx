@@ -1,6 +1,6 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -13,6 +13,8 @@ import SelectActionScreen from '../screens/AreaCreation/SelectAction';
 import WorkflowReactionScreen from '../screens/AreaCreation/WorkflowReaction';
 import AddReactionScreen from '../screens/AreaCreation/AddReaction';
 import SelectReactionScreen from '../screens/AreaCreation/SelectReaction';
+import SettingsScreen from '../screens/SettingsScreen';
+import AreaDetailsScreen from '../screens/AreaDetails';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -20,20 +22,25 @@ export type RootStackParamList = {
   SignUp: undefined;
   AreaView: undefined;
   ServicesScreen: undefined;
-  authRedirect: {code: string};
+  authRedirect: { code: string };
   WorkflowScreen: undefined;
   AddActionScreen: undefined;
-  SelectActionScreen: {serviceId: number};
+  SelectActionScreen: { serviceId: number };
   WorkflowReactionScreen: {
     actionId: number;
-    actionOptions: {[key: string]: string};
+    actionOptions: { [key: string]: string };
   };
-  AddReactionScreen: {actionId: number; actionOptions: {[key: string]: string}};
+  AddReactionScreen: {
+    actionId: number;
+    actionOptions: { [key: string]: string };
+  };
   SelectReactionScreen: {
     actionId: number;
-    actionOptions: {[key: string]: string};
+    actionOptions: { [key: string]: string };
     serviceId: number;
   };
+  SettingsScreen: undefined;
+  AreaDetails: { area: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -52,7 +59,7 @@ const Navigation = () => {
     <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName="Home"
-        screenOptions={{headerShown: false}}>
+        screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignupScreen} />
@@ -74,6 +81,8 @@ const Navigation = () => {
           name="SelectReactionScreen"
           component={SelectReactionScreen}
         />
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+        <Stack.Screen name="AreaDetails" component={AreaDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

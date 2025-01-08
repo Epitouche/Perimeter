@@ -5,13 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"area/schemas"
-	"area/service"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type GmailController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
-	HandleServiceCallback(ctx *gin.Context, path string) (string, error)
+	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
@@ -53,7 +53,6 @@ func (controller *gmailController) RedirectToService(
 
 func (controller *gmailController) HandleServiceCallback(
 	ctx *gin.Context,
-	path string,
 ) (string, error) {
 	var credentials schemas.CodeCredentials
 	err := ctx.ShouldBind(&credentials)
@@ -100,7 +99,11 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		authHeader,
 		schemas.Gmail,
 		credentials,
 		controller.serviceUser,

@@ -44,7 +44,7 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
-      - name: Run Formater
+      - name: Run Linter
         run: npx eslint --fix --ignore-pattern .nuxt --ignore-pattern dist
 
       - name: Commit changes

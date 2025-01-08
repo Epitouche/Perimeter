@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,22 +8,22 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../Navigation/navigate';
-import {AppContext} from '../../context/AppContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../Navigation/navigate';
+import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddReactionScreen'>;
 
-const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
+const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
+  const [connectedServices, setConnectedServices] = useState<string[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const {ipAddress, token} = useContext(AppContext);
-  const {actionId, actionOptions } = route.params;
+  const { ipAddress, token } = useContext(AppContext);
+  const { actionId, actionOptions } = route.params;
 
   useEffect(() => {
-    // Fetch actionas from API
     const fetchServices = async () => {
       try {
         const response = await fetch(
@@ -35,6 +35,19 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
             },
           },
         );
+        const userResponse = await fetch(
+          `http://${ipAddress}:8080/api/v1/user/info/all`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const userData = await userResponse.json();
+        const connected = userData.tokens.map(token => token.service.name);
+        setConnectedServices(connected);
         console.log('Services:', response);
         const data = await response.json();
         if (Array.isArray(data)) {
@@ -78,12 +91,20 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
     );
   }
 
+  const formatText = (text: string): string => {
+    return text
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choose reaction</Text>
       <TextInput
         style={styles.searchBar}
         placeholder="Search services"
+        placeholderTextColor="#bbbbbb"
         value={search}
         onChangeText={handleSearch}
       />
@@ -91,9 +112,26 @@ const AddReactionScreen: React.FC<Props> = ({navigation, route}) => {
         {filteredServices?.map(service => (
           <TouchableOpacity
             key={service.id}
-            style={styles.serviceBox}
-            onPress={() => navigation.navigate('SelectReactionScreen', { actionId:actionId, actionOptions: actionOptions, serviceId: service.id})}>
-            <Text style={styles.serviceText}>{service.name}</Text>
+            style={[
+              styles.serviceBox,
+              {
+                backgroundColor:
+                  connectedServices.includes(service.name) || !service.oauth
+                    ? service.color
+                    : '#d3d3d3',
+              },
+            ]}
+            onPress={() =>
+              navigation.navigate('SelectReactionScreen', {
+                actionId: actionId,
+                actionOptions: actionOptions,
+                serviceId: service.id,
+              })
+            }
+            disabled={
+              !(connectedServices.includes(service.name) || !service.oauth)
+            }>
+            <Text style={styles.serviceText}>{formatText(service.name)}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

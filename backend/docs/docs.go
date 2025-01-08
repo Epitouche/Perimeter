@@ -112,6 +112,47 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "update user area list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "update user area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Area"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -145,6 +186,47 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "delete user area list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "delete user area",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Area"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
@@ -276,6 +358,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/dropbox/file": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give user info of dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/schemas.DropboxFile"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/dropbox/info": {
             "get": {
                 "security": [
@@ -367,6 +492,52 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.CodeCredentials"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/github/auth/callback/mobile": {
+            "post": {
+                "description": "give authentication token to mobile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Github"
+                ],
+                "summary": "give authentication token to mobile",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -502,12 +673,7 @@ const docTemplate = `{
         },
         "/gmail/auth/callback/mobile": {
             "post": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "give url to authenticate with gmail",
+                "description": "give authentication token to mobile",
                 "consumes": [
                     "application/json"
                 ],
@@ -517,7 +683,7 @@ const docTemplate = `{
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give url to authenticate with gmail",
+                "summary": "give authentication token to mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -527,6 +693,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/schemas.CodeCredentials"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -1029,8 +1201,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/schemas.JWT"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -1072,14 +1244,14 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/schemas.JWT"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -1095,7 +1267,7 @@ const docTemplate = `{
                 "description",
                 "name",
                 "option",
-                "service_id"
+                "service"
             ],
             "properties": {
                 "createdAt": {
@@ -1111,9 +1283,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "option": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
-                "service_id": {
+                "service": {
                     "$ref": "#/definitions/schemas.Service"
                 },
                 "update_at": {
@@ -1124,18 +1299,21 @@ const docTemplate = `{
         "schemas.Area": {
             "type": "object",
             "required": [
-                "action_id",
+                "action",
                 "action_option",
-                "reaction_id",
+                "reaction",
                 "reaction_option",
-                "user_id"
+                "user"
             ],
             "properties": {
-                "action_id": {
+                "action": {
                     "$ref": "#/definitions/schemas.Action"
                 },
                 "action_option": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "createdAt": {
                     "type": "string"
@@ -1146,16 +1324,19 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "reaction_id": {
+                "reaction": {
                     "$ref": "#/definitions/schemas.Reaction"
                 },
                 "reaction_option": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "update_at": {
                     "type": "string"
                 },
-                "user_id": {
+                "user": {
                     "$ref": "#/definitions/schemas.User"
                 }
             }
@@ -1172,14 +1353,20 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "action_option": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "reaction_id": {
                     "description": "Foreign key for Reaction",
                     "type": "integer"
                 },
                 "reaction_option": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -1198,6 +1385,32 @@ const docTemplate = `{
             ],
             "properties": {
                 "code": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.DropboxFile": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "destination": {
+                    "type": "string"
+                },
+                "file_count": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_open": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }
@@ -1224,10 +1437,10 @@ const docTemplate = `{
                 "description",
                 "name",
                 "option",
-                "service_id"
+                "service"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "description": {
@@ -1240,9 +1453,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "option": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
-                "service_id": {
+                "service": {
                     "$ref": "#/definitions/schemas.Service"
                 },
                 "update_at": {
@@ -1261,14 +1477,23 @@ const docTemplate = `{
         "schemas.Service": {
             "type": "object",
             "required": [
+                "color",
                 "description",
-                "name"
+                "icon",
+                "name",
+                "oauth"
             ],
             "properties": {
-                "createdAt": {
+                "color": {
+                    "type": "string"
+                },
+                "created_at": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "icon": {
                     "type": "string"
                 },
                 "id": {
@@ -1276,6 +1501,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "$ref": "#/definitions/schemas.ServiceName"
+                },
+                "oauth": {
+                    "type": "boolean"
                 },
                 "update_at": {
                     "type": "string"
@@ -1285,16 +1513,16 @@ const docTemplate = `{
         "schemas.ServiceName": {
             "type": "string",
             "enum": [
-                "spotify",
-                "openWeatherMap",
-                "timer",
-                "gmail",
-                "github",
-                "dropbox"
+                "Spotify",
+                "OpenWeatherMap",
+                "Timer",
+                "Gmail",
+                "Github",
+                "Dropbox"
             ],
             "x-enum-varnames": [
                 "Spotify",
-                "OpenWeatherMap",
+                "Openweathermap",
                 "Timer",
                 "Gmail",
                 "Github",
@@ -1304,29 +1532,45 @@ const docTemplate = `{
         "schemas.Token": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the token was created",
                     "type": "string"
                 },
-                "expireAt": {
+                "expire_at": {
+                    "description": "Time when the token expires",
                     "type": "string"
                 },
                 "id": {
+                    "description": "Unique identifier for the token",
                     "type": "integer"
                 },
                 "refresh_token": {
+                    "description": "Refresh token",
                     "type": "string"
                 },
-                "service_id": {
-                    "$ref": "#/definitions/schemas.Service"
+                "service": {
+                    "description": "Service that the token belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Service"
+                        }
+                    ]
                 },
                 "token": {
+                    "description": "Token",
                     "type": "string"
                 },
-                "updateAt": {
+                "update_at": {
+                    "description": "Time when the token was last updated",
                     "type": "string"
                 },
-                "user_id": {
-                    "$ref": "#/definitions/schemas.User"
+                "user": {
+                    "description": "User that the token belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    ]
                 }
             }
         },
@@ -1337,13 +1581,16 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
-                "createdAt": {
+                "created_at": {
+                    "description": "Time when the user was created",
                     "type": "string"
                 },
                 "email": {
+                    "description": "Email of the user",
                     "type": "string"
                 },
                 "id": {
+                    "description": "Unique identifier for the user",
                     "type": "integer"
                 },
                 "password": {
@@ -1355,9 +1602,11 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
+                    "description": "Time when the user was last updated",
                     "type": "string"
                 },
                 "username": {
+                    "description": "Username of the user",
                     "type": "string"
                 }
             }
@@ -1366,13 +1615,19 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "tokens": {
+                    "description": "List of tokens",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/schemas.Token"
                     }
                 },
                 "user": {
-                    "$ref": "#/definitions/schemas.User"
+                    "description": "User",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    ]
                 }
             }
         },
@@ -1380,9 +1635,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "Email of the user",
                     "type": "string"
                 },
                 "username": {
+                    "description": "Username of the user",
                     "type": "string"
                 }
             }

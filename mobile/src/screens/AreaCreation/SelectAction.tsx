@@ -20,20 +20,24 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedAction, setSelectedAction] = useState<any | null>(null);
-  const [selectedActionOptions, setSelectedActionOptions] = useState<{ [key: string]: any }>({});
+  const [selectedActionOptions, setSelectedActionOptions] = useState<{
+    [key: string]: any;
+  }>({});
   const { ipAddress, token } = useContext(AppContext);
   const serviceId = route.params?.serviceId;
 
   useEffect(() => {
-    // Fetch actions from API
     const fetchServices = async () => {
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/action/info/${serviceId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/action/info/${serviceId}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         const data = await response.json();
         if (Array.isArray(data)) {
           setServices(data);
@@ -61,9 +65,9 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
       setFilteredServices(services);
     } else {
       setFilteredServices(
-        services.filter((service) =>
-          service.name.toLowerCase().includes(text.toLowerCase())
-        )
+        services.filter(service =>
+          service.name.toLowerCase().includes(text.toLowerCase()),
+        ),
       );
     }
   };
@@ -72,7 +76,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
     setSelectedAction(action);
     if (action.option) {
       console.log('Action Options:', action.option);
-      const parsedOptions = JSON.parse(action.option);
+      const parsedOptions = action.option;
       setSelectedActionOptions(parsedOptions);
     } else {
       setSelectedActionOptions({});
@@ -80,7 +84,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleOptionChange = (key: string, value: any, type: any) => {
-    setSelectedActionOptions((prev) => ({
+    setSelectedActionOptions(prev => ({
       ...prev,
       [key]: type === 'number' ? Number(value) : value,
     }));
@@ -89,7 +93,10 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleSaveOptions = () => {
     console.log('Selected Action:', selectedAction);
     console.log('Configured Options:', selectedActionOptions);
-    navigation.navigate('WorkflowReactionScreen', { actionId: selectedAction.id, actionOptions: selectedActionOptions });
+    navigation.navigate('WorkflowReactionScreen', {
+      actionId: selectedAction.id,
+      actionOptions: selectedActionOptions,
+    });
     setSelectedAction(null);
     setSelectedActionOptions({});
   };
@@ -102,27 +109,46 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
     );
   }
 
+  const formatText = (text: string): string => {
+    return text
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choose action</Text>
       {selectedAction ? (
         <View style={styles.optionsContainer}>
-          <Text style={styles.optionTitle}>Configure Options for {selectedAction.name}</Text>
-          {Object.keys(selectedActionOptions).map((key) => (
+          <Text style={styles.optionTitle}>
+            Configure Options for {selectedAction.name}
+          </Text>
+          {Object.keys(selectedActionOptions).map(key => (
             <View key={key} style={styles.optionRow}>
               <Text style={styles.optionLabel}>{key}</Text>
               <TextInput
                 style={styles.optionInput}
                 value={String(selectedActionOptions[key])}
-                onChangeText={(text) => handleOptionChange(key, text, typeof selectedActionOptions[key])}
+                onChangeText={text =>
+                  handleOptionChange(
+                    key,
+                    text,
+                    typeof selectedActionOptions[key],
+                  )
+                }
                 keyboardType="default" // Adjust as needed
               />
             </View>
           ))}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveOptions}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSaveOptions}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.backButton} onPress={() => setSelectedAction(null)}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setSelectedAction(null)}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </View>
@@ -135,17 +161,20 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
             onChangeText={handleSearch}
           />
           <ScrollView contentContainerStyle={styles.servicesContainer}>
-            {filteredServices?.map((service) => (
+            {filteredServices?.map(service => (
               <TouchableOpacity
                 key={service.id}
                 style={styles.serviceBox}
-                onPress={() => handleActionPress(service)}
-              >
-                <Text style={styles.serviceText}>{service.name}</Text>
+                onPress={() => handleActionPress(service)}>
+                <Text style={styles.serviceText}>
+                  {formatText(service.name)}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </>
@@ -168,7 +197,8 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     width: '100%',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f9f9f9',
+    color: '#000',
     borderRadius: 10,
     padding: 10,
     fontSize: 18,

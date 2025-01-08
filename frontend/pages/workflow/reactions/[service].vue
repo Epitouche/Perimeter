@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "@/interfaces/serviceinfo";
+
+interface Reaction {
+  id: number;
+  name: string;
+  description: string;
+}
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -8,10 +16,11 @@ const route = useRoute();
 const serviceId = route.params.service;
 const token = useCookie("token");
 const isLoading = ref(true);
-const reactions = ref<any>(null);
+
+const reactions = ref<Reaction[] | null>(null);
 const errorMessage = ref<string | null>(null);
 
-const serviceInfo = ref<{ name: string } | null>(null);
+const serviceInfo = ref<ServiceInfo | null>(null);
 
 const getServiceInfo = async () => {
   if (serviceId) {
@@ -25,13 +34,14 @@ const getServiceInfo = async () => {
           serviceId: serviceId,
         },
       });
-      // console.log("services", serviceInfo.value);
+      console.log("serviceInfo: ", serviceInfo.value);
     } catch (error: unknown) {
       errorMessage.value = handleErrorStatus(error);
 
       if (errorMessage.value === "An unknown error occurred") {
         console.error("An unknown error occurred", error);
       }
+      console.log("error", error);
     } finally {
       isLoading.value = false;
     }
@@ -42,7 +52,7 @@ const fetchReactions = async () => {
   isLoading.value = true;
   try {
     errorMessage.value = null;
-    reactions.value = await $fetch("/api/workflow/reactions", {
+    reactions.value = await $fetch<Reaction[]>("/api/workflow/reactions", {
       method: "POST",
       body: {
         token: token.value,
@@ -77,7 +87,8 @@ onMounted(() => {
     <UContainer
       v-else-if="serviceInfo"
       :ui="{ constrained: 'max-w-none' }"
-      :class="[`bg-custom_color-${serviceInfo.name}`, 'py-20']"
+      class="py-20"
+      :style="{ backgroundColor: serviceInfo.color }"
     >
       <div class="px-20">
         <BackButton link="/workflow/reactions" :is-white="true" />
@@ -86,9 +97,10 @@ onMounted(() => {
         <h1 class="text-8xl text-white font-custom_weight_title">
           Add a reaction
         </h1>
-        <UIcon
-          :name="`my-icons:white-${serviceInfo.name}`"
-          class="w-[9em] h-[9em]"
+        <img
+          :src="serviceInfo.icon"
+          :alt="serviceInfo.name"
+          class="w-[8em] h-[8em]"
         />
         <h2 class="capitalize text-white text-7xl font-bold pt-8">
           {{ serviceInfo.name }}

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"area/database"
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/database"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type UserService interface {
@@ -14,7 +14,7 @@ type UserService interface {
 	Register(newUser schemas.User) (jwtToken string, userID uint64, err error)
 	GetUserInfo(token string) (userInfo schemas.User, err error)
 	UpdateUserInfo(newUser schemas.User) (err error)
-	GetUserById(userID uint64) schemas.User
+	GetUserById(userID uint64) (user schemas.User, err error)
 }
 
 type userService struct {
@@ -36,7 +36,10 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 func (service *userService) Login(
 	newUser schemas.User,
 ) (jwtToken string, userID uint64, err error) {
-	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
+	userWiththisUserName, err := service.repository.FindByUserName(newUser.Username)
+	if err != nil {
+		return "", 0, err
+	}
 	if len(userWiththisUserName) == 0 {
 		return "", 0, schemas.ErrInvalidCredentials
 	}
@@ -70,8 +73,12 @@ func (service *userService) Login(
 func (service *userService) Register(
 	newUser schemas.User,
 ) (jwtToken string, userID uint64, err error) {
-	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
+	userWiththisEmail, err := service.repository.FindByEmail(newUser.Email)
+	if err != nil {
+		return "", 0, err
+	}
 	fmt.Printf("%+v\n", userWiththisEmail)
+
 	if len(userWiththisEmail) != 0 {
 		// return service.Login(newUser)
 		return "", 0, schemas.ErrEmailAlreadyExist
@@ -87,13 +94,17 @@ func (service *userService) Register(
 
 	service.repository.Save(newUser)
 
-	newUser.Id = service.repository.FindByUserName(newUser.Username)[0].Id
+	userTemp, err := service.repository.FindByUserName(newUser.Username)
+	if err != nil {
+		return "", 0, err
+	}
+	newUser.Id = userTemp[0].Id
 
 	return service.serviceJWT.GenerateToken(
-		fmt.Sprint(newUser.Id),
+		strconv.FormatUint(newUser.Id, 10),
 		newUser.Username,
 		false,
-	), service.repository.FindByUserName(newUser.Username)[0].Id, nil
+	), newUser.Id, nil
 }
 
 func (service *userService) GetUserInfo(token string) (userInfo schemas.User, err error) {
@@ -101,7 +112,10 @@ func (service *userService) GetUserInfo(token string) (userInfo schemas.User, er
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to get user info because %w", err)
 	}
-	userInfo = service.repository.FindById(userId)
+	userInfo, err = service.repository.FindById(userId)
+	if err != nil {
+		return schemas.User{}, fmt.Errorf("unable to get user info because %w", err)
+	}
 	return userInfo, nil
 }
 
@@ -110,6 +124,6 @@ func (service *userService) UpdateUserInfo(newUser schemas.User) (err error) {
 	return nil
 }
 
-func (service *userService) GetUserById(userID uint64) schemas.User {
+func (service *userService) GetUserById(userID uint64) (user schemas.User, err error) {
 	return service.repository.FindById(userID)
 }

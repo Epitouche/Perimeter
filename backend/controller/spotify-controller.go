@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"area/schemas"
-	"area/service"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type SpotifyController interface {
@@ -41,7 +41,7 @@ func (controller *spotifyController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthUrl string, err error) {
 	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
-		schemas.Gmail,
+		schemas.Spotify,
 		"https://accounts.spotify.com/authorize",
 		"user-read-private user-read-email user-modify-playback-state",
 	)
@@ -99,7 +99,11 @@ func (controller *spotifyController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		authHeader,
 		schemas.Spotify,
 		credentials,
 		controller.serviceUser,

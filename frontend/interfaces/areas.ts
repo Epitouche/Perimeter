@@ -1,9 +1,20 @@
-export interface Workflow {
+export interface Area {
   id: number;
-  action_id: {
+  createdAt: string;
+  action: {
     name: string;
+    service: {
+      name: string;
+      color: string;
+      icon: string;
+    };
   };
-  reaction_id: {
+  reaction: {
     name: string;
+    service: {
+      name: string;
+      color: string;
+      icon: string;
+    };
   };
 }

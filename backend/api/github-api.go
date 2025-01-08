@@ -5,16 +5,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"area/controller"
-	"area/middlewares"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/controller"
+	"github.com/Epitouche/Perimeter/middlewares"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type GithubAPI struct {
 	controller controller.GithubController
 }
 
-func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterGroup) *GithubAPI {
+func NewGithubAPI(
+	controller controller.GithubController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *GithubAPI {
 	apiRoutes = apiRoutes.Group("/github")
 	api := GithubAPI{
 		controller: controller,
@@ -22,7 +27,7 @@ func NewGithubAPI(controller controller.GithubController, apiRoutes *gin.RouterG
 	api.RedirectToService(apiRoutes)
 	api.HandleServiceCallback(apiRoutes)
 	api.HandleServiceCallbackMobile(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	return &api
 }
@@ -65,7 +70,6 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		github_token, err := api.controller.HandleServiceCallback(
 			ctx,
-			apiRoutes.BasePath()+"/auth/callback",
 		)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
@@ -81,7 +85,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //
 //	@Summary		give authentication token to mobile
 //	@Description	give authentication token to mobile
-//	@Tags			Spotify
+//	@Tags			Github
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"

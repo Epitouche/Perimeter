@@ -3,7 +3,12 @@ import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
-async function HandleGithubLogin(setToken: any, navigation: any, ipAddress: string, login: boolean = false) {
+async function HandleGithubLogin(
+  setToken: any,
+  navigation: any,
+  ipAddress: string,
+  login: boolean = false,
+) {
   const config: AuthConfiguration = {
     clientId: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_SECRET,
@@ -16,28 +21,32 @@ async function HandleGithubLogin(setToken: any, navigation: any, ipAddress: stri
   };
 
   try {
-      const result = await authorize(config);
-      // console.log('result', result);
-      let data;
+    const result = await authorize(config);
+    // console.log('result', result);
+    let data;
+    if (login) {
+      data = await handleCallback(
+        `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
+        result,
+      );
+    } else {
+      setToken(result.accessToken);
+      // TODO: call route when loging in from myServices page (waiting for back to be done)
+    }
+    if (data.error) {
+      console.error(data.error);
+    } else {
+      setToken(data.token);
       if (login) {
-        data = await handleCallback(`http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`, result);
-      } else {
-        setToken(result.accessToken);
-        // TODO: call route when loging in from myServices page (waiting for back to be done)
-      }
-      if (data.error) {
-        console.error(data.error);
-      } else {
-        setToken(data.token);
-        if (login)
-          navigation.navigate('AreaView');
-      }
-    } catch (error) {
-      if ((error as Error).message != 'User cancelled flow') {
-        console.error('Failed to log in', error);
-        Alert.alert('Error', (error as Error).message);
+        navigation.navigate('AreaView');
       }
     }
+  } catch (error) {
+    if ((error as Error).message !== 'User cancelled flow') {
+      console.error('Failed to log in', error);
+      Alert.alert('Error', (error as Error).message);
+    }
+  }
 }
 
 export { HandleGithubLogin };

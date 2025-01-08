@@ -1,13 +1,14 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 // Constructor
@@ -16,15 +17,15 @@ type TimerService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option string, idArea uint64)
-	FindReactionbyName(name string) func(option string, idArea uint64) string
+	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
+	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetActionsName() []string
 	GetReactionsName() []string
 	// Service specific functions
 	// Actions functions
-	TimerActionSpecificHour(c chan string, option string, idArea uint64)
+	TimerActionSpecificHour(c chan string, option json.RawMessage, idArea uint64)
 	// Reactions functions
-	TimerReactionGiveTime(option string, idArea uint64) string
+	TimerReactionGiveTime(option json.RawMessage, idArea uint64) string
 }
 
 type timerService struct {
@@ -45,6 +46,9 @@ func NewTimerService(
 		serviceInfo: schemas.Service{
 			Name:        schemas.Timer,
 			Description: "This service is a time service",
+			Oauth:       false,
+			Color:       "#BB00FF",
+			Icon:        "https://api.iconify.design/mdi:clock.svg?color=%23FFFFFF",
 		},
 	}
 }
@@ -57,7 +61,7 @@ func (service *timerService) GetServiceInfo() schemas.Service {
 
 func (service *timerService) FindActionbyName(
 	name string,
-) func(c chan string, option string, idArea uint64) {
+) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
 	case string(schemas.SpecificTime):
 		return service.TimerActionSpecificHour
@@ -68,7 +72,7 @@ func (service *timerService) FindActionbyName(
 
 func (service *timerService) FindReactionbyName(
 	name string,
-) func(option string, idArea uint64) string {
+) func(option json.RawMessage, idArea uint64) string {
 	switch name {
 	case string(schemas.GiveTime):
 		return service.TimerReactionGiveTime
@@ -79,24 +83,49 @@ func (service *timerService) FindReactionbyName(
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
+	defaultValue := schemas.TimerActionSpecificHour{
+		Hour:   0,
+		Minute: 0,
+	}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Timer,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Action{
 		{
 			Name:        string(schemas.SpecificTime),
 			Description: "This action is a specific time action",
-			Service:     service.serviceRepository.FindByName(schemas.Timer),
-			Option:      "{\"hour\": 0, \"minute\": 0}",
+			Service:     service.serviceInfo,
+			Option:      option,
 		},
 	}
 }
 
 func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
+	defaultValue := struct{}{}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Timer,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.GiveTime),
 			Description: "This reaction is a give time reaction",
-			Service:     service.serviceRepository.FindByName(schemas.Timer),
-			Option:      "{}",
+			Service:     service.serviceInfo,
+			Option:      option,
 		},
 	}
 }
@@ -114,7 +143,8 @@ func (service *timerService) GetReactionsName() []string {
 func getActualTime() (schemas.TimeApiResponse, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
-	req, err := http.NewRequest("GET", apiURL, nil)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
 	if err != nil {
 		return schemas.TimeApiResponse{}, schemas.ErrCreateRequest
 	}
@@ -141,10 +171,14 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 
 // Actions functions
 
-func (service *timerService) TimerActionSpecificHour(c chan string, option string, idArea uint64) {
+func (service *timerService) TimerActionSpecificHour(
+	c chan string,
+	option json.RawMessage,
+	idArea uint64,
+) {
 	optionJSON := schemas.TimerActionSpecificHour{}
 
-	err := json.Unmarshal([]byte(option), &optionJSON)
+	err := json.Unmarshal(option, &optionJSON)
 	if err != nil {
 		println("error unmarshal timer option: " + err.Error())
 		time.Sleep(time.Second)
@@ -166,7 +200,10 @@ func (service *timerService) TimerActionSpecificHour(c chan string, option strin
 
 // Reactions functions
 
-func (service *timerService) TimerReactionGiveTime(option string, idArea uint64) string {
+func (service *timerService) TimerReactionGiveTime(
+	option json.RawMessage,
+	idArea uint64,
+) string {
 	actualTimeApi, err := getActualTime()
 	if err != nil {
 		println("error get actual time" + err.Error())

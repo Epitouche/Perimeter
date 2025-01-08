@@ -5,23 +5,28 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"area/controller"
-	"area/middlewares"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/controller"
+	"github.com/Epitouche/Perimeter/middlewares"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type UserApi struct {
 	controller controller.UserController
 }
 
-func NewUserApi(controller controller.UserController, apiRoutes *gin.RouterGroup) *UserApi {
+func NewUserApi(
+	controller controller.UserController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *UserApi {
 	apiRoutes = apiRoutes.Group("/user")
 	api := UserApi{
 		controller: controller,
 	}
 	api.Login(apiRoutes)
 	api.Register(apiRoutes)
-	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT())
+	apiRoutesInfo := apiRoutes.Group("/info", middlewares.AuthorizeJWT(serviceUser))
 	api.GetUserInfo(apiRoutesInfo)
 	api.GetUserAllInfo(apiRoutesInfo)
 	return &api
@@ -48,6 +53,7 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, &schemas.JWT{
 			Token: token,
 		})
@@ -76,6 +82,7 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 			})
 			return
 		}
+
 		ctx.JSON(http.StatusCreated, &schemas.JWT{
 			Token: token,
 		})

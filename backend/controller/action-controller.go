@@ -1,8 +1,10 @@
 package controller
 
 import (
-	"area/schemas"
-	"area/service"
+	"fmt"
+
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type ActionController interface {
@@ -22,5 +24,9 @@ func NewActionController(service service.ActionService) ActionController {
 func (controller *actionController) GetActionsInfo(
 	id uint64,
 ) (response []schemas.Action, err error) {
-	return controller.service.GetActionsInfo(id)
+	response, err = controller.service.GetActionsInfo(id)
+	if err != nil {
+		return nil, fmt.Errorf("unable to get actions info because %w", err)
+	}
+	return response, nil
 }

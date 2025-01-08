@@ -1,22 +1,20 @@
 package repository
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type ActionRepository interface {
-	Save(action schemas.Action)
-	Update(action schemas.Action)
-	Delete(action schemas.Action)
-	FindAll() []schemas.Action
-	FindByName(actionName string) []schemas.Action
-	FindByServiceId(serviceId uint64) []schemas.Action
-	FindById(actionId uint64) schemas.Action
-	FindByServiceByName(serviceId uint64, actionName string) []schemas.Action
+	Save(action schemas.Action) error
+	Update(action schemas.Action) error
+	Delete(action schemas.Action) error
+	FindAll() (action []schemas.Action, err error)
+	FindByName(actionName string) (action []schemas.Action, err error)
+	FindByServiceId(serviceId uint64) (action []schemas.Action, err error)
+	FindById(actionId uint64) (action schemas.Action, err error)
+	FindByServiceByName(serviceId uint64, actionName string) (action []schemas.Action, err error)
 }
 
 type actionRepository struct {
@@ -35,78 +33,78 @@ func NewActionRepository(conn *gorm.DB) ActionRepository {
 	}
 }
 
-func (repo *actionRepository) Save(action schemas.Action) {
+func (repo *actionRepository) Save(action schemas.Action) error {
 	err := repo.db.Connection.Create(&action)
 	if err.Error != nil {
-		panic(err.Error)
+		return err.Error
 	}
+	return nil
 }
 
-func (repo *actionRepository) Update(action schemas.Action) {
+func (repo *actionRepository) Update(action schemas.Action) error {
 	err := repo.db.Connection.Save(&action)
 	if err.Error != nil {
-		panic(err.Error)
+		return err.Error
 	}
+	return nil
 }
 
-func (repo *actionRepository) Delete(action schemas.Action) {
+func (repo *actionRepository) Delete(action schemas.Action) error {
 	err := repo.db.Connection.Delete(&action)
 	if err.Error != nil {
-		panic(err.Error)
+		return err.Error
 	}
+	return nil
 }
 
-func (repo *actionRepository) FindAll() []schemas.Action {
-	var action []schemas.Action
-	err := repo.db.Connection.Preload("Service").Find(&action)
+func (repo *actionRepository) FindAll() (actions []schemas.Action, err error) {
+	errDatabase := repo.db.Connection.Preload("Service").Find(&actions)
 
-	if err.Error != nil {
-		panic(err.Error)
+	if errDatabase.Error != nil {
+		return actions, errDatabase.Error
 	}
-	return action
+	return actions, nil
 }
 
-func (repo *actionRepository) FindByName(actionName string) []schemas.Action {
-	var actions []schemas.Action
-	err := repo.db.Connection.Where(&schemas.Action{Name: actionName}).Find(&actions)
+func (repo *actionRepository) FindByName(actionName string) (actions []schemas.Action, err error) {
+	errDatabase := repo.db.Connection.Where(&schemas.Action{Name: actionName}).Find(&actions)
 
-	if err.Error != nil {
-		panic(err.Error)
+	if errDatabase.Error != nil {
+		return actions, errDatabase.Error
 	}
-	return actions
+	return actions, nil
 }
 
-func (repo *actionRepository) FindByServiceId(serviceId uint64) []schemas.Action {
-	var actions []schemas.Action
-	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
+func (repo *actionRepository) FindByServiceId(
+	serviceId uint64,
+) (actions []schemas.Action, err error) {
+	errDatabase := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
 		Find(&actions)
 
-	if err.Error != nil {
-		panic(fmt.Errorf("failed to find action by service id: %w", err.Error))
+	if errDatabase.Error != nil {
+		return actions, errDatabase.Error
 	}
-	return actions
+	return actions, nil
 }
 
 func (repo *actionRepository) FindByServiceByName(
 	serviceId uint64,
 	actionName string,
-) []schemas.Action {
-	var actions []schemas.Action
-	err := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).
+) (actions []schemas.Action, err error) {
+	errDatabase := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).
 		Find(&actions)
 
-	if err.Error != nil {
-		panic(err.Error)
+	if errDatabase.Error != nil {
+		return actions, errDatabase.Error
 	}
-	return actions
+	return actions, nil
 }
 
-func (repo *actionRepository) FindById(actionId uint64) schemas.Action {
-	var action schemas.Action
-	err := repo.db.Connection.Where(&schemas.Action{Id: actionId}).First(&action)
+func (repo *actionRepository) FindById(actionId uint64) (action schemas.Action, err error) {
+	errDatabase := repo.db.Connection.Where(&schemas.Action{Id: actionId}).First(&action)
 
-	if err.Error != nil {
-		panic(err.Error)
+	if errDatabase.Error != nil {
+		return action, errDatabase.Error
 	}
-	return action
+	return action, nil
 }

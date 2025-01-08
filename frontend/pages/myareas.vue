@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Workflow } from "@/interfaces/areas";
+import type { Area } from "@/interfaces/areas";
 import { handleErrorStatus } from "../utils/handleErrorStatus.js";
 
 definePageMeta({
@@ -7,44 +7,129 @@ definePageMeta({
 });
 
 const token = useCookie("token");
-const workflows = ref<Workflow[] | null>(null);
 const errorMessage = ref<string | null>(null);
+const isLoading = ref(true);
 
-const fetchWorkflows = async () => {
-  errorMessage.value = null;
+const areas = ref<Area[]>([]);
+const filteredAreas = ref<Area[]>([]);
+
+const searchQuery = ref<string>("");
+
+const dateSort = ref(false);
+
+const fetchAreas = async () => {
   try {
-    workflows.value = await $fetch("/api/myareas", {
+    errorMessage.value = null;
+    const result = await $fetch<Area[]>("/api/myareas", {
       method: "POST",
       body: {
         token: token.value,
       },
     });
-    console.log("workflows: ", workflows.value);
+    areas.value = result;
+    filteredAreas.value = result;
+    console.log("areas: ", areas.value);
+    console.log("filteredAreas: ", filteredAreas.value);
+    console.log("filteredAreas.length: ", filteredAreas.value.length); /////////////////////////
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
     }
+    filteredAreas.value = [];
+  } finally {
+    isLoading.value = false;
   }
 };
 
+watch(searchQuery, (newQuery) => {
+  const lowerQuery = newQuery.toLowerCase();
+  filteredAreas.value = areas.value.filter(
+    (area) =>
+      area.action.service.name.toLowerCase().includes(lowerQuery) ||
+      area.reaction.service.name.toLowerCase().includes(lowerQuery) ||
+      area.action.name.toLowerCase().includes(lowerQuery) ||
+      area.reaction.name.toLowerCase().includes(lowerQuery),
+  );
+});
+
+watch(dateSort, (newSort) => {
+  const sortFn = (a: Area, b: Area) =>
+    newSort
+      ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  filteredAreas.value.sort(sortFn);
+});
+
+const items = [
+  [
+    {
+      label: "Date",
+      slot: "date",
+    },
+  ],
+];
+
 onMounted(() => {
-  fetchWorkflows();
+  fetchAreas();
 });
 </script>
 
 <template>
-  <div>
-    <div>My Areas</div>
+  <div class="flex flex-col justify-center items-center gap-10 w-full">
+    <h1 class="text-custom_size_title font-custom_weight_title">My Areas</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div v-else-if="workflows">
-      <div v-for="workflow in workflows" :key="workflow.id">
-        {{ workflow.action_id.name }}
-        {{ workflow.reaction_id.name }}
+    <div
+      v-else
+      class="flex flex-col justify-center items-start gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
+    >
+      <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
+        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" />
+        <UDropdown :items="items" :popper="{ placement: 'bottom' }">
+          <UIcon
+            name="i-bytesize-filter"
+            class="text-black w-10 h-10 p-0 pb-1"
+          />
+          <template #date="{ item }">
+            <div class="flex flex-row justify-evenly items-center w-full">
+              <h3>Latest</h3>
+              <UTooltip
+                :text="`Sort by ${item.label}`"
+                :popper="{ placement: 'top' }"
+                class="w-fit"
+              >
+                <UToggle v-model="dateSort" />
+              </UTooltip>
+              <h3>Oldest</h3>
+            </div>
+          </template>
+        </UDropdown>
+      </div>
+      <div v-if="isLoading" class="text-xl font-semibold">
+        <p>Loading...</p>
+      </div>
+      <div v-else-if="errorMessage">
+        <p>Error: {{ errorMessage }}</p>
+      </div>
+      <div v-else-if="filteredAreas.length === 0" class="w-full">
+        <p>No areas found, create some!</p>
+      </div>
+      <div v-else class="w-full overflow-y-scroll max-h-[64vh]">
+        <AreaCardContainer :areas="filteredAreas" />
       </div>
     </div>
   </div>
 </template>
 
-<style></style>
+<style scoped>
+p {
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+  color: black;
+  font-weight: 600;
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+</style>

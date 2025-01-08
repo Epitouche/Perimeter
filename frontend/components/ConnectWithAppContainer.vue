@@ -1,46 +1,36 @@
 <script setup lang="ts">
+import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import { fetchServices } from "~/utils/fetchServices";
+
 defineProps<{
   apps: string[];
 }>();
 
-interface OAuthLink {
-  authentication_url: string;
-}
+const services = ref<ServiceInfo[]>([]);
+const errorMessage = ref<string | null>(null);
 
-const authApiCall = async (label: string) => {
+onMounted(() => {
+  loadServices();
+});
+
+const loadServices = async () => {
   try {
-    const response = await $fetch<OAuthLink>("/api/auth/service/redirect", {
-      method: "POST",
-      body: {
-        link: label,
-      },
-    });
-    navigateTo(response.authentication_url, { external: true });
-    //console.log(response.authentication_url);
-    return response;
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error(err.message);
-    } else {
-      console.error("Unexpected error:", err);
-    }
-    throw err;
+    errorMessage.value = null;
+    services.value = await fetchServices();
+    console.log("services", services.value);
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error loading services:", error);
   }
 };
 
-const handleClick = (label: string) => {
-  if (label == "my-icons:color-spotify") {
-    console.log("Spotify icon clicked");
-    const spotifyApiLink = "http://server:8080/api/v1/spotify/auth/";
-    authApiCall(spotifyApiLink);
-  } else if (label === "my-icons:color-google") {
-    console.log("Google icon clicked");
-    const gmailApiLink = "http://server:8080/api/v1/gmail/auth/";
-    authApiCall(gmailApiLink);
-  } else {
-    console.log(`${label} unknown icon clicked`);
-  }
-};
+const filteredServices = computed(() =>
+  services.value
+    .filter((service) => service.oauth)
+    .map((service) => ({
+      name: service.name,
+    })),
+);
 </script>
 
 <template>
@@ -48,14 +38,7 @@ const handleClick = (label: string) => {
     :ui="{ padding: 'px-0' }"
     class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly"
   >
-    <UButton
-      variant="ghost"
-      v-for="(app, index) in apps"
-      :key="index"
-      @click="handleClick(app)"
-      :icon="app"
-      class="app_button basis-1/3 flex justify-center"
-    />
+    <ServiceList :apps="filteredServices" />
   </UContainer>
 </template>
 

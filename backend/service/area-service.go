@@ -3,19 +3,20 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
-	"github.com/gin-gonic/gin"
-
-	"area/repository"
-	"area/schemas"
+	"github.com/Epitouche/Perimeter/repository"
+	"github.com/Epitouche/Perimeter/schemas"
 )
 
 type AreaService interface {
-	FindAll() []schemas.Area
-	CreateArea(ctx *gin.Context) (string, error)
+	FindAll() (areas []schemas.Area, err error)
+	CreateArea(result schemas.AreaMessage, token string) (string, error)
 	InitArea(areaStartValue schemas.Area)
 	AreaExist(id uint64) bool
-	GetUserAreas(ctx *gin.Context) ([]schemas.Area, error)
+	GetUserAreas(token string) ([]schemas.Area, error)
+	UpdateUserArea(token string, areaToUpdate schemas.Area) (updatedArea schemas.Area, err error)
+	DeleteUserArea(token string, areaToDelete schemas.Area) (updatedArea schemas.Area, err error)
 }
 
 type areaService struct {
@@ -46,56 +47,92 @@ func NewAreaService(
 	return &newService
 }
 
-func (service *areaService) FindAll() []schemas.Area {
-	return service.repository.FindAll()
+func (service *areaService) FindAll() (areas []schemas.Area, err error) {
+	areas, err = service.repository.FindAll()
+	if err != nil {
+		return areas, fmt.Errorf("error when get all areas: %w", err)
+	}
+	return areas, nil
 }
 
-func (service *areaService) CreateArea(ctx *gin.Context) (string, error) {
-	println("CreateArea Service")
-	var result schemas.AreaMessage
+// compareMaps compares two maps for equality
+func compareMaps(map1, map2 map[string]interface{}) bool {
+	if len(map1) != len(map2) {
+		return false
+	}
+	for key, value1 := range map1 {
+		value2, ok := map2[key]
+		if !ok || reflect.TypeOf(value1) != reflect.TypeOf(value2) {
+			return false
+		}
+	}
+	return true
+}
 
-	fmt.Printf("\n\nctx.Request.Body %+v\n\n\n", ctx.Request.Body)
+func (service *areaService) CreateArea(result schemas.AreaMessage, token string) (string, error) {
+	var actionOption, reactionOption json.RawMessage
 
-	// respBody, _ := io.ReadAll(ctx.Request.Body)
-
-	// fmt.Printf("\n\nrespBody %+v\n\n\n", respBody)
-
-	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
-	if err != nil {
-		println(fmt.Errorf("can't bind credentials: %w", err))
-		return "", fmt.Errorf("can't bind credentials: %w", err)
+	if err := json.Unmarshal(result.ActionOption, &actionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal action option: %w", err)
 	}
 
-	fmt.Printf("\n\nresult %v\n\n\n", result)
-	fmt.Printf("\n\nresult %+v\n\n\n", result)
-
-	if result.ActionOption == "" {
-		return "", fmt.Errorf("empty action empty: %w", err)
+	if err := json.Unmarshal(result.ReactionOption, &reactionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal reaction option: %w", err)
 	}
 
-	if result.ReactionOption == "" {
-		return "", fmt.Errorf("empty reaction empty: %w", err)
-	}
-
-	authHeader := ctx.GetHeader("Authorization")
-	tokenString := authHeader[len("Bearer "):]
-
-	user, err := service.serviceUser.GetUserInfo(tokenString)
+	user, err := service.serviceUser.GetUserInfo(token)
 	if err != nil {
 		return "", fmt.Errorf("can't get user info: %w", err)
 	}
+
+	areaAction, err := service.actionService.FindById(result.ActionId)
+	if err != nil {
+		return "", fmt.Errorf("can't find action by id: %w", err)
+	}
+	areaReaction, err := service.reactionService.FindById(result.ReactionId)
+	if err != nil {
+		return "", fmt.Errorf("can't find reaction by id: %w", err)
+	}
+
+	// check if the json key are the same as default areaAction.Option, json value can be different
+	var defaultActionOption, providedActionOption map[string]interface{}
+	if err := json.Unmarshal(areaAction.Option, &defaultActionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal default action option: %w", err)
+	}
+	if err := json.Unmarshal(result.ActionOption, &providedActionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal provided action option: %w", err)
+	}
+	if !compareMaps(defaultActionOption, providedActionOption) {
+		return "", fmt.Errorf("action option does not match default option type")
+	}
+
+	var defaultReactionOption, providedReactionOption map[string]interface{}
+	if err := json.Unmarshal(areaReaction.Option, &defaultReactionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal default reaction option: %w", err)
+	}
+	if err := json.Unmarshal(result.ReactionOption, &providedReactionOption); err != nil {
+		return "", fmt.Errorf("can't unmarshal provided reaction option: %w", err)
+	}
+	if !compareMaps(defaultReactionOption, providedReactionOption) {
+		return "", fmt.Errorf("reaction option does not match default option type")
+	}
+
 	newArea := schemas.Area{
 		User:           user,
 		ActionOption:   result.ActionOption,
 		ReactionOption: result.ReactionOption,
+		Title:          result.Title,
+		Description:    result.Description,
 		Enable:         true,
-		Action:         service.actionService.FindById(result.ActionId),
-		Reaction:       service.reactionService.FindById(result.ReactionId),
+		Action:         areaAction,
+		Reaction:       areaReaction,
 	}
+
 	id, error := service.repository.SaveArea(newArea)
 	if error != nil {
 		return "", fmt.Errorf("can't save area: %w", error)
 	}
+
 	newArea.Id = id
 	service.InitArea(newArea)
 	return "Area created successfully", nil
@@ -108,7 +145,8 @@ func (service *areaService) AreaExist(id uint64) bool {
 
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	channelArea := make(chan string)
-	println("go routine action")
+	println("go routine action " + areaStartValue.Action.Name)
+	println("reaction " + areaStartValue.Reaction.Name)
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// get the action with the id
 		for service.AreaExist(areaStartValue.Id) {
@@ -123,6 +161,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				println("action not found")
 				return
 			}
+
 			if area.Enable {
 				action(channelArea, area.ActionOption, area.Id)
 			}
@@ -131,7 +170,7 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 		channelArea <- "response to clear"
 	}(areaStartValue, channelArea)
 	// area
-	println("go routine area")
+	fmt.Printf("go routine area %+v\n", areaStartValue)
 	go func(areaStartValue schemas.Area, channelArea chan string) {
 		// check if the area is in the databse
 		for service.AreaExist(areaStartValue.Id) {
@@ -140,7 +179,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 			if err != nil {
 				return
 			}
+
 			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
+
 			if area.Enable {
 				resultAction := <-channelArea
 				resultReaction := reaction(area.ReactionOption, area.Id)
@@ -155,14 +196,78 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	}(areaStartValue, channelArea)
 }
 
-func (service *areaService) GetUserAreas(ctx *gin.Context) ([]schemas.Area, error) {
-	authHeader := ctx.GetHeader("Authorization")
-	tokenString := authHeader[len("Bearer "):]
+// containsArea checks if a slice of areas contains a specific area
+func containsArea(areas []schemas.Area, area schemas.Area) bool {
+	for _, a := range areas {
+		if a.Id == area.Id {
+			return true
+		}
+	}
+	return false
+}
 
-	user, err := service.serviceUser.GetUserInfo(tokenString)
+func (service *areaService) GetUserAreas(token string) ([]schemas.Area, error) {
+	user, err := service.serviceUser.GetUserInfo(token)
 	if err != nil {
 		return nil, fmt.Errorf("can't get user info: %w", err)
 	}
-	areas := service.repository.FindByUserId(user.Id)
+	areas, err := service.repository.FindByUserId(user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("can't find areas by user id: %w", err)
+	}
 	return areas, nil
+}
+
+func (service *areaService) UpdateUserArea(
+	token string,
+	areaToUpdate schemas.Area,
+) (updatedArea schemas.Area, err error) {
+	user, err := service.serviceUser.GetUserInfo(token)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't get user info: %w", err)
+	}
+	userArea, err := service.repository.FindByUserId(user.Id)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+	}
+	areaToUpdateDatabase, err := service.repository.FindById(areaToUpdate.Id)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+	}
+	if containsArea(userArea, areaToUpdateDatabase) {
+		err = service.repository.Update(areaToUpdate)
+		if err != nil {
+			return updatedArea, fmt.Errorf("can't update area: %w", err)
+		}
+		return areaToUpdateDatabase, nil
+	} else {
+		return updatedArea, fmt.Errorf("area not found")
+	}
+}
+
+func (service *areaService) DeleteUserArea(
+	token string,
+	areaToDelete schemas.Area,
+) (updatedArea schemas.Area, err error) {
+	user, err := service.serviceUser.GetUserInfo(token)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't get user info: %w", err)
+	}
+	userArea, err := service.repository.FindByUserId(user.Id)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+	}
+	areaToUpdateDatabase, err := service.repository.FindById(areaToDelete.Id)
+	if err != nil {
+		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+	}
+	if containsArea(userArea, areaToUpdateDatabase) {
+		err = service.repository.Delete(areaToDelete)
+		if err != nil {
+			return updatedArea, fmt.Errorf("can't update area: %w", err)
+		}
+		return areaToUpdateDatabase, nil
+	} else {
+		return updatedArea, fmt.Errorf("area not found")
+	}
 }

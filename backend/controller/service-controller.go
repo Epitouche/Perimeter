@@ -2,12 +2,13 @@ package controller
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	"area/schemas"
-	"area/service"
+	"github.com/Epitouche/Perimeter/schemas"
+	"github.com/Epitouche/Perimeter/service"
 )
 
 type ServiceController interface {
@@ -39,6 +40,7 @@ func (controller *serviceController) AboutJSON(
 ) (aboutJSON schemas.AboutJSON, err error) {
 	allServicesJSON := []schemas.ServiceJSON{}
 	allServices := controller.service.FindAll()
+
 	for _, oneService := range allServices {
 		allServicesJSON = append(allServicesJSON, schemas.ServiceJSON{
 			Name:     schemas.ServiceName(oneService.Name),
@@ -47,17 +49,22 @@ func (controller *serviceController) AboutJSON(
 		})
 	}
 	aboutJSON.Client.Host = ctx.ClientIP()
-	aboutJSON.Server.CurrentTime = fmt.Sprintf("%d", time.Now().Unix())
+	aboutJSON.Server.CurrentTime = strconv.FormatInt(time.Now().Unix(), 10)
 	aboutJSON.Server.Services = allServicesJSON
 	return aboutJSON, nil
 }
 
 func (controller *serviceController) GetServicesInfo() (response []schemas.Service, err error) {
-	return controller.service.GetServicesInfo()
+	response, err = controller.service.GetServicesInfo()
+	if err != nil {
+		return nil, fmt.Errorf("can't get services info: %w", err)
+	}
+	return response, nil
 }
 
 func (controller *serviceController) GetServiceInfoById(
 	id uint64,
 ) (response schemas.Service, err error) {
-	return controller.service.GetServiceById(id), nil
+	response = controller.service.GetServiceById(id)
+	return response, nil
 }
