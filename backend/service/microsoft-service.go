@@ -30,6 +30,11 @@ type MicrosoftService interface {
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
+	MicrosoftActionReceiveMail(
+		channel chan string,
+		option json.RawMessage,
+		idArea uint64,
+	)
 	// Reactions functions
 	MicrosoftReactionSendMail(
 		option json.RawMessage,
@@ -75,7 +80,26 @@ func (service *microsoftService) GetServiceInfo() schemas.Service {
 }
 
 func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
+	service.actionName = append(service.actionName, string(schemas.ReceiveMicrosoftMail))
+	defaultValue := struct{}{}
+	option, err := json.Marshal(defaultValue)
+	if err != nil {
+		fmt.Println("Error marshalling default options:", err)
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Microsoft,
+	)
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
+	return []schemas.Action{
+		{
+			Name:        string(schemas.ReceiveMicrosoftMail),
+			Description: "Receive a mail using Microsoft services",
+			Service:     service.serviceInfo,
+			Option:      option,
+		},
+	}
 }
 
 func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
@@ -109,6 +133,8 @@ func (service *microsoftService) FindActionbyName(
 	name string,
 ) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
+	case string(schemas.ReceiveMicrosoftMail):
+		return service.MicrosoftActionReceiveMail
 	default:
 		return nil
 	}
@@ -231,6 +257,89 @@ func (service *microsoftService) GetUserInfo(
 	}
 
 	return user, nil
+}
+
+func (service *microsoftService) MicrosoftActionReceiveMail(
+	channel chan string,
+	option json.RawMessage,
+	idArea uint64,
+) {
+	println("MicrosoftActionReceiveMail")
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		println("error finding area: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil || token.Token == "" {
+		println("error retrieving token or token not found")
+		time.Sleep(time.Second)
+		return
+	}
+
+	apiURL := "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$orderby=receivedDateTime%20desc&$top=1"
+
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		println("error creating request: " + err.Error())
+		time.Sleep(time.Minute)
+		return
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		time.Sleep(time.Minute)
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		time.Sleep(time.Minute)
+		resp.Body.Close()
+		return
+	}
+
+	var emailResponse struct {
+		Value []struct {
+			ID      string `json:"id"`
+			Subject string `json:"subject"`
+			From    struct {
+				EmailAddress struct {
+					Address string `json:"address"`
+				} `json:"emailAddress"`
+			} `json:"from"`
+			ReceivedDateTime string `json:"receivedDateTime"`
+		} `json:"value"`
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
+	resp.Body.Close()
+	if err != nil {
+		println("error decoding response: " + err.Error())
+		time.Sleep(time.Minute)
+		return
+	}
+
+	if len(emailResponse.Value) > 0 {
+		latestEmail := emailResponse.Value[0]
+		response := fmt.Sprintf("New email received from %s: %s",
+			latestEmail.From.EmailAddress.Address,
+			latestEmail.Subject,
+		)
+
+		println(response)
+		channel <- response
+	}
+
+	time.Sleep(time.Minute)
 }
 
 func (service *microsoftService) MicrosoftReactionSendMail(
