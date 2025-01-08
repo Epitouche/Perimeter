@@ -37,9 +37,12 @@ type DropboxService interface {
 	GetUserFolderList(
 		folderAndFileList []schemas.DropboxEntry,
 	) (fileList []schemas.DropboxEntry)
-	GetUserFileCount(
+	CountDropboxEntry(
 		folderAndFileList []schemas.DropboxEntry,
 	) uint64
+	GetPathDisplayDropboxEntry(
+		folderAndFileList []schemas.DropboxEntry,
+	) (pathDisplay []string)
 	// Actions functions
 	// Reactions functions
 }
@@ -301,10 +304,19 @@ func (service *dropboxService) GetUserFolderList(
 	return fileList
 }
 
-func (service *dropboxService) GetUserFileCount(
+func (service *dropboxService) CountDropboxEntry(
 	folderAndFileList []schemas.DropboxEntry,
 ) uint64 {
 	return uint64(len(folderAndFileList))
+}
+
+func (service *dropboxService) GetPathDisplayDropboxEntry(
+	folderAndFileList []schemas.DropboxEntry,
+) (pathDisplay []string) {
+	for _, entry := range folderAndFileList {
+		pathDisplay = append(pathDisplay, entry.PathDisplay)
+	}
+	return pathDisplay
 }
 
 // Actions functions

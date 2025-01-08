@@ -14,7 +14,8 @@ type DropboxController interface {
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
-	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxEntry, err error)
+	GetUserFile(ctx *gin.Context) (userFile []string, err error)
+	GetUserFolder(ctx *gin.Context) (userFile []string, err error)
 }
 
 type dropboxController struct {
@@ -142,7 +143,7 @@ func (controller *dropboxController) GetUserInfo(
 
 func (controller *dropboxController) GetUserFile(
 	ctx *gin.Context,
-) (userFile []schemas.DropboxEntry, err error) {
+) (userFile []string, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
@@ -163,6 +164,39 @@ func (controller *dropboxController) GetUserFile(
 		return userFile, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userFile = controller.service.GetUserFileList(dropboxAllFolderAndFileList)
+	userFile = controller.service.GetPathDisplayDropboxEntry(
+		controller.service.GetUserFileList(dropboxAllFolderAndFileList),
+	)
+
+	return userFile, nil
+}
+
+func (controller *dropboxController) GetUserFolder(
+	ctx *gin.Context,
+) (userFile []string, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := controller.serviceUser.GetUserInfo(tokenString)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	DropboxToken, err := controller.serviceToken.GetTokenById(user.Id)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get token because %w", err)
+	}
+
+	dropboxAllFolderAndFileList, err := controller.service.GetUserAllFolderAndFileList(
+		DropboxToken.Token,
+	)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	userFile = controller.service.GetPathDisplayDropboxEntry(
+		controller.service.GetUserFolderList(dropboxAllFolderAndFileList),
+	)
+
 	return userFile, nil
 }
