@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -94,17 +92,6 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Router			/gmail/auth/callback/mobile [post]
 func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
-		bodyBytes, err := io.ReadAll(ctx.Request.Body)
-		if err != nil {
-			fmt.Printf("Failed to read body: %v\n", err)
-			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
-				Error: "Invalid request body",
-			})
-			return
-		}
-
-		// Print the body
-		fmt.Printf("body: %s\n", string(bodyBytes))
 		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{

@@ -13,7 +13,7 @@ async function HandleGoogleLogin(
     issuer: 'https://accounts.google.com',
     clientId: `${GMAIL_MOBILE_CLIENT_ID}.apps.googleusercontent.com`,
     redirectUrl: `com.googleusercontent.apps.${GMAIL_MOBILE_CLIENT_ID}:/oauth2redirect/google`,
-    scopes: ['openid', 'profile'],
+    scopes: ['https://mail.google.com/', 'profile', 'email'],
   };
 
   try {
