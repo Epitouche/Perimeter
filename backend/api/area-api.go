@@ -27,6 +27,8 @@ func NewAreaAPI(
 	}
 	api.CreateArea(apiRoutes)
 	api.GetUserAreas(apiRoutes)
+	api.UpdateUserArea(apiRoutes)
+	api.DeleteUserArea(apiRoutes)
 	return &api
 }
 
