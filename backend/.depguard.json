@@ -2,11 +2,11 @@
     "rules": [
         {
             "allowed": [
-                "github.com/Epitouche/Perimeter/api",
-                "github.com/Epitouche/Perimeter/test",
-                "github.com/Epitouche/Perimeter/service",
-                "github.com/Epitouche/Perimeter/controller",
-                "github.com/Epitouche/Perimeter/middlewares",
+                "area/api",
+                "area/test",
+                "area/service",
+                "area/controller",
+                "area/middlewares",
                 "github.com/swaggo/files",
                 "github.com/swaggo/gin-swagger",
                 "github.com/stretchr/testify/require",
@@ -29,11 +29,11 @@
         },
         {
             "allowed": [
-                "github.com/Epitouche/Perimeter/docs",
-                "github.com/Epitouche/Perimeter/api",
-                "github.com/Epitouche/Perimeter/service",
-                "github.com/Epitouche/Perimeter/controller",
-                "github.com/Epitouche/Perimeter/middlewares"
+                "area/docs",
+                "area/api",
+                "area/service",
+                "area/controller",
+                "area/middlewares"
             ],
             "packages": [
                 "main"
@@ -41,8 +41,8 @@
         },
         {
             "allowed": [
-                "github.com/Epitouche/Perimeter/controller",
-                "github.com/Epitouche/Perimeter/middlewares"
+                "area/controller",
+                "area/middlewares"
             ],
             "packages": [
                 "api"
@@ -50,7 +50,7 @@
         },
         {
             "allowed": [
-                "github.com/Epitouche/Perimeter/schmas"
+                "area/schmas"
             ],
             "packages": [
                 "tools"

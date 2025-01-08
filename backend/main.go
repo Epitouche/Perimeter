@@ -9,13 +9,13 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/Epitouche/Perimeter/api"
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/database"
-	"github.com/Epitouche/Perimeter/docs"
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/api"
+	"area/controller"
+	"area/database"
+	"area/docs"
+	"area/repository"
+	"area/schemas"
+	"area/service"
 )
 
 // ping godoc

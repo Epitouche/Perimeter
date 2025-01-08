@@ -3,8 +3,8 @@ package controller
 import (
 	"fmt"
 
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/schemas"
+	"area/service"
 )
 
 type ReactionController interface {

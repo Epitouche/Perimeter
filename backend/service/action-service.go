@@ -3,8 +3,8 @@ package service
 import (
 	"fmt"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 type ActionService interface {

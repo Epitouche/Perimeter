@@ -382,7 +382,50 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schemas.DropboxFile"
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/folder": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give user info of dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
                             }
                         }
                     },
@@ -735,6 +778,166 @@ const docTemplate = `{
                     "Gmail"
                 ],
                 "summary": "give user info of gmail",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/auth": {
+            "get": {
+                "description": "give url to authenticate with microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give url to authenticate with microsoft",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.AuthenticationURL"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/auth/callback": {
+            "post": {
+                "description": "give url to authenticate with microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give url to authenticate with microsoft",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/auth/callback/mobile": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give url to authenticate with microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give url to authenticate with microsoft",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/info": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give user info of microsoft",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1128,6 +1331,84 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/info/": {
+            "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user/info/all": {
             "get": {
                 "security": [
@@ -1301,8 +1582,10 @@ const docTemplate = `{
             "required": [
                 "action",
                 "action_option",
+                "description",
                 "reaction",
                 "reaction_option",
+                "title",
                 "user"
             ],
             "properties": {
@@ -1316,6 +1599,9 @@ const docTemplate = `{
                     }
                 },
                 "createdAt": {
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 },
                 "enable": {
@@ -1333,6 +1619,9 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "title": {
+                    "type": "string"
+                },
                 "update_at": {
                     "type": "string"
                 },
@@ -1345,7 +1634,9 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "action_option",
-                "reaction_option"
+                "description",
+                "reaction_option",
+                "title"
             ],
             "properties": {
                 "action_id": {
@@ -1358,6 +1649,9 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "description": {
+                    "type": "string"
+                },
                 "reaction_id": {
                     "description": "Foreign key for Reaction",
                     "type": "integer"
@@ -1367,6 +1661,9 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -1385,32 +1682,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "code": {
-                    "type": "string"
-                }
-            }
-        },
-        "schemas.DropboxFile": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "type": "string"
-                },
-                "destination": {
-                    "type": "string"
-                },
-                "file_count": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "is_open": {
-                    "type": "boolean"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "url": {
                     "type": "string"
                 }
             }
@@ -1518,7 +1789,8 @@ const docTemplate = `{
                 "Timer",
                 "Gmail",
                 "Github",
-                "Dropbox"
+                "Dropbox",
+                "Microsoft"
             ],
             "x-enum-varnames": [
                 "Spotify",
@@ -1526,7 +1798,8 @@ const docTemplate = `{
                 "Timer",
                 "Gmail",
                 "Github",
-                "Dropbox"
+                "Dropbox",
+                "Microsoft"
             ]
         },
         "schemas.Token": {

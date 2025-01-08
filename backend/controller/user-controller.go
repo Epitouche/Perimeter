@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/schemas"
+	"area/service"
 )
 
 type UserController interface {
@@ -164,26 +164,13 @@ func (controller *userController) DeleteUser(
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
-	var result schemas.User
-
-	err = json.NewDecoder(ctx.Request.Body).Decode(&result)
-	if err != nil {
-		println(fmt.Errorf("can't bind credentials: %w", err))
-		return updatedUser, fmt.Errorf("can't bind credentials: %w", err)
-	}
-
 	user, err := controller.userService.GetUserInfo(tokenString)
 	if err != nil {
 		return updatedUser, fmt.Errorf("unable to get user info because %w", err)
 	}
-
-	if result.Id == user.Id {
-		err = controller.userService.DeleteUser(result)
-		if err != nil {
-			return updatedUser, fmt.Errorf("unable to update user info because %w", err)
-		}
-		return result, nil
-	} else {
-		return updatedUser, errors.New("unable to update user info because not the right user")
+	err = controller.userService.DeleteUser(user)
+	if err != nil {
+		return updatedUser, fmt.Errorf("unable to delete user because %w", err)
 	}
+	return user, nil
 }

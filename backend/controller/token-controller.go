@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/Epitouche/Perimeter/service"
+	"area/service"
 )
 
 type TokenController interface{}

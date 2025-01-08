@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/controller"
+	"area/schemas"
 )
 
 type ServiceApi struct {

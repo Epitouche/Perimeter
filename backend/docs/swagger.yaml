@@ -33,6 +33,8 @@ definitions:
         type: array
       createdAt:
         type: string
+      description:
+        type: string
       enable:
         type: boolean
       id:
@@ -43,6 +45,8 @@ definitions:
         items:
           type: integer
         type: array
+      title:
+        type: string
       update_at:
         type: string
       user:
@@ -50,8 +54,10 @@ definitions:
     required:
     - action
     - action_option
+    - description
     - reaction
     - reaction_option
+    - title
     - user
     type: object
   schemas.AreaMessage:
@@ -63,6 +69,8 @@ definitions:
         items:
           type: integer
         type: array
+      description:
+        type: string
       reaction_id:
         description: Foreign key for Reaction
         type: integer
@@ -70,9 +78,13 @@ definitions:
         items:
           type: integer
         type: array
+      title:
+        type: string
     required:
     - action_option
+    - description
     - reaction_option
+    - title
     type: object
   schemas.AuthenticationURL:
     properties:
@@ -85,23 +97,6 @@ definitions:
         type: string
     required:
     - code
-    type: object
-  schemas.DropboxFile:
-    properties:
-      created:
-        type: string
-      destination:
-        type: string
-      file_count:
-        type: integer
-      id:
-        type: string
-      is_open:
-        type: boolean
-      title:
-        type: string
-      url:
-        type: string
     type: object
   schemas.ErrorResponse:
     properties:
@@ -175,6 +170,7 @@ definitions:
     - Gmail
     - Github
     - Dropbox
+    - Microsoft
     type: string
     x-enum-varnames:
     - Spotify
@@ -183,6 +179,7 @@ definitions:
     - Gmail
     - Github
     - Dropbox
+    - Microsoft
   schemas.Token:
     properties:
       created_at:
@@ -490,7 +487,34 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/schemas.DropboxFile'
+              type: string
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of dropbox
+      tags:
+      - Dropbox
+  /dropbox/folder:
+    get:
+      consumes:
+      - application/json
+      description: give user info of dropbox
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
             type: array
         "401":
           description: Unauthorized
@@ -734,6 +758,108 @@ paths:
       summary: give user info of gmail
       tags:
       - Gmail
+  /microsoft/auth:
+    get:
+      consumes:
+      - application/json
+      description: give url to authenticate with microsoft
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.AuthenticationURL'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give url to authenticate with microsoft
+      tags:
+      - Microsoft
+  /microsoft/auth/callback:
+    post:
+      consumes:
+      - application/json
+      description: give url to authenticate with microsoft
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: give url to authenticate with microsoft
+      tags:
+      - Microsoft
+  /microsoft/auth/callback/mobile:
+    post:
+      consumes:
+      - application/json
+      description: give url to authenticate with microsoft
+      parameters:
+      - description: Callback Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.CodeCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give url to authenticate with microsoft
+      tags:
+      - Microsoft
+  /microsoft/info:
+    get:
+      consumes:
+      - application/json
+      description: give user info of microsoft
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of microsoft
+      tags:
+      - Microsoft
   /ping:
     get:
       consumes:
@@ -957,6 +1083,55 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.UserCredentials'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of user
+      tags:
+      - User
+  /user/info/:
+    delete:
+      consumes:
+      - application/json
+      description: give user info of user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: give user info of user
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: give user info of user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.User'
         "401":
           description: Unauthorized
           schema:

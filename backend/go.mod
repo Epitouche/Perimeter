@@ -1,4 +1,4 @@
-module github.com/Epitouche/Perimeter
+module area
 
 go 1.23
 

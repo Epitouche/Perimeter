@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Epitouche/Perimeter/database"
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/database"
+	"area/repository"
+	"area/schemas"
 )
 
 type UserService interface {

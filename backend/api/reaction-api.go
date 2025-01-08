@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/middlewares"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/controller"
+	"area/middlewares"
+	"area/schemas"
+	"area/service"
 )
 
 type ReactionApi struct {

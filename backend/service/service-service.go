@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/tools"
+	"area/repository"
+	"area/schemas"
+	"area/tools"
 )
 
 type ServiceService interface {

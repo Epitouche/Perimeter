@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 // Constructor

@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/schemas"
 )
 
 type ServiceRepository interface {
