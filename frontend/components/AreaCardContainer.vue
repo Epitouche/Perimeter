@@ -75,8 +75,12 @@ onMounted(() => {
       <UContainer 
       :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
-        :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)">
-        <h2 class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full">
+        :style="{ backgroundColor: area.action.service.color }"
+        @click="toggleAreaModal(area.id)"
+      >
+        <h2
+          class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
+        >
           {{ formatName(area.action.name) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
@@ -94,20 +98,38 @@ onMounted(() => {
           :style="{ backgroundColor: area.action.service.color }">
           <div class="flex flex-row justify-between pb-2 w-full">
             <h2 class="text-6xl text-center w-full"><b>Temp title</b></h2>
-            <UButton variant="ghost" class="self-end w-fit" @click="toggleAreaModal(area.id)">
+            <UButton
+              variant="ghost"
+              class="self-end w-fit"
+              @click="toggleAreaModal(area.id)"
+            >
               <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
             </UButton>
           </div>
-          <div class="capitalize self-start flex flex-row items-center text-5xl gap-5">
-            <img :src="area.action.service.icon" :alt="area.action.service.name" class="w-16 h-16 p-0">
+          <div
+            class="capitalize self-start flex flex-row items-center text-5xl gap-5"
+          >
+            <img
+              :src="area.action.service.icon"
+              :alt="area.action.service.name"
+              class="w-16 h-16 p-0"
+            />
             <p>
-              <b>{{ area.action.service.name }}</b>: {{ formatName(area.action.name) }}
+              <b>{{ area.action.service.name }}</b
+              >: {{ formatName(area.action.name) }}
             </p>
           </div>
-          <div class="capitalize self-start flex flex-row items-center text-5xl gap-5">
-            <img :src="area.reaction.service.icon" :alt="area.reaction.service.name" class="w-16 h-16 p-0">
+          <div
+            class="capitalize self-start flex flex-row items-center text-5xl gap-5"
+          >
+            <img
+              :src="area.reaction.service.icon"
+              :alt="area.reaction.service.name"
+              class="w-16 h-16 p-0"
+            />
             <p>
-              <b>{{ area.reaction.service.name }}</b>:
+              <b>{{ area.reaction.service.name }}</b
+              >:
               {{ formatName(area.reaction.name) }}
             </p>
           </div>
