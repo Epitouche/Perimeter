@@ -31,7 +31,7 @@ async function HandleSpotifyLogin(
       );
     } else {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback`,
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/`,
         result,
       );
     }
