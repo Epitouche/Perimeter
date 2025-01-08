@@ -3,7 +3,7 @@ import { handleError } from "~/utils/handleErrors";
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);
-    if (!params.token || !params.area) {
+    if (!params.token || !params.areaId) {
       throw createError({
         statusCode: 400,
         message: "Missing parameters",
@@ -14,7 +14,9 @@ export default defineEventHandler(async (event) => {
       headers: {
         Authorization: "Bearer " + params.token,
       },
-      body: params.area,
+      body: {
+        id: params.areaId,
+      }
     });
     return response;
   } catch (error: unknown) {
