@@ -125,7 +125,7 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20 mt-4"
-      >
+      />
 
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
         app.name
