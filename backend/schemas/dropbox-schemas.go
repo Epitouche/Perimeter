@@ -70,6 +70,44 @@ type DropboxListFileRequestsV2Result struct {
 	HasMore      bool          `json:"has_more"`
 }
 
+type DropboxEntry struct {
+	Tag            string    `json:".tag"`
+	ClientModified time.Time `json:"client_modified,omitempty"`
+	ContentHash    string    `json:"content_hash,omitempty"`
+	FileLockInfo   struct {
+		Created        time.Time `json:"created"`
+		IsLockholder   bool      `json:"is_lockholder"`
+		LockholderName string    `json:"lockholder_name"`
+	} `json:"file_lock_info,omitempty"`
+	HasExplicitSharedMembers bool   `json:"has_explicit_shared_members,omitempty"`
+	ID                       string `json:"id"`
+	IsDownloadable           bool   `json:"is_downloadable,omitempty"`
+	Name                     string `json:"name"`
+	PathDisplay              string `json:"path_display"`
+	PathLower                string `json:"path_lower"`
+	PropertyGroups           []struct {
+		Fields []struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		} `json:"fields"`
+		TemplateID string `json:"template_id"`
+	} `json:"property_groups"`
+	Rev            string    `json:"rev,omitempty"`
+	ServerModified time.Time `json:"server_modified,omitempty"`
+	SharingInfo    struct {
+		ModifiedBy           string `json:"modified_by"`
+		ParentSharedFolderID string `json:"parent_shared_folder_id"`
+		ReadOnly             bool   `json:"read_only"`
+	} `json:"sharing_info"`
+	Size int `json:"size,omitempty"`
+}
+
+type DropboxListFolderResult struct {
+	Cursor  string         `json:"cursor"`
+	Entries []DropboxEntry `json:"entries"`
+	HasMore bool           `json:"has_more"`
+}
+
 type DropboxCountFileRequestsResult struct {
 	FileRequestCount uint64 `json:"file_request_count"`
 }
