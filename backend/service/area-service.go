@@ -16,7 +16,10 @@ type AreaService interface {
 	AreaExist(id uint64) bool
 	GetUserAreas(token string) ([]schemas.Area, error)
 	UpdateUserArea(token string, areaToUpdate schemas.Area) (updatedArea schemas.Area, err error)
-	DeleteUserArea(token string, areaToDelete struct{ Id uint64 }) (updatedArea schemas.Area, err error)
+	DeleteUserArea(
+		token string,
+		areaToDelete struct{ Id uint64 },
+	) (updatedArea schemas.Area, err error)
 }
 
 type areaService struct {
