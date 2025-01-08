@@ -244,7 +244,11 @@ func (service *dropboxService) GetUserFileList(
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
 		errorBody, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("unexpected status code: %d, response: %s", resp.StatusCode, string(errorBody))
+		return nil, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
 	println("Response status code: ", resp.StatusCode)
