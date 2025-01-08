@@ -66,12 +66,12 @@ onMounted(() => {
           :src="area.action.service.icon"
           :alt="area.action.service.name"
           class="w-16 h-16 p-0 self-start"
-        />
+        >
         <img
           :src="area.reaction.service.icon"
           :alt="area.reaction.service.name"
           class="w-16 h-16 p-0 self-end"
-        />
+        >
       </UContainer>
       <UModal
         v-model="areaIsOpen[area.id]"
@@ -100,7 +100,7 @@ onMounted(() => {
               :src="area.action.service.icon"
               :alt="area.action.service.name"
               class="w-16 h-16 p-0"
-            />
+            >
             <p>
               <b>{{ area.action.service.name }}</b
               >: {{ formatName(area.action.name) }}
@@ -113,7 +113,7 @@ onMounted(() => {
               :src="area.reaction.service.icon"
               :alt="area.reaction.service.name"
               class="w-16 h-16 p-0"
-            />
+            >
             <p>
               <b>{{ area.reaction.service.name }}</b
               >:
