@@ -14,7 +14,7 @@ type DropboxController interface {
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
-	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error)
+	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxEntry, err error)
 }
 
 type dropboxController struct {
@@ -44,7 +44,7 @@ func (controller *dropboxController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Dropbox,
 		"https://www.dropbox.com/oauth2/authorize",
-		"account_info.read profile email openid",
+		"account_info.read files.content.read files.metadata.read profile email openid",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
@@ -138,7 +138,7 @@ func (controller *dropboxController) GetUserInfo(
 
 func (controller *dropboxController) GetUserFile(
 	ctx *gin.Context,
-) (userFile []schemas.DropboxFile, err error) {
+) (userFile []schemas.DropboxEntry, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -27,7 +28,7 @@ type DropboxService interface {
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
-	GetUserFileList(userDropboxToken string) (fileList []schemas.DropboxFile, err error)
+	GetUserFileList(userDropboxToken string) (fileList []schemas.DropboxEntry, err error)
 	// Actions functions
 	// Reactions functions
 }
@@ -213,37 +214,50 @@ func (service *dropboxService) GetUserInfo(
 
 func (service *dropboxService) GetUserFileList(
 	userDropboxToken string,
-) (fileList []schemas.DropboxFile, err error) {
+) (fileList []schemas.DropboxEntry, err error) {
 	ctx := context.Background()
 
-	reqBody := `{"limit": 100}`
+	// Prepare the request body
+	reqBody := `{"path": "","recursive": true}`
 
+	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/list_v2",
+		"https://api.dropboxapi.com/2/files/list_folder",
 		strings.NewReader(reqBody),
 	)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to create request because %w", err)
+		return nil, fmt.Errorf("unable to create request: %w", err)
 	}
 
+	// Set the Authorization header
 	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+	req.Header.Set("Content-Type", "application/json")
 
 	// Make the request using the default HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to make request because %w", err)
+		return nil, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status code: %d, response: %s", resp.StatusCode, string(errorBody))
 	}
 
-	result := schemas.DropboxListFileRequestsV2Result{}
+	println("Response status code: ", resp.StatusCode)
+
+	// Decode the JSON response into the result struct
+	result := schemas.DropboxListFolderResult{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to decode response because %w", err)
+		return nil, fmt.Errorf("unable to decode response: %w", err)
 	}
 
-	resp.Body.Close()
-
-	fileList = append(fileList, result.FileRequests...)
+	// Append the retrieved files to the file list
+	fileList = append(fileList, result.Entries...)
 
 	return fileList, nil
 }
