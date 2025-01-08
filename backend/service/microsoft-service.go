@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Epitouche/Perimeter/repository"
@@ -62,7 +63,7 @@ func NewMicrosoftService(
 			Description: "This service is used to interact with Microsoft services",
 			Oauth:       true,
 			Color:       "#001DDA",
-			Icon:        "https://api.iconify.design/mdi:discord.svg?color=%23FFFFFF",
+			Icon:        "https://api.iconify.design/mdi:microsoft.svg?color=%23FFFFFF",
 		},
 	}
 }
@@ -97,7 +98,7 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMicrosoftMail),
-			Description: "Send a message to a user in Discord",
+			Description: "Send a mail using Microsoft services",
 			Service:     service.serviceInfo,
 			Option:      option,
 		},
@@ -132,19 +133,12 @@ func (service *microsoftService) GetReactionsName() []string {
 	return service.reactionName
 }
 
-// Service specific functions
-
 func (service *microsoftService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("DISCORD_CLIENT_ID")
+	clientID := os.Getenv("MICROSOFT_CLIENT_ID")
 	if clientID == "" {
-		return schemas.Token{}, schemas.ErrDropboxClientIdNotSet
-	}
-
-	clientSecret := os.Getenv("DISCORD_SECRET")
-	if clientSecret == "" {
-		return schemas.Token{}, schemas.ErrDropboxSecretNotSet
+		return schemas.Token{}, schemas.ErrMicrosoftClientIdNotSet
 	}
 
 	appPort := os.Getenv("BACKEND_PORT")
@@ -152,23 +146,22 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrBackendPortNotSet
 	}
 
-	redirectURI := "http://localhost:8081/services/discord"
+	redirectURI := "http://localhost:8081/services/microsoft"
 
-	apiURL := "https://discord.com/api/v8/oauth2/token"
+	apiURL := "https://login.microsoftonline.com/common/oauth2/v2.0/token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
-	data.Set("client_secret", clientSecret)
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
 	data.Set("grant_type", "authorization_code")
 
-	req, err := http.NewRequest(http.MethodPost, apiURL, nil)
+	req, err := http.NewRequest(http.MethodPost, apiURL, strings.NewReader(data.Encode()))
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
 	}
 
-	req.URL.RawQuery = data.Encode()
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 
 	client := &http.Client{}
@@ -176,21 +169,20 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
+	defer resp.Body.Close()
 
-	var result schemas.DropboxTokenResponse
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	bodyBytes, _ := io.ReadAll(resp.Body)
+	fmt.Println("response body: ", string(bodyBytes))
+
+	var result schemas.MicrosoftTokenResponse
+	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf(
-			"unable to decode response because %w",
-			err,
-		)
+		return schemas.Token{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	if (result.AccessToken == "") || (result.TokenType == "") {
+	if result.AccessToken == "" || result.TokenType == "" {
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
-
-	resp.Body.Close()
 
 	token = schemas.Token{
 		Token:        result.AccessToken,

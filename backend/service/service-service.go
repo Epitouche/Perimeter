@@ -125,7 +125,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 			return "", schemas.ErrDropboxClientIdNotSet
 		}
 	case schemas.Microsoft:
-		clientID = os.Getenv("MICROSOFT_MOBILE_ID")
+		clientID = os.Getenv("MICROSOFT_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrMicrosoftClientIdNotSet
 		}

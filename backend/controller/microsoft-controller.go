@@ -43,7 +43,7 @@ func (controller *microsoftController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Microsoft,
 		"https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-		"identify email",
+		"Mail.ReadWrite, User.Read, Mail.Send, offline_access",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
@@ -79,7 +79,7 @@ func (controller *microsoftController) HandleServiceCallback(
 	bearer, err := controller.serviceService.HandleServiceCallback(
 		code,
 		authHeader,
-		schemas.Dropbox,
+		schemas.Microsoft,
 		controller.service.AuthGetServiceAccessToken,
 		controller.serviceUser,
 		controller.service.GetUserInfo,
@@ -128,13 +128,13 @@ func (controller *microsoftController) GetUserInfo(
 		return userInfo, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	discordUserInfo, err := controller.service.GetUserInfo(token.Token)
+	microsoftUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
 		println("error 3")
 		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userInfo.Email = discordUserInfo.Email
-	userInfo.Username = discordUserInfo.Username
+	userInfo.Email = microsoftUserInfo.Email
+	userInfo.Username = microsoftUserInfo.Username
 	return userInfo, nil
 }
