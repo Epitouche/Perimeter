@@ -99,7 +99,11 @@ func (controller *githubController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		authHeader,
 		schemas.Github,
 		credentials,
 		controller.serviceUser,

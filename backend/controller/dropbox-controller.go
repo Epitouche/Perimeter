@@ -14,7 +14,7 @@ type DropboxController interface {
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
-	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error)
+	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxEntry, err error)
 }
 
 type dropboxController struct {
@@ -44,7 +44,7 @@ func (controller *dropboxController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Dropbox,
 		"https://www.dropbox.com/oauth2/authorize",
-		"account_info.read profile email openid",
+		"account_info.read files.content.read files.metadata.read profile email openid",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
@@ -100,7 +100,11 @@ func (controller *dropboxController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		authHeader,
 		schemas.Dropbox,
 		credentials,
 		controller.serviceUser,
@@ -138,7 +142,7 @@ func (controller *dropboxController) GetUserInfo(
 
 func (controller *dropboxController) GetUserFile(
 	ctx *gin.Context,
-) (userFile []schemas.DropboxFile, err error) {
+) (userFile []schemas.DropboxEntry, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
@@ -152,11 +156,13 @@ func (controller *dropboxController) GetUserFile(
 		return userFile, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	dropboxFile, err := controller.service.GetUserFileList(DropboxToken.Token)
+	dropboxAllFolderAndFileList, err := controller.service.GetUserAllFolderAndFileList(
+		DropboxToken.Token,
+	)
 	if err != nil {
 		return userFile, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userFile = dropboxFile
+	userFile = controller.service.GetUserFileList(dropboxAllFolderAndFileList)
 	return userFile, nil
 }

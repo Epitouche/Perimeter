@@ -11,14 +11,6 @@ const errorMessage = ref<string | null>(null);
 const services = ref<ServiceInfo[]>([]);
 const searchQuery = ref("");
 
-const apps = computed(() =>
-  services.value
-    .filter((service) => service.oauth)
-    .map((service) => ({
-      name: service.name,
-    })),
-);
-
 onMounted(() => {
   loadServices();
 });
@@ -35,7 +27,7 @@ const loadServices = async () => {
 };
 
 const filteredApps = computed(() => {
-  return apps.value.filter((app) => app.name.includes(searchQuery.value));
+  return services.value.filter((app) => app.name.includes(searchQuery.value));
 });
 </script>
 

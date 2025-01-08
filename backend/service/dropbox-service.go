@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -27,7 +28,18 @@ type DropboxService interface {
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
-	GetUserFileList(userDropboxToken string) (fileList []schemas.DropboxFile, err error)
+	GetUserAllFolderAndFileList(
+		userDropboxToken string,
+	) (fileList []schemas.DropboxEntry, err error)
+	GetUserFileList(
+		folderAndFileList []schemas.DropboxEntry,
+	) (fileList []schemas.DropboxEntry)
+	GetUserFolderList(
+		folderAndFileList []schemas.DropboxEntry,
+	) (fileList []schemas.DropboxEntry)
+	GetUserFileCount(
+		folderAndFileList []schemas.DropboxEntry,
+	) uint64
 	// Actions functions
 	// Reactions functions
 }
@@ -177,8 +189,8 @@ func (service *dropboxService) GetUserInfo(
 	ctx := context.Background()
 
 	// Create a new HTTP request
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
-		"https://api.dropboxapi.com/2/users/get_account",
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.dropboxapi.com/2/users/get_current_account",
 		nil,
 	)
 	if err != nil {
@@ -211,73 +223,88 @@ func (service *dropboxService) GetUserInfo(
 	return user, nil
 }
 
-func (service *dropboxService) GetUserFileList(
+func (service *dropboxService) GetUserAllFolderAndFileList(
 	userDropboxToken string,
-) (fileList []schemas.DropboxFile, err error) {
+) (folderAndFileList []schemas.DropboxEntry, err error) {
 	ctx := context.Background()
 
-	reqBody := `{"limit": 100}`
+	// Prepare the request body
+	reqBody := `{"path": "","recursive": true}`
 
+	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/list_v2",
+		"https://api.dropboxapi.com/2/files/list_folder",
 		strings.NewReader(reqBody),
 	)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to create request because %w", err)
+		return nil, fmt.Errorf("unable to create request: %w", err)
 	}
 
+	// Set the Authorization header
 	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+	req.Header.Set("Content-Type", "application/json")
 
 	// Make the request using the default HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to make request because %w", err)
+		return nil, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
-	result := schemas.DropboxListFileRequestsV2Result{}
+	println("Response status code: ", resp.StatusCode)
+
+	// Decode the JSON response into the result struct
+	result := schemas.DropboxListFolderResult{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to decode response because %w", err)
+		return nil, fmt.Errorf("unable to decode response: %w", err)
 	}
 
-	resp.Body.Close()
+	// Append the retrieved files to the file list
+	folderAndFileList = result.Entries
 
-	fileList = append(fileList, result.FileRequests...)
+	return folderAndFileList, nil
+}
 
-	return fileList, nil
+func (service *dropboxService) GetUserFileList(
+	folderAndFileList []schemas.DropboxEntry,
+) (fileList []schemas.DropboxEntry) {
+	for _, entry := range folderAndFileList {
+		if entry.Tag == "file" {
+			fileList = append(fileList, entry)
+		}
+	}
+
+	return fileList
+}
+
+func (service *dropboxService) GetUserFolderList(
+	folderAndFileList []schemas.DropboxEntry,
+) (fileList []schemas.DropboxEntry) {
+	for _, entry := range folderAndFileList {
+		if entry.Tag == "folder" {
+			fileList = append(fileList, entry)
+		}
+	}
+
+	return fileList
 }
 
 func (service *dropboxService) GetUserFileCount(
-	userDropboxToken string,
-) (numberFile uint64, err error) {
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/count", nil,
-	)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to create request because %w", err)
-	}
-
-	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
-
-	// Make the request using the default HTTP client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to make request because %w", err)
-	}
-
-	result := schemas.DropboxCountFileRequestsResult{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to decode response because %w", err)
-	}
-
-	resp.Body.Close()
-
-	numberFile = result.FileRequestCount
-	return numberFile, nil
+	folderAndFileList []schemas.DropboxEntry,
+) uint64 {
+	return uint64(len(folderAndFileList))
 }
 
 // Actions functions
