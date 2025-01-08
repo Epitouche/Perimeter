@@ -5,6 +5,11 @@ const props = defineProps<{
   areas: Area[];
 }>();
 
+const token = useCookie("token");
+const errorMessage = ref<string | null>(null);
+
+const componentKey = ref(0);
+
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
 );
@@ -21,14 +26,32 @@ const toggleConfirmDeletionModal = (areaId: number) => {
   confirmDeletionIsOpen[areaId] = !confirmDeletionIsOpen[areaId];
 };
 
-const onDelete = (areaId: number) => {
+const onDelete = async (areaId: number) => {
   if (confirmDeletionIsOpen[areaId]) {
-    console.log("Delete area here", areaId);
+    try {
+      errorMessage.value = null;
+      const response = await $fetch("/api/area/delete", {
+        method: "POST",
+        body: {
+          token: token.value,
+          areaId: areaId,
+        },
+      });
+      console.log("response:", response);
+    } catch (error: unknown) {
+      console.log("error:", error);
+      errorMessage.value = handleErrorStatus(error);
+      if (errorMessage.value === "An unknown error occurred") {
+        console.error("An unknown error occurred", error);
+      }
+    }
     toggleConfirmDeletionModal(areaId);
+    componentKey.value += 1;
     return;
   }
   toggleConfirmDeletionModal(areaId);
   toggleAreaModal(areaId);
+  return;
 };
 
 const cancelDeletion = (areaId: number) => {
@@ -41,12 +64,13 @@ function formatName(name: string): string {
 }
 
 onMounted(() => {
-  console.log("areas", props.areas);
+  console.log("areas in AreaCardContainer", props.areas);
 });
 </script>
 
 <template>
   <UContainer
+    :key="componentKey"
     :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
     class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full"
   >
@@ -58,20 +82,22 @@ onMounted(() => {
         @click="toggleAreaModal(area.id)"
       >
         <h2
-          class="clamp-2-lines capitalize text-4xl text-center break-words w-full pb-6"
+          class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
         >
           {{ formatName(area.action.name) }}
         </h2>
-        <img
-          :src="area.action.service.icon"
-          :alt="area.action.service.name"
-          class="w-16 h-16 p-0 self-start"
-        >
-        <img
-          :src="area.reaction.service.icon"
-          :alt="area.reaction.service.name"
-          class="w-16 h-16 p-0 self-end"
-        >
+        <div class="grid place-items-center h-36 relative w-full">
+          <img
+            :src="area.action.service.icon"
+            :alt="area.action.service.name"
+            class="w-24 h-24 p-0 absolute top-1 left-12"
+          />
+          <img
+            :src="area.reaction.service.icon"
+            :alt="area.reaction.service.name"
+            class="w-24 h-24 p-0 absolute bottom-0 right-12"
+          />
+        </div>
       </UContainer>
       <UModal
         v-model="areaIsOpen[area.id]"
@@ -100,7 +126,8 @@ onMounted(() => {
               :src="area.action.service.icon"
               :alt="area.action.service.name"
               class="w-16 h-16 p-0"
-            >
+            />
+            />
             <p>
               <b>{{ area.action.service.name }}</b
               >: {{ formatName(area.action.name) }}
@@ -113,7 +140,8 @@ onMounted(() => {
               :src="area.reaction.service.icon"
               :alt="area.reaction.service.name"
               class="w-16 h-16 p-0"
-            >
+            />
+            />
             <p>
               <b>{{ area.reaction.service.name }}</b
               >:
