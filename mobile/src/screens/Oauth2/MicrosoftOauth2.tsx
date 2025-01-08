@@ -12,7 +12,7 @@ async function HandleMicrosoftLogin(
   const config: AuthConfiguration = {
     clientId: MICROSOFT_CLIENT_ID,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['Mail.ReadWrite', 'User.Read', 'Mail.Send', 'offline_access'],
+    scopes: ['Mail.ReadWrite', 'Mail.Read', 'User.Read', 'Mail.Send', 'offline_access'],
     serviceConfiguration: {
       authorizationEndpoint:
         'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',

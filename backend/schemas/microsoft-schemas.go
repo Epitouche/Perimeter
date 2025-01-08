@@ -4,6 +4,10 @@ import "errors"
 
 type MicrosoftAction string
 
+const (
+	ReceiveMicrosoftMail MicrosoftAction = "ReceiveMicrosoftMail"
+)
+
 type MicrosoftReaction string
 
 const (
