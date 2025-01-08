@@ -76,7 +76,7 @@ func (controller *areaController) UpdateUserArea(
 func (controller *areaController) DeleteUserArea(
 	ctx *gin.Context,
 ) (newArea schemas.Area, err error) {
-	var result schemas.Area
+	var result struct{ Id uint64 }
 
 	err = json.NewDecoder(ctx.Request.Body).Decode(&result)
 	if err != nil {

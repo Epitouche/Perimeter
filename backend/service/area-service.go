@@ -16,7 +16,10 @@ type AreaService interface {
 	AreaExist(id uint64) bool
 	GetUserAreas(token string) ([]schemas.Area, error)
 	UpdateUserArea(token string, areaToUpdate schemas.Area) (updatedArea schemas.Area, err error)
-	DeleteUserArea(token string, areaToDelete schemas.Area) (updatedArea schemas.Area, err error)
+	DeleteUserArea(
+		token string,
+		areaToDelete struct{ Id uint64 },
+	) (updatedArea schemas.Area, err error)
 }
 
 type areaService struct {
@@ -247,7 +250,7 @@ func (service *areaService) UpdateUserArea(
 
 func (service *areaService) DeleteUserArea(
 	token string,
-	areaToDelete schemas.Area,
+	areaToDelete struct{ Id uint64 },
 ) (updatedArea schemas.Area, err error) {
 	user, err := service.serviceUser.GetUserInfo(token)
 	if err != nil {
@@ -262,7 +265,7 @@ func (service *areaService) DeleteUserArea(
 		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
 	}
 	if containsArea(userArea, areaToUpdateDatabase) {
-		err = service.repository.Delete(areaToDelete)
+		err = service.repository.Delete(areaToUpdateDatabase)
 		if err != nil {
 			return updatedArea, fmt.Errorf("can't update area: %w", err)
 		}
