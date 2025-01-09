@@ -38,3 +38,8 @@ func (m *MockUserService) GetUserInfo(token string) (schemas.User, error) {
 	args := m.Called(token)
 	return args.Get(0).(schemas.User), args.Error(1)
 }
+
+func (m *MockUserService) DeleteUser(newUser schemas.User) (err error) {
+	args := m.Called(newUser)
+	return args.Error(1)
+}
