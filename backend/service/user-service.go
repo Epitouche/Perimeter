@@ -93,7 +93,10 @@ func (service *userService) Register(
 		newUser.Password = hashedPassword
 	}
 
-	service.repository.Save(newUser)
+	err = service.repository.Save(newUser)
+	if err != nil {
+		return "", 0, err
+	}
 
 	userTemp, err := service.repository.FindByUserName(newUser.Username)
 	if err != nil {

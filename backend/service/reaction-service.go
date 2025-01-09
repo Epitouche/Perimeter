@@ -68,7 +68,10 @@ func (service *reactionService) SaveAllReaction() {
 					println("Error when find reaction by name")
 				}
 				if len(reactionByName) == 0 {
-					service.repository.Save(reaction)
+					err = service.repository.Save(reaction)
+					if err != nil {
+						println("Error when save reaction")
+					}
 				}
 			}
 		} else {

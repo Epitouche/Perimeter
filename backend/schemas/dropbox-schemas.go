@@ -9,6 +9,10 @@ type DropboxAction string
 
 type DropboxReaction string
 
+const (
+	SaveUrl DropboxReaction = "SaveUrl"
+)
+
 // DropboxTokenResponse represents the response from Dropbox when a token is requested.
 type DropboxTokenResponse struct {
 	AccessToken  string `json:"access_token"`
@@ -110,4 +114,9 @@ type DropboxListFolderResult struct {
 
 type DropboxCountFileRequestsResult struct {
 	FileRequestCount uint64 `json:"file_request_count"`
+}
+
+type DropboxSaveUrlReactionOption struct {
+	Path string `json:"path"`
+	URL  string `json:"url"`
 }
