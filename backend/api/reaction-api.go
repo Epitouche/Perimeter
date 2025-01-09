@@ -37,12 +37,12 @@ func NewReactionApi(
 //	@Tags			Reaction
 //	@Accept			json
 //	@Produce		json
-//	@Security	bearerAuth
-//	@Param		id	path		int	true	"Service ID"
-//	@Success	200	{object}	[]schemas.Reaction
-//	@Failure	401	{object}	schemas.ErrorResponse
-//	@Failure	500	{object}	schemas.ErrorResponse
-//	@Router		/reaction/info/:id [get]
+//	@Security		bearerAuth
+//	@Param			id	path		int	true	"Service ID"
+//	@Success		200	{object}	[]schemas.Reaction
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/reaction/info/:id [get]
 func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
