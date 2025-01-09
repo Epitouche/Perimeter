@@ -20,12 +20,13 @@ export const authApiCall = async (label: string) => {
   }
 };
 
-export const disconnectService = async (tokenId: string, token: string) => {
+export const disconnectService = async (token: string, tokenId: number, ) => {
   try {
+    console.log("Infos: ", token, " with : ", tokenId);
     const response = await $fetch("/api/auth/service/disconnection", {
       method: "POST",
       body: {
-        token: token,
+        authorization: token,
         tokenId: tokenId,
       },
     });
@@ -43,18 +44,17 @@ export const handleClick = (
   token: string
 ) => {
   const serviceNames = services.value.map((service) => service.name);
-
-  // Trouver le tokenId correspondant au service
-  const matchingToken = tokens.value.find((t) => t.service.name === label);
-
+  let matchingToken;
+  if (tokens && token) {
+    matchingToken = tokens.value.find((t) => t.service.name === label);
+  }
   if (matchingToken) {
-    console.log(`Disconnecting service: ${label}`);
-    disconnectService(matchingToken, token); // Envoie tokenId et token
+    const serviceId = matchingToken.service.id;
+    disconnectService(token, Number(serviceId));
   } else {
     const apiLink = `http://server:8080/api/v1/${label.toLowerCase()}/auth/`;
-
+    
     if (serviceNames.includes(label)) {
-      console.log(`Service "${label}" exists, initiating auth API call.`);
       authApiCall(apiLink);
     } else {
       console.log(`Unknown service "${label}" clicked.`);

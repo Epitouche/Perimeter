@@ -19,21 +19,20 @@ const serviceConnected = ref<string[]>([]);
 const tokens = ref<Token[]>([]);
 
 onMounted(() => {
-  loadTokens();
+  loadConnectionInfos();
   loadServices();
 });
 
-async function loadTokens() {
+async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
       tokens.value = await servicesConnectionInfos(tokenCookie.value);
       serviceConnected.value = tokens.value.map((token) => token.service.name);
+      isLoading.value = false;
       // console.log("Tokens received:", tokens.value);
     }
   } catch (error) {
     console.error("Error loading tokens:", error);
-  } finally {
-    isLoading.value = false;
   }
 }
 
@@ -41,7 +40,6 @@ const loadServices = async () => {
   try {
     errorMessage.value = null;
     services.value = await fetchServices();
-    console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading services:", error);
@@ -85,7 +83,7 @@ const getServiceDetails = (appName: string) =>
   serviceDetails.value.find((service) => service.name === appName);
 
 const onClick = (label: string) => {
-  handleClick(label, services, serviceConnected);
+  handleClick(label, services, tokens, tokenCookie.value);
 };
 </script>
 
