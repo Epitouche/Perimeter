@@ -9,13 +9,13 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/Epitouche/Perimeter/api"
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/database"
-	"github.com/Epitouche/Perimeter/docs"
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/api"
+	"area/controller"
+	"area/database"
+	"area/docs"
+	"area/repository"
+	"area/schemas"
+	"area/service"
 )
 
 // ping godoc
@@ -130,7 +130,7 @@ func setupRouter() *gin.Engine {
 		userService,
 		areaResultService,
 	)
-	tokenService := service.NewTokenService(tokenRepository)
+	tokenService := service.NewTokenService(tokenRepository, userService)
 
 	// Controllers
 	spotifyController := controller.NewSpotifyController(
@@ -178,7 +178,7 @@ func setupRouter() *gin.Engine {
 	// API routes
 	api.NewActionApi(actionController, apiRoutes, userService)
 	api.NewReactionApi(reactionController, apiRoutes, userService)
-	api.NewTokenApi(tokenController)
+	api.NewTokenApi(tokenController, apiRoutes, userService)
 
 	ping(apiRoutes)
 	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)

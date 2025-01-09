@@ -26,8 +26,8 @@ FROM alpine:3.21 AS run
 
 WORKDIR /app
 
-COPY --from=build /app/Perimeter .
+COPY --from=build /app/area .
 
 EXPOSE 8080
 
-CMD ["/app/Perimeter"]
+CMD ["/app/area"]

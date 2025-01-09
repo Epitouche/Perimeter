@@ -5,16 +5,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/middlewares"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/controller"
+	"area/middlewares"
+	"area/schemas"
+	"area/service"
 )
 
+// SpotifyAPI is a struct that provides an interface to interact with the Spotify API.
+// It contains a controller of type SpotifyController which handles the business logic
+// for communicating with Spotify's services.
 type SpotifyAPI struct {
 	controller controller.SpotifyController
 }
 
+// NewSpotifyAPI initializes a new SpotifyAPI instance, sets up the necessary routes,
+// and returns a pointer to the SpotifyAPI instance.
+//
+// Parameters:
+//   - controller: an instance of SpotifyController to handle Spotify-related operations.
+//   - apiRoutes: a pointer to a gin.RouterGroup where the Spotify routes will be registered.
+//   - serviceUser: an instance of UserService to handle user-related operations.
+//
+// Returns:
+//   - A pointer to the initialized SpotifyAPI instance.
 func NewSpotifyAPI(
 	controller controller.SpotifyController,
 	apiRoutes *gin.RouterGroup,

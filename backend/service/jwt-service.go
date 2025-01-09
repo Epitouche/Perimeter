@@ -9,7 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/schemas"
 )
 
 type JWTService interface {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 type AreaService interface {
@@ -19,7 +19,7 @@ type AreaService interface {
 	DeleteUserArea(
 		token string,
 		areaToDelete struct{ Id uint64 },
-	) (updatedArea schemas.Area, err error)
+	) (deletedArea schemas.Area, err error)
 }
 
 type areaService struct {
@@ -251,26 +251,26 @@ func (service *areaService) UpdateUserArea(
 func (service *areaService) DeleteUserArea(
 	token string,
 	areaToDelete struct{ Id uint64 },
-) (updatedArea schemas.Area, err error) {
+) (deletedArea schemas.Area, err error) {
 	user, err := service.serviceUser.GetUserInfo(token)
 	if err != nil {
-		return updatedArea, fmt.Errorf("can't get user info: %w", err)
+		return deletedArea, fmt.Errorf("can't get user info: %w", err)
 	}
-	userArea, err := service.repository.FindByUserId(user.Id)
+	userAreas, err := service.repository.FindByUserId(user.Id)
 	if err != nil {
-		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+		return deletedArea, fmt.Errorf("can't find areas by user id: %w", err)
 	}
-	areaToUpdateDatabase, err := service.repository.FindById(areaToDelete.Id)
+	areaToDeleteDatabase, err := service.repository.FindById(areaToDelete.Id)
 	if err != nil {
-		return updatedArea, fmt.Errorf("can't find areas by user id: %w", err)
+		return deletedArea, fmt.Errorf("can't find areas by user id: %w", err)
 	}
-	if containsArea(userArea, areaToUpdateDatabase) {
-		err = service.repository.Delete(areaToUpdateDatabase)
+	if containsArea(userAreas, areaToDeleteDatabase) {
+		err = service.repository.Delete(areaToDeleteDatabase)
 		if err != nil {
-			return updatedArea, fmt.Errorf("can't update area: %w", err)
+			return deletedArea, fmt.Errorf("can't update area: %w", err)
 		}
-		return areaToUpdateDatabase, nil
+		return areaToDeleteDatabase, nil
 	} else {
-		return updatedArea, fmt.Errorf("area not found")
+		return deletedArea, fmt.Errorf("area not found")
 	}
 }

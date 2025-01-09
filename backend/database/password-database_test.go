@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Epitouche/Perimeter/database"
-	"github.com/Epitouche/Perimeter/tools"
+	"area/database"
+	"area/tools"
 )
 
 func TestHashPassword(t *testing.T) {

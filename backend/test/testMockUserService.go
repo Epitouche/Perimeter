@@ -3,7 +3,7 @@ package test
 import (
 	"github.com/stretchr/testify/mock"
 
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/schemas"
 )
 
 type MockUserService struct {
