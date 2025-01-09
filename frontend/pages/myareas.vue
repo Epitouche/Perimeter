@@ -20,7 +20,7 @@ const dateSort = ref(false);
 const fetchAreas = async () => {
   try {
     errorMessage.value = null;
-    const result = await $fetch<Area[]>("/api/myareas", {
+    const result = await $fetch<Area[]>("/api/area/myareas", {
       method: "POST",
       body: {
         token: token.value,
@@ -28,9 +28,7 @@ const fetchAreas = async () => {
     });
     areas.value = result;
     filteredAreas.value = result;
-    console.log("areas: ", areas.value);
     console.log("filteredAreas: ", filteredAreas.value);
-    console.log("filteredAreas.length: ", filteredAreas.value.length); /////////////////////////
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
