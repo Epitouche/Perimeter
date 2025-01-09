@@ -35,7 +35,10 @@ func NewAreaRepository(conn *gorm.DB) AreaRepository {
 }
 
 func (repo *areaRepository) SaveArea(action schemas.Area) (areaID uint64, err error) {
-	repo.Save(action)
+	err = repo.Save(action)
+	if err != nil {
+		return 0, fmt.Errorf("failed to save area: %w", err)
+	}
 	result := repo.db.Connection.Last(&action)
 	if result.Error != nil {
 		return 0, fmt.Errorf("failed to save area: %w", err)

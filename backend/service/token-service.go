@@ -49,7 +49,10 @@ func (service *tokenService) SaveToken(
 		}
 	}
 
-	service.repository.Save(token)
+	err = service.repository.Save(token)
+	if err != nil {
+		return 0, err
+	}
 	tokens, err = service.repository.FindByToken(token.Token)
 	if err != nil {
 		return 0, err
