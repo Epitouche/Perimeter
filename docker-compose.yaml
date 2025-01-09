@@ -12,6 +12,7 @@ services:
       - .env
     networks:
       - app-networks
+    pull_policy: always
 
   client_web:
     build:
@@ -32,6 +33,7 @@ services:
       - '0.0.0.0:${FRONTEND_PORT:-8081}:${FRONTEND_PORT:-8081}'
     networks:
       - app-networks
+    pull_policy: always
 
   database:
     image: postgres:17-alpine
@@ -55,6 +57,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    pull_policy: always
 
   server:
     build:
@@ -83,6 +86,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    pull_policy: always
 
 networks:
   app-networks:
