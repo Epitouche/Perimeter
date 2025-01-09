@@ -3,7 +3,7 @@ import type { ServiceInfo } from "~/interfaces/serviceinfo";
 import type { Token } from "~/interfaces/serviceResponse";
 import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
-import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js"
+import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js";
 
 defineProps<{
   apps: {
@@ -73,7 +73,10 @@ const isServiceConnectedOrInvalid = (appName: string): boolean => {
     (service) => service.name.toLowerCase() === appName.toLowerCase(),
   );
 
-  if (serviceConnected.value.includes(appName) || (matchingService && matchingService.oauth === false)) {
+  if (
+    serviceConnected.value.includes(appName) ||
+    (matchingService && matchingService.oauth === false)
+  ) {
     return true;
   }
   return false;
@@ -103,7 +106,7 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20 mt-4"
-      >
+      />
 
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
         app.name

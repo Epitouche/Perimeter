@@ -41,7 +41,7 @@ export const handleClick = (
   label: string,
   services: Ref<ServiceInfo[]>,
   tokens: Ref<Token[]>,
-  token: string
+  token: string,
 ) => {
   const serviceNames = services.value.map((service) => service.name);
   let matchingToken;

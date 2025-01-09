@@ -21,7 +21,10 @@ export default defineEventHandler(async (event) => {
           Authorization: params.authorization ? `Bearer  ${params.authorization}` : "",
         },
       },
-    );
+      headers: {
+        Authorization: params.authorization ? `${params.authorization}` : "",
+      },
+    });
     console.log("Deleting ? : ", response);
     return response;
   }  catch (error: unknown) {
