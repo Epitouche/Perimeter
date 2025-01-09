@@ -126,6 +126,60 @@ const docTemplate = `{
                     "Area"
                 ],
                 "summary": "update user area",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "action_option",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "name": "description",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "enable",
+                        "in": "path"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "reaction_option",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "update_at",
+                        "in": "path"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -207,6 +261,15 @@ const docTemplate = `{
                     "Area"
                 ],
                 "summary": "delete user area",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Area ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1297,6 +1360,15 @@ const docTemplate = `{
                     "Token"
                 ],
                 "summary": "delete user token",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Token ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

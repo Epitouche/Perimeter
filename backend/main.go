@@ -130,7 +130,7 @@ func setupRouter() *gin.Engine {
 		userService,
 		areaResultService,
 	)
-	tokenService := service.NewTokenService(tokenRepository)
+	tokenService := service.NewTokenService(tokenRepository, userService)
 
 	// Controllers
 	spotifyController := controller.NewSpotifyController(
@@ -178,7 +178,7 @@ func setupRouter() *gin.Engine {
 	// API routes
 	api.NewActionApi(actionController, apiRoutes, userService)
 	api.NewReactionApi(reactionController, apiRoutes, userService)
-	api.NewTokenApi(tokenController)
+	api.NewTokenApi(tokenController, apiRoutes, userService)
 
 	ping(apiRoutes)
 	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)

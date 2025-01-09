@@ -298,6 +298,12 @@ paths:
       consumes:
       - application/json
       description: delete user area list
+      parameters:
+      - description: Area ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -375,6 +381,41 @@ paths:
       consumes:
       - application/json
       description: update user area list
+      parameters:
+      - collectionFormat: csv
+        in: path
+        items:
+          type: integer
+        name: action_option
+        required: true
+        type: array
+      - in: path
+        name: createdAt
+        type: string
+      - in: path
+        name: description
+        required: true
+        type: string
+      - in: path
+        name: enable
+        type: boolean
+      - in: path
+        name: id
+        type: integer
+      - collectionFormat: csv
+        in: path
+        items:
+          type: integer
+        name: reaction_option
+        required: true
+        type: array
+      - in: path
+        name: title
+        required: true
+        type: string
+      - in: path
+        name: update_at
+        type: string
       produces:
       - application/json
       responses:
@@ -1072,6 +1113,12 @@ paths:
       consumes:
       - application/json
       description: delete user token list
+      parameters:
+      - description: Token ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:

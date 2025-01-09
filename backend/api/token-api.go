@@ -15,6 +15,16 @@ type TokenApi struct {
 	controller controller.TokenController
 }
 
+// NewTokenApi initializes a new TokenApi instance, sets up the necessary routes,
+// and applies the JWT authorization middleware.
+//
+// Parameters:
+//   - controller: An instance of TokenController to handle token-related operations.
+//   - apiRoutes: A RouterGroup from the Gin framework to define the API routes.
+//   - serviceUser: An instance of UserService to manage user-related services.
+//
+// Returns:
+//   - A pointer to the initialized TokenApi instance.
 func NewTokenApi(controller controller.TokenController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *TokenApi {
 	apiRoutes = apiRoutes.Group("/token", middlewares.AuthorizeJWT(serviceUser))
 	api := TokenApi{
@@ -32,6 +42,7 @@ func NewTokenApi(controller controller.TokenController, apiRoutes *gin.RouterGro
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
+//	@Param			id	path		int	true	"Token ID"
 //	@Success		200	{object}	schemas.Token
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse

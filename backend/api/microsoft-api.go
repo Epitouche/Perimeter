@@ -11,10 +11,23 @@ import (
 	"area/service"
 )
 
+// MicrosoftAPI is a struct that provides an interface to interact with the MicrosoftController.
+// It serves as a bridge between the API layer and the controller layer, facilitating the handling
+// of requests and responses related to Microsoft services.
 type MicrosoftAPI struct {
 	controller controller.MicrosoftController
 }
 
+// NewMicrosoftAPI initializes a new MicrosoftAPI instance, sets up the necessary routes,
+// and returns a pointer to the MicrosoftAPI instance.
+//
+// Parameters:
+//   - controller: An instance of MicrosoftController to handle the API logic.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the Microsoft API routes will be registered.
+//   - serviceUser: An instance of UserService to handle user-related operations.
+//
+// Returns:
+//   - A pointer to the initialized MicrosoftAPI instance.
 func NewMicrosoftAPI(
 	controller controller.MicrosoftController,
 	apiRoutes *gin.RouterGroup,

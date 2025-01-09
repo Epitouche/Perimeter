@@ -11,10 +11,22 @@ import (
 	"area/service"
 )
 
+// DropboxAPI is a struct that provides an interface to interact with the DropboxController.
+// It contains a single field, controller, which is an instance of DropboxController.
 type DropboxAPI struct {
 	controller controller.DropboxController
 }
 
+// NewDropboxAPI initializes a new DropboxAPI instance, sets up the necessary routes,
+// and returns a pointer to the DropboxAPI instance.
+//
+// Parameters:
+//   - controller: An instance of DropboxController to handle Dropbox-related operations.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the Dropbox routes will be registered.
+//   - serviceUser: An instance of UserService to handle user-related operations.
+//
+// Returns:
+//   - A pointer to the initialized DropboxAPI instance.
 func NewDropboxAPI(
 	controller controller.DropboxController,
 	apiRoutes *gin.RouterGroup,

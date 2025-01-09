@@ -12,6 +12,8 @@ import (
 	"area/service"
 )
 
+// AreaApi represents the API layer for handling area-related requests.
+// It contains a reference to the AreaController which manages the business logic.
 type AreaApi struct {
 	controller controller.AreaController
 }
@@ -108,6 +110,7 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
+//	@Param			area	path		schemas.Area	true	"Updated Area"
 //	@Success		200	{object}	schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
@@ -134,6 +137,7 @@ func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
+//	@Param			id	path		int	true	"Area ID"
 //	@Success		200	{object}	schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse

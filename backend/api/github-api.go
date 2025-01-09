@@ -11,10 +11,22 @@ import (
 	"area/service"
 )
 
+// GithubAPI is a struct that provides an interface to interact with the GithubController.
+// It contains a single field, controller, which is an instance of GithubController.
 type GithubAPI struct {
 	controller controller.GithubController
 }
 
+// NewGithubAPI initializes a new GithubAPI instance, sets up the necessary routes,
+// and returns a pointer to the created GithubAPI instance.
+//
+// Parameters:
+//   - controller: An instance of GithubController to handle GitHub-related operations.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the GitHub API routes will be registered.
+//   - serviceUser: An instance of UserService to handle user-related operations.
+//
+// Returns:
+//   - A pointer to the initialized GithubAPI instance.
 func NewGithubAPI(
 	controller controller.GithubController,
 	apiRoutes *gin.RouterGroup,

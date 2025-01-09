@@ -11,10 +11,28 @@ import (
 	"area/service"
 )
 
+// UserApi provides an API layer for user-related operations.
+// It interacts with the UserController to handle user data and actions.
 type UserApi struct {
 	controller controller.UserController
 }
 
+// NewUserApi initializes a new UserApi instance, sets up the necessary routes, and returns the instance.
+// It configures the following routes under the "/user" group:
+// - POST /login: handled by api.Login
+// - POST /register: handled by api.Register
+// - GET /info: handled by api.GetUserInfo (protected by JWT authorization middleware)
+// - GET /info/all: handled by api.GetUserAllInfo (protected by JWT authorization middleware)
+// - PUT /info: handled by api.UpdateUserInfo (protected by JWT authorization middleware)
+// - DELETE /info: handled by api.DeleteUserInfo (protected by JWT authorization middleware)
+//
+// Parameters:
+// - controller: an instance of UserController to handle user-related operations.
+// - apiRoutes: a gin.RouterGroup to define the API routes.
+// - serviceUser: an instance of UserService used for JWT authorization middleware.
+//
+// Returns:
+// - A pointer to the initialized UserApi instance.
 func NewUserApi(
 	controller controller.UserController,
 	apiRoutes *gin.RouterGroup,

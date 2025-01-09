@@ -6,6 +6,9 @@ import (
 	"area/controller"
 )
 
+// AreaResultApi is a struct that provides an API for handling area result operations.
+// It contains a controller of type AreaResultController which manages the business logic
+// for area result-related actions.
 type AreaResultApi struct {
 	controller controller.AreaResultController
 }
