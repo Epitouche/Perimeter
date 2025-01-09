@@ -1,19 +1,13 @@
 name: area-prod
 services:
   client_mobile:
-    build:
-      context: ./mobile
-      target: build-apk
-      dockerfile: Dockerfile
+    image: ghcr.io/epitouche/area-mobile:dev
     extends:
       file: ./docker-compose.template.yaml
       service: client_mobile
 
   client_web:
-    build:
-      context: ./frontend
-      target: run
-      dockerfile: Dockerfile
+    image: ghcr.io/epitouche/area-frontend:dev
     extends:
       file: ./docker-compose.template.yaml
       service: client_web
@@ -24,10 +18,7 @@ services:
       service: database
 
   server:
-    build:
-      context: ./backend
-      target: run
-      dockerfile: Dockerfile
+    image: ghcr.io/epitouche/area-backend:dev
     extends:
       file: ./docker-compose.template.yaml
       service: server
