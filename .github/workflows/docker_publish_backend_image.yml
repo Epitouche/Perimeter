@@ -76,6 +76,6 @@ jobs:
       - name: Security Scan ${{ env.IMAGE_NAME }} Image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+          image-ref: ${{ steps.meta.outputs.tags }}
           format: table
           severity: 'CRITICAL,HIGH'
