@@ -111,9 +111,9 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 //	@Produce		json
 //	@Security		bearerAuth
 //	@Param			area	path		schemas.Area	true	"Updated Area"
-//	@Success		200	{object}	schemas.Area
-//	@Failure		401	{object}	schemas.ErrorResponse
-//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Success		200		{object}	schemas.Area
+//	@Failure		401		{object}	schemas.ErrorResponse
+//	@Failure		500		{object}	schemas.ErrorResponse
 //	@Router			/area [put]
 func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
 	apiRoutes.PUT("/", func(ctx *gin.Context) {

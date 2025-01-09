@@ -25,7 +25,11 @@ type TokenApi struct {
 //
 // Returns:
 //   - A pointer to the initialized TokenApi instance.
-func NewTokenApi(controller controller.TokenController, apiRoutes *gin.RouterGroup, serviceUser service.UserService) *TokenApi {
+func NewTokenApi(
+	controller controller.TokenController,
+	apiRoutes *gin.RouterGroup,
+	serviceUser service.UserService,
+) *TokenApi {
 	apiRoutes = apiRoutes.Group("/token", middlewares.AuthorizeJWT(serviceUser))
 	api := TokenApi{
 		controller: controller,
