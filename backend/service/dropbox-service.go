@@ -92,7 +92,33 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
+	// service.reactionsName = append(
+	// 	service.reactionsName,
+	// 	string(schemas.CurrentWeather),
+	// 	string(schemas.CurrentTemperature),
+	// )
+	defaultValue := schemas.DropboxSaveUrlReactionOption{
+		Path: "",
+		URL:  "",
+	}
+	saveUrlReactionOoption, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Dropbox,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SaveUrl),
+			Description: "This reaction save content from a URL to a file in Dropbox",
+			Service:     service.serviceInfo,
+			Option:      saveUrlReactionOoption,
+		},
+	}
 }
 
 func (service *dropboxService) FindActionbyName(
@@ -108,6 +134,8 @@ func (service *dropboxService) FindReactionbyName(
 	name string,
 ) func(option json.RawMessage, idArea uint64) string {
 	switch name {
+	case string(schemas.SaveUrl):
+		return service.DropboxReactionSaveUrl
 	default:
 		return nil
 	}
@@ -328,6 +356,101 @@ func (service *dropboxService) GetPathDisplayDropboxEntry(
 	return pathDisplay
 }
 
+func (service *dropboxService) SaveUrl(
+	userDropboxToken string, path string, url string,
+) (saveUrlFile schemas.DropboxEntry, err error) {
+	ctx := context.Background()
+
+	// Prepare the request body
+	reqBody := `{"path": "` + path + `","url": "` + url + `"}`
+
+	// Create the HTTP request
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.dropboxapi.com/2/files/save_url",
+		strings.NewReader(reqBody),
+	)
+	if err != nil {
+		return saveUrlFile, fmt.Errorf("unable to create request: %w", err)
+	}
+
+	// Set the Authorization header
+	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return saveUrlFile, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return saveUrlFile, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
+	// Decode the JSON response into the result struct
+	err = json.NewDecoder(resp.Body).Decode(&saveUrlFile)
+	if err != nil {
+		return saveUrlFile, fmt.Errorf("unable to decode response: %w", err)
+	}
+
+	if saveUrlFile.PathDisplay != path {
+		return saveUrlFile, fmt.Errorf("unable to save file")
+	}
+
+	return saveUrlFile, nil
+}
+
 // Actions functions
 
 // Reactions functions
+
+func (service *dropboxService) DropboxReactionSaveUrl(option json.RawMessage, idArea uint64) string {
+	optionJSON := schemas.DropboxSaveUrlReactionOption{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal temperature option: " + err.Error())
+		time.Sleep(time.Second)
+		return "error unmarshal temperature option: " + err.Error()
+	}
+
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return "Error finding area" + err.Error()
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token" + err.Error()
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return "Error: Token not found"
+	}
+
+	saveFile, err := service.SaveUrl(token.Token, optionJSON.Path, optionJSON.URL)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if saveFile.PathDisplay != optionJSON.Path {
+		return "unable to save file"
+	}
+
+	return "create file " + saveFile.PathDisplay + " that save content from " + optionJSON.URL
+}
