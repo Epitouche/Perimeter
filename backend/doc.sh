@@ -15,5 +15,7 @@ echo "Generating Swagger documentation..."
 go install github.com/swaggo/swag/cmd/swag@latest
 swag init --parseDependency --parseInternal
 
-npx @redocly/cli build-docs docs/swagger.yaml
-mv redoc-static.html godoc/redoc-static.html
+if [ "$(command -v npm)" ]; then
+    npx @redocly/cli build-docs docs/swagger.yaml
+    mv redoc-static.html godoc/redoc-static.html
+fi

@@ -1067,6 +1067,31 @@ paths:
       summary: give user info of spotify
       tags:
       - Spotify
+  /token:
+    delete:
+      consumes:
+      - application/json
+      description: delete user token list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Token'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: delete user token
+      tags:
+      - Token
   /user/info:
     get:
       consumes:
