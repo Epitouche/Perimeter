@@ -16,6 +16,19 @@ type AreaApi struct {
 	controller controller.AreaController
 }
 
+// godoc
+//
+// NewAreaAPI initializes a new AreaApi instance, sets up the API routes with the necessary
+// middleware, and registers the route handlers for creating, retrieving, updating, and deleting
+// user areas.
+//
+// Parameters:
+//   - controller: An instance of AreaController that handles the business logic for area operations.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the area routes will be registered.
+//   - serviceUser: An instance of UserService used for JWT authorization middleware.
+//
+// Returns:
+//   - A pointer to the initialized AreaApi instance.
 func NewAreaAPI(
 	controller controller.AreaController,
 	apiRoutes *gin.RouterGroup,
@@ -68,7 +81,6 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	[]schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
@@ -95,7 +107,6 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
@@ -122,7 +133,6 @@ func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse

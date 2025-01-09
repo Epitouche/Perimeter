@@ -60,9 +60,6 @@
             "get": {
                 "security": [
                     {
-                        "Bearer": []
-                    },
-                    {
                         "bearerAuth": []
                     }
                 ],
@@ -103,9 +100,6 @@
             },
             "put": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -187,9 +181,6 @@
             },
             "delete": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -975,9 +966,6 @@
         "/reaction/info/:id": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }

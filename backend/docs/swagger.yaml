@@ -314,7 +314,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: delete user area
       tags:
@@ -341,7 +340,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: get user areas
       tags:
@@ -393,7 +391,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: update user area
       tags:
@@ -904,7 +901,6 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
-      - Bearer: []
       - bearerAuth: []
       summary: get reaction info
       tags:

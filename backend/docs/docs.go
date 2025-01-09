@@ -71,9 +71,6 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "Bearer": []
-                    },
-                    {
                         "bearerAuth": []
                     }
                 ],
@@ -114,9 +111,6 @@ const docTemplate = `{
             },
             "put": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -198,9 +192,6 @@ const docTemplate = `{
             },
             "delete": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -986,9 +977,6 @@ const docTemplate = `{
         "/reaction/info/:id": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
