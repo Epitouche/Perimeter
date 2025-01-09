@@ -412,7 +412,10 @@ func (service *dropboxService) SaveUrl(
 
 // Reactions functions
 
-func (service *dropboxService) DropboxReactionSaveUrl(option json.RawMessage, idArea uint64) string {
+func (service *dropboxService) DropboxReactionSaveUrl(
+	option json.RawMessage,
+	idArea uint64,
+) string {
 	optionJSON := schemas.DropboxSaveUrlReactionOption{}
 
 	err := json.Unmarshal([]byte(option), &optionJSON)
