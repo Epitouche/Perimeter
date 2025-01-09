@@ -31,6 +31,9 @@ type DropboxService interface {
 	GetUserAllFolderAndFileList(
 		userDropboxToken string,
 	) (fileList []schemas.DropboxEntry, err error)
+	GetUserFolderAndFileList(
+		userDropboxToken string, path string,
+	) (folderAndFileList []schemas.DropboxEntry, err error)
 	GetUserFileList(
 		folderAndFileList []schemas.DropboxEntry,
 	) (fileList []schemas.DropboxEntry)
@@ -229,10 +232,16 @@ func (service *dropboxService) GetUserInfo(
 func (service *dropboxService) GetUserAllFolderAndFileList(
 	userDropboxToken string,
 ) (folderAndFileList []schemas.DropboxEntry, err error) {
+	return service.GetUserFolderAndFileList(userDropboxToken, "")
+}
+
+func (service *dropboxService) GetUserFolderAndFileList(
+	userDropboxToken string, path string,
+) (folderAndFileList []schemas.DropboxEntry, err error) {
 	ctx := context.Background()
 
 	// Prepare the request body
-	reqBody := `{"path": "","recursive": true}`
+	reqBody := `{"` + path + `": "","recursive": true}`
 
 	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
