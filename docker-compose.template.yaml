@@ -1,0 +1,85 @@
+name: area
+services:
+  client_mobile:
+    container_name: client_mobile
+    volumes:
+      - shared_apk:/app/public/apk
+    env_file:
+      - .env
+    networks:
+      - app-networks
+    pull_policy: always
+
+  client_web:
+    container_name: client_web
+    depends_on:
+      client_mobile:
+        condition: service_started
+      server:
+        condition: service_healthy
+    volumes:
+      - shared_apk:/app/public/apk
+    environment:
+      - PORT=${FRONTEND_PORT:-8081}
+    ports:
+      - '0.0.0.0:${FRONTEND_PORT:-8081}:${FRONTEND_PORT:-8081}'
+    networks:
+      - app-networks
+    pull_policy: always
+
+  database:
+    image: postgres:17-alpine
+    container_name: database
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-area-database}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      DB_HOST: ${DB_HOST:-database}
+    networks:
+      - app-networks
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-admin} -d
+            ${POSTGRES_DB:-area-database}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    pull_policy: always
+
+  server:
+    container_name: server
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - GIN_MODE=release
+    env_file:
+      - .env
+    ports:
+      - '0.0.0.0:${BACKEND_PORT:-8080}:${BACKEND_PORT:-8080}'
+    networks:
+      - app-networks
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider
+            http://localhost:${BACKEND_PORT:-8080}/about.json || exit 1"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    pull_policy: always
+
+networks:
+  app-networks:
+
+
+volumes:
+  database-data:
+  shared_apk:
