@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import type { Token } from "~/interfaces/serviceResponse";
 import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
+import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js"
 
 defineProps<{
   apps: {
@@ -14,43 +16,24 @@ const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
 const services = ref<ServiceInfo[]>([]);
 const serviceConnected = ref<string[]>([]);
+const tokens = ref<Token[]>([]);
 
 onMounted(() => {
-  servicesConnectionInfos();
+  loadTokens();
   loadServices();
 });
 
-async function servicesConnectionInfos() {
+async function loadTokens() {
   try {
-    const response = await $fetch("/api/auth/service/infos", {
-      method: "POST",
-      body: {
-        authorization: tokenCookie.value,
-      },
-    });
-
-    if (
-      typeof response === "object" &&
-      response !== null &&
-      "tokens" in response &&
-      Array.isArray((response as { tokens: unknown }).tokens)
-    ) {
-      const tokens = (
-        response as { tokens: Array<{ service: { name: string } }> }
-      ).tokens;
-      serviceConnected.value = tokens.map((token) => token.service.name);
-      console.log("tokens: ", tokens);
-      console.log("serviceConnected", serviceConnected);
-      isLoading.value = false;
-    } else {
-      console.error("Response does not contain valid tokens.");
-      return [];
+    if (tokenCookie.value) {
+      tokens.value = await servicesConnectionInfos(tokenCookie.value);
+      serviceConnected.value = tokens.value.map((token) => token.service.name);
+      // console.log("Tokens received:", tokens.value);
     }
-  } catch (error: unknown) {
-    errorMessage.value = handleErrorStatus(error);
-    if (errorMessage.value === "An unknown error occurred") {
-      console.error("An unknown error occurred", error);
-    }
+  } catch (error) {
+    console.error("Error loading tokens:", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -92,10 +75,7 @@ const isServiceConnectedOrInvalid = (appName: string): boolean => {
     (service) => service.name.toLowerCase() === appName.toLowerCase(),
   );
 
-  if (
-    serviceConnected.value.includes(appName) ||
-    (matchingService && matchingService.oauth === false)
-  ) {
+  if (serviceConnected.value.includes(appName) || (matchingService && matchingService.oauth === false)) {
     return true;
   }
   return false;
@@ -125,7 +105,7 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20 mt-4"
-      />
+      >
 
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
         app.name

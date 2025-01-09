@@ -2,6 +2,7 @@
 import type { Ref } from "vue";
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
 import type { OAuthLink } from "~/interfaces/authLink";
+import type { Token } from "~/interfaces/serviceResponse";
 
 export const authApiCall = async (label: string) => {
   try {
@@ -19,24 +20,44 @@ export const authApiCall = async (label: string) => {
   }
 };
 
+export const disconnectService = async (tokenId: string, token: string) => {
+  try {
+    const response = await $fetch("/api/auth/service/disconnection", {
+      method: "POST",
+      body: {
+        token: token,
+        tokenId: tokenId,
+      },
+    });
+    console.log("Response of disconnectService:", response);
+    return response;
+  } catch (error: unknown) {
+    throw handleErrorStatus(error);
+  }
+};
+
 export const handleClick = (
   label: string,
   services: Ref<ServiceInfo[]>,
-  serviceConnected?: Ref<string[]>,
+  tokens: Ref<Token[]>,
+  token: string
 ) => {
   const serviceNames = services.value.map((service) => service.name);
 
-  if (serviceConnected && serviceConnected.value.includes(label)) {
-    //disconnectService(label);
+  // Trouver le tokenId correspondant au service
+  const matchingToken = tokens.value.find((t) => t.service.name === label);
+
+  if (matchingToken) {
+    console.log(`Disconnecting service: ${label}`);
+    disconnectService(matchingToken, token); // Envoie tokenId et token
   } else {
     const apiLink = `http://server:8080/api/v1/${label.toLowerCase()}/auth/`;
-    console.log("apiLink:", apiLink);
 
     if (serviceNames.includes(label)) {
-      console.log("serviceNames have label, sending to authApiCall");
+      console.log(`Service "${label}" exists, initiating auth API call.`);
       authApiCall(apiLink);
     } else {
-      console.log(`${label} unknown icon clicked`);
+      console.log(`Unknown service "${label}" clicked.`);
     }
   }
 };
