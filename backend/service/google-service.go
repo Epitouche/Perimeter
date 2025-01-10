@@ -322,7 +322,11 @@ func (service *googleService) GoogleActionReceiveMail(
 				println("error marshalling storage variable: " + err.Error())
 				return
 			}
-			service.areaRepository.Update(area)
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
 		}
 	}
 
@@ -335,7 +339,11 @@ func (service *googleService) GoogleActionReceiveMail(
 			println("error marshalling storage variable: " + err.Error())
 			return
 		}
-		service.areaRepository.Update(area)
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
@@ -461,7 +469,11 @@ func (service *googleService) GoogleActionReceiveMail(
 			println("error marshalling storage variable: " + err.Error())
 			return
 		}
-		service.areaRepository.Update(area)
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
 		channel <- response
 	} else {
 		println("No new emails")

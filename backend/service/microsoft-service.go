@@ -287,7 +287,11 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 				println("error marshalling storage variable: " + err.Error())
 				return
 			}
-			service.areaRepository.Update(area)
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
 		}
 	}
 
@@ -301,7 +305,11 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 			println("error marshalling storage variable: " + err.Error())
 			return
 		}
-		service.areaRepository.Update(area)
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
@@ -377,7 +385,11 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 			println("error marshalling storage variable: " + err.Error())
 			return
 		}
-		service.areaRepository.Update(area)
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
 		println("response sent to channel")
 		channel <- response
 	} else {
