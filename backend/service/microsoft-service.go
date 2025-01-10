@@ -80,7 +80,6 @@ func (service *microsoftService) GetServiceInfo() schemas.Service {
 }
 
 func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
-	// service.actionName = append(service.actionName, string(schemas.ReceiveMicrosoftMail))
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -281,7 +280,7 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		} else {
 			println("initializing storage variable")
 			variable = schemas.MicrosoftVariableReceiveMail{
-				Time: time.Now().Add(-time.Hour),
+				Time: time.Now(),
 			}
 			area.StorageVariable, err = json.Marshal(variable)
 			if err != nil {
@@ -295,7 +294,7 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 	if variable.Time.IsZero() {
 		println("initializing storage variable")
 		variable = schemas.MicrosoftVariableReceiveMail{
-			Time: time.Now().Add(-time.Hour),
+			Time: time.Now(),
 		}
 		area.StorageVariable, err = json.Marshal(variable)
 		if err != nil {
@@ -325,10 +324,8 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	// Add the authorization header
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
-	// Send the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -342,7 +339,6 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	// Decode the response
 	var emailResponse struct {
 		Value []struct {
 			ID      string `json:"id"`
@@ -362,7 +358,6 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	// Process the most recent email
 	if len(emailResponse.Value) > 0 {
 		println("New email received")
 		latestEmail := emailResponse.Value[0]
@@ -388,14 +383,13 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 	} else {
 		println("No new emails")
 	}
-	time.Sleep(time.Second * 10)
+	time.Sleep(time.Minute)
 }
 
 func (service *microsoftService) MicrosoftReactionSendMail(
 	option json.RawMessage,
 	idArea uint64,
 ) string {
-	// Parse the options
 	options := schemas.MicrosoftReactionSendMailOptions{}
 	err := json.Unmarshal(option, &options)
 	if err != nil {
@@ -403,14 +397,12 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 		return "Error unmarshalling options: " + err.Error()
 	}
 
-	// Retrieve the area
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
 		return "Error finding area: " + err.Error()
 	}
 
-	// Retrieve the token
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,
@@ -424,10 +416,8 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 		return "Error: Token not found"
 	}
 
-	// Microsoft Graph API URL for sending mail
 	apiURL := "https://graph.microsoft.com/v1.0/me/sendMail"
 
-	// Construct the email payload
 	payload := map[string]interface{}{
 		"message": map[string]interface{}{
 			"subject": options.Subject,
@@ -451,18 +441,15 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 		return "Error marshalling email payload: " + err.Error()
 	}
 
-	// Create the HTTP request
 	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer(payloadBytes))
 	if err != nil {
 		fmt.Println("Error creating HTTP request:", err)
 		return "Error creating HTTP request: " + err.Error()
 	}
 
-	// Add headers
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
 
-	// Send the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -471,7 +458,6 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 	}
 	defer resp.Body.Close()
 
-	// Check the response
 	if resp.StatusCode != http.StatusAccepted {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		fmt.Println("Error sending email:", string(bodyBytes))

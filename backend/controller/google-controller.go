@@ -9,7 +9,7 @@ import (
 	"area/service"
 )
 
-type GmailController interface {
+type GoogleController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
@@ -17,18 +17,18 @@ type GmailController interface {
 }
 
 type gmailController struct {
-	service        service.GmailService
+	service        service.GoogleService
 	serviceUser    service.UserService
 	serviceToken   service.TokenService
 	serviceService service.ServiceService
 }
 
-func NewGmailController(
-	service service.GmailService,
+func NewGoogleController(
+	service service.GoogleService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
 	serviceService service.ServiceService,
-) GmailController {
+) GoogleController {
 	return &gmailController{
 		service:        service,
 		serviceUser:    serviceUser,
