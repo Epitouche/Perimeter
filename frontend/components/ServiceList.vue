@@ -93,28 +93,34 @@ const onClick = (label: string) => {
 <template>
   <div class="flex flex-wrap gap-5 justify-center">
     <UButton
-v-for="(app, index) in apps" :key="index"
-      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }" 
+      v-for="(app, index) in apps"
+      :key="index"
+      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
         `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
-      ]" @click="onClick(app.name)">
+      ]"
+      @click="onClick(app.name)"
+    >
       <img
         v-if="getServiceDetails(app.name)?.icon"
         :src="getServiceDetails(app.name)?.icon"
         alt="service_icon"
         class="w-20 h-20"
+      />
+
+      <span
+        class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
+        >{{ app.name }}</span
       >
 
-      <span class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text">{{
-        app.name
-        }}</span>
-
       <div
-v-if="!isLoading"
-        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold" :class="{
+        v-if="!isLoading"
+        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
+        :class="{
           'bg-black text-white': isServiceConnectedOrInvalid(app.name),
           'bg-white text-black': !isServiceConnectedOrInvalid(app.name),
-        }">
+        }"
+      >
         {{ getServiceStateText(app.name) }}
       </div>
     </UButton>
