@@ -314,7 +314,9 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format("2006-01-02T15:04:05") + "Z"
+	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format(
+		"2006-01-02T15:04:05",
+	) + "Z"
 
 	ctx := context.Background()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
