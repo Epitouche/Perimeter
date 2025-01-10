@@ -358,8 +358,24 @@ func (service *dropboxService) GetPathDisplayDropboxEntry(
 
 func (service *dropboxService) SaveUrl(
 	userDropboxToken string, path string, url string,
-) (saveUrlFile schemas.DropboxEntry, err error) {
+) (fileJobStatus schemas.DropboxSaveUrlResult, err error) {
 	ctx := context.Background()
+
+	if path == "" {
+		return fileJobStatus, fmt.Errorf("path cannot be empty")
+	}
+
+	if url == "" {
+		return fileJobStatus, fmt.Errorf("url cannot be empty")
+	}
+
+	if path[0] != '/' {
+		path = "/" + path
+	}
+
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "http://" + url
+	}
 
 	// Prepare the request body
 	reqBody := `{"path": "` + path + `","url": "` + url + `"}`
@@ -367,6 +383,54 @@ func (service *dropboxService) SaveUrl(
 	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
 		"https://api.dropboxapi.com/2/files/save_url",
+		strings.NewReader(reqBody),
+	)
+	if err != nil {
+		return fileJobStatus, fmt.Errorf("unable to create request: %w", err)
+	}
+
+	// Set the Authorization header
+	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fileJobStatus, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return fileJobStatus, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
+	// Decode the JSON response into the result struct
+	err = json.NewDecoder(resp.Body).Decode(&fileJobStatus)
+	if err != nil {
+		return fileJobStatus, fmt.Errorf("unable to decode response: %w", err)
+	}
+
+	return fileJobStatus, nil
+}
+
+func (service *dropboxService) SaveUrlCheckJobStatus(
+	userDropboxToken string, saveUrlResult schemas.DropboxSaveUrlResult,
+) (saveUrlFile schemas.DropboxEntry, err error) {
+	ctx := context.Background()
+
+	// Prepare the request body
+	reqBody := `{"async_job_id":"` + saveUrlResult.AsyncJobID + `"}`
+
+	// Create the HTTP request
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.dropboxapi.com/2/files/save_url/check_job_status",
 		strings.NewReader(reqBody),
 	)
 	if err != nil {
@@ -399,10 +463,6 @@ func (service *dropboxService) SaveUrl(
 	err = json.NewDecoder(resp.Body).Decode(&saveUrlFile)
 	if err != nil {
 		return saveUrlFile, fmt.Errorf("unable to decode response: %w", err)
-	}
-
-	if saveUrlFile.PathDisplay != path {
-		return saveUrlFile, fmt.Errorf("unable to save file")
 	}
 
 	return saveUrlFile, nil
@@ -446,13 +506,14 @@ func (service *dropboxService) DropboxReactionSaveUrl(
 		return "Error: Token not found"
 	}
 
-	saveFile, err := service.SaveUrl(token.Token, optionJSON.Path, optionJSON.URL)
+	fileJobStatus, err := service.SaveUrl(token.Token, optionJSON.Path, optionJSON.URL)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	if saveFile.PathDisplay != optionJSON.Path {
-		return "unable to save file"
+	saveFile, err := service.SaveUrlCheckJobStatus(token.Token, fileJobStatus)
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	return "create file " + saveFile.PathDisplay + " that save content from " + optionJSON.URL
