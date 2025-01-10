@@ -19,6 +19,13 @@ type GithubUserInfo struct {
 	Email     string `json:"email"`
 }
 
+type GithubUserEmail struct {
+	Email      string `json:"email"`
+	Verified   bool   `json:"verified"`
+	Primary    bool   `json:"primary"`
+	Visibility string `json:"visibility"`
+}
+
 // Errors Messages.
 var (
 	ErrGithubSecretNotSet   = errors.New("GITHUB_SECRET is not set")

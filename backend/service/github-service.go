@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -153,13 +154,68 @@ func (service *githubService) AuthGetServiceAccessToken(
 	return token, nil
 }
 
-func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+func (service *githubService) GetUserEmail(accessToken string) (email string, err error) {
+	ctx := context.Background()
+
+	// Create a new HTTP request
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		"https://api.github.com/user/emails",
+		nil,
+	)
+	if err != nil {
+		return email, fmt.Errorf("unable to create request because %w", err)
+	}
+
+	// Add the Authorization header
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept", "application/vnd.github+json")
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return email, fmt.Errorf("unable to make request because %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return email, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
+	result := []schemas.GithubUserEmail{}
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return email, fmt.Errorf("unable to decode response because %w", err)
+	}
+
+	resp.Body.Close()
+
+	for _, email := range result {
+		if email.Primary {
+			return email.Email, nil
+		}
+	}
+
+	return email, fmt.Errorf("unable to find primary email")
+}
+
+func (service *githubService) GetUserInfoAccount(
+	accessToken string,
+) (user schemas.User, err error) {
 	ctx := context.Background()
 
 	// Create a new HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.github.com/user", nil)
 	if err != nil {
-		return schemas.User{}, fmt.Errorf("unable to create request because %w", err)
+		return user, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	// Add the Authorization header
@@ -184,6 +240,26 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 		Username: result.Login,
 		Email:    result.Email,
 	}
+	return user, nil
+}
+
+func (service *githubService) GetUserInfo(accessToken string) (user schemas.User, err error) {
+	user, err = service.GetUserInfoAccount(accessToken)
+	if err != nil {
+		return user, err
+	}
+
+	email, err := service.GetUserEmail(accessToken)
+	if err != nil {
+		return user, err
+	}
+
+	user = schemas.User{
+		Username: user.Username,
+		Email:    email,
+	}
+
+	fmt.Printf("user %+v\n", user)
 	return user, nil
 }
 
