@@ -6,5 +6,4 @@ definePageMeta({
 onMounted(() => {
   navigateTo("/workflow");
 });
-
 </script>

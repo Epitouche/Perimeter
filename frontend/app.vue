@@ -1,6 +1,4 @@
-
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <div>
@@ -12,7 +10,8 @@
 </template>
 
 <style>
-html, body {
+html,
+body {
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
