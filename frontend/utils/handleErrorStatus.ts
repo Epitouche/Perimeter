@@ -9,7 +9,7 @@ export const handleErrorStatus = (error: unknown): string => {
     if (statusCode === 401) {
       token.value = null;
       navigateTo("/login");
-      return "401 Unauthorized access.";
+      return "401: Unauthorized access.";
     } else {
       return `Error: ${message}`;
     }

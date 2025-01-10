@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   timeout: number;
+  path: string;
 }>();
 
 const timedOut = ref(false);
@@ -8,7 +9,7 @@ const timedOut = ref(false);
 onMounted(() => {
   setTimeout(() => {
     timedOut.value = true;
-    navigateTo("/myareas");
+    navigateTo("/", props.path);
   }, props.timeout);
 });
 </script>
@@ -16,7 +17,7 @@ onMounted(() => {
 <template>
   <div v-if="!timedOut" class="loading-screen">
     <div class="loader" />
-    <p>Chargement...</p>
+    <p class="text6x1 font-extrabold">Loading...</p>
   </div>
 </template>
 
@@ -39,8 +40,8 @@ onMounted(() => {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-top: 4px solid #3498db;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   animation: spin 1s linear infinite;
 }
 
