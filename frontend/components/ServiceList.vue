@@ -68,14 +68,9 @@ const getServiceStateText = (appName: string) => {
 };
 
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
-  const matchingService = services.value.find(
-    (service) => service.name.toLowerCase() === appName.toLowerCase(),
-  );
+  const matchingService = services.value.find((service) => service.name.toLowerCase() === appName.toLowerCase(),);
 
-  if (
-    serviceConnected.value.includes(appName) ||
-    (matchingService && matchingService.oauth === false)
-  ) {
+  if (serviceConnected.value.includes(appName) || (matchingService && matchingService.oauth === false) ) {
     return true;
   }
   return false;

@@ -1,10 +1,41 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
+import type { Token } from "~/interfaces/serviceResponse";
 
-defineProps<{
+const props = defineProps<{
   type: string;
   services: ServiceInfo[];
 }>();
+
+const tokenCookie = useCookie("token");
+const serviceConnected = ref<string[]>([]);
+const tokens = ref<Token[]>([]);
+
+onMounted(() => {
+  loadConnectionInfos();
+});
+
+async function loadConnectionInfos() {
+  try {
+    if (tokenCookie.value) {
+      tokens.value = await servicesConnectionInfos(tokenCookie.value);
+      serviceConnected.value = tokens.value.map((token) => token.service.name);
+    }
+  } catch (error) {
+    console.error("Error loading tokens:", error);
+  }
+}
+
+const isServiceConnectedOrInvalid = (appName: string): boolean => {
+  const matchingService = props.services.find(
+    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+  );
+
+  if (serviceConnected.value.includes(appName) || (matchingService && matchingService.oauth === false)) {
+    return true;
+  }
+  return false;
+};
 
 function formatName(name: string): string {
   return name.replace(/([a-z])([A-Z])/g, "$1 $2");
@@ -18,6 +49,7 @@ function formatName(name: string): string {
   >
     <div v-for="service in services" :key="service.id">
       <NuxtLink
+        v-if="isServiceConnectedOrInvalid(service.name)"
         :to="{
           name: `workflow-${type}-service`,
           params: { service: service.id },
@@ -36,6 +68,19 @@ function formatName(name: string): string {
           </h2>
         </UContainer>
       </NuxtLink>
+      <UContainer
+        v-else
+        :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+        class="flex flex-col justify-end items-center gap-5 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius overflow-hidden w-[5em] h-[4.5em] opacity-40 cursor-not-allowed"
+        :style="{ backgroundColor: service.color }"
+      >
+        <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0">
+        <h2
+          class="clamp-1-line capitalize text-5xl text-center break-words w-full"
+        >
+          {{ formatName(service.name) }}
+        </h2>
+      </UContainer>
     </div>
   </UContainer>
 </template>
