@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
+import type { Token } from "~/interfaces/serviceResponse";
 import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
+import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js";
 
 defineProps<{
   apps: {
@@ -14,43 +16,23 @@ const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
 const services = ref<ServiceInfo[]>([]);
 const serviceConnected = ref<string[]>([]);
+const tokens = ref<Token[]>([]);
 
 onMounted(() => {
-  servicesConnectionInfos();
+  loadConnectionInfos();
   loadServices();
 });
 
-async function servicesConnectionInfos() {
+async function loadConnectionInfos() {
   try {
-    const response = await $fetch("/api/auth/service/infos", {
-      method: "POST",
-      body: {
-        authorization: tokenCookie.value,
-      },
-    });
-
-    if (
-      typeof response === "object" &&
-      response !== null &&
-      "tokens" in response &&
-      Array.isArray((response as { tokens: unknown }).tokens)
-    ) {
-      const tokens = (
-        response as { tokens: Array<{ service: { name: string } }> }
-      ).tokens;
-      serviceConnected.value = tokens.map((token) => token.service.name);
-      console.log("tokens: ", tokens);
-      console.log("serviceConnected", serviceConnected);
+    if (tokenCookie.value) {
+      tokens.value = await servicesConnectionInfos(tokenCookie.value);
+      serviceConnected.value = tokens.value.map((token) => token.service.name);
       isLoading.value = false;
-    } else {
-      console.error("Response does not contain valid tokens.");
-      return [];
+      // console.log("Tokens received:", tokens.value);
     }
-  } catch (error: unknown) {
-    errorMessage.value = handleErrorStatus(error);
-    if (errorMessage.value === "An unknown error occurred") {
-      console.error("An unknown error occurred", error);
-    }
+  } catch (error) {
+    console.error("Error loading tokens:", error);
   }
 }
 
@@ -58,7 +40,6 @@ const loadServices = async () => {
   try {
     errorMessage.value = null;
     services.value = await fetchServices();
-    console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading services:", error);
@@ -105,7 +86,7 @@ const getServiceDetails = (appName: string) =>
   serviceDetails.value.find((service) => service.name === appName);
 
 const onClick = (label: string) => {
-  handleClick(label, services, serviceConnected);
+  handleClick(label, services, tokens, tokenCookie.value);
 };
 </script>
 
@@ -116,20 +97,21 @@ const onClick = (label: string) => {
       :key="index"
       :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
-        `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`,
+        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]"
       @click="onClick(app.name)"
     >
       <img
         v-if="getServiceDetails(app.name)?.icon"
         :src="getServiceDetails(app.name)?.icon"
-        alt=""
-        class="w-20 h-20 mt-4"
+        alt="service_icon"
+        class="w-20 h-20"
       />
 
-      <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
-        app.name
-      }}</span>
+      <span
+        class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
+        >{{ app.name }}</span
+      >
 
       <div
         v-if="!isLoading"
@@ -150,5 +132,23 @@ const onClick = (label: string) => {
   height: 5rem;
   width: 5rem;
   color: white;
+}
+
+.clamp-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  transition: all 1s ease-in-out;
+}
+
+.hover-expand-text:hover {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+  white-space: normal;
 }
 </style>
