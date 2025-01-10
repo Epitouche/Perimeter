@@ -109,7 +109,7 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt="service_icon"
         class="w-20 h-20"
-      >
+      />
 
       <span
         class="clamp-1-line p-8 text-2xl text-center break-words w-full hover-expand-text"
