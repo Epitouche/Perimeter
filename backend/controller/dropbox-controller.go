@@ -45,7 +45,7 @@ func (controller *dropboxController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Dropbox,
 		"https://www.dropbox.com/oauth2/authorize",
-		"account_info.read files.content.read files.metadata.read profile email openid",
+		"account_info.read files.content.read files.content.write files.metadata.read profile email openid",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)

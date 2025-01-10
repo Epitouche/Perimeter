@@ -1,6 +1,9 @@
 package schemas
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 type MicrosoftAction string
 
@@ -26,6 +29,10 @@ type MicrosoftTokenResponse struct {
 	Scope        string `json:"scope"`
 	TokenType    string `json:"token_type"`
 	RefreshToken string `json:"refresh_token"`
+}
+
+type MicrosoftVariableReceiveMail struct {
+	Time time.Time `json:"time"`
 }
 
 // error messages

@@ -120,3 +120,8 @@ type DropboxSaveUrlReactionOption struct {
 	Path string `json:"path"`
 	URL  string `json:"url"`
 }
+
+type DropboxSaveUrlResult struct {
+	Tag        string `json:".tag"`
+	AsyncJobID string `json:"async_job_id"`
+}

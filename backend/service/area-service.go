@@ -120,15 +120,22 @@ func (service *areaService) CreateArea(result schemas.AreaMessage, token string)
 		return "", fmt.Errorf("reaction option does not match default option type")
 	}
 
+	defaultVariavle := struct{}{}
+	defaultStorageVariable, err := json.Marshal(defaultVariavle)
+	if err != nil {
+		return "", fmt.Errorf("can't marshal default storage variable: %w", err)
+	}
+
 	newArea := schemas.Area{
-		User:           user,
-		ActionOption:   result.ActionOption,
-		ReactionOption: result.ReactionOption,
-		Title:          result.Title,
-		Description:    result.Description,
-		Enable:         true,
-		Action:         areaAction,
-		Reaction:       areaReaction,
+		User:            user,
+		ActionOption:    result.ActionOption,
+		ReactionOption:  result.ReactionOption,
+		Title:           result.Title,
+		Description:     result.Description,
+		Enable:          true,
+		Action:          areaAction,
+		Reaction:        areaReaction,
+		StorageVariable: defaultStorageVariable,
 	}
 
 	id, error := service.repository.SaveArea(newArea)
@@ -192,7 +199,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 					Area:   area,
 					Result: resultReaction,
 				})
+				println("result action")
 				println(resultAction)
+				println("result reaction")
 				println(resultReaction)
 			}
 		}
