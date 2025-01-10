@@ -55,7 +55,11 @@ export const handleClick = async (
   } else {
     const apiLink = `http://server:8080/api/v1/${label.toLowerCase()}/auth/`;
 
-    if (serviceNames.includes(label) && label.toLowerCase() != "timer" && label.toLowerCase() != "openweathermap") {
+    if (
+      serviceNames.includes(label) &&
+      label.toLowerCase() != "timer" &&
+      label.toLowerCase() != "openweathermap"
+    ) {
       await authApiCall(apiLink);
       return false;
     } else {

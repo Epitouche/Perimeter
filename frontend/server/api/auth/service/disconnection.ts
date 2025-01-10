@@ -10,18 +10,19 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    await $fetch(`http://server:8080/api/v1/token`,
-      {
-        method: "DELETE",
-        body: {
-          id: params.tokenId,
-        },
-        headers: {
-          Authorization: params.authorization ? `Bearer ${params.authorization}` : "",
-        },
+    await $fetch(`http://server:8080/api/v1/token`, {
+      method: "DELETE",
+      body: {
+        id: params.tokenId,
+      },
+      headers: {
+        Authorization: params.authorization
+          ? `Bearer ${params.authorization}`
+          : "",
+      },
     });
     return true;
-  }  catch (error: unknown) {
+  } catch (error: unknown) {
     const errorMessage = handleErrorStatus(error);
     if (errorMessage === "An unknown error occurred") {
       console.error("An unknown error occurred", error);

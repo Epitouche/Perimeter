@@ -105,7 +105,12 @@ const confirmAction = async () => {
 
 const executeHandleClick = async (label: string) => {
   try {
-    const response = await handleClick(label, services, tokens, tokenCookie.value || undefined);
+    const response = await handleClick(
+      label,
+      services,
+      tokens,
+      tokenCookie.value || undefined,
+    );
     if (response) {
       loadConnectionInfos();
     }
@@ -119,21 +124,25 @@ const cancelAction = () => {
   isPopupVisible.value = false;
   selectedService.value = null;
 };
-
 </script>
 
 <template>
   <div class="flex flex-wrap gap-5 justify-center">
     <UButton
-      v-for="(app, index) in apps" :key="index"
-      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }" 
+      v-for="(app, index) in apps"
+      :key="index"
+      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
         `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
-      ]" @click="onClick(app.name)">
+      ]"
+      @click="onClick(app.name)"
+    >
       <img
         v-if="getServiceDetails(app.name)?.icon"
-        :src="getServiceDetails(app.name)?.icon" alt=""
-        class="w-20 h-20">
+        :src="getServiceDetails(app.name)?.icon"
+        alt=""
+        class="w-20 h-20"
+      />
 
       <span
         class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
@@ -142,7 +151,8 @@ const cancelAction = () => {
 
       <div
         v-if="!isLoading"
-        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold" :class="{
+        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
+        :class="{
           'bg-black text-white': isServiceConnectedOrInvalid(app.name),
           'bg-white text-black': !isServiceConnectedOrInvalid(app.name),
         }"
@@ -151,26 +161,34 @@ const cancelAction = () => {
       </div>
     </UButton>
   </div>
-  <div v-if="isPopupVisible" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-  <div class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full">
-    <h2 class="text-4xl font-semibold mb-2">
-      Are you sure you want to disconnect from this service?
-    </h2>
-    <p class="text-2xl mb-5">
-      This action cannot be undone!
-    </p>
-    <div class="flex flex-row justify-end items-center gap-5 pt-5">
-      <UButton class="text-black border-black bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5 " @click="cancelAction">No</UButton>
-      <UButton class="text-red-600 border-red-600 bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5 " @click="confirmAction">Yes</UButton>
+  <div
+    v-if="isPopupVisible"
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  >
+    <div
+      class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+    >
+      <h2 class="text-4xl font-semibold mb-2">
+        Are you sure you want to disconnect from this service?
+      </h2>
+      <p class="text-2xl mb-5">This action cannot be undone!</p>
+      <div class="flex flex-row justify-end items-center gap-5 pt-5">
+        <UButton
+          class="text-black border-black bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+          @click="cancelAction"
+          >No</UButton
+        >
+        <UButton
+          class="text-red-600 border-red-600 bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+          @click="confirmAction"
+          >Yes</UButton
+        >
+      </div>
     </div>
   </div>
-</div>
-
-
 </template>
 
 <style scoped>
-
 :deep(.app_button span) {
   height: 5rem;
   width: 5rem;
@@ -194,5 +212,4 @@ const cancelAction = () => {
   overflow: visible;
   white-space: normal;
 }
-
 </style>
