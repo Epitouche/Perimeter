@@ -20,7 +20,7 @@ export const authApiCall = async (label: string) => {
   }
 };
 
-export const disconnectService = async (token: string, tokenId: number, ) => {
+export const disconnectService = async (token: string, tokenId: number) => {
   try {
     console.log("Infos: ", token, " with : ", tokenId);
     const response = await $fetch("/api/auth/service/disconnection", {
@@ -53,8 +53,12 @@ export const handleClick = (
     disconnectService(token, Number(serviceId));
   } else {
     const apiLink = `http://server:8080/api/v1/${label.toLowerCase()}/auth/`;
-    
-    if (serviceNames.includes(label) && label.toLowerCase() != "timer" && label.toLowerCase() != "openweathermap") {
+
+    if (
+      serviceNames.includes(label) &&
+      label.toLowerCase() != "timer" &&
+      label.toLowerCase() != "openweathermap"
+    ) {
       authApiCall(apiLink);
     } else {
       console.log(`Unknown service "${label}" clicked.`);
