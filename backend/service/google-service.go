@@ -410,7 +410,6 @@ func (service *googleService) GoogleActionReceiveMail(
 		}
 		var emailAllDetails schemas.GmailMessageResponse
 		err = json.NewDecoder(resp.Body).Decode(&emailAllDetails)
-
 		if err != nil {
 			println("error decoding response: " + err.Error())
 			return
