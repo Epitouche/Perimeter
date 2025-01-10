@@ -24,8 +24,6 @@ type GmailService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Token operations
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
@@ -40,8 +38,6 @@ type gmailService struct {
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
-	actionName        []string
-	reactionName      []string
 	serviceInfo       schemas.Service
 }
 
@@ -91,14 +87,6 @@ func (service *gmailService) FindReactionbyName(
 	default:
 		return nil
 	}
-}
-
-func (service *gmailService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *gmailService) GetReactionsName() []string {
-	return service.reactionName
 }
 
 func (service *gmailService) GetServiceActionInfo() []schemas.Action {
