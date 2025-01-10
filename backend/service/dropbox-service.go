@@ -532,7 +532,11 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 				println("error marshalling storage variable: " + err.Error())
 				return
 			}
-			service.areaRepository.Update(area)
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
 		}
 	}
 
@@ -546,7 +550,11 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 			println("error marshalling storage variable: " + err.Error())
 			return
 		}
-		service.areaRepository.Update(area)
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
 	}
 
 	// Unmarshal the option
@@ -576,7 +584,11 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 			println("error marshalling storage variable: " + err.Error())
 			return
 		}
-		service.areaRepository.Update(area)
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
 		println(response)
 		channel <- response
 	}
