@@ -31,7 +31,6 @@ async function loadConnectionInfos() {
       tokens.value = await servicesConnectionInfos(tokenCookie.value);
       serviceConnected.value = tokens.value.map((token) => token.service.name);
       isLoading.value = false;
-      // console.log("Tokens received:", tokens.value);
     }
   } catch (error) {
     console.error("Error loading tokens:", error);

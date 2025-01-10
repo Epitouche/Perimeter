@@ -15,8 +15,6 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(["my-icons:color-spotify", "my-icons:color-google"]);
-
 const handleSignUp = async () => {
   try {
     signUpError.value = null;
@@ -47,9 +45,7 @@ const handleSignUp = async () => {
 
     if (response.token) {
       token.value = response.token;
-      ///console.log("Token stored in cookies:", response.token);
     }
-    //console.log("Sign up successful:", response);
     navigateTo("/myareas");
   } catch (error) {
     if (error && typeof error === "object" && "data" in error) {
@@ -78,7 +74,7 @@ const handleSignUp = async () => {
     <UContainer
       :ui="{
         padding: 'pt-8 pb-16 px-0',
-        constrained: 'min-w-[30%] max-w-[80%]',
+        constrained: 'min-w-[30%] max-w-[60%]',
       }"
       class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
     >
@@ -152,7 +148,7 @@ const handleSignUp = async () => {
           :ui="{ label: 'text-custom_color-text_other text-xl' }"
         />
       </div>
-      <ConnectWithAppContainer :apps="apps" />
+      <ConnectWithAppContainer />
     </UContainer>
   </div>
 </template>
