@@ -11,32 +11,32 @@ import (
 	"area/service"
 )
 
-// GmailAPI is a struct that provides an interface to interact with the Gmail service.
-// It contains a controller of type GmailController which handles the core logic
+// GoogleAPI is a struct that provides an interface to interact with the Gmail service.
+// It contains a controller of type GoogleController which handles the core logic
 // for managing Gmail-related operations.
-type GmailAPI struct {
-	controller controller.GmailController
+type GoogleAPI struct {
+	controller controller.GoogleController
 }
 
-// NewGmailAPI initializes a new GmailAPI instance, sets up the necessary routes, and returns the instance.
+// NewGoogleAPI initializes a new GoogleAPI instance, sets up the necessary routes, and returns the instance.
 // It configures the following routes:
 // - /gmail: Base route for Gmail API.
 // - /gmail/info: Route for getting user information, protected by JWT authorization middleware.
 //
 // Parameters:
-// - controller: An instance of GmailController to handle Gmail-related operations.
+// - controller: An instance of GoogleController to handle Gmail-related operations.
 // - apiRoutes: A gin.RouterGroup to define the API routes.
 // - serviceUser: An instance of UserService to handle user-related operations.
 //
 // Returns:
-// - A pointer to the initialized GmailAPI instance.
-func NewGmailAPI(
-	controller controller.GmailController,
+// - A pointer to the initialized GoogleAPI instance.
+func NewGoogleAPI(
+	controller controller.GoogleController,
 	apiRoutes *gin.RouterGroup,
 	serviceUser service.UserService,
-) *GmailAPI {
-	apiRoutes = apiRoutes.Group("/gmail")
-	api := GmailAPI{
+) *GoogleAPI {
+	apiRoutes = apiRoutes.Group("/google")
+	api := GoogleAPI{
 		controller: controller,
 	}
 	api.RedirectToService(apiRoutes)
@@ -57,7 +57,7 @@ func NewGmailAPI(
 //	@Success		200	{object}	schemas.AuthenticationURL
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth [get]
-func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
+func (api *GoogleAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/auth", func(ctx *gin.Context) {
 		authURL, err := api.controller.RedirectToService(ctx)
 		if err != nil {
@@ -80,7 +80,7 @@ func (api *GmailAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Success		200				{object}	schemas.JWT
 //	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback [post]
-func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
+func (api *GoogleAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
 		gmail_token, err := api.controller.HandleServiceCallback(
 			ctx,
@@ -105,7 +105,7 @@ func (api *GmailAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //	@Success		200				{object}	schemas.JWT
 //	@Failure		500				{object}	schemas.ErrorResponse
 //	@Router			/gmail/auth/callback/mobile [post]
-func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
+func (api *GoogleAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback/mobile", func(ctx *gin.Context) {
 		spotify_token, err := api.controller.HandleServiceCallbackMobile(ctx)
 		if err != nil {
@@ -130,7 +130,7 @@ func (api *GmailAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/gmail/info [get]
-func (api *GmailAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
+func (api *GoogleAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/", func(ctx *gin.Context) {
 		userInfo, err := api.controller.GetUserInfo(ctx)
 		if err != nil {

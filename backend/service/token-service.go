@@ -145,21 +145,21 @@ func (service *tokenService) DeleteUserToken(
 	if err != nil {
 		return deletedToken, fmt.Errorf("can't get user info: %w", err)
 	}
-	userTokens, err := service.repository.FindByUserId(user.Id)
+	userTokenList, err := service.repository.FindByUserId(user.Id)
 	if err != nil {
-		return deletedToken, fmt.Errorf("can't find areas by user id: %w", err)
+		return deletedToken, fmt.Errorf("can't find tokens by user id: %w", err)
 	}
 	tokenToDeleteDatabase, err := service.repository.FindById(tokenToDelete.Id)
 	if err != nil {
-		return deletedToken, fmt.Errorf("can't find areas by user id: %w", err)
+		return deletedToken, fmt.Errorf("can't find token by id: %w", err)
 	}
-	if containsToken(userTokens, tokenToDeleteDatabase) {
+	if containsToken(userTokenList, tokenToDeleteDatabase) {
 		err = service.repository.Delete(tokenToDeleteDatabase)
 		if err != nil {
-			return deletedToken, fmt.Errorf("can't update area: %w", err)
+			return deletedToken, fmt.Errorf("can't delete token: %w", err)
 		}
 		return tokenToDeleteDatabase, nil
 	} else {
-		return deletedToken, fmt.Errorf("area not found")
+		return deletedToken, fmt.Errorf("token not found")
 	}
 }
