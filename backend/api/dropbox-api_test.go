@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/Epitouche/Perimeter/api"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/test"
+	"area/api"
+	"area/schemas"
+	"area/test"
 )
 
 type MockDropboxController struct {
@@ -39,13 +39,20 @@ func (m *MockDropboxController) GetUserInfo(ctx *gin.Context) (schemas.UserCrede
 	return args.Get(0).(schemas.UserCredentials), args.Error(1)
 }
 
-// DROPBOX CONTROLLER MOCK.
-
 func (m *MockDropboxController) GetUserFile(
 	ctx *gin.Context,
-) (userFile []schemas.DropboxFile, err error) {
+) (userFile []string, err error) {
 	args := m.Called(ctx)
-	userFile = args.Get(0).([]schemas.DropboxFile)
+	userFile = args.Get(0).([]string)
+	err = args.Error(1)
+	return userFile, err
+}
+
+func (m *MockDropboxController) GetUserFolder(
+	ctx *gin.Context,
+) (userFile []string, err error) {
+	args := m.Called(ctx)
+	userFile = args.Get(0).([]string)
 	err = args.Error(1)
 	return userFile, err
 }

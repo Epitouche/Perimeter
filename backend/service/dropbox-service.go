@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 // Constructor
@@ -27,7 +28,24 @@ type DropboxService interface {
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
-	GetUserFileList(userDropboxToken string) (fileList []schemas.DropboxFile, err error)
+	GetUserAllFolderAndFileList(
+		userDropboxToken string,
+	) (fileList []schemas.DropboxEntry, err error)
+	GetUserFolderAndFileList(
+		userDropboxToken string, path string,
+	) (folderAndFileList []schemas.DropboxEntry, err error)
+	GetUserFileList(
+		folderAndFileList []schemas.DropboxEntry,
+	) (fileList []schemas.DropboxEntry)
+	GetUserFolderList(
+		folderAndFileList []schemas.DropboxEntry,
+	) (fileList []schemas.DropboxEntry)
+	CountDropboxEntry(
+		folderAndFileList []schemas.DropboxEntry,
+	) uint64
+	GetPathDisplayDropboxEntry(
+		folderAndFileList []schemas.DropboxEntry,
+	) (pathDisplay []string)
 	// Actions functions
 	// Reactions functions
 }
@@ -74,7 +92,33 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
+	// service.reactionsName = append(
+	// 	service.reactionsName,
+	// 	string(schemas.CurrentWeather),
+	// 	string(schemas.CurrentTemperature),
+	// )
+	defaultValue := schemas.DropboxSaveUrlReactionOption{
+		Path: "",
+		URL:  "",
+	}
+	saveUrlReactionOoption, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Dropbox,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.SaveUrl),
+			Description: "This reaction save content from a URL to a file in Dropbox",
+			Service:     service.serviceInfo,
+			Option:      saveUrlReactionOoption,
+		},
+	}
 }
 
 func (service *dropboxService) FindActionbyName(
@@ -90,6 +134,8 @@ func (service *dropboxService) FindReactionbyName(
 	name string,
 ) func(option json.RawMessage, idArea uint64) string {
 	switch name {
+	case string(schemas.SaveUrl):
+		return service.DropboxReactionSaveUrl
 	default:
 		return nil
 	}
@@ -211,75 +257,203 @@ func (service *dropboxService) GetUserInfo(
 	return user, nil
 }
 
-func (service *dropboxService) GetUserFileList(
+func (service *dropboxService) GetUserAllFolderAndFileList(
 	userDropboxToken string,
-) (fileList []schemas.DropboxFile, err error) {
+) (folderAndFileList []schemas.DropboxEntry, err error) {
+	return service.GetUserFolderAndFileList(userDropboxToken, "")
+}
+
+func (service *dropboxService) GetUserFolderAndFileList(
+	userDropboxToken string, path string,
+) (folderAndFileList []schemas.DropboxEntry, err error) {
 	ctx := context.Background()
 
-	reqBody := `{"limit": 100}`
+	// Prepare the request body
+	reqBody := `{"` + path + `": "","recursive": true}`
 
+	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/list_v2",
+		"https://api.dropboxapi.com/2/files/list_folder",
 		strings.NewReader(reqBody),
 	)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to create request because %w", err)
+		return nil, fmt.Errorf("unable to create request: %w", err)
 	}
 
+	// Set the Authorization header
 	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+	req.Header.Set("Content-Type", "application/json")
 
 	// Make the request using the default HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to make request because %w", err)
+		return nil, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
-	result := schemas.DropboxListFileRequestsV2Result{}
+	println("Response status code: ", resp.StatusCode)
+
+	// Decode the JSON response into the result struct
+	result := schemas.DropboxListFolderResult{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return fileList, fmt.Errorf("unable to decode response because %w", err)
+		return nil, fmt.Errorf("unable to decode response: %w", err)
 	}
 
-	resp.Body.Close()
+	// Append the retrieved files to the file list
+	folderAndFileList = result.Entries
 
-	fileList = append(fileList, result.FileRequests...)
-
-	return fileList, nil
+	return folderAndFileList, nil
 }
 
-func (service *dropboxService) GetUserFileCount(
-	userDropboxToken string,
-) (numberFile uint64, err error) {
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
-		"https://api.dropboxapi.com/2/file_requests/count", nil,
-	)
-	if err != nil {
-		return numberFile, fmt.Errorf("unable to create request because %w", err)
+func (service *dropboxService) GetUserFileList(
+	folderAndFileList []schemas.DropboxEntry,
+) (fileList []schemas.DropboxEntry) {
+	for _, entry := range folderAndFileList {
+		if entry.Tag == "file" {
+			fileList = append(fileList, entry)
+		}
 	}
 
+	return fileList
+}
+
+func (service *dropboxService) GetUserFolderList(
+	folderAndFileList []schemas.DropboxEntry,
+) (fileList []schemas.DropboxEntry) {
+	for _, entry := range folderAndFileList {
+		if entry.Tag == "folder" {
+			fileList = append(fileList, entry)
+		}
+	}
+
+	return fileList
+}
+
+func (service *dropboxService) CountDropboxEntry(
+	folderAndFileList []schemas.DropboxEntry,
+) uint64 {
+	return uint64(len(folderAndFileList))
+}
+
+func (service *dropboxService) GetPathDisplayDropboxEntry(
+	folderAndFileList []schemas.DropboxEntry,
+) (pathDisplay []string) {
+	for _, entry := range folderAndFileList {
+		pathDisplay = append(pathDisplay, entry.PathDisplay)
+	}
+	return pathDisplay
+}
+
+func (service *dropboxService) SaveUrl(
+	userDropboxToken string, path string, url string,
+) (saveUrlFile schemas.DropboxEntry, err error) {
+	ctx := context.Background()
+
+	// Prepare the request body
+	reqBody := `{"path": "` + path + `","url": "` + url + `"}`
+
+	// Create the HTTP request
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.dropboxapi.com/2/files/save_url",
+		strings.NewReader(reqBody),
+	)
+	if err != nil {
+		return saveUrlFile, fmt.Errorf("unable to create request: %w", err)
+	}
+
+	// Set the Authorization header
 	req.Header.Set("Authorization", "Bearer "+userDropboxToken)
+	req.Header.Set("Content-Type", "application/json")
 
 	// Make the request using the default HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return numberFile, fmt.Errorf("unable to make request because %w", err)
+		return saveUrlFile, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return saveUrlFile, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
-	result := schemas.DropboxCountFileRequestsResult{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	// Decode the JSON response into the result struct
+	err = json.NewDecoder(resp.Body).Decode(&saveUrlFile)
 	if err != nil {
-		return numberFile, fmt.Errorf("unable to decode response because %w", err)
+		return saveUrlFile, fmt.Errorf("unable to decode response: %w", err)
 	}
 
-	resp.Body.Close()
+	if saveUrlFile.PathDisplay != path {
+		return saveUrlFile, fmt.Errorf("unable to save file")
+	}
 
-	numberFile = result.FileRequestCount
-	return numberFile, nil
+	return saveUrlFile, nil
 }
 
 // Actions functions
 
 // Reactions functions
+
+func (service *dropboxService) DropboxReactionSaveUrl(
+	option json.RawMessage,
+	idArea uint64,
+) string {
+	optionJSON := schemas.DropboxSaveUrlReactionOption{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal temperature option: " + err.Error())
+		time.Sleep(time.Second)
+		return "error unmarshal temperature option: " + err.Error()
+	}
+
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return "Error finding area" + err.Error()
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token" + err.Error()
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return "Error: Token not found"
+	}
+
+	saveFile, err := service.SaveUrl(token.Token, optionJSON.Path, optionJSON.URL)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if saveFile.PathDisplay != optionJSON.Path {
+		return "unable to save file"
+	}
+
+	return "create file " + saveFile.PathDisplay + " that save content from " + optionJSON.URL
+}

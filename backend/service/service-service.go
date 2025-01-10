@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/tools"
+	"area/repository"
+	"area/schemas"
+	"area/tools"
 )
 
 type ServiceService interface {
@@ -92,7 +92,10 @@ func (service *serviceService) InitialSaveService() {
 			println(fmt.Errorf("unable to find service by name because %w", err))
 		}
 		if len(serviceByName) == 0 {
-			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
+			err = service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
+			if err != nil {
+				println(fmt.Errorf("unable to save service because %w", err))
+			}
 		}
 	}
 }

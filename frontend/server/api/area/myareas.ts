@@ -16,11 +16,10 @@ export default defineEventHandler(async (event) => {
         Authorization: "Bearer " + params.token,
       },
     });
-    console.log(response);
     return response;
   } catch (error: unknown) {
-    console.error(error);
     console.log("error: ", error);
+    console.error(error);
     handleError(error);
   }
 });

@@ -3,7 +3,7 @@ package test
 import (
 	"github.com/stretchr/testify/mock"
 
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/schemas"
 )
 
 type MockUserService struct {
@@ -37,4 +37,9 @@ func (m *MockUserService) GetUserById(id uint64) (schemas.User, error) {
 func (m *MockUserService) GetUserInfo(token string) (schemas.User, error) {
 	args := m.Called(token)
 	return args.Get(0).(schemas.User), args.Error(1)
+}
+
+func (m *MockUserService) DeleteUser(newUser schemas.User) (err error) {
+	args := m.Called(newUser)
+	return args.Error(1)
 }

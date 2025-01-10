@@ -75,9 +75,30 @@ const serviceDetails = computed(() =>
 );
 
 const getServiceStateText = (appName: string) => {
+  const matchingService = services.value.find(
+    (service) => service.name === appName && !service.oauth,
+  );
+
+  if (matchingService) {
+    return "Automatically connected";
+  }
   const isConnected = serviceConnected.value.includes(appName);
   const message = isConnected ? `Disconnect ${appName}` : `Connect ${appName}`;
   return message;
+};
+
+const isServiceConnectedOrInvalid = (appName: string): boolean => {
+  const matchingService = services.value.find(
+    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+  );
+
+  if (
+    serviceConnected.value.includes(appName) ||
+    (matchingService && matchingService.oauth === false)
+  ) {
+    return true;
+  }
+  return false;
 };
 
 const getServiceDetails = (appName: string) =>
@@ -104,7 +125,7 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20 mt-4"
-      />
+      >
 
       <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
         app.name
@@ -114,8 +135,8 @@ const onClick = (label: string) => {
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
         :class="{
-          'bg-black text-white': serviceConnected.includes(app.name),
-          'bg-white text-black': !serviceConnected.includes(app.name),
+          'bg-black text-white': isServiceConnectedOrInvalid(app.name),
+          'bg-white text-black': !isServiceConnectedOrInvalid(app.name),
         }"
       >
         {{ getServiceStateText(app.name) }}

@@ -5,16 +5,31 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/middlewares"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/controller"
+	"area/middlewares"
+	"area/schemas"
+	"area/service"
 )
 
+// GmailAPI is a struct that provides an interface to interact with the Gmail service.
+// It contains a controller of type GmailController which handles the core logic
+// for managing Gmail-related operations.
 type GmailAPI struct {
 	controller controller.GmailController
 }
 
+// NewGmailAPI initializes a new GmailAPI instance, sets up the necessary routes, and returns the instance.
+// It configures the following routes:
+// - /gmail: Base route for Gmail API.
+// - /gmail/info: Route for getting user information, protected by JWT authorization middleware.
+//
+// Parameters:
+// - controller: An instance of GmailController to handle Gmail-related operations.
+// - apiRoutes: A gin.RouterGroup to define the API routes.
+// - serviceUser: An instance of UserService to handle user-related operations.
+//
+// Returns:
+// - A pointer to the initialized GmailAPI instance.
 func NewGmailAPI(
 	controller controller.GmailController,
 	apiRoutes *gin.RouterGroup,
