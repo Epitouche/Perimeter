@@ -28,7 +28,7 @@ function formatName(name: string): string {
         :src="type.service.icon"
         :alt="type.service.name"
         class="w-16 h-16 p-0"
-      >
+      />
       <p class="text-5xl self-start">
         <b>{{ type.service.name }}</b
         >:
