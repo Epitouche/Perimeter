@@ -40,15 +40,15 @@ export const disconnectService = async (token: string, tokenId: number) => {
 export const handleClick = (
   label: string,
   services: Ref<ServiceInfo[]>,
-  tokens: Ref<Token[]>,
-  token: string,
+  tokens?: Ref<Token[]>,
+  token?: string,
 ) => {
   const serviceNames = services.value.map((service) => service.name);
   let matchingToken;
   if (tokens && token) {
     matchingToken = tokens.value.find((t) => t.service.name === label);
   }
-  if (matchingToken) {
+  if (matchingToken && token) {
     const serviceId = matchingToken.service.id;
     disconnectService(token, Number(serviceId));
   } else {

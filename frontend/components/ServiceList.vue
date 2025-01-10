@@ -29,7 +29,6 @@ async function loadConnectionInfos() {
       tokens.value = await servicesConnectionInfos(tokenCookie.value);
       serviceConnected.value = tokens.value.map((token) => token.service.name);
       isLoading.value = false;
-      // console.log("Tokens received:", tokens.value);
     }
   } catch (error) {
     console.error("Error loading tokens:", error);
@@ -86,7 +85,11 @@ const getServiceDetails = (appName: string) =>
   serviceDetails.value.find((service) => service.name === appName);
 
 const onClick = (label: string) => {
-  handleClick(label, services, tokens, tokenCookie.value);
+  if (tokenCookie.value) {
+    handleClick(label, services, tokens, tokenCookie.value);
+  } else {
+    handleClick(label, services, undefined, undefined);
+  }
 };
 </script>
 
@@ -97,7 +100,7 @@ const onClick = (label: string) => {
       :key="index"
       :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
-        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
+        `flex flex-col items-center justify-start relative p-5 w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]"
       @click="onClick(app.name)"
     >
@@ -109,7 +112,7 @@ const onClick = (label: string) => {
       >
 
       <span
-        class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
+        class="clamp-1-line p-8 text-2xl text-center break-words w-full hover-expand-text"
         >{{ app.name }}</span
       >
 

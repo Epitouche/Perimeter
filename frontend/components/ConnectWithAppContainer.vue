@@ -2,10 +2,6 @@
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
 import { fetchServices } from "~/utils/fetchServices";
 
-defineProps<{
-  apps: string[];
-}>();
-
 const services = ref<ServiceInfo[]>([]);
 const errorMessage = ref<string | null>(null);
 

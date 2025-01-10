@@ -3,11 +3,8 @@ definePageMeta({
   middleware: "auth",
 });
 
-const isLoading = ref(true);
-</script>
+onMounted(() => {
+  navigateTo("/workflow");
+});
 
-<template>
-  <div>
-    <LoadingScreen v-if="isLoading" :timeout="500" />
-  </div>
-</template>
+</script>
