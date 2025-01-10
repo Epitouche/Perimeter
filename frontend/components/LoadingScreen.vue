@@ -5,11 +5,12 @@ const props = defineProps<{
 }>();
 
 const timedOut = ref(false);
+const newPath = "/" + props.path;
 
 onMounted(() => {
   setTimeout(() => {
     timedOut.value = true;
-    navigateTo("/", props.path);
+    navigateTo(newPath);
   }, props.timeout);
 });
 </script>
