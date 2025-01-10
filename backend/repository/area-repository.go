@@ -106,3 +106,4 @@ func (repo *areaRepository) FindById(id uint64) (area schemas.Area, err error) {
 	}
 	return area, nil
 }
+
