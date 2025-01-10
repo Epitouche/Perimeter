@@ -57,7 +57,7 @@ func setupRouter() *gin.Engine {
 
 	// Repositories
 	githubRepository := repository.NewGithubRepository(databaseConnection)
-	gmailRepository := repository.NewGmailRepository(databaseConnection)
+	gmailRepository := repository.NewGoogleRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
 	dropboxRepository := repository.NewDropboxRepository(databaseConnection)
 	microsoftRepository := repository.NewMicrosoftRepository(databaseConnection)
@@ -78,7 +78,7 @@ func setupRouter() *gin.Engine {
 		areaRepository,
 		tokenRepository,
 	)
-	gmailService := service.NewGmailService(
+	googleService := service.NewGoogleService(
 		gmailRepository,
 		serviceRepository,
 		areaRepository,
@@ -113,7 +113,7 @@ func setupRouter() *gin.Engine {
 		serviceRepository,
 		timerService,
 		spotifyService,
-		gmailService,
+		googleService,
 		githubService,
 		dropboxService,
 		microsoftService,
@@ -145,8 +145,8 @@ func setupRouter() *gin.Engine {
 		tokenService,
 		serviceService,
 	)
-	gmailController := controller.NewGmailController(
-		gmailService,
+	gmailController := controller.NewGoogleController(
+		googleService,
 		userService,
 		tokenService,
 		serviceService,
@@ -184,7 +184,7 @@ func setupRouter() *gin.Engine {
 	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)
 	api.NewUserApi(userController, apiRoutes, userService)
 	api.NewSpotifyAPI(spotifyController, apiRoutes, userService)
-	api.NewGmailAPI(gmailController, apiRoutes, userService)
+	api.NewGoogleAPI(gmailController, apiRoutes, userService)
 	api.NewGithubAPI(githubController, apiRoutes, userService)
 	api.NewDropboxAPI(dropboxController, apiRoutes, userService)
 	api.NewMicrosoftAPI(microsoftController, apiRoutes, userService)
