@@ -5,6 +5,14 @@ import (
 	"time"
 )
 
+type GithubAction string
+
+const (
+	UpdateCommitInRepo GithubAction = "UpdateCommitInRepo"
+)
+
+type GithubReaction string
+
 // GitHubTokenResponse represents the response from Github when a token is requested.
 type GitHubTokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -111,4 +119,12 @@ type GithubCommit struct {
 		URL string `json:"url"`
 		Sha string `json:"sha"`
 	} `json:"parents"`
+}
+
+type GithubActionUpdateCommitInRepo struct {
+	RepoName string `json:"repo_name"`
+}
+
+type GithubActionUpdateCommitInRepoStorage struct {
+	Time time.Time `json:"time"`
 }

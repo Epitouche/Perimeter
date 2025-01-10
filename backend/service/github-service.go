@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -64,7 +65,27 @@ func (service *githubService) GetServiceInfo() schemas.Service {
 }
 
 func (service *githubService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
+	defaultValue := schemas.GithubActionUpdateCommitInRepo{
+		RepoName: "",
+	}
+	actionUpdateCommitInRepo, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Github,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
+	return []schemas.Action{
+		{
+			Name:        string(schemas.UpdateCommitInRepo),
+			Description: "This reaction save content from a URL to a file in Dropbox",
+			Service:     service.serviceInfo,
+			Option:      actionUpdateCommitInRepo,
+		},
+	}
 }
 
 func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
@@ -75,6 +96,8 @@ func (service *githubService) FindActionbyName(
 	name string,
 ) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
+	case string(schemas.UpdateCommitInRepo):
+		return service.GithubActionUpdateCommitInRepo
 	default:
 		return nil
 	}
@@ -263,13 +286,26 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 	return user, nil
 }
 
+func (service *githubService) IsCommitUpdate(
+	commitList []schemas.GithubCommit,
+	date time.Time,
+) bool {
+	for _, commit := range commitList {
+		if commit.Commit.Author.Date.After(date) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (service *githubService) CommitList(
 	userGithubToken string, repo string,
 ) (commitList []schemas.GithubCommit, err error) {
 	ctx := context.Background()
 
 	// Create the HTTP request
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
 		"https://api.github.com/repos/"+repo+"/commits",
 		nil,
 	)
@@ -307,6 +343,110 @@ func (service *githubService) CommitList(
 	}
 
 	return commitList, nil
+}
+
+func (service *githubService) GithubActionUpdateCommitInRepo(
+	channel chan string,
+	option json.RawMessage,
+	idArea uint64,
+) {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Action.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return
+	}
+
+	databaseStored := schemas.GithubActionUpdateCommitInRepoStorage{}
+	err = json.Unmarshal(area.StorageVariable, &databaseStored)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return
+		} else {
+			println("initializing storage variable")
+			databaseStored = schemas.GithubActionUpdateCommitInRepoStorage{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(databaseStored)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
+		}
+	}
+
+	if databaseStored.Time.IsZero() {
+		println("initializing storage variable")
+		databaseStored = schemas.GithubActionUpdateCommitInRepoStorage{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
+	}
+
+	// Unmarshal the option
+	optionJSON := schemas.GithubActionUpdateCommitInRepo{}
+
+	err = json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal weather option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	commitList, err := service.CommitList(token.Token, optionJSON.RepoName)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if service.IsCommitUpdate(commitList, databaseStored.Time) {
+		response := "new commit update in " + optionJSON.RepoName + " repository"
+		databaseStored.Time = time.Now()
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
+		println(response)
+		channel <- response
+	}
+
+	time.Sleep(time.Minute)
 }
 
 // Actions functions
