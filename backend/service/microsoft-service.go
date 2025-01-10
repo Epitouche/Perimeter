@@ -80,7 +80,7 @@ func (service *microsoftService) GetServiceInfo() schemas.Service {
 }
 
 func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
-	service.actionName = append(service.actionName, string(schemas.ReceiveMicrosoftMail))
+	// service.actionName = append(service.actionName, string(schemas.ReceiveMicrosoftMail))
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {

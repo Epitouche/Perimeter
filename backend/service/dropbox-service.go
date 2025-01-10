@@ -23,8 +23,6 @@ type DropboxService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -55,8 +53,6 @@ type dropboxService struct {
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
-	actionName        []string
-	reactionName      []string
 	serviceInfo       schemas.Service
 }
 
@@ -92,11 +88,6 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
-	// service.reactionsName = append(
-	// 	service.reactionsName,
-	// 	string(schemas.CurrentWeather),
-	// 	string(schemas.CurrentTemperature),
-	// )
 	defaultValue := schemas.DropboxSaveUrlReactionOption{
 		Path: "",
 		URL:  "",
@@ -139,14 +130,6 @@ func (service *dropboxService) FindReactionbyName(
 	default:
 		return nil
 	}
-}
-
-func (service *dropboxService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *dropboxService) GetReactionsName() []string {
-	return service.reactionName
 }
 
 // Service specific functions

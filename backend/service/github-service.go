@@ -20,8 +20,6 @@ type GithubService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -34,8 +32,6 @@ type githubService struct {
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
-	actionName        []string
-	reactionName      []string
 	serviceInfo       schemas.Service
 }
 
@@ -90,14 +86,6 @@ func (service *githubService) FindReactionbyName(
 	default:
 		return nil
 	}
-}
-
-func (service *githubService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *githubService) GetReactionsName() []string {
-	return service.reactionName
 }
 
 // Service specific functions
