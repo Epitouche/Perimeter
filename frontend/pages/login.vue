@@ -15,8 +15,6 @@ interface RegisterResponse {
   message?: string;
 }
 
-const apps = ref<string[]>(["my-icons:color-spotify", "my-icons:color-google"]);
-
 const handleLogin = async () => {
   try {
     loginError.value = null;
@@ -49,9 +47,6 @@ const handleLogin = async () => {
         loginError.value = "Login failed. Please try again.";
       }
       console.error("Login error:", typedError);
-    } else if (error instanceof Error) {
-      loginError.value = error.message || "An unknown error occurred.";
-      console.error("Login failed:", error.message);
     } else {
       loginError.value = "An unknown error occurred.";
       console.error("Unexpected error:", error);
@@ -65,7 +60,7 @@ const handleLogin = async () => {
     <UContainer
       :ui="{
         padding: 'pt-8 pb-16 px-0',
-        constrained: 'min-w-[30%] max-w-[80%]',
+        constrained: 'min-w-[30%] max-w-[60%]',
       }"
       class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
     >
@@ -123,7 +118,7 @@ const handleLogin = async () => {
           :ui="{ label: 'text-custom_color-text_other text-xl' }"
         />
       </div>
-      <ConnectWithAppContainer :apps="apps" />
+      <ConnectWithAppContainer />
     </UContainer>
   </div>
 </template>
