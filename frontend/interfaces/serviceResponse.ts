@@ -1,6 +1,7 @@
 export interface Service {
     name: string;
     id: number;
+    oauth: boolean;
   }
   
   export interface Token {

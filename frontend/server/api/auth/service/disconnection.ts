@@ -20,10 +20,6 @@ export default defineEventHandler(async (event) => {
         headers: {
           Authorization: params.authorization ? `Bearer  ${params.authorization}` : "",
         },
-      },
-      headers: {
-        Authorization: params.authorization ? `${params.authorization}` : "",
-      },
     });
     console.log("Deleting ? : ", response);
     return response;

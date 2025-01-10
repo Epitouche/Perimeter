@@ -92,34 +92,23 @@ const onClick = (label: string) => {
 
 <template>
   <div class="flex flex-wrap gap-5 justify-center">
-    <UButton
-      v-for="(app, index) in apps"
-      :key="index"
-      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
+    <UButton v-for="(app, index) in apps" :key="index"
+      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }" 
       :class="[
-        `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`,
-      ]"
-      @click="onClick(app.name)"
-    >
-      <img
-        v-if="getServiceDetails(app.name)?.icon"
-        :src="getServiceDetails(app.name)?.icon"
-        alt=""
-        class="w-20 h-20 mt-4"
-      />
+        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
+      ]" @click="onClick(app.name)">
+      <img v-if="getServiceDetails(app.name)?.icon" :src="getServiceDetails(app.name)?.icon" alt=""
+        class="w-20 h-20" />
 
-      <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
+      <span class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text">{{
         app.name
-      }}</span>
+        }}</span>
 
-      <div
-        v-if="!isLoading"
-        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
-        :class="{
+      <div v-if="!isLoading"
+        class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold" :class="{
           'bg-black text-white': isServiceConnectedOrInvalid(app.name),
           'bg-white text-black': !isServiceConnectedOrInvalid(app.name),
-        }"
-      >
+        }">
         {{ getServiceStateText(app.name) }}
       </div>
     </UButton>
@@ -131,5 +120,23 @@ const onClick = (label: string) => {
   height: 5rem;
   width: 5rem;
   color: white;
+}
+
+.clamp-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  transition: all 1s ease-in-out;
+}
+
+.hover-expand-text:hover {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+  white-space: normal;
 }
 </style>

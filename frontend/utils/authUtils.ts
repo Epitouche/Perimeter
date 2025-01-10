@@ -54,7 +54,7 @@ export const handleClick = (
   } else {
     const apiLink = `http://server:8080/api/v1/${label.toLowerCase()}/auth/`;
     
-    if (serviceNames.includes(label)) {
+    if (serviceNames.includes(label) && label.toLowerCase() != "timer" && label.toLowerCase() != "openweathermap") {
       authApiCall(apiLink);
     } else {
       console.log(`Unknown service "${label}" clicked.`);
