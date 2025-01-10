@@ -99,8 +99,11 @@ v-for="(app, index) in apps" :key="index"
         `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]" @click="onClick(app.name)">
       <img
-v-if="getServiceDetails(app.name)?.icon" :src="getServiceDetails(app.name)?.icon" alt=""
-        class="w-20 h-20" >
+        v-if="getServiceDetails(app.name)?.icon"
+        :src="getServiceDetails(app.name)?.icon"
+        alt="service_icon"
+        class="w-20 h-20"
+      >
 
       <span class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text">{{
         app.name

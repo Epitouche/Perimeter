@@ -1,19 +1,19 @@
 # Push docker image to GitHub Container Registry
-name: Create and publish a frontend Docker image
+name: Create and publish a backend documentation Docker image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
   pull_request:
     branches:
-      - frontend
-      - frontend-feature/**
+      - backend
+      - backend-feature/**
       - dev
       - pre-prod
       - main
   push:
     branches:
-      - frontend
-      - frontend-feature/**
+      - backend
+      - backend-feature/**
       - dev
       - pre-prod
       - main
@@ -21,11 +21,11 @@ on:
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: "epitouche/area-frontend"
+  IMAGE_NAME: "epitouche/area-backend-documentation"
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
-  build-and-push-frontend-image:
+  build-and-push-backend-documentation-image:
     runs-on: self-hosted
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
@@ -35,7 +35,7 @@ jobs:
       id-token: write
       #
     steps:
-      - name: 'Cleanup build folder'
+      - name: "Cleanup build folder"
         run: |
           ls -la ./
           rm -rf ./* || true
@@ -67,8 +67,8 @@ jobs:
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: ./frontend
-          target: run
+          context: ./backend
+          target: documentation
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
