@@ -493,7 +493,6 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 	option json.RawMessage,
 	idArea uint64,
 ) {
-
 	// Find the area
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
