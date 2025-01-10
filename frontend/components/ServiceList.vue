@@ -68,9 +68,14 @@ const getServiceStateText = (appName: string) => {
 };
 
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
-  const matchingService = services.value.find((service) => service.name.toLowerCase() === appName.toLowerCase(),);
+  const matchingService = services.value.find(
+    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+  );
 
-  if (serviceConnected.value.includes(appName) || (matchingService && matchingService.oauth === false) ) {
+  if (
+    serviceConnected.value.includes(appName) ||
+    (matchingService && matchingService.oauth === false)
+  ) {
     return true;
   }
   return false;
@@ -104,7 +109,7 @@ const onClick = (label: string) => {
         :src="getServiceDetails(app.name)?.icon"
         alt="service_icon"
         class="w-20 h-20"
-      >
+      />
 
       <span
         class="clamp-1-line p-8 text-2xl text-center break-words w-full hover-expand-text"
