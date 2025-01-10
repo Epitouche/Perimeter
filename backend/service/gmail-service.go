@@ -57,11 +57,11 @@ func NewGmailService(
 		areaRepository:    areaRepository,
 		tokenRepository:   tokenRepository,
 		serviceInfo: schemas.Service{
-			Name:        schemas.Gmail,
+			Name:        schemas.Google,
 			Description: "This service is a mail service",
 			Oauth:       true,
 			Color:       "#E60000",
-			Icon:        "https://api.iconify.design/mdi:gmail.svg?color=%23FFFFFF",
+			Icon:        "https://api.iconify.design/mdi:google.svg?color=%23FFFFFF",
 		},
 	}
 }
@@ -116,7 +116,7 @@ func (service *gmailService) GetServiceReactionInfo() []schemas.Reaction {
 		println("error marshal timer option: " + err.Error())
 	}
 	service.serviceInfo, err = service.serviceRepository.FindByName(
-		schemas.Gmail,
+		schemas.Google,
 	) // must update the serviceInfo
 	if err != nil {
 		println("error find service by name: " + err.Error())

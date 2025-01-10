@@ -110,7 +110,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		if clientID == "" {
 			return "", schemas.ErrSpotifyClientIdNotSet
 		}
-	case schemas.Gmail:
+	case schemas.Google:
 		clientID = os.Getenv("GMAIL_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrGmailClientIdNotSet
