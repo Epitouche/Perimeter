@@ -72,7 +72,10 @@ func (service *actionService) SaveAllAction() {
 					fmt.Println("Error when get action by name")
 				}
 				if len(actionByName) == 0 {
-					service.repository.Save(action)
+					err = service.repository.Save(action)
+					if err != nil {
+						fmt.Println("Error when save action")
+					}
 				}
 			}
 		} else {

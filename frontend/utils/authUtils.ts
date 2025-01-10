@@ -20,7 +20,7 @@ export const authApiCall = async (label: string) => {
   }
 };
 
-export const disconnectService = async (token: string, tokenId: number, ) => {
+export const disconnectService = async (token: string, tokenId: number) => {
   try {
     console.log("Infos: ", token, " with : ", tokenId);
     const response = await $fetch("/api/auth/service/disconnection", {

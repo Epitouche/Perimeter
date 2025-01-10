@@ -92,7 +92,10 @@ func (service *serviceService) InitialSaveService() {
 			println(fmt.Errorf("unable to find service by name because %w", err))
 		}
 		if len(serviceByName) == 0 {
-			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
+			err = service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
+			if err != nil {
+				println(fmt.Errorf("unable to save service because %w", err))
+			}
 		}
 	}
 }
@@ -110,7 +113,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		if clientID == "" {
 			return "", schemas.ErrSpotifyClientIdNotSet
 		}
-	case schemas.Gmail:
+	case schemas.Google:
 		clientID = os.Getenv("GMAIL_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrGmailClientIdNotSet

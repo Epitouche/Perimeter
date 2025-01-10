@@ -41,7 +41,7 @@ func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthURL string, err error) {
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
-		schemas.Gmail,
+		schemas.Google,
 		"https://accounts.google.com/o/oauth2/v2/auth",
 		"https://mail.google.com/ profile email",
 	)
@@ -79,7 +79,7 @@ func (controller *gmailController) HandleServiceCallback(
 	bearer, err := controller.serviceService.HandleServiceCallback(
 		code,
 		authHeader,
-		schemas.Gmail,
+		schemas.Google,
 		controller.service.AuthGetServiceAccessToken,
 		controller.serviceUser,
 		controller.service.GetUserInfo,
@@ -104,7 +104,7 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
 		authHeader,
-		schemas.Gmail,
+		schemas.Google,
 		credentials,
 		controller.serviceUser,
 		controller.service.GetUserInfo,

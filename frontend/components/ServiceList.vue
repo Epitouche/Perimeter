@@ -135,16 +135,18 @@ const cancelAction = () => {
         :src="getServiceDetails(app.name)?.icon" alt=""
         class="w-20 h-20">
 
-      <span class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text">{{
-        app.name
-        }}</span>
+      <span
+        class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
+        >{{ app.name }}</span
+      >
 
       <div
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold" :class="{
           'bg-black text-white': isServiceConnectedOrInvalid(app.name),
           'bg-white text-black': !isServiceConnectedOrInvalid(app.name),
-        }">
+        }"
+      >
         {{ getServiceStateText(app.name) }}
       </div>
     </UButton>

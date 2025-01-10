@@ -2,7 +2,7 @@ import { handleErrorStatus } from "~/utils/handleErrorStatus";
 
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
-  if (!params.authorization || !params.tokenId ) {
+  if (!params.authorization || !params.tokenId) {
     throw createError({
       statusCode: 400,
       message: "Missing parameters: token or tokenId",
