@@ -263,5 +263,52 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 	return user, nil
 }
 
+func (service *githubService) CommitList(
+	userGithubToken string, repo string,
+) (commitList []schemas.GithubCommit, err error) {
+	ctx := context.Background()
+
+	// Create the HTTP request
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		"https://api.github.com/repos/"+repo+"/commits",
+		nil,
+	)
+	if err != nil {
+		return commitList, fmt.Errorf("unable to create request: %w", err)
+	}
+
+	// Set the Authorization header
+	req.Header.Set("Authorization", "Bearer "+userGithubToken)
+	req.Header.Set("Content-Type", "application/vnd.github+json")
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return commitList, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return commitList, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
+	// Decode the JSON response into the result struct
+	err = json.NewDecoder(resp.Body).Decode(&commitList)
+	if err != nil {
+		return commitList, fmt.Errorf("unable to decode response: %w", err)
+	}
+
+	return commitList, nil
+}
+
 // Actions functions
+
 // Reactions functions
