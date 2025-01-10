@@ -1,11 +1,11 @@
 export interface Service {
   name: string;
-  id: number;
   oauth: boolean;
 }
 
 export interface Token {
   service: Service;
+  id: number;
 }
 
 export interface ServiceResponse {

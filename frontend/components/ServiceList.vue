@@ -17,6 +17,8 @@ const errorMessage = ref<string | null>(null);
 const services = ref<ServiceInfo[]>([]);
 const serviceConnected = ref<string[]>([]);
 const tokens = ref<Token[]>([]);
+const isPopupVisible = ref(false);
+const selectedService = ref<string | null>(null);
 
 onMounted(() => {
   loadConnectionInfos();
@@ -85,11 +87,41 @@ const getServiceDetails = (appName: string) =>
   serviceDetails.value.find((service) => service.name === appName);
 
 const onClick = (label: string) => {
-  if (tokenCookie.value) {
-    handleClick(label, services, tokens, tokenCookie.value);
+  if (isServiceConnectedOrInvalid(label)) {
+    selectedService.value = label;
+    isPopupVisible.value = true;
   } else {
-    handleClick(label, services, undefined, undefined);
+    executeHandleClick(label);
   }
+};
+
+const confirmAction = async () => {
+  if (!selectedService.value) return;
+  await executeHandleClick(selectedService.value);
+  isPopupVisible.value = false;
+  selectedService.value = null;
+};
+
+const executeHandleClick = async (label: string) => {
+  try {
+    const response = await handleClick(
+      label,
+      services,
+      tokens,
+      tokenCookie.value || undefined,
+    );
+    if (response) {
+      loadConnectionInfos();
+    }
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error executing handleClick:", error);
+  }
+};
+
+const cancelAction = () => {
+  isPopupVisible.value = false;
+  selectedService.value = null;
 };
 </script>
 
@@ -100,19 +132,19 @@ const onClick = (label: string) => {
       :key="index"
       :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
-        `flex flex-col items-center justify-start relative p-5 w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
+        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]"
       @click="onClick(app.name)"
     >
       <img
         v-if="getServiceDetails(app.name)?.icon"
         :src="getServiceDetails(app.name)?.icon"
-        alt="service_icon"
+        alt=""
         class="w-20 h-20"
-      >
+      />
 
       <span
-        class="clamp-1-line p-8 text-2xl text-center break-words w-full hover-expand-text"
+        class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
         >{{ app.name }}</span
       >
 
@@ -127,6 +159,31 @@ const onClick = (label: string) => {
         {{ getServiceStateText(app.name) }}
       </div>
     </UButton>
+  </div>
+  <div
+    v-if="isPopupVisible"
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  >
+    <div
+      class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+    >
+      <h2 class="text-4xl font-semibold mb-2">
+        Are you sure you want to disconnect from this service?
+      </h2>
+      <p class="text-2xl mb-5">This action cannot be undone!</p>
+      <div class="flex flex-row justify-end items-center gap-5 pt-5">
+        <UButton
+          class="text-black border-black bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+          @click="cancelAction"
+          >No</UButton
+        >
+        <UButton
+          class="text-red-600 border-red-600 bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+          @click="confirmAction"
+          >Yes</UButton
+        >
+      </div>
+    </div>
   </div>
 </template>
 
