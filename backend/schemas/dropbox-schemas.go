@@ -7,6 +7,10 @@ import (
 
 type DropboxAction string
 
+const (
+	UpdateInFolder DropboxAction = "UpdateInFolder"
+)
+
 type DropboxReaction string
 
 const (
@@ -124,4 +128,12 @@ type DropboxSaveUrlReactionOption struct {
 type DropboxSaveUrlResult struct {
 	Tag        string `json:".tag"`
 	AsyncJobID string `json:"async_job_id"`
+}
+
+type DropboxActionUpdateInFolder struct {
+	Path string `json:"path"`
+}
+
+type DropboxActionUpdateInFolderStorage struct {
+	Time time.Time `json:"time"`
 }

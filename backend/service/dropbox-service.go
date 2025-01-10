@@ -84,7 +84,27 @@ func (service *dropboxService) GetServiceInfo() schemas.Service {
 }
 
 func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
-	return []schemas.Action{}
+	defaultValue := schemas.DropboxActionUpdateInFolder{
+		Path: "",
+	}
+	actionUpdateInFolder, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal timer option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Dropbox,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
+	return []schemas.Action{
+		{
+			Name:        string(schemas.UpdateInFolder),
+			Description: "This reaction save content from a URL to a file in Dropbox",
+			Service:     service.serviceInfo,
+			Option:      actionUpdateInFolder,
+		},
+	}
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
@@ -92,7 +112,7 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 		Path: "",
 		URL:  "",
 	}
-	saveUrlReactionOoption, err := json.Marshal(defaultValue)
+	saveUrlReactionOption, err := json.Marshal(defaultValue)
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
@@ -107,7 +127,7 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 			Name:        string(schemas.SaveUrl),
 			Description: "This reaction save content from a URL to a file in Dropbox",
 			Service:     service.serviceInfo,
-			Option:      saveUrlReactionOoption,
+			Option:      saveUrlReactionOption,
 		},
 	}
 }
@@ -116,6 +136,8 @@ func (service *dropboxService) FindActionbyName(
 	name string,
 ) func(c chan string, option json.RawMessage, idArea uint64) {
 	switch name {
+	case string(schemas.UpdateInFolder):
+		return service.DropboxActionUpdateInFolder
 	default:
 		return nil
 	}
@@ -252,7 +274,7 @@ func (service *dropboxService) GetUserFolderAndFileList(
 	ctx := context.Background()
 
 	// Prepare the request body
-	reqBody := `{"` + path + `": "","recursive": true}`
+	reqBody := `{"path": "` + path + `","recursive": true}`
 
 	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
@@ -451,7 +473,117 @@ func (service *dropboxService) SaveUrlCheckJobStatus(
 	return saveUrlFile, nil
 }
 
+func (service *dropboxService) IsEntryUpdate(
+	folderAndFileList []schemas.DropboxEntry,
+	date time.Time,
+) bool {
+	for _, entry := range folderAndFileList {
+		if entry.ClientModified.After(date) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Actions functions
+
+func (service *dropboxService) DropboxActionUpdateInFolder(
+	channel chan string,
+	option json.RawMessage,
+	idArea uint64,
+) {
+
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Action.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return
+	}
+
+	databaseStored := schemas.DropboxActionUpdateInFolderStorage{}
+	err = json.Unmarshal(area.StorageVariable, &databaseStored)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return
+		} else {
+			println("initializing storage variable")
+			databaseStored = schemas.DropboxActionUpdateInFolderStorage{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(databaseStored)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return
+			}
+			service.areaRepository.Update(area)
+		}
+	}
+
+	if databaseStored.Time.IsZero() {
+		println("initializing storage variable")
+		databaseStored = schemas.DropboxActionUpdateInFolderStorage{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		service.areaRepository.Update(area)
+	}
+
+	// Unmarshal the option
+	optionJSON := schemas.DropboxActionUpdateInFolder{}
+
+	err = json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal weather option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	if optionJSON.Path[0] == '/' {
+		optionJSON.Path = optionJSON.Path[1:]
+	}
+
+	fileAndFolder, err := service.GetUserFolderAndFileList(token.Token, optionJSON.Path)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if service.IsEntryUpdate(fileAndFolder, databaseStored.Time) {
+		response := "new update in " + optionJSON.Path + " folder"
+		databaseStored.Time = time.Now()
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		service.areaRepository.Update(area)
+		println(response)
+		channel <- response
+	}
+
+	time.Sleep(time.Minute)
+}
 
 // Reactions functions
 
