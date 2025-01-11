@@ -12,23 +12,7 @@ module.exports = {
     "./nuxt.config.{js,ts}",
     "./app.config.{js,ts,mjs}",
   ],
-  safelist: [
-    "bg-custom_color-spotify",
-    "bg-custom_color-gmail",
-    "bg-custom_color-dropbox",
-    "bg-custom_color-timer",
-    "bg-custom_color-openWeatherMap",
-    "border-custom_color-spotify",
-    "border-custom_color-gmail",
-    "border-custom_color-dropbox",
-    "border-custom_color-timer",
-    "border-custom_color-openWeatherMap",
-    "text-custom_color-spotify",
-    "text-custom_color-gmail",
-    "text-custom_color-dropbox",
-    "text-custom_color-timer",
-    "text-custom_color-openWeatherMap",
-  ],
+  safelist: [],
   theme: {
     extend: {
       colors: {
@@ -41,11 +25,6 @@ module.exports = {
           text_delete: "#FC0005", // Red
           border: "#000000", // Black
           input: "#F4F4F4", // Light grey
-          gmail: "#E60000", // Red
-          spotify: "#1DC000", // Green
-          dropbox: "#001DDA", // Blue
-          timer: "#BB00FF", // Purple
-          openWeatherMap: "#946500", // Brown
         },
       },
       fontSize: {

@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -12,8 +14,14 @@ import (
 type UserController interface {
 	Login(ctx *gin.Context) (string, error)
 	Register(ctx *gin.Context) (string, error)
-	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
+	GetUser(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 	GetUserAllInfo(ctx *gin.Context) (userInfo schemas.UserAllInfo, err error)
+	UpdateUser(
+		ctx *gin.Context,
+	) (updatedUser schemas.User, err error)
+	DeleteUser(
+		ctx *gin.Context,
+	) (updatedUser schemas.User, err error)
 }
 
 type userController struct {
@@ -83,7 +91,7 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	return token, nil
 }
 
-func (controller *userController) GetUserInfo(
+func (controller *userController) GetUser(
 	ctx *gin.Context,
 ) (userInfo schemas.UserCredentials, err error) {
 	authHeader := ctx.GetHeader("Authorization")
@@ -118,4 +126,51 @@ func (controller *userController) GetUserAllInfo(
 	userInfo.User = user
 	userInfo.Tokens = tokens
 	return userInfo, nil
+}
+
+func (controller *userController) UpdateUser(
+	ctx *gin.Context,
+) (updatedUser schemas.User, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	var result schemas.User
+
+	err = json.NewDecoder(ctx.Request.Body).Decode(&result)
+	if err != nil {
+		println(fmt.Errorf("can't bind credentials: %w", err))
+		return updatedUser, fmt.Errorf("can't bind credentials: %w", err)
+	}
+
+	user, err := controller.userService.GetUserInfo(tokenString)
+	if err != nil {
+		return updatedUser, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	if result.Id == user.Id {
+		err = controller.userService.UpdateUserInfo(result)
+		if err != nil {
+			return updatedUser, fmt.Errorf("unable to update user info because %w", err)
+		}
+		return result, nil
+	} else {
+		return updatedUser, errors.New("unable to update user info because not the right user")
+	}
+}
+
+func (controller *userController) DeleteUser(
+	ctx *gin.Context,
+) (updatedUser schemas.User, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := controller.userService.GetUserInfo(tokenString)
+	if err != nil {
+		return updatedUser, fmt.Errorf("unable to get user info because %w", err)
+	}
+	err = controller.userService.DeleteUser(user)
+	if err != nil {
+		return updatedUser, fmt.Errorf("unable to delete user because %w", err)
+	}
+	return user, nil
 }

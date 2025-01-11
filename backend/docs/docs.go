@@ -71,9 +71,6 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "Bearer": []
-                    },
-                    {
                         "bearerAuth": []
                     }
                 ],
@@ -96,6 +93,98 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/schemas.Area"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "update user area list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "update user area",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "action_option",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAt",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "name": "description",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "enable",
+                        "in": "path"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "reaction_option",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "update_at",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Area"
                         }
                     },
                     "401": {
@@ -145,6 +234,53 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "delete user area list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Area"
+                ],
+                "summary": "delete user area",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Area ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Area"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
@@ -276,6 +412,92 @@ const docTemplate = `{
                 }
             }
         },
+        "/dropbox/file": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give user info of dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dropbox/folder": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of dropbox",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dropbox"
+                ],
+                "summary": "give user info of dropbox",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/dropbox/info": {
             "get": {
                 "security": [
@@ -395,7 +617,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Spotify"
+                    "Github"
                 ],
                 "summary": "give authentication token to mobile",
                 "parameters": [
@@ -556,7 +778,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Spotify"
+                    "Gmail"
                 ],
                 "summary": "give authentication token to mobile",
                 "parameters": [
@@ -632,6 +854,166 @@ const docTemplate = `{
                 }
             }
         },
+        "/microsoft/auth": {
+            "get": {
+                "description": "give url to authenticate with microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give url to authenticate with microsoft",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.AuthenticationURL"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/auth/callback": {
+            "post": {
+                "description": "give url to authenticate with microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give url to authenticate with microsoft",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/auth/callback/mobile": {
+            "post": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give url to authenticate with microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give url to authenticate with microsoft",
+                "parameters": [
+                    {
+                        "description": "Callback Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.CodeCredentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.JWT"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/microsoft/info": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of microsoft",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Microsoft"
+                ],
+                "summary": "give user info of microsoft",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "do ping to check if the server is running",
@@ -658,9 +1040,6 @@ const docTemplate = `{
         "/reaction/info/:id": {
             "get": {
                 "security": [
-                    {
-                        "Bearer": []
-                    },
                     {
                         "bearerAuth": []
                     }
@@ -963,6 +1342,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/token": {
+            "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "delete user token list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Token"
+                ],
+                "summary": "delete user token",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Token ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Token"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user/info": {
             "get": {
                 "security": [
@@ -986,6 +1414,84 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.UserCredentials"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info/": {
+            "put": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "give user info of user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "give user info of user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.User"
                         }
                     },
                     "401": {
@@ -1145,36 +1651,28 @@ const docTemplate = `{
                 "service"
             ],
             "properties": {
-                "created_at": {
-                    "description": "Time when the action was created",
+                "createdAt": {
                     "type": "string"
                 },
                 "description": {
-                    "description": "Description of the action",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Unique identifier for the action",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "Name of the action",
                     "type": "string"
                 },
                 "option": {
-                    "description": "Option for the action",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "service": {
-                    "description": "Service that the action belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Service"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Service"
                 },
                 "update_at": {
-                    "description": "Time when the action was last updated",
                     "type": "string"
                 }
             }
@@ -1184,58 +1682,51 @@ const docTemplate = `{
             "required": [
                 "action",
                 "action_option",
+                "description",
                 "reaction",
                 "reaction_option",
+                "title",
                 "user"
             ],
             "properties": {
                 "action": {
-                    "description": "Action that the area belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Action"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Action"
                 },
                 "action_option": {
-                    "description": "Action option",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "createdAt": {
                     "type": "string"
                 },
-                "created_at": {
-                    "description": "Time when the area was created",
+                "description": {
                     "type": "string"
                 },
                 "enable": {
-                    "description": "Enable or disable the area",
                     "type": "boolean"
                 },
                 "id": {
-                    "description": "Unique identifier for the area",
                     "type": "integer"
                 },
                 "reaction": {
-                    "description": "Reaction that the area belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Reaction"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Reaction"
                 },
                 "reaction_option": {
-                    "description": "Reaction option",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "title": {
                     "type": "string"
                 },
                 "update_at": {
-                    "description": "Time when the area was last updated",
                     "type": "string"
                 },
                 "user": {
-                    "description": "User that the area belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.User"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.User"
                 }
             }
         },
@@ -1243,23 +1734,35 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "action_option",
-                "reaction_option"
+                "description",
+                "reaction_option",
+                "title"
             ],
             "properties": {
                 "action_id": {
-                    "description": "Unique identifier for the action",
+                    "description": "Foreign key for Action",
                     "type": "integer"
                 },
                 "action_option": {
-                    "description": "Action option",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "description": {
                     "type": "string"
                 },
                 "reaction_id": {
-                    "description": "Unique identifier for the reaction",
+                    "description": "Foreign key for Reaction",
                     "type": "integer"
                 },
                 "reaction_option": {
-                    "description": "Reaction option",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -1309,35 +1812,27 @@ const docTemplate = `{
             ],
             "properties": {
                 "created_at": {
-                    "description": "Time when the reaction was created",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Description of the reaction",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Unique identifier for the reaction",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "Name of the reaction",
                     "type": "string"
                 },
                 "option": {
-                    "description": "Option for the reaction",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "service": {
-                    "description": "Service that the reaction belongs to",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schemas.Service"
-                        }
-                    ]
+                    "$ref": "#/definitions/schemas.Service"
                 },
                 "update_at": {
-                    "description": "Time when the reaction was last updated",
                     "type": "string"
                 }
             }
@@ -1353,14 +1848,23 @@ const docTemplate = `{
         "schemas.Service": {
             "type": "object",
             "required": [
+                "color",
                 "description",
-                "name"
+                "icon",
+                "name",
+                "oauth"
             ],
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "icon": {
                     "type": "string"
                 },
                 "id": {
@@ -1368,6 +1872,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "$ref": "#/definitions/schemas.ServiceName"
+                },
+                "oauth": {
+                    "type": "boolean"
                 },
                 "update_at": {
                     "type": "string"
@@ -1377,12 +1884,13 @@ const docTemplate = `{
         "schemas.ServiceName": {
             "type": "string",
             "enum": [
-                "spotify",
-                "openweathermap",
-                "timer",
-                "gmail",
-                "github",
-                "dropbox"
+                "Spotify",
+                "OpenWeatherMap",
+                "Timer",
+                "Gmail",
+                "Github",
+                "Dropbox",
+                "Microsoft"
             ],
             "x-enum-varnames": [
                 "Spotify",
@@ -1390,7 +1898,8 @@ const docTemplate = `{
                 "Timer",
                 "Gmail",
                 "Github",
-                "Dropbox"
+                "Dropbox",
+                "Microsoft"
             ]
         },
         "schemas.Token": {

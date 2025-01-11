@@ -34,3 +34,6 @@ tmp
 cover.out
 cover.html
 cover.svg
+
+# godoc
+godoc

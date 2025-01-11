@@ -33,6 +33,9 @@ jobs:
           rm -rf ./.??* || true
           ls -la ./
 
+      - name: "Cleanup Docker"
+        run:  docker system prune -f
+
       - uses: actions/checkout@v4
 
       - name: Setup env

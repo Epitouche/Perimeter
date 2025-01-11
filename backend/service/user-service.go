@@ -15,6 +15,7 @@ type UserService interface {
 	GetUserInfo(token string) (userInfo schemas.User, err error)
 	UpdateUserInfo(newUser schemas.User) (err error)
 	GetUserById(userID uint64) (user schemas.User, err error)
+	DeleteUser(newUser schemas.User) (err error)
 }
 
 type userService struct {
@@ -92,7 +93,10 @@ func (service *userService) Register(
 		newUser.Password = hashedPassword
 	}
 
-	service.repository.Save(newUser)
+	err = service.repository.Save(newUser)
+	if err != nil {
+		return "", 0, err
+	}
 
 	userTemp, err := service.repository.FindByUserName(newUser.Username)
 	if err != nil {
@@ -120,10 +124,13 @@ func (service *userService) GetUserInfo(token string) (userInfo schemas.User, er
 }
 
 func (service *userService) UpdateUserInfo(newUser schemas.User) (err error) {
-	service.repository.Update(newUser)
-	return nil
+	return service.repository.Update(newUser)
 }
 
 func (service *userService) GetUserById(userID uint64) (user schemas.User, err error) {
 	return service.repository.FindById(userID)
+}
+
+func (service *userService) DeleteUser(newUser schemas.User) (err error) {
+	return service.repository.Delete(newUser)
 }
