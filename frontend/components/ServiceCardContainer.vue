@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
-import type { Token } from "~/interfaces/serviceResponse";
+import type { Token, ServiceResponse } from "~/interfaces/serviceResponse";
 
 const props = defineProps<{
   type: string;
@@ -8,8 +8,10 @@ const props = defineProps<{
 }>();
 
 const tokenCookie = useCookie("token");
+const errorMessage = ref<string | null>(null);
 const serviceConnected = ref<string[]>([]);
 const tokens = ref<Token[]>([]);
+const infosConnection = ref<ServiceResponse | null>(null);
 
 onMounted(() => {
   loadConnectionInfos();
@@ -18,11 +20,19 @@ onMounted(() => {
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
-      tokens.value = await servicesConnectionInfos(tokenCookie.value);
-      serviceConnected.value = tokens.value.map((token) => token.service.name);
+      infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
+
+      if (infosConnection.value) {
+        tokens.value = infosConnection.value.tokens;
+
+        serviceConnected.value = tokens.value.map(
+          (token) => token.service.name,
+        );
+      }
     }
-  } catch (error) {
-    console.error("Error loading tokens:", error);
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error loading connections infos:", error);
   }
 }
 
