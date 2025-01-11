@@ -17,6 +17,9 @@ services:
     extends:
       file: ./docker-compose.template.yaml
       service: client_web
+    labels:
+      - "traefik.http.routers.client_web.rule=Host(`localhost`)"
+
 
   database:
     extends:
@@ -31,6 +34,20 @@ services:
     extends:
       file: ./docker-compose.template.yaml
       service: server
+
+  reverse-proxy:
+    extends:
+      file: ./docker-compose.template.yaml
+      service: reverse-proxy
+
+  server-documentation:
+    build:
+      context: ./backend
+      target: documentation
+      dockerfile: Dockerfile
+    extends:
+      file: ./docker-compose.template.yaml
+      service: server-documentation
 
 networks:
   app-networks:

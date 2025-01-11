@@ -25,6 +25,8 @@ services:
       - '0.0.0.0:${FRONTEND_PORT:-8081}:${FRONTEND_PORT:-8081}'
     networks:
       - app-networks
+    labels:
+      - "traefik.enable=true"
     pull_policy: always
 
   database:
@@ -51,6 +53,28 @@ services:
       retries: 5
     pull_policy: always
 
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: traefik:v3.3
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      # So that Traefik can store the certificates
+    ports:
+      # The HTTP port
+      - '0.0.0.0:80:80'
+
+      # The HTTPS port
+      - '0.0.0.0:443:443'
+      # The Web UI (enabled by --api.insecure=true)
+      - '0.0.0.0:8090:8080'
+    networks:
+      - app-networks
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+
   server:
     container_name: server
     depends_on:
@@ -74,6 +98,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    labels:
+      - "traefik.enable=true"
+    pull_policy: always
+
+  server-documentation:
+    container_name: server-documentation
+    ports:
+      - '0.0.0.0:6060:6060'
+    networks:
+      - app-networks
+    labels:
+      - "traefik.enable=true"
     pull_policy: always
 
 networks:

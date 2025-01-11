@@ -11,6 +11,10 @@ services:
     extends:
       file: ./docker-compose.template.yaml
       service: client_web
+    labels:
+      - "traefik.http.routers.client_web.rule=Host(`tom-mendy.com`)"
+      - "traefik.http.routers.client_web.entrypoints=websecure"
+      - "traefik.http.routers.client_web.tls.certresolver=myresolver"
 
   database:
     extends:
@@ -23,6 +27,30 @@ services:
       file: ./docker-compose.template.yaml
       service: server
 
+  reverse-proxy:
+    extends:
+      file: ./docker-compose.template.yaml
+      service: reverse-proxy
+    labels:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=tom.mendy@tom-mendy.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - letsencrypt:/letsencrypt
+
+  server-documentation:
+    image: ghcr.io/epitouche/area-backend-documentation:dev
+    extends:
+      file: ./docker-compose.template.yaml
+      service: server-documentation
+    # labels:
+    #   - "traefik.http.routers.server-documentation.rule=Host(`documentation.tom-mendy.com`)"
+    #   - "traefik.http.routers.server-documentation.entrypoints=websecure"
+    #   - "traefik.http.routers.server-documentation.tls.certresolver=myresolver"
 networks:
   app-networks:
 
@@ -30,3 +58,4 @@ networks:
 volumes:
   database-data:
   shared_apk:
+  letsencrypt:
