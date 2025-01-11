@@ -9,7 +9,7 @@ type SpotifyAction string
 type SpotifyReaction string
 
 const (
-	SkipNextMusic SpotifyReaction = "SkipNextMusic"
+	SkipNextMusic     SpotifyReaction = "SkipNextMusic"
 	SkipPreviousMusic SpotifyReaction = "SkipPreviousMusic"
 )
 
