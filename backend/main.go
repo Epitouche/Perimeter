@@ -9,13 +9,13 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/Epitouche/Perimeter/api"
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/database"
-	"github.com/Epitouche/Perimeter/docs"
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/api"
+	"area/controller"
+	"area/database"
+	"area/docs"
+	"area/repository"
+	"area/schemas"
+	"area/service"
 )
 
 // ping godoc
@@ -57,7 +57,7 @@ func setupRouter() *gin.Engine {
 
 	// Repositories
 	githubRepository := repository.NewGithubRepository(databaseConnection)
-	gmailRepository := repository.NewGmailRepository(databaseConnection)
+	gmailRepository := repository.NewGoogleRepository(databaseConnection)
 	spotifyRepository := repository.NewSpotifyRepository(databaseConnection)
 	dropboxRepository := repository.NewDropboxRepository(databaseConnection)
 	microsoftRepository := repository.NewMicrosoftRepository(databaseConnection)
@@ -78,7 +78,7 @@ func setupRouter() *gin.Engine {
 		areaRepository,
 		tokenRepository,
 	)
-	gmailService := service.NewGmailService(
+	googleService := service.NewGoogleService(
 		gmailRepository,
 		serviceRepository,
 		areaRepository,
@@ -113,7 +113,7 @@ func setupRouter() *gin.Engine {
 		serviceRepository,
 		timerService,
 		spotifyService,
-		gmailService,
+		googleService,
 		githubService,
 		dropboxService,
 		microsoftService,
@@ -130,7 +130,7 @@ func setupRouter() *gin.Engine {
 		userService,
 		areaResultService,
 	)
-	tokenService := service.NewTokenService(tokenRepository)
+	tokenService := service.NewTokenService(tokenRepository, userService)
 
 	// Controllers
 	spotifyController := controller.NewSpotifyController(
@@ -145,8 +145,8 @@ func setupRouter() *gin.Engine {
 		tokenService,
 		serviceService,
 	)
-	gmailController := controller.NewGmailController(
-		gmailService,
+	gmailController := controller.NewGoogleController(
+		googleService,
 		userService,
 		tokenService,
 		serviceService,
@@ -178,13 +178,13 @@ func setupRouter() *gin.Engine {
 	// API routes
 	api.NewActionApi(actionController, apiRoutes, userService)
 	api.NewReactionApi(reactionController, apiRoutes, userService)
-	api.NewTokenApi(tokenController)
+	api.NewTokenApi(tokenController, apiRoutes, userService)
 
 	ping(apiRoutes)
 	serviceAPI := api.NewServiceApi(serviceController, apiRoutes)
 	api.NewUserApi(userController, apiRoutes, userService)
 	api.NewSpotifyAPI(spotifyController, apiRoutes, userService)
-	api.NewGmailAPI(gmailController, apiRoutes, userService)
+	api.NewGoogleAPI(gmailController, apiRoutes, userService)
 	api.NewGithubAPI(githubController, apiRoutes, userService)
 	api.NewDropboxAPI(dropboxController, apiRoutes, userService)
 	api.NewMicrosoftAPI(microsoftController, apiRoutes, userService)

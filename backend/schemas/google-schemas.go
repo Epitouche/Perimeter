@@ -1,17 +1,24 @@
 package schemas
 
-import "errors"
-
-type GmailAction string
-
-type GmailReaction string
-
-const (
-	SendMail GmailReaction = "SendMail"
+import (
+	"errors"
+	"time"
 )
 
-// GmailTokenResponse represents the response from Gmail when a token is requested.
-type GmailTokenResponse struct {
+type GoogleAction string
+
+const (
+	ReceiveGoogleMail GoogleAction = "ReceiveGoogleMail"
+)
+
+type GoogleReaction string
+
+const (
+	SendMail GoogleReaction = "SendMail"
+)
+
+// GoogleTokenResponse represents the response from Gmail when a token is requested.
+type GoogleTokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	ExpiresIn    uint64 `json:"expires_in"`
 	Scope        string `json:"scope"`
@@ -58,10 +65,40 @@ type GmailReactionSendMailOption struct {
 
 // Errors Messages.
 var (
-	ErrGmailSecretNotSet   = errors.New("GMAIL_SECRET is not set")
-	ErrGmailClientIdNotSet = errors.New("GMAIL_CLIENT_ID is not set")
+	ErrGoogleSecretNotSet   = errors.New("GMAIL_SECRET is not set")
+	ErrGoogleClientIdNotSet = errors.New("GMAIL_CLIENT_ID is not set")
 )
 
-type GmailMobileTokenRequest struct {
-	Token string `json:"token"`
+type GoogleVariableReceiveMail struct {
+	Time time.Time `json:"time"`
+}
+
+type GmailMessage struct {
+	Id     string `json:"id"`
+	Thread string `json:"threadId"`
+}
+
+type GmailEmailResponse struct {
+	Messages []GmailMessage `json:"messages"`
+}
+
+type EmailDetails struct {
+	Date    string `json:"date"`
+	From    string `json:"from"`
+	Subject string `json:"body"`
+}
+
+type GmailMessageResponse struct {
+	Payload struct {
+		Headers []struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		} `json:"headers"`
+		Parts []struct {
+			MimeType string `json:"mimeType"`
+			Body     struct {
+				Data string `json:"data"`
+			} `json:"body"`
+		} `json:"parts"`
+	} `json:"payload"`
 }

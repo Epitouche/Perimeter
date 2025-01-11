@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 type TokenService interface {
@@ -17,15 +17,21 @@ type TokenService interface {
 	FindAll() (allServices []schemas.Token)
 	GetTokenById(id uint64) (schemas.Token, error)
 	GetTokenByUserId(userID uint64) ([]schemas.Token, error)
+	DeleteUserToken(
+		token string,
+		tokenToDelete struct{ Id uint64 },
+	) (deletedToken schemas.Token, err error)
 }
 
 type tokenService struct {
-	repository repository.TokenRepository
+	repository  repository.TokenRepository
+	serviceUser UserService
 }
 
-func NewTokenService(repository repository.TokenRepository) TokenService {
+func NewTokenService(repository repository.TokenRepository, serviceUser UserService) TokenService {
 	newService := tokenService{
-		repository: repository,
+		repository:  repository,
+		serviceUser: serviceUser,
 	}
 	return &newService
 }
@@ -43,7 +49,10 @@ func (service *tokenService) SaveToken(
 		}
 	}
 
-	service.repository.Save(token)
+	err = service.repository.Save(token)
+	if err != nil {
+		return 0, err
+	}
 	tokens, err = service.repository.FindByToken(token.Token)
 	if err != nil {
 		return 0, err
@@ -103,13 +112,11 @@ func (service *tokenService) GetTokenByUserId(userID uint64) ([]schemas.Token, e
 }
 
 func (service *tokenService) Update(token schemas.Token) error {
-	service.repository.Update(token)
-	return nil
+	return service.repository.Update(token)
 }
 
 func (service *tokenService) Delete(token schemas.Token) error {
-	service.repository.Delete(token)
-	return nil
+	return service.repository.Delete(token)
 }
 
 func (service *tokenService) FindAll() []schemas.Token {
@@ -118,4 +125,41 @@ func (service *tokenService) FindAll() []schemas.Token {
 		return nil
 	}
 	return tokens
+}
+
+// containsArea checks if a slice of areas contains a specific area
+func containsToken(tokens []schemas.Token, token schemas.Token) bool {
+	for _, a := range tokens {
+		if a.Id == token.Id {
+			return true
+		}
+	}
+	return false
+}
+
+func (service *tokenService) DeleteUserToken(
+	token string,
+	tokenToDelete struct{ Id uint64 },
+) (deletedToken schemas.Token, err error) {
+	user, err := service.serviceUser.GetUserInfo(token)
+	if err != nil {
+		return deletedToken, fmt.Errorf("can't get user info: %w", err)
+	}
+	userTokenList, err := service.repository.FindByUserId(user.Id)
+	if err != nil {
+		return deletedToken, fmt.Errorf("can't find tokens by user id: %w", err)
+	}
+	tokenToDeleteDatabase, err := service.repository.FindById(tokenToDelete.Id)
+	if err != nil {
+		return deletedToken, fmt.Errorf("can't find token by id: %w", err)
+	}
+	if containsToken(userTokenList, tokenToDeleteDatabase) {
+		err = service.repository.Delete(tokenToDeleteDatabase)
+		if err != nil {
+			return deletedToken, fmt.Errorf("can't delete token: %w", err)
+		}
+		return tokenToDeleteDatabase, nil
+	} else {
+		return deletedToken, fmt.Errorf("token not found")
+	}
 }

@@ -11,8 +11,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 // Constructor
@@ -23,8 +23,6 @@ type SpotifyService interface {
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -38,8 +36,6 @@ type spotifyService struct {
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
-	actionsName       []string
-	reactionsName     []string
 	serviceInfo       schemas.Service
 }
 
@@ -96,7 +92,6 @@ func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionsName = append(service.reactionsName, string(schemas.PlayMusic))
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -116,14 +111,6 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 			Option:      option,
 		},
 	}
-}
-
-func (service *spotifyService) GetActionsName() []string {
-	return service.actionsName
-}
-
-func (service *spotifyService) GetReactionsName() []string {
-	return service.reactionsName
 }
 
 // Service specific functions

@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
+	"area/repository"
+	"area/schemas"
 )
 
 // Constructor
@@ -80,7 +80,6 @@ func (service *microsoftService) GetServiceInfo() schemas.Service {
 }
 
 func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
-	service.actionName = append(service.actionName, string(schemas.ReceiveMicrosoftMail))
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -259,112 +258,160 @@ func (service *microsoftService) GetUserInfo(
 	return user, nil
 }
 
+func initializedMicrosoftStorageVariable(
+	area schemas.Area,
+	service microsoftService,
+) (schemas.MicrosoftVariableReceiveMail, error) {
+	variable := schemas.MicrosoftVariableReceiveMail{}
+	err := json.Unmarshal(area.StorageVariable, &variable)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return variable, err
+		} else {
+			println("initializing storage variable")
+			variable = schemas.MicrosoftVariableReceiveMail{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(variable)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return variable, err
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return variable, err
+			}
+		}
+	}
+
+	if variable.Time.IsZero() {
+		variable = schemas.MicrosoftVariableReceiveMail{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(variable)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return variable, err
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return variable, err
+		}
+	}
+	return variable, nil
+}
+
+func getNewEmails(
+	token schemas.Token,
+	variable schemas.MicrosoftVariableReceiveMail,
+) (schemas.MicrosoftEmailResponse, error) {
+	var emailResponse schemas.MicrosoftEmailResponse
+	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format(
+		"2006-01-02T15:04:05",
+	) + "Z"
+	println("apiURL: " + apiURL)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		println("error creating request: " + err.Error())
+		return emailResponse, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		println("error making request: " + err.Error())
+		return emailResponse, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		return emailResponse, nil
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
+	if err != nil {
+		println("error decoding response: " + err.Error())
+		return emailResponse, err
+	}
+
+	return emailResponse, nil
+}
+
 func (service *microsoftService) MicrosoftActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
 	idArea uint64,
 ) {
-	println("MicrosoftActionReceiveMail")
-
-	// Fetch area information
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		println("error finding area: " + err.Error())
-		time.Sleep(time.Second)
 		return
 	}
 
-	// Fetch user token
+	variable, err := initializedMicrosoftStorageVariable(area, *service)
+	if err != nil {
+		println("error initializing storage variable: " + err.Error())
+		return
+	}
+
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Action.ServiceId,
 	)
 	if err != nil || token.Token == "" {
 		println("error retrieving token or token not found")
-		time.Sleep(time.Second)
 		return
 	}
 
-	// API endpoint for the 10 latest emails
-	apiURL := "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$orderby=receivedDateTime%20desc&$top=10"
-
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	emailResponse, err := getNewEmails(token, variable)
 	if err != nil {
-		println("error creating request: " + err.Error())
-		time.Sleep(time.Minute)
+		println("error getting new emails: " + err.Error())
 		return
 	}
 
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
-	// Send the HTTP request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		println("error making request: " + err.Error())
-		time.Sleep(time.Minute)
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
-		time.Sleep(time.Minute)
-		return
-	}
-
-	// Parse the response
-	var emailResponse struct {
-		Value []struct {
-			ID      string `json:"id"`
-			Subject string `json:"subject"`
-			From    struct {
-				EmailAddress struct {
-					Address string `json:"address"`
-				} `json:"emailAddress"`
-			} `json:"from"`
-			ReceivedDateTime string `json:"receivedDateTime"`
-		} `json:"value"`
-	}
-
-	// print headers
-	for key, value := range resp.Header {
-		println("Header: ", key, value)
-	}
-	bodyBytes, _ := io.ReadAll(resp.Body)
-	println("Raw response: ", string(bodyBytes)) // Debugging: Print raw response
-
-	err = json.Unmarshal(bodyBytes, &emailResponse)
-	if err != nil {
-		println("error decoding response: " + err.Error())
-		time.Sleep(time.Minute)
-		return
-	}
-
-	// Iterate over the 10 latest emails and print them for debugging
-	for _, email := range emailResponse.Value {
-		debugMessage := fmt.Sprintf(
-			"Email ID: %s\nFrom: %s\nSubject: %s\nReceived: %s\n",
-			email.ID,
-			email.From.EmailAddress.Address,
-			email.Subject,
-			email.ReceivedDateTime,
+	if len(emailResponse.Value) > 0 {
+		latestEmail := emailResponse.Value[0]
+		response := fmt.Sprintf("New email received from %s: object: %s",
+			latestEmail.From.EmailAddress.Address,
+			latestEmail.Subject,
 		)
-		println(debugMessage)
-
-		// Send email details to the channel
-		channel <- debugMessage
+		println(response)
+		variable.Time, err = time.Parse(time.RFC3339, latestEmail.ReceivedDateTime)
+		if err != nil {
+			println("error parsing time: " + err.Error())
+			return
+		}
+		variable.Time = variable.Time.Add(time.Second)
+		area.StorageVariable, err = json.Marshal(variable)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
+		channel <- response
+	} else {
+		println("No new emails")
 	}
-
-	time.Sleep(time.Minute)
+	time.Sleep(time.Second * 10)
 }
 
 func (service *microsoftService) MicrosoftReactionSendMail(
 	option json.RawMessage,
 	idArea uint64,
 ) string {
-	// Parse the options
 	options := schemas.MicrosoftReactionSendMailOptions{}
 	err := json.Unmarshal(option, &options)
 	if err != nil {
@@ -372,14 +419,12 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 		return "Error unmarshalling options: " + err.Error()
 	}
 
-	// Retrieve the area
 	area, err := service.areaRepository.FindById(idArea)
 	if err != nil {
 		fmt.Println("Error finding area:", err)
 		return "Error finding area: " + err.Error()
 	}
 
-	// Retrieve the token
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,
@@ -393,10 +438,8 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 		return "Error: Token not found"
 	}
 
-	// Microsoft Graph API URL for sending mail
 	apiURL := "https://graph.microsoft.com/v1.0/me/sendMail"
 
-	// Construct the email payload
 	payload := map[string]interface{}{
 		"message": map[string]interface{}{
 			"subject": options.Subject,
@@ -420,18 +463,15 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 		return "Error marshalling email payload: " + err.Error()
 	}
 
-	// Create the HTTP request
 	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer(payloadBytes))
 	if err != nil {
 		fmt.Println("Error creating HTTP request:", err)
 		return "Error creating HTTP request: " + err.Error()
 	}
 
-	// Add headers
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 	req.Header.Set("Content-Type", "application/json")
 
-	// Send the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -440,7 +480,6 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 	}
 	defer resp.Body.Close()
 
-	// Check the response
 	if resp.StatusCode != http.StatusAccepted {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		fmt.Println("Error sending email:", string(bodyBytes))

@@ -7,7 +7,15 @@ import (
 
 type DropboxAction string
 
+const (
+	UpdateInFolder DropboxAction = "UpdateInFolder"
+)
+
 type DropboxReaction string
+
+const (
+	SaveUrl DropboxReaction = "SaveUrl"
+)
 
 // DropboxTokenResponse represents the response from Dropbox when a token is requested.
 type DropboxTokenResponse struct {
@@ -110,4 +118,22 @@ type DropboxListFolderResult struct {
 
 type DropboxCountFileRequestsResult struct {
 	FileRequestCount uint64 `json:"file_request_count"`
+}
+
+type DropboxSaveUrlReactionOption struct {
+	Path string `json:"path"`
+	URL  string `json:"url"`
+}
+
+type DropboxSaveUrlResult struct {
+	Tag        string `json:".tag"`
+	AsyncJobID string `json:"async_job_id"`
+}
+
+type DropboxActionUpdateInFolder struct {
+	Path string `json:"path"`
+}
+
+type DropboxActionUpdateInFolderStorage struct {
+	Time time.Time `json:"time"`
 }

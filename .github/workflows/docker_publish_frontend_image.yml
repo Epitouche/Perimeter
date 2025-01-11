@@ -9,12 +9,14 @@ on:
       - frontend-feature/**
       - dev
       - pre-prod
+      - main
   push:
     branches:
       - frontend
       - frontend-feature/**
       - dev
       - pre-prod
+      - main
 
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
@@ -39,6 +41,9 @@ jobs:
           rm -rf ./* || true
           rm -rf ./.??* || true
           ls -la ./
+
+      - name: "Cleanup Docker"
+        run:  docker system prune -f
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,3 +72,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Security Scan ${{ env.IMAGE_NAME }} Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.meta.outputs.tags }}
+          format: table
+          severity: 'CRITICAL,HIGH'

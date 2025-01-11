@@ -6,16 +6,28 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/middlewares"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/controller"
+	"area/middlewares"
+	"area/schemas"
+	"area/service"
 )
 
+// ActionApi represents the API layer for handling actions.
+// It contains a reference to the ActionController which manages the business logic.
 type ActionApi struct {
 	controller controller.ActionController
 }
 
+// NewActionApi initializes a new instance of ActionApi with the provided controller,
+// sets up the API routes with the necessary middleware, and registers the action info routes.
+//
+// Parameters:
+//   - controller: An instance of ActionController to handle action-related operations.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the action routes will be registered.
+//   - serviceUser: An instance of UserService used for JWT authorization middleware.
+//
+// Returns:
+//   - A pointer to the initialized ActionApi instance.
 func NewActionApi(
 	controller controller.ActionController,
 	apiRoutes *gin.RouterGroup,

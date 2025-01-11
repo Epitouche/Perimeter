@@ -5,11 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/schemas"
+	"area/service"
 )
 
-type GmailController interface {
+type GoogleController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
@@ -17,18 +17,18 @@ type GmailController interface {
 }
 
 type gmailController struct {
-	service        service.GmailService
+	service        service.GoogleService
 	serviceUser    service.UserService
 	serviceToken   service.TokenService
 	serviceService service.ServiceService
 }
 
-func NewGmailController(
-	service service.GmailService,
+func NewGoogleController(
+	service service.GoogleService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
 	serviceService service.ServiceService,
-) GmailController {
+) GoogleController {
 	return &gmailController{
 		service:        service,
 		serviceUser:    serviceUser,
@@ -41,7 +41,7 @@ func (controller *gmailController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthURL string, err error) {
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
-		schemas.Gmail,
+		schemas.Google,
 		"https://accounts.google.com/o/oauth2/v2/auth",
 		"https://mail.google.com/ profile email",
 	)
@@ -79,7 +79,7 @@ func (controller *gmailController) HandleServiceCallback(
 	bearer, err := controller.serviceService.HandleServiceCallback(
 		code,
 		authHeader,
-		schemas.Gmail,
+		schemas.Google,
 		controller.service.AuthGetServiceAccessToken,
 		controller.serviceUser,
 		controller.service.GetUserInfo,
@@ -104,7 +104,7 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
 		authHeader,
-		schemas.Gmail,
+		schemas.Google,
 		credentials,
 		controller.serviceUser,
 		controller.service.GetUserInfo,

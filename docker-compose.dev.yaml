@@ -19,6 +19,7 @@ services:
     networks:
       - app-networks-dev
     command: sleep infinity
+    pull_policy: always
 
   database:
     image: postgres:17-alpine
@@ -41,6 +42,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    pull_policy: always
 
   server:
     build:
@@ -65,6 +67,7 @@ services:
     networks:
       - app-networks-dev
     command: sleep infinity
+    pull_policy: always
 
 networks:
   app-networks-dev:

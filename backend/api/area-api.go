@@ -6,16 +6,31 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/controller"
-	"github.com/Epitouche/Perimeter/middlewares"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/controller"
+	"area/middlewares"
+	"area/schemas"
+	"area/service"
 )
 
+// AreaApi represents the API layer for handling area-related requests.
+// It contains a reference to the AreaController which manages the business logic.
 type AreaApi struct {
 	controller controller.AreaController
 }
 
+// godoc
+//
+// NewAreaAPI initializes a new AreaApi instance, sets up the API routes with the necessary
+// middleware, and registers the route handlers for creating, retrieving, updating, and deleting
+// user areas.
+//
+// Parameters:
+//   - controller: An instance of AreaController that handles the business logic for area operations.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the area routes will be registered.
+//   - serviceUser: An instance of UserService used for JWT authorization middleware.
+//
+// Returns:
+//   - A pointer to the initialized AreaApi instance.
 func NewAreaAPI(
 	controller controller.AreaController,
 	apiRoutes *gin.RouterGroup,
@@ -68,7 +83,6 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Success		200	{object}	[]schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
@@ -95,11 +109,11 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
-//	@Success		200	{object}	schemas.Area
-//	@Failure		401	{object}	schemas.ErrorResponse
-//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Param			area	path		schemas.Area	true	"Updated Area"
+//	@Success		200		{object}	schemas.Area
+//	@Failure		401		{object}	schemas.ErrorResponse
+//	@Failure		500		{object}	schemas.ErrorResponse
 //	@Router			/area [put]
 func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
 	apiRoutes.PUT("/", func(ctx *gin.Context) {
@@ -122,8 +136,8 @@ func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
 //	@Tags			Area
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
+//	@Param			id	path		int	true	"Area ID"
 //	@Success		200	{object}	schemas.Area
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse

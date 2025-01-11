@@ -17,6 +17,7 @@ import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
 import { SvgFromUri } from 'react-native-svg';
+import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ServicesScreen'>;
 
@@ -31,14 +32,17 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
       case 'spotify':
         HandleSpotifyLogin(setToken, navigation, ipAddress, false, token);
         break;
-      case 'gmail':
-        HandleMicrosoftLogin(setToken, navigation, ipAddress);
+      case 'google':
+        HandleGoogleLogin(setToken, navigation, ipAddress);
         break;
       case 'dropbox':
         HandleDropboxLogin(setToken, navigation, ipAddress);
         break;
       case 'github':
         HandleGithubLogin(setToken, navigation, ipAddress);
+        break;
+      case 'microsoft':
+        HandleMicrosoftLogin(setToken, navigation, ipAddress);
         break;
       default:
         break;

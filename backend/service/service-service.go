@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Epitouche/Perimeter/repository"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/tools"
+	"area/repository"
+	"area/schemas"
+	"area/tools"
 )
 
 type ServiceService interface {
@@ -61,7 +61,7 @@ func NewServiceService(
 	repository repository.ServiceRepository,
 	timerService TimerService,
 	spotifyService SpotifyService,
-	gmailService GmailService,
+	googleService GoogleService,
 	githubService GithubService,
 	dropboxService DropboxService,
 	microsoftService MicrosoftService,
@@ -72,7 +72,7 @@ func NewServiceService(
 		allService: []interface{}{
 			spotifyService,
 			timerService,
-			gmailService,
+			googleService,
 			githubService,
 			dropboxService,
 			microsoftService,
@@ -92,7 +92,10 @@ func (service *serviceService) InitialSaveService() {
 			println(fmt.Errorf("unable to find service by name because %w", err))
 		}
 		if len(serviceByName) == 0 {
-			service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
+			err = service.repository.Save(oneService.(ServiceInterface).GetServiceInfo())
+			if err != nil {
+				println(fmt.Errorf("unable to save service because %w", err))
+			}
 		}
 	}
 }
@@ -110,10 +113,10 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		if clientID == "" {
 			return "", schemas.ErrSpotifyClientIdNotSet
 		}
-	case schemas.Gmail:
+	case schemas.Google:
 		clientID = os.Getenv("GMAIL_CLIENT_ID")
 		if clientID == "" {
-			return "", schemas.ErrGmailClientIdNotSet
+			return "", schemas.ErrGoogleClientIdNotSet
 		}
 	case schemas.Github:
 		clientID = os.Getenv("GITHUB_CLIENT_ID")
