@@ -14,17 +14,21 @@ services:
       context: ./frontend
       target: run
       dockerfile: Dockerfile
+    labels:
+      - "traefik.http.routers.client_web.rule=Host(`localhost`)"
     extends:
       file: ./docker-compose.template.yaml
       service: client_web
-    labels:
-      - "traefik.http.routers.client_web.rule=Host(`localhost`)"
-
 
   database:
     extends:
       file: ./docker-compose.template.yaml
       service: database
+
+  reverse-proxy:
+    extends:
+      file: ./docker-compose.template.yaml
+      service: reverse-proxy
 
   server:
     build:
@@ -34,11 +38,6 @@ services:
     extends:
       file: ./docker-compose.template.yaml
       service: server
-
-  reverse-proxy:
-    extends:
-      file: ./docker-compose.template.yaml
-      service: reverse-proxy
 
   server-documentation:
     build:

@@ -54,8 +54,8 @@ services:
     pull_policy: always
 
   reverse-proxy:
-    container_name: reverse-proxy
     image: traefik:v3.3
+    container_name: reverse-proxy
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
