@@ -9,7 +9,8 @@ type SpotifyAction string
 type SpotifyReaction string
 
 const (
-	PlayMusic SpotifyReaction = "PlayMusic"
+	SkipNextMusic SpotifyReaction = "SkipNextMusic"
+	SkipPreviousMusic SpotifyReaction = "SkipPreviousMusic"
 )
 
 type SpotifyTokenResponse struct {

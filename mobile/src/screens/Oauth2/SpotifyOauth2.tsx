@@ -14,7 +14,7 @@ async function HandleSpotifyLogin(
     clientId: SPOTIFY_CLIENT_ID,
     clientSecret: SPOTIFY_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['user-read-email', 'playlist-modify-public'],
+    scopes: ['user-read-email', 'playlist-modify-public', 'user-modify-playback-state'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://accounts.spotify.com/authorize',
       tokenEndpoint: 'https://accounts.spotify.com/api/token',

@@ -28,7 +28,8 @@ type SpotifyService interface {
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
 	// Reactions functions
-	SpotifyReactionPlayMusic(option json.RawMessage, idArea uint64) string
+	SpotifyReactionSkipNextMusic(option json.RawMessage, idArea uint64) string
+	SpotifyReactionSkipPreviousMusic(option json.RawMessage, idArea uint64) string
 }
 
 type spotifyService struct {
@@ -79,8 +80,10 @@ func (service *spotifyService) FindReactionbyName(
 	name string,
 ) func(option json.RawMessage, idArea uint64) string {
 	switch name {
-	case string(schemas.PlayMusic):
-		return service.SpotifyReactionPlayMusic
+	case string(schemas.SkipNextMusic):
+		return service.SpotifyReactionSkipNextMusic
+	case string(schemas.SkipPreviousMusic):
+		return service.SpotifyReactionSkipPreviousMusic
 	default:
 		return nil
 	}
@@ -105,8 +108,14 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 	return []schemas.Reaction{
 		{
-			Name:        string(schemas.PlayMusic),
-			Description: "This reaction will play music",
+			Name:        string(schemas.SkipNextMusic),
+			Description: "This reaction will skip to the next music",
+			Service:     service.serviceInfo,
+			Option:      option,
+		},
+		{
+			Name:        string(schemas.SkipPreviousMusic),
+			Description: "This reaction will skip to the previous music",
 			Service:     service.serviceInfo,
 			Option:      option,
 		},
@@ -260,7 +269,7 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 
 // Reactions functions
 
-func (service *spotifyService) SpotifyReactionPlayMusic(
+func (service *spotifyService) SpotifyReactionSkipNextMusic(
 	option json.RawMessage,
 	idArea uint64,
 ) string {
@@ -282,23 +291,68 @@ func (service *spotifyService) SpotifyReactionPlayMusic(
 		fmt.Println("Error: Token not found")
 		return "Error: Token not found"
 	}
+	apiURL := "https://api.spotify.com/v1/me/player/next"
 
-	apiURL := "https://api.spotify.com/v1/me/player/play"
-
-	body := `{
-		"context_uri": "spotify:album:5ht7ItJgpBH7W6vJ5BqpPr",
-		"offset": {
-			"position": 5
-		},
-		"position_ms": 0
-	}`
 	ctx := context.Background()
 
 	req, err := http.NewRequestWithContext(
 		ctx,
-		http.MethodPut,
+		http.MethodPost,
 		apiURL,
-		bytes.NewBuffer([]byte(body)),
+		bytes.NewBuffer([]byte("{}")),
+	)
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return "Error creating request:" + err.Error()
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return "Error making request:" + err.Error()
+	}
+
+	defer resp.Body.Close()
+
+	fmt.Println("Response Status:", resp.Status)
+	return "Response Status:" + resp.Status
+}
+
+func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
+	option json.RawMessage,
+	idArea uint64,
+) string {
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return "Error finding area:" + err.Error()
+	}
+
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token:" + err.Error()
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return "Error: Token not found"
+	}
+	apiURL := "https://api.spotify.com/v1/me/player/previous"
+
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		apiURL,
+		bytes.NewBuffer([]byte("{}")),
 	)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
