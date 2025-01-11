@@ -290,7 +290,6 @@ func (service *githubService) GetUserInfo(accessToken string) (user schemas.User
 		Email:    email,
 	}
 
-	fmt.Printf("user %+v\n", user)
 	return user, nil
 }
 
