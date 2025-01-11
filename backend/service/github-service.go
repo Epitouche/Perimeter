@@ -65,10 +65,10 @@ func (service *githubService) GetServiceInfo() schemas.Service {
 }
 
 func (service *githubService) GetServiceActionInfo() []schemas.Action {
-	defaultValue := schemas.GithubActionUpdateCommitInRepo{
+	defaultValue := schemas.GithubActionOption{
 		RepoName: "",
 	}
-	actionUpdateCommitInRepo, err := json.Marshal(defaultValue)
+	actionOption, err := json.Marshal(defaultValue)
 	if err != nil {
 		println("error marshal timer option: " + err.Error())
 	}
@@ -83,13 +83,19 @@ func (service *githubService) GetServiceActionInfo() []schemas.Action {
 			Name:        string(schemas.UpdateCommitInRepo),
 			Description: "This action trigger when a new commit is pushed to a repository",
 			Service:     service.serviceInfo,
-			Option:      actionUpdateCommitInRepo,
+			Option:      actionOption,
 		},
 		{
 			Name:        string(schemas.UpdatePullRequestInRepo),
 			Description: "This action trigger when a new pullrequest is open to a repository",
 			Service:     service.serviceInfo,
-			Option:      actionUpdateCommitInRepo,
+			Option:      actionOption,
+		},
+		{
+			Name:        string(schemas.UpdateWorkflowRunInRepo),
+			Description: "This action trigger when a new workflow is run in a repository",
+			Service:     service.serviceInfo,
+			Option:      actionOption,
 		},
 	}
 }
@@ -106,6 +112,8 @@ func (service *githubService) FindActionbyName(
 		return service.GithubActionUpdateCommitInRepo
 	case string(schemas.UpdatePullRequestInRepo):
 		return service.GithubActionUpdatePullRequestInRepo
+	case string(schemas.UpdateWorkflowRunInRepo):
+		return service.GithubActionUpdateWorkflowRunInRepo
 	default:
 		return nil
 	}
@@ -411,6 +419,65 @@ func (service *githubService) PullRequestList(
 	return pullRequestList, nil
 }
 
+func (service *githubService) IsWorkflowRunUpdate(
+	workflowRunList []schemas.GithubWorkflow,
+	date time.Time,
+) bool {
+	for _, workflowRun := range workflowRunList {
+		if workflowRun.CreatedAt.After(date) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (service *githubService) WorkflowRunList(
+	userGithubToken string, repo string,
+) (workflowRunList schemas.GithubWorkflowRunsList, err error) {
+	ctx := context.Background()
+
+	// Create the HTTP request
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet,
+		"https://api.github.com/repos/"+repo+"/actions/runs",
+		nil,
+	)
+	if err != nil {
+		return workflowRunList, fmt.Errorf("unable to create request: %w", err)
+	}
+
+	// Set the Authorization header
+	req.Header.Set("Authorization", "Bearer "+userGithubToken)
+	req.Header.Set("Content-Type", "application/vnd.github+json")
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+
+	// Make the request using the default HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return workflowRunList, fmt.Errorf("unable to make request: %w", err)
+	}
+	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return workflowRunList, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
+	// Decode the JSON response into the result struct
+	err = json.NewDecoder(resp.Body).Decode(&workflowRunList)
+	if err != nil {
+		return workflowRunList, fmt.Errorf("unable to decode response: %w", err)
+	}
+
+	return workflowRunList, nil
+}
+
 // Actions functions
 
 func (service *githubService) GithubActionUpdateCommitInRepo(
@@ -439,7 +506,7 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 		return
 	}
 
-	databaseStored := schemas.GithubActionUpdateCommitInRepoStorage{}
+	databaseStored := schemas.GithubActionOptionStorage{}
 	err = json.Unmarshal(area.StorageVariable, &databaseStored)
 	if err != nil {
 		toto := struct{}{}
@@ -449,7 +516,7 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 			return
 		} else {
 			println("initializing storage variable")
-			databaseStored = schemas.GithubActionUpdateCommitInRepoStorage{
+			databaseStored = schemas.GithubActionOptionStorage{
 				Time: time.Now(),
 			}
 			area.StorageVariable, err = json.Marshal(databaseStored)
@@ -467,7 +534,7 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 
 	if databaseStored.Time.IsZero() {
 		println("initializing storage variable")
-		databaseStored = schemas.GithubActionUpdateCommitInRepoStorage{
+		databaseStored = schemas.GithubActionOptionStorage{
 			Time: time.Now(),
 		}
 		area.StorageVariable, err = json.Marshal(databaseStored)
@@ -483,7 +550,7 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 	}
 
 	// Unmarshal the option
-	optionJSON := schemas.GithubActionUpdateCommitInRepo{}
+	optionJSON := schemas.GithubActionOption{}
 
 	err = json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
@@ -543,7 +610,7 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 		return
 	}
 
-	databaseStored := schemas.GithubActionUpdatePullRequestInRepoStorage{}
+	databaseStored := schemas.GithubActionOptionStorage{}
 	err = json.Unmarshal(area.StorageVariable, &databaseStored)
 	if err != nil {
 		toto := struct{}{}
@@ -553,7 +620,7 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 			return
 		} else {
 			println("initializing storage variable")
-			databaseStored = schemas.GithubActionUpdatePullRequestInRepoStorage{
+			databaseStored = schemas.GithubActionOptionStorage{
 				Time: time.Now(),
 			}
 			area.StorageVariable, err = json.Marshal(databaseStored)
@@ -571,7 +638,7 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 
 	if databaseStored.Time.IsZero() {
 		println("initializing storage variable")
-		databaseStored = schemas.GithubActionUpdatePullRequestInRepoStorage{
+		databaseStored = schemas.GithubActionOptionStorage{
 			Time: time.Now(),
 		}
 		area.StorageVariable, err = json.Marshal(databaseStored)
@@ -587,7 +654,7 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 	}
 
 	// Unmarshal the option
-	optionJSON := schemas.GithubActionUpdatePullRequestInRepo{}
+	optionJSON := schemas.GithubActionOption{}
 
 	err = json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
@@ -603,6 +670,110 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 
 	if service.IsPullRequestUpdate(pullRequestList, databaseStored.Time) {
 		response := "new commit update in " + optionJSON.RepoName + " repository"
+		databaseStored.Time = time.Now()
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
+		println(response)
+		channel <- response
+	}
+
+	time.Sleep(time.Minute)
+}
+
+func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
+	channel chan string,
+	option json.RawMessage,
+	idArea uint64,
+) {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Action.ServiceId,
+	)
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return
+	}
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return
+	}
+
+	databaseStored := schemas.GithubActionOptionStorage{}
+	err = json.Unmarshal(area.StorageVariable, &databaseStored)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return
+		} else {
+			println("initializing storage variable")
+			databaseStored = schemas.GithubActionOptionStorage{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(databaseStored)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
+		}
+	}
+
+	if databaseStored.Time.IsZero() {
+		println("initializing storage variable")
+		databaseStored = schemas.GithubActionOptionStorage{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
+	}
+
+	// Unmarshal the option
+	optionJSON := schemas.GithubActionOption{}
+
+	err = json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal weather option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	workflowRunList, err := service.WorkflowRunList(token.Token, optionJSON.RepoName)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if service.IsWorkflowRunUpdate(workflowRunList.WorkflowRuns, databaseStored.Time) {
+		response := "new workflow run in " + optionJSON.RepoName + " repository"
 		databaseStored.Time = time.Now()
 		area.StorageVariable, err = json.Marshal(databaseStored)
 		if err != nil {
