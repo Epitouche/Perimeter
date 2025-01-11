@@ -70,7 +70,7 @@ func (service *githubService) GetServiceActionInfo() []schemas.Action {
 	}
 	actionOption, err := json.Marshal(defaultValue)
 	if err != nil {
-		println("error marshal timer option: " + err.Error())
+		println("error marshal github option: " + err.Error())
 	}
 	service.serviceInfo, err = service.serviceRepository.FindByName(
 		schemas.Github,
@@ -101,7 +101,33 @@ func (service *githubService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
-	return []schemas.Reaction{}
+	defaultValue := schemas.GithubActionOption{
+		RepoName: "",
+	}
+	actionOption, err := json.Marshal(defaultValue)
+	if err != nil {
+		println("error marshal github option: " + err.Error())
+	}
+	service.serviceInfo, err = service.serviceRepository.FindByName(
+		schemas.Github,
+	) // must update the serviceInfo
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
+	return []schemas.Reaction{
+		{
+			Name:        string(schemas.GetLatestCommitInRepo),
+			Description: "This reaction get the latest commit in a repository",
+			Service:     service.serviceInfo,
+			Option:      actionOption,
+		},
+		{
+			Name:        string(schemas.GetLatestWorkflowRunInRepo),
+			Description: "This reaction get the latest workflow run in a repository",
+			Service:     service.serviceInfo,
+			Option:      actionOption,
+		},
+	}
 }
 
 func (service *githubService) FindActionbyName(
@@ -123,6 +149,10 @@ func (service *githubService) FindReactionbyName(
 	name string,
 ) func(option json.RawMessage, idArea uint64) string {
 	switch name {
+	case string(schemas.GetLatestCommitInRepo):
+		return service.GithubReactionGetLatestCommitInRepo
+	case string(schemas.GetLatestWorkflowRunInRepo):
+		return service.GithubReactionGetLatestWorkflowRunInRepo
 	default:
 		return nil
 	}
@@ -793,3 +823,79 @@ func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
 }
 
 // Reactions functions
+
+func (service *githubService) GithubReactionGetLatestCommitInRepo(
+	option json.RawMessage,
+	idArea uint64,
+) string {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		return "Error finding area: " + err.Error()
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		return "Error finding token:" + err.Error()
+	}
+	if token.Token == "" {
+		return "Error: Token not found"
+	}
+
+	// Unmarshal the option
+	optionJSON := schemas.GithubActionOption{}
+
+	err = json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		return "error unmarshal weather option: " + err.Error()
+	}
+
+	commitList, err := service.CommitList(token.Token, optionJSON.RepoName)
+	if err != nil {
+		return err.Error()
+	}
+
+	return commitList[0].Commit.Author.Name + " commit " + commitList[0].Commit.Message + " in " + optionJSON.RepoName + " repository, at " + commitList[0].Commit.Author.Date.String()
+}
+
+func (service *githubService) GithubReactionGetLatestWorkflowRunInRepo(
+	option json.RawMessage,
+	idArea uint64,
+) string {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		return "Error finding area: " + err.Error()
+	}
+
+	// Find the token of the user
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+	if err != nil {
+		return "Error finding token:" + err.Error()
+	}
+	if token.Token == "" {
+		return "Error: Token not found"
+	}
+
+	// Unmarshal the option
+	optionJSON := schemas.GithubActionOption{}
+
+	err = json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		return "error unmarshal weather option: " + err.Error()
+	}
+
+	workflowList, err := service.WorkflowRunList(token.Token, optionJSON.RepoName)
+	if err != nil {
+		return err.Error()
+	}
+
+	return workflowList.WorkflowRuns[0].Name + " workflow run in " + optionJSON.RepoName + " repository, at " + workflowList.WorkflowRuns[0].CreatedAt.String()
+}

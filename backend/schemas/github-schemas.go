@@ -15,6 +15,11 @@ const (
 
 type GithubReaction string
 
+const (
+	GetLatestCommitInRepo      GithubReaction = "GetLatestCommitInRepo"
+	GetLatestWorkflowRunInRepo GithubReaction = "GetLatestWorkflowRunInRepo"
+)
+
 // GitHubTokenResponse represents the response from Github when a token is requested.
 type GitHubTokenResponse struct {
 	AccessToken string `json:"access_token"`
