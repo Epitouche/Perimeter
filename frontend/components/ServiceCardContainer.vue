@@ -25,7 +25,9 @@ async function loadConnectionInfos() {
       if (infosConnection.value) {
         tokens.value = infosConnection.value.tokens;
 
-        serviceConnected.value = tokens.value.map((token) => token.service.name);
+        serviceConnected.value = tokens.value.map(
+          (token) => token.service.name,
+        );
       }
     }
   } catch (error: unknown) {

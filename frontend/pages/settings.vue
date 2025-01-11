@@ -21,9 +21,9 @@ async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
       infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
-        username.value = infosConnection.value.user.username;
-        email.value = infosConnection.value.user.email;
-        password.value = infosConnection.value.user.password;
+      username.value = infosConnection.value.user.username;
+      email.value = infosConnection.value.user.email;
+      password.value = infosConnection.value.user.password;
     }
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
@@ -40,7 +40,6 @@ const handleSubmit = async () => {
 
   console.log("User Data : ", userData);
 };
-
 </script>
 
 <template>
@@ -52,25 +51,15 @@ const handleSubmit = async () => {
       class="flex flex-col justify-center items-center gap-10 w-[60%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
     >
       <div class="flex flex-col justify-center items-center gap-8 w-full px-5">
-        <EditableInput
-          v-model="username"
-          name="Username"
-        />
-        <EditableInput
-          v-model="email"
-          name="Email"
-        />
-        <EditableInput
-          v-model="password"
-          name="Password"
-        />
+        <EditableInput v-model="username" name="Username" />
+        <EditableInput v-model="email" name="Email" />
+        <EditableInput v-model="password" name="Password" />
       </div>
       <UButton
-          class="text-black bg-custom_color-bg_section border-2 border-black items-right text-2xl font-semibold py-3 px-5"
-          @click="handleSubmit"
-          >Submit
-      </UButton
-        >
+        class="text-black bg-custom_color-bg_section border-2 border-black items-right text-2xl font-semibold py-3 px-5"
+        @click="handleSubmit"
+        >Submit
+      </UButton>
     </div>
   </div>
 </template>

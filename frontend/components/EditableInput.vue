@@ -10,10 +10,10 @@ export default {
     },
     modelValue: {
       type: String,
-      default: '',
+      default: "",
     },
   },
-  emits: ['update:modelValue'],
+  emits: ["update:modelValue"],
   setup(props, { emit }) {
     const isEditable = ref(false);
     const inputValue = ref(props.modelValue);
@@ -22,7 +22,7 @@ export default {
       () => props.modelValue,
       (newValue) => {
         inputValue.value = newValue;
-      }
+      },
     );
 
     const toggleEdit = () => {
@@ -53,7 +53,8 @@ export default {
           size: { sm: 'text-3xl' },
         }"
         :class="{
-          'bg-gray-100 text-gray-500 cursor-not-allowed rounded-full': !isEditable,
+          'bg-gray-100 text-gray-500 cursor-not-allowed rounded-full':
+            !isEditable,
           'bg-white text-black rounded-full': isEditable,
         }"
         class="flex-1 transition-colors duration-300"
@@ -71,5 +72,4 @@ export default {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
