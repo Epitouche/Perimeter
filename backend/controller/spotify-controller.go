@@ -43,7 +43,7 @@ func (controller *spotifyController) RedirectToService(
 	oauthUrl, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Spotify,
 		"https://accounts.spotify.com/authorize",
-		"user-read-private user-read-email user-modify-playback-state",
+		"user-read-private user-read-email user-modify-playback-state user-read-playback-state",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)

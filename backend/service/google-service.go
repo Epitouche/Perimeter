@@ -525,8 +525,6 @@ func (service *googleService) GoogleReactionSendMail(
 ) string {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
-	println("gmail option: " + string(option))
-
 	err := json.Unmarshal(option, &optionJSON)
 	if err != nil {
 		println("error unmarshal gmail option: " + err.Error())
