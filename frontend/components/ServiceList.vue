@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
-import type { Token } from "~/interfaces/serviceResponse";
+import type { Token, ServiceResponse } from "~/interfaces/serviceResponse";
 import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
 import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js";
@@ -12,12 +12,13 @@ defineProps<{
 }>();
 
 const tokenCookie = useCookie("token");
-const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+const isLoading = ref(true);
+const isPopupVisible = ref(false);
 const services = ref<ServiceInfo[]>([]);
 const serviceConnected = ref<string[]>([]);
 const tokens = ref<Token[]>([]);
-const isPopupVisible = ref(false);
+const infosConnection = ref<ServiceResponse | null>(null);
 const selectedService = ref<string | null>(null);
 
 onMounted(() => {
@@ -28,12 +29,19 @@ onMounted(() => {
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
-      tokens.value = await servicesConnectionInfos(tokenCookie.value);
-      serviceConnected.value = tokens.value.map((token) => token.service.name);
+      infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
+
+      if (infosConnection.value) {
+        tokens.value = infosConnection.value.tokens;
+
+        serviceConnected.value = tokens.value.map((token) => token.service.name);
+      }
+
       isLoading.value = false;
     }
-  } catch (error) {
-    console.error("Error loading tokens:", error);
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error loading connections infos:", error);
   }
 }
 
@@ -132,7 +140,7 @@ const cancelAction = () => {
       :key="index"
       :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
-        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
+        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] shadow-lg font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]"
       @click="onClick(app.name)"
     >
@@ -141,7 +149,7 @@ const cancelAction = () => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20"
-      />
+      >
 
       <span
         class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
@@ -173,12 +181,12 @@ const cancelAction = () => {
       <p class="text-2xl mb-5">This action cannot be undone!</p>
       <div class="flex flex-row justify-end items-center gap-5 pt-5">
         <UButton
-          class="text-black border-black bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+          class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
           @click="cancelAction"
           >No</UButton
         >
         <UButton
-          class="text-red-600 border-red-600 bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+          class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
           @click="confirmAction"
           >Yes</UButton
         >
