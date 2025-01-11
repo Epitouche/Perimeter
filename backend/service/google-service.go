@@ -292,7 +292,10 @@ func (service *googleService) GetUserInfo(
 	return user, nil
 }
 
-func initializedGoogleStorageVariable(area schemas.Area, service googleService) (schemas.GoogleVariableReceiveMail, error) {
+func initializedGoogleStorageVariable(
+	area schemas.Area,
+	service googleService,
+) (schemas.GoogleVariableReceiveMail, error) {
 	variable := schemas.GoogleVariableReceiveMail{}
 	err := json.Unmarshal(area.StorageVariable, &variable)
 	if err != nil {
@@ -337,7 +340,10 @@ func initializedGoogleStorageVariable(area schemas.Area, service googleService) 
 	return variable, nil
 }
 
-func getLastEmailId(token schemas.Token, variable schemas.GoogleVariableReceiveMail) (schemas.GmailEmailResponse, error) {
+func getLastEmailId(
+	token schemas.Token,
+	variable schemas.GoogleVariableReceiveMail,
+) (schemas.GmailEmailResponse, error) {
 	emailResponse := schemas.GmailEmailResponse{}
 	timeQuery := variable.Time.Format("2006/01/02")
 	apiURL := fmt.Sprintf(

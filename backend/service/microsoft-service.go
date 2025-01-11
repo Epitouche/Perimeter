@@ -258,7 +258,10 @@ func (service *microsoftService) GetUserInfo(
 	return user, nil
 }
 
-func initializedMicrosoftStorageVariable(area schemas.Area, service microsoftService) (schemas.MicrosoftVariableReceiveMail, error) {
+func initializedMicrosoftStorageVariable(
+	area schemas.Area,
+	service microsoftService,
+) (schemas.MicrosoftVariableReceiveMail, error) {
 	variable := schemas.MicrosoftVariableReceiveMail{}
 	err := json.Unmarshal(area.StorageVariable, &variable)
 	if err != nil {
@@ -303,7 +306,10 @@ func initializedMicrosoftStorageVariable(area schemas.Area, service microsoftSer
 	return variable, nil
 }
 
-func getNewEmails(token schemas.Token, variable schemas.MicrosoftVariableReceiveMail) (schemas.MicrosoftEmailResponse, error) {
+func getNewEmails(
+	token schemas.Token,
+	variable schemas.MicrosoftVariableReceiveMail,
+) (schemas.MicrosoftEmailResponse, error) {
 	var emailResponse schemas.MicrosoftEmailResponse
 	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format(
 		"2006-01-02T15:04:05",
