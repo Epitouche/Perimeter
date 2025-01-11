@@ -6,10 +6,15 @@ import (
 
 type SpotifyAction string
 
+const (
+	MusicPlayed SpotifyAction = "MusicPlayed"
+)
+
 type SpotifyReaction string
 
 const (
-	PlayMusic SpotifyReaction = "PlayMusic"
+	SkipNextMusic     SpotifyReaction = "SkipNextMusic"
+	SkipPreviousMusic SpotifyReaction = "SkipPreviousMusic"
 )
 
 type SpotifyTokenResponse struct {
@@ -52,6 +57,20 @@ type SpotifyUserInfo struct {
 	Product string `json:"product"`
 	Type    string `json:"type"`
 	Uri     string `json:"uri"`
+}
+
+type SpotifyPlaybackResponse struct {
+	IsPlaying bool `json:"is_playing"`
+	Item      struct {
+		Name    string `json:"name"`
+		Artists []struct {
+			Name string `json:"name"`
+		} `json:"artists"`
+	} `json:"item"`
+}
+
+type SpotifyActionMusicPlayedOption struct {
+	Name string `json:"name"`
 }
 
 // Errors Messages.
