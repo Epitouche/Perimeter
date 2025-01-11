@@ -37,20 +37,21 @@ export const disconnectService = async (token: string, tokenId: number) => {
   }
 };
 
-export const handleClick = (
+export const handleClick = async (
   label: string,
   services: Ref<ServiceInfo[]>,
-  tokens: Ref<Token[]>,
-  token: string,
+  tokens?: Ref<Token[]>,
+  token?: string,
 ) => {
   const serviceNames = services.value.map((service) => service.name);
   let matchingToken;
   if (tokens && token) {
     matchingToken = tokens.value.find((t) => t.service.name === label);
   }
-  if (matchingToken) {
-    const serviceId = matchingToken.service.id;
-    disconnectService(token, Number(serviceId));
+  if (matchingToken && token) {
+    const serviceId = matchingToken.id;
+    await disconnectService(token, Number(serviceId));
+    return true;
   } else {
     const apiLink = `http://server:8080/api/v1/${label.toLowerCase()}/auth/`;
 
@@ -59,9 +60,11 @@ export const handleClick = (
       label.toLowerCase() != "timer" &&
       label.toLowerCase() != "openweathermap"
     ) {
-      authApiCall(apiLink);
+      await authApiCall(apiLink);
+      return false;
     } else {
       console.log(`Unknown service "${label}" clicked.`);
+      return false;
     }
   }
 };

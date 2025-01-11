@@ -292,6 +292,150 @@ func (service *googleService) GetUserInfo(
 	return user, nil
 }
 
+func initializedGoogleStorageVariable(
+	area schemas.Area,
+	service googleService,
+) (schemas.GoogleVariableReceiveMail, error) {
+	variable := schemas.GoogleVariableReceiveMail{}
+	err := json.Unmarshal(area.StorageVariable, &variable)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return variable, err
+		} else {
+			println("initializing storage variable")
+			variable = schemas.GoogleVariableReceiveMail{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(variable)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return variable, err
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return variable, err
+			}
+		}
+	}
+
+	if variable.Time.IsZero() {
+		variable = schemas.GoogleVariableReceiveMail{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(variable)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return variable, err
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return variable, err
+		}
+	}
+	return variable, nil
+}
+
+func getLastEmailId(
+	token schemas.Token,
+	variable schemas.GoogleVariableReceiveMail,
+) (schemas.GmailEmailResponse, error) {
+	emailResponse := schemas.GmailEmailResponse{}
+	timeQuery := variable.Time.Format("2006/01/02")
+	apiURL := fmt.Sprintf(
+		"https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=1&labelIds=INBOX&q=after:%s",
+		timeQuery,
+	)
+
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		println("error creating request: " + err.Error())
+		return emailResponse, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		println("error making request: " + err.Error())
+		return emailResponse, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		return emailResponse, err
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
+	if err != nil {
+		println("error decoding response: " + err.Error())
+		return emailResponse, err
+	}
+	return emailResponse, nil
+}
+
+func getLastEmailDetails(id string, token schemas.Token) (schemas.EmailDetails, error) {
+	var emailDetails schemas.EmailDetails
+	ctx := context.Background()
+	client := &http.Client{}
+
+	apiURL := fmt.Sprintf(
+		"https://gmail.googleapis.com/gmail/v1/users/me/messages/%s?fields=payload(headers),id",
+		id,
+	)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		println("error creating request: " + err.Error())
+		return emailDetails, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		println("error making request: " + err.Error())
+		return emailDetails, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		return emailDetails, err
+	}
+	var emailAllDetails schemas.GmailMessageResponse
+	err = json.NewDecoder(resp.Body).Decode(&emailAllDetails)
+	if err != nil {
+		println("error decoding response: " + err.Error())
+		return emailDetails, err
+	}
+
+	for _, header := range emailAllDetails.Payload.Headers {
+		switch header.Name {
+		case "Date":
+			emailDetails.Date = header.Value
+		case "From":
+			emailDetails.From = header.Value
+		case "Subject":
+			emailDetails.Subject = header.Value
+		}
+	}
+
+	if emailDetails.Date == "" || emailDetails.From == "" || emailDetails.Subject == "" {
+		println("error: email details not found")
+		return emailDetails, err
+	}
+
+	return emailDetails, nil
+}
+
 // Actions functions
 func (service *googleService) GoogleActionReceiveMail(
 	channel chan string,
@@ -304,46 +448,10 @@ func (service *googleService) GoogleActionReceiveMail(
 		return
 	}
 
-	variable := schemas.GoogleVariableReceiveMail{}
-	err = json.Unmarshal(area.StorageVariable, &variable)
+	variable, err := initializedGoogleStorageVariable(area, *service)
 	if err != nil {
-		toto := struct{}{}
-		err = json.Unmarshal(area.StorageVariable, &toto)
-		if err != nil {
-			println("error unmarshalling storage variable: " + err.Error())
-			return
-		} else {
-			println("initializing storage variable")
-			variable = schemas.GoogleVariableReceiveMail{
-				Time: time.Now(),
-			}
-			area.StorageVariable, err = json.Marshal(variable)
-			if err != nil {
-				println("error marshalling storage variable: " + err.Error())
-				return
-			}
-			err = service.areaRepository.Update(area)
-			if err != nil {
-				println("error updating area: " + err.Error())
-				return
-			}
-		}
-	}
-
-	if variable.Time.IsZero() {
-		variable = schemas.GoogleVariableReceiveMail{
-			Time: time.Now(),
-		}
-		area.StorageVariable, err = json.Marshal(variable)
-		if err != nil {
-			println("error marshalling storage variable: " + err.Error())
-			return
-		}
-		err = service.areaRepository.Update(area)
-		if err != nil {
-			println("error updating area: " + err.Error())
-			return
-		}
+		println("error initializing storage variable: " + err.Error())
+		return
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
@@ -355,88 +463,17 @@ func (service *googleService) GoogleActionReceiveMail(
 		return
 	}
 
-	timeQuery := variable.Time.Format("2006/01/02")
-	apiURL := fmt.Sprintf(
-		"https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&labelIds=INBOX&q=after:%s",
-		timeQuery,
-	)
-
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	emailResponse, err := getLastEmailId(token, variable)
 	if err != nil {
-		println("error creating request: " + err.Error())
-		return
-	}
-
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		println("error making request: " + err.Error())
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
-		return
-	}
-	emailResponse := schemas.GmailEmailResponse{}
-
-	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
-	if err != nil {
-		println("error decoding response: " + err.Error())
+		println("error getting last email id: " + err.Error())
 		return
 	}
 
 	if len(emailResponse.Messages) > 0 {
 		id := emailResponse.Messages[0].Id
-		apiURL = fmt.Sprintf(
-			"https://gmail.googleapis.com/gmail/v1/users/me/messages/%s?fields=payload(headers),id",
-			id,
-		)
-
-		req, err = http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+		emailDetails, err := getLastEmailDetails(id, token)
 		if err != nil {
-			println("error creating request: " + err.Error())
-			return
-		}
-
-		req.Header.Set("Authorization", "Bearer "+token.Token)
-
-		resp, err = client.Do(req)
-		if err != nil {
-			println("error making request: " + err.Error())
-			return
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			println("error status code: " + fmt.Sprint(resp.StatusCode))
-			return
-		}
-		var emailAllDetails schemas.GmailMessageResponse
-		err = json.NewDecoder(resp.Body).Decode(&emailAllDetails)
-		if err != nil {
-			println("error decoding response: " + err.Error())
-			return
-		}
-
-		var emailDetails schemas.EmailDetails
-		for _, header := range emailAllDetails.Payload.Headers {
-			switch header.Name {
-			case "Date":
-				emailDetails.Date = header.Value
-			case "From":
-				emailDetails.From = header.Value
-			case "Subject":
-				emailDetails.Subject = header.Value
-			}
-		}
-
-		if emailDetails.Date == "" || emailDetails.From == "" || emailDetails.Subject == "" {
-			println("error: email details not found")
+			println("error getting last email details: " + err.Error())
 			return
 		}
 

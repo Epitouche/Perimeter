@@ -46,3 +46,16 @@ type MicrosoftUserInfo struct {
 	UserPrincipalName string `json:"userPrincipalName"`
 	DisplayName       string `json:"displayName"`
 }
+
+type MicrosoftEmailResponse struct {
+	Value []struct {
+		ID      string `json:"id"`
+		Subject string `json:"subject"`
+		From    struct {
+			EmailAddress struct {
+				Address string `json:"address"`
+			} `json:"emailAddress"`
+		} `json:"from"`
+		ReceivedDateTime string `json:"receivedDateTime"`
+	} `json:"value"`
+}
