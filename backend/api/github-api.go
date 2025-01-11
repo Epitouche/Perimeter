@@ -11,10 +11,22 @@ import (
 	"area/service"
 )
 
+// GithubAPI is a struct that provides an interface to interact with the GithubController.
+// It contains a single field, controller, which is an instance of GithubController.
 type GithubAPI struct {
 	controller controller.GithubController
 }
 
+// NewGithubAPI initializes a new GithubAPI instance, sets up the necessary routes,
+// and returns a pointer to the created GithubAPI instance.
+//
+// Parameters:
+//   - controller: An instance of GithubController to handle GitHub-related operations.
+//   - apiRoutes: A pointer to a gin.RouterGroup where the GitHub API routes will be registered.
+//   - serviceUser: An instance of UserService to handle user-related operations.
+//
+// Returns:
+//   - A pointer to the initialized GithubAPI instance.
 func NewGithubAPI(
 	controller controller.GithubController,
 	apiRoutes *gin.RouterGroup,
@@ -68,9 +80,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 //	@Router			/github/auth/callback [post]
 func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/auth/callback", func(ctx *gin.Context) {
-		github_token, err := api.controller.HandleServiceCallback(
-			ctx,
-		)
+		github_token, err := api.controller.HandleServiceCallback(ctx)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
 				Error: err.Error(),
@@ -85,7 +95,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 //
 //	@Summary		give authentication token to mobile
 //	@Description	give authentication token to mobile
-//	@Tags			Spotify
+//	@Tags			Github
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload			body		schemas.CodeCredentials	true	"Callback Payload"

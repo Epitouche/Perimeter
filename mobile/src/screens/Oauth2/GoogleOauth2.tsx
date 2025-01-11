@@ -1,7 +1,7 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GMAIL_MOBILE_CLIENT_ID, GMAIL_SECRET } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
+import { GMAIL_MOBILE_CLIENT_ID } from '@env';
 
 async function HandleGoogleLogin(
   setToken: any,
@@ -10,19 +10,15 @@ async function HandleGoogleLogin(
   login: boolean = false,
 ) {
   const config: AuthConfiguration = {
-    clientId: GMAIL_MOBILE_CLIENT_ID,
-    clientSecret: GMAIL_SECRET,
-    redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['profile', 'email'],
-    serviceConfiguration: {
-      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
-      tokenEndpoint: 'https://accounts.google.com/o/oauth2/token',
-    },
+    issuer: 'https://accounts.google.com',
+    clientId: `${GMAIL_MOBILE_CLIENT_ID}.apps.googleusercontent.com`,
+    redirectUrl: `com.googleusercontent.apps.${GMAIL_MOBILE_CLIENT_ID}:/oauth2redirect/google`,
+    scopes: ['https://mail.google.com/', 'profile', 'email'],
   };
 
   try {
     const result = await authorize(config);
-    // console.log('result', result);
+    console.log('result', result);
     let data;
     if (login) {
       data = await handleCallback(
@@ -42,7 +38,7 @@ async function HandleGoogleLogin(
       }
     }
   } catch (error) {
-    if ((error as Error).message != 'User cancelled flow') {
+    if ((error as Error).message !== 'User cancelled flow') {
       console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }

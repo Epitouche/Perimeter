@@ -19,10 +19,10 @@ type OpenweathermapService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(channel chan string, option json.RawMessage, idArea uint64)
+	FindActionbyName(
+		name string,
+	) func(channel chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	// Actions functions
 	OpenweathermapActionSpecificWeather(
@@ -49,8 +49,6 @@ type OpenweathermapService interface {
 type openweathermapService struct {
 	repository        repository.OpenweathermapRepository
 	serviceRepository repository.ServiceRepository
-	actionsName       []string
-	reactionsName     []string
 	serviceInfo       schemas.Service
 }
 
@@ -105,11 +103,6 @@ func (service *openweathermapService) FindReactionbyName(
 }
 
 func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
-	service.actionsName = append(
-		service.actionsName,
-		string(schemas.SpecificWeather),
-		string(schemas.SpecificTemperature),
-	)
 	// SpecificWeather
 	defaultValueSpecificWeather := schemas.OpenweathermapActionSpecificWeather{
 		City:    "",
@@ -140,25 +133,18 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 			Name:        string(schemas.SpecificWeather),
 			Description: "This action is a specific weather action",
 			Service:     service.serviceInfo,
-
-			Option: optionSpecificWeather,
+			Option:      optionSpecificWeather,
 		},
 		{
 			Name:        string(schemas.SpecificTemperature),
 			Description: "This action is a specific temperature action",
 			Service:     service.serviceInfo,
-
-			Option: optionSpecificTemperature,
+			Option:      optionSpecificTemperature,
 		},
 	}
 }
 
 func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionsName = append(
-		service.reactionsName,
-		string(schemas.CurrentWeather),
-		string(schemas.CurrentTemperature),
-	)
 	defaultValue := schemas.OpenweathermapReactionOption{
 		City: "",
 	}
@@ -186,14 +172,6 @@ func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reactio
 			Option:      option,
 		},
 	}
-}
-
-func (service *openweathermapService) GetActionsName() []string {
-	return service.actionsName
-}
-
-func (service *openweathermapService) GetReactionsName() []string {
-	return service.reactionsName
 }
 
 // Service specific functions

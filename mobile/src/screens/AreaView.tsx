@@ -59,21 +59,20 @@ const AreasScreen = ({ navigation }: Props) => {
             style={[
               styles.areaBox,
               { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' },
-            ]} // Dynamic colors
-            // onPress={() => navigation.navigate('AreaDetails', { area })}
-          >
+            ]}
+            onPress={() => navigation.navigate('AreaDetails', { area })}>
             <Text
               style={
                 styles.areaText
-              }>{`${area.action_id.name} ~ ${area.reaction_id.name}`}</Text>
+              }>{`${area.action.name} ~ ${area.reaction.name}`}</Text>
             <View style={styles.iconsContainer}>
               <MaterialCommunityIcons
-                name={area.action_id.service_id.name.toLowerCase()}
+                name={area.action.service.name.toLowerCase()}
                 size={24}
                 color="white"
               />
               <MaterialCommunityIcons
-                name={area.reaction_id.service_id.name.toLowerCase()}
+                name={area.reaction.service.name.toLowerCase()}
                 size={24}
                 color="white"
               />

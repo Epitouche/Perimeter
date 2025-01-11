@@ -14,7 +14,12 @@ async function HandleSpotifyLogin(
     clientId: SPOTIFY_CLIENT_ID,
     clientSecret: SPOTIFY_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['user-read-email', 'playlist-modify-public'],
+    scopes: [
+      'user-read-email',
+      'playlist-modify-public',
+      'user-modify-playback-state',
+      'user-read-playback-state',
+    ],
     serviceConfiguration: {
       authorizationEndpoint: 'https://accounts.spotify.com/authorize',
       tokenEndpoint: 'https://accounts.spotify.com/api/token',
@@ -31,7 +36,7 @@ async function HandleSpotifyLogin(
       );
     } else {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback`,
+        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/`,
         result,
       );
     }
@@ -44,7 +49,7 @@ async function HandleSpotifyLogin(
       }
     }
   } catch (error) {
-    if ((error as Error).message != 'User cancelled flow') {
+    if ((error as Error).message !== 'User cancelled flow') {
       console.error('Failed to log in', error);
       Alert.alert('Error', (error as Error).message);
     }

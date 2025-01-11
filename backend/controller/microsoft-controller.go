@@ -9,27 +9,27 @@ import (
 	"area/service"
 )
 
-type GmailController interface {
+type MicrosoftController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
-type gmailController struct {
-	service        service.GmailService
+type microsoftController struct {
+	service        service.MicrosoftService
 	serviceUser    service.UserService
 	serviceToken   service.TokenService
 	serviceService service.ServiceService
 }
 
-func NewGmailController(
-	service service.GmailService,
+func NewMicrosoftController(
+	service service.MicrosoftService,
 	serviceUser service.UserService,
 	serviceToken service.TokenService,
 	serviceService service.ServiceService,
-) GmailController {
-	return &gmailController{
+) MicrosoftController {
+	return &microsoftController{
 		service:        service,
 		serviceUser:    serviceUser,
 		serviceToken:   serviceToken,
@@ -37,13 +37,13 @@ func NewGmailController(
 	}
 }
 
-func (controller *gmailController) RedirectToService(
+func (controller *microsoftController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthURL string, err error) {
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
-		schemas.Gmail,
-		"https://accounts.google.com/o/oauth2/v2/auth",
-		"https://mail.google.com/ profile email",
+		schemas.Microsoft,
+		"https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+		"Mail.ReadWrite, Mail.Read, User.Read, Mail.Send, offline_access",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
@@ -51,7 +51,7 @@ func (controller *gmailController) RedirectToService(
 	return oauthURL, nil
 }
 
-func (controller *gmailController) HandleServiceCallback(
+func (controller *microsoftController) HandleServiceCallback(
 	ctx *gin.Context,
 ) (string, error) {
 	var credentials schemas.CodeCredentials
@@ -79,7 +79,7 @@ func (controller *gmailController) HandleServiceCallback(
 	bearer, err := controller.serviceService.HandleServiceCallback(
 		code,
 		authHeader,
-		schemas.Gmail,
+		schemas.Microsoft,
 		controller.service.AuthGetServiceAccessToken,
 		controller.serviceUser,
 		controller.service.GetUserInfo,
@@ -91,7 +91,7 @@ func (controller *gmailController) HandleServiceCallback(
 	return bearer, nil
 }
 
-func (controller *gmailController) HandleServiceCallbackMobile(
+func (controller *microsoftController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
 ) (string, error) {
 	var credentials schemas.MobileTokenRequest
@@ -99,8 +99,12 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
-		schemas.Gmail,
+		authHeader,
+		schemas.Microsoft,
 		credentials,
 		controller.serviceUser,
 		controller.service.GetUserInfo,
@@ -109,28 +113,32 @@ func (controller *gmailController) HandleServiceCallbackMobile(
 	return bearer, err
 }
 
-func (controller *gmailController) GetUserInfo(
+func (controller *microsoftController) GetUserInfo(
 	ctx *gin.Context,
 ) (userInfo schemas.UserCredentials, err error) {
+	println("get user info")
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
+		println("error 1")
+		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
 	token, err := controller.serviceToken.GetTokenById(user.Id)
 	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get token because %w", err)
+		println("error 2")
+		return userInfo, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	gmailUserInfo, err := controller.service.GetUserInfo(token.Token)
+	microsoftUserInfo, err := controller.service.GetUserInfo(token.Token)
 	if err != nil {
-		return schemas.UserCredentials{}, fmt.Errorf("unable to get user info because %w", err)
+		println("error 3")
+		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userInfo.Email = gmailUserInfo.Email
-	userInfo.Username = gmailUserInfo.Username
+	userInfo.Email = microsoftUserInfo.Email
+	userInfo.Username = microsoftUserInfo.Username
 	return userInfo, nil
 }

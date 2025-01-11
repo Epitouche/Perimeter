@@ -43,7 +43,7 @@ func (controller *githubController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Github,
 		"https://github.com/login/oauth/authorize",
-		"repo",
+		"repo user user:email",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
@@ -86,6 +86,7 @@ func (controller *githubController) HandleServiceCallback(
 		controller.serviceToken,
 	)
 	if err != nil {
+		println(err.Error())
 		return "", fmt.Errorf("unable to handle service callback because %w", err)
 	}
 	return bearer, nil
@@ -99,7 +100,11 @@ func (controller *githubController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		authHeader,
 		schemas.Github,
 		credentials,
 		controller.serviceUser,

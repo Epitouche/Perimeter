@@ -12,10 +12,23 @@ import (
 	"area/service"
 )
 
+// ReactionApi is a struct that provides an API for handling reactions.
+// It contains a controller of type ReactionController which manages the
+// business logic related to reactions.
 type ReactionApi struct {
 	controller controller.ReactionController
 }
 
+// NewReactionApi initializes a new ReactionApi instance, sets up the necessary routes,
+// and applies the JWT authorization middleware.
+//
+// Parameters:
+//   - controller: An instance of ReactionController to handle reaction-related operations.
+//   - apiRoutes: A pointer to the gin.RouterGroup where the reaction routes will be registered.
+//   - serviceUser: An instance of UserService used for JWT authorization.
+//
+// Returns:
+//   - A pointer to the initialized ReactionApi instance.
 func NewReactionApi(
 	controller controller.ReactionController,
 	apiRoutes *gin.RouterGroup,
@@ -37,7 +50,6 @@ func NewReactionApi(
 //	@Tags			Reaction
 //	@Accept			json
 //	@Produce		json
-//	@Security		Bearer
 //	@Security		bearerAuth
 //	@Param			id	path		int	true	"Service ID"
 //	@Success		200	{object}	[]schemas.Reaction

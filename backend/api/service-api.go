@@ -10,10 +10,21 @@ import (
 	"area/schemas"
 )
 
+// ServiceApi represents the API layer for the service, handling HTTP requests
+// and delegating them to the appropriate service controller.
 type ServiceApi struct {
 	controller controller.ServiceController
 }
 
+// NewServiceApi initializes a new instance of ServiceApi, sets up the necessary
+// routes for the service API, and returns a pointer to the created ServiceApi instance.
+//
+// Parameters:
+//   - controller: an instance of ServiceController that handles the business logic for the service API.
+//   - apiRoutes: a pointer to a gin.RouterGroup where the service API routes will be registered.
+//
+// Returns:
+//   - A pointer to the initialized ServiceApi instance.
 func NewServiceApi(
 	controller controller.ServiceController,
 	apiRoutes *gin.RouterGroup,

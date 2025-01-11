@@ -12,6 +12,8 @@ export const useWebsiteStore = defineStore("websiteStore", {
     reactionOptions: {} as Record<string, unknown>,
     actionServiceId: null as string | null,
     reactionServiceId: null as string | null,
+    actionName: "" as string,
+    reactionName: "" as string,
   }),
 
   actions: {
@@ -51,6 +53,8 @@ export const useWebsiteStore = defineStore("websiteStore", {
         showCreateButton: this.showCreateButton,
         actionIsSelected: this.actionIsSelected,
         reactionIsSelected: this.reactionIsSelected,
+        actionName: this.actionName,
+        reactionName: this.reactionName,
       };
 
       localStorage.setItem("workflowState", JSON.stringify(stateToSave));
@@ -97,6 +101,8 @@ export const useWebsiteStore = defineStore("websiteStore", {
       this.showCreateButton = false;
       this.actionIsSelected = false;
       this.reactionIsSelected = false;
+      this.actionName = "";
+      this.reactionName = "";
       this.clearWorkflowState();
     },
   },

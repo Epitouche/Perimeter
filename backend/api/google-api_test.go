@@ -46,7 +46,7 @@ func TestGmailAPI(t *testing.T) {
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 	mockUserService := new(test.MockUserService)
-	api.NewGmailAPI(mockController, apiRoutes, mockUserService)
+	api.NewGoogleAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
 		t.Parallel()
