@@ -22,7 +22,7 @@ async function HandleGoogleLogin(
     let data;
     if (login) {
       data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/gmail/auth/callback/mobile`,
+        `http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`,
         result,
       );
     } else {

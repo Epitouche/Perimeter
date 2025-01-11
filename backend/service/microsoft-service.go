@@ -258,6 +258,94 @@ func (service *microsoftService) GetUserInfo(
 	return user, nil
 }
 
+func initializedMicrosoftStorageVariable(
+	area schemas.Area,
+	service microsoftService,
+) (schemas.MicrosoftVariableReceiveMail, error) {
+	variable := schemas.MicrosoftVariableReceiveMail{}
+	err := json.Unmarshal(area.StorageVariable, &variable)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return variable, err
+		} else {
+			println("initializing storage variable")
+			variable = schemas.MicrosoftVariableReceiveMail{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(variable)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return variable, err
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return variable, err
+			}
+		}
+	}
+
+	if variable.Time.IsZero() {
+		variable = schemas.MicrosoftVariableReceiveMail{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(variable)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return variable, err
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return variable, err
+		}
+	}
+	return variable, nil
+}
+
+func getNewEmails(
+	token schemas.Token,
+	variable schemas.MicrosoftVariableReceiveMail,
+) (schemas.MicrosoftEmailResponse, error) {
+	var emailResponse schemas.MicrosoftEmailResponse
+	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format(
+		"2006-01-02T15:04:05",
+	) + "Z"
+	println("apiURL: " + apiURL)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		println("error creating request: " + err.Error())
+		return emailResponse, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		println("error making request: " + err.Error())
+		return emailResponse, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		return emailResponse, nil
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
+	if err != nil {
+		println("error decoding response: " + err.Error())
+		return emailResponse, err
+	}
+
+	return emailResponse, nil
+}
+
 func (service *microsoftService) MicrosoftActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
@@ -269,47 +357,10 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	variable := schemas.MicrosoftVariableReceiveMail{}
-	err = json.Unmarshal(area.StorageVariable, &variable)
+	variable, err := initializedMicrosoftStorageVariable(area, *service)
 	if err != nil {
-		toto := struct{}{}
-		err = json.Unmarshal(area.StorageVariable, &toto)
-		if err != nil {
-			println("error unmarshalling storage variable: " + err.Error())
-			return
-		} else {
-			println("initializing storage variable")
-			variable = schemas.MicrosoftVariableReceiveMail{
-				Time: time.Now(),
-			}
-			area.StorageVariable, err = json.Marshal(variable)
-			if err != nil {
-				println("error marshalling storage variable: " + err.Error())
-				return
-			}
-			err = service.areaRepository.Update(area)
-			if err != nil {
-				println("error updating area: " + err.Error())
-				return
-			}
-		}
-	}
-
-	if variable.Time.IsZero() {
-		println("initializing storage variable")
-		variable = schemas.MicrosoftVariableReceiveMail{
-			Time: time.Now(),
-		}
-		area.StorageVariable, err = json.Marshal(variable)
-		if err != nil {
-			println("error marshalling storage variable: " + err.Error())
-			return
-		}
-		err = service.areaRepository.Update(area)
-		if err != nil {
-			println("error updating area: " + err.Error())
-			return
-		}
+		println("error initializing storage variable: " + err.Error())
+		return
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
@@ -321,53 +372,13 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		return
 	}
 
-	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format(
-		"2006-01-02T15:04:05",
-	) + "Z"
-
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	emailResponse, err := getNewEmails(token, variable)
 	if err != nil {
-		println("error creating request: " + err.Error())
-		return
-	}
-
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		println("error making request: " + err.Error())
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
-		return
-	}
-
-	var emailResponse struct {
-		Value []struct {
-			ID      string `json:"id"`
-			Subject string `json:"subject"`
-			From    struct {
-				EmailAddress struct {
-					Address string `json:"address"`
-				} `json:"emailAddress"`
-			} `json:"from"`
-			ReceivedDateTime string `json:"receivedDateTime"`
-		} `json:"value"`
-	}
-
-	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
-	if err != nil {
-		println("error decoding response: " + err.Error())
+		println("error getting new emails: " + err.Error())
 		return
 	}
 
 	if len(emailResponse.Value) > 0 {
-		println("New email received")
 		latestEmail := emailResponse.Value[0]
 		response := fmt.Sprintf("New email received from %s: object: %s",
 			latestEmail.From.EmailAddress.Address,
@@ -390,12 +401,11 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 			println("error updating area: " + err.Error())
 			return
 		}
-		println("response sent to channel")
 		channel <- response
 	} else {
 		println("No new emails")
 	}
-	time.Sleep(time.Minute)
+	time.Sleep(time.Second * 10)
 }
 
 func (service *microsoftService) MicrosoftReactionSendMail(
