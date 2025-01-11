@@ -8,29 +8,25 @@ services:
 
   client_web:
     image: ghcr.io/epitouche/area-frontend:dev
-    extends:
-      file: ./docker-compose.template.yaml
-      service: client_web
     labels:
       - "traefik.http.routers.client_web.rule=Host(`tom-mendy.com`)"
       - "traefik.http.routers.client_web.entrypoints=websecure"
       - "traefik.http.routers.client_web.tls.certresolver=myresolver"
+      - "com.centurylinklabs.watchtower.enable=true"
+    extends:
+      file: ./docker-compose.template.yaml
+      service: client_web
 
   database:
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     extends:
       file: ./docker-compose.template.yaml
       service: database
 
-  server:
-    image: ghcr.io/epitouche/area-backend:dev
-    extends:
-      file: ./docker-compose.template.yaml
-      service: server
-
   reverse-proxy:
-    extends:
-      file: ./docker-compose.template.yaml
-      service: reverse-proxy
+    volumes:
+      - letsencrypt:/letsencrypt
     labels:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
@@ -39,18 +35,36 @@ services:
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=tom.mendy@tom-mendy.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    volumes:
-      - letsencrypt:/letsencrypt
+    extends:
+      file: ./docker-compose.template.yaml
+      service: reverse-proxy
+
+  server:
+    image: ghcr.io/epitouche/area-backend:dev
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    extends:
+      file: ./docker-compose.template.yaml
+      service: server
 
   server-documentation:
     image: ghcr.io/epitouche/area-backend-documentation:dev
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     extends:
       file: ./docker-compose.template.yaml
       service: server-documentation
-    # labels:
-    #   - "traefik.http.routers.server-documentation.rule=Host(`documentation.tom-mendy.com`)"
-    #   - "traefik.http.routers.server-documentation.entrypoints=websecure"
-    #   - "traefik.http.routers.server-documentation.tls.certresolver=myresolver"
+
+  watchtower:
+    image: containrrr/watchtower:1.7
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+      - "--rolling-restart"
+
 networks:
   app-networks:
 
