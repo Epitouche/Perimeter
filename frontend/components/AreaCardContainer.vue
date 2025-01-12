@@ -110,7 +110,7 @@ onMounted(() => {
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div class="flex flex-row justify-between pb-2 w-full">
-            <h2 class="text-6xl text-center w-full"><b>Temp title</b></h2>
+            <h2 class="text-6xl text-center w-full"><b> {{ area.title }}</b></h2>
             <UButton
               variant="ghost"
               class="self-end w-fit"
@@ -125,7 +125,7 @@ onMounted(() => {
 
           <div>
             <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
-            <p class="text-4xl">Desc will go here</p>
+            <p class="text-4xl"> {{ area.description }}</p>
           </div>
 
           <UTooltip text="Delete" class="self-end w-fit">

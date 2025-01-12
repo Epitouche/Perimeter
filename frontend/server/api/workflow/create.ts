@@ -8,13 +8,17 @@ export default defineEventHandler(async (event) => {
       !params.actionOptions ||
       !params.actionId ||
       !params.reactionOptions ||
-      !params.reactionId
+      !params.reactionId ||
+      !params.title ||
+      !params.description
     ) {
       console.log("params.token", params.token);
       console.log("params.actionOptions", params.actionOptions);
       console.log("params.actionId", params.actionId);
       console.log("params.reactionOptions", params.reactionOptions);
       console.log("params.reactionId", params.reactionId);
+      console.log("params.title", params.title);
+      console.log("params.descritpion", params.description);
       throw createError({
         statusCode: 400,
         message: "Missing parameters",
@@ -30,6 +34,8 @@ export default defineEventHandler(async (event) => {
         action_id: Number(params.actionId),
         reaction_option: params.reactionOptions,
         reaction_id: Number(params.reactionId),
+        title: params.title,
+        description: params.description,
       },
     });
     return response;

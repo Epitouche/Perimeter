@@ -1,6 +1,8 @@
 export interface Area {
   id: number;
   createdAt: string;
+  title: string;
+  description: string;
   action: {
     name: string;
     service: {
