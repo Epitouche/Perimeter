@@ -61,40 +61,64 @@ onMounted(() => {
 </script>
 
 <template>
-  <UContainer :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
-    class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full">
+  <UContainer
+    :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
+    class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full"
+  >
     <div v-for="type in props.types" :key="type.id">
-      <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+      <UContainer
+        :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
-        :style="{ backgroundColor: props.serviceInfo?.color || 'black' }" @click="openConfig(type.id)">
-        <h2 class="clamp-2-lines capitalize text-5xl text-center break-words w-full">
+        :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
+        @click="openConfig(type.id)"
+      >
+        <h2
+          class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
+        >
           {{ formatString(type.name) }}
         </h2>
         <p class="text-3xl">{{ type.description }}</p>
       </UContainer>
 
-      <UModal v-model="configIsOpen[type.id]" :ui="{
-        base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
-      }" :style="{ borderColor: props.serviceInfo?.color || 'black' }">
+      <UModal
+        v-model="configIsOpen[type.id]"
+        :ui="{
+          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
+        }"
+        :style="{ borderColor: props.serviceInfo?.color || 'black' }"
+      >
         <template #default>
-          <UForm :state="state[type.id]" class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
-            @submit.prevent="onSubmit(type.id, type.name)">
+          <UForm
+            :state="state[type.id]"
+            class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
+            @submit.prevent="onSubmit(type.id, type.name)"
+          >
             <h2 class="text-center text-6xl font-semibold pb-2">
               {{ formatString(type.name) }}
             </h2>
 
-            <UFormGroup v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key"
-              :ui="{ label: { base: 'capitalize text-2xl' } }">
-              <UInput v-model="state[type.id][key] as string | number | undefined" :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }" :placeholder="key + '...'" />
+            <UFormGroup
+              v-for="(value, key) in state[type.id]"
+              :key="key"
+              :label="key"
+              :name="key"
+              :ui="{ label: { base: 'capitalize text-2xl' } }"
+            >
+              <UInput
+                v-model="state[type.id][key] as string | number | undefined"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                :placeholder="key + '...'"
+              />
             </UFormGroup>
 
             <div class="flex flex-row justify-evenly gap-4 pt-4">
               <UButton
                 class="text-3xl font-semibold px-5 py-3 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
-                @click="openConfig(type.id)">
+                @click="openConfig(type.id)"
+              >
                 Cancel
               </UButton>
               <UButton type="submit" class="text-3xl font-semibold px-5 py-3">
