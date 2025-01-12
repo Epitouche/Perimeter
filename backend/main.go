@@ -106,6 +106,7 @@ func setupRouter() *gin.Engine {
 	openweathermapService := service.NewOpenweathermapService(
 		openweathermapRepository,
 		serviceRepository,
+		areaRepository,
 	)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
