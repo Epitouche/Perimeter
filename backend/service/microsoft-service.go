@@ -45,6 +45,10 @@ type MicrosoftService interface {
 		option json.RawMessage,
 		idArea uint64,
 	) string
+	MicrosoftReactionCreateEvent(
+		option json.RawMessage,
+		idArea uint64,
+	) string
 }
 
 type microsoftService struct {
@@ -140,12 +144,30 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	if err != nil {
 		println("error find service by name: " + err.Error())
 	}
+
+	defaultValueCreateEvent := schemas.MicrosoftCreateEventOptions{
+		Subject:     "",
+		Body:        "",
+		Location:    "",
+		Start:       "",
+		End:         "",
+	}
+	optionCreateEvent, err := json.Marshal(defaultValueCreateEvent)
+	if err != nil {
+		fmt.Println("Error marshalling default options:", err)
+	}
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SendMicrosoftMail),
 			Description: "Send a mail using Microsoft services",
 			Service:     service.serviceInfo,
 			Option:      option,
+		},
+		{
+			Name:        string(schemas.CreateEvent),
+			Description: "Create an event using Microsoft services",
+			Service:     service.serviceInfo,
+			Option:      optionCreateEvent,
 		},
 	}
 }
@@ -169,6 +191,8 @@ func (service *microsoftService) FindReactionbyName(
 	switch name {
 	case string(schemas.SendMicrosoftMail):
 		return service.MicrosoftReactionSendMail
+	case string(schemas.CreateEvent):
+		return service.MicrosoftReactionCreateEvent
 	default:
 		return nil
 	}
@@ -611,4 +635,91 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 	}
 
 	return "Email sent successfully!"
+}
+
+func (service *microsoftService) MicrosoftReactionCreateEvent(
+	option json.RawMessage,
+	idArea uint64,
+) string {
+	options := schemas.MicrosoftCreateEventOptions{}
+	err := json.Unmarshal(option, &options)
+	if err != nil {
+		fmt.Println("Error unmarshalling options:", err)
+		return "Error unmarshalling options: " + err.Error()
+	}
+
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return "Error finding area: " + err.Error()
+	}
+
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Reaction.ServiceId,
+	)
+
+	if err != nil {
+		fmt.Println("Error finding token:", err)
+		return "Error finding token: " + err.Error()
+	}
+
+	if token.Token == "" {
+		fmt.Println("Error: Token not found")
+		return "Error: Token not found"
+	}
+
+	apiURL := "https://graph.microsoft.com/v1.0/me/events"
+
+	startTime, err := time.Parse("2006-01-02T15:04:05", options.Start)
+	if err != nil {
+		fmt.Println("Error parsing start time:", err)
+		return "Error parsing start time: " + err.Error()
+	}
+
+	endTime, err := time.Parse("2006-01-02T15:04:05", options.End)
+	if err != nil {
+		fmt.Println("Error parsing end time:", err)
+		return "Error parsing end time: " + err.Error()
+	}
+
+	payload := map[string]interface{}{
+		"subject":  options.Subject,
+		"body":     map[string]string{"contentType": "Text", "content": options.Body},
+		"location": map[string]string{"displayName": options.Location},
+		"start":    map[string]string{"dateTime": startTime.Format(time.RFC3339), "timeZone": "UTC"},
+		"end":      map[string]string{"dateTime": endTime.Format(time.RFC3339), "timeZone": "UTC"},
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Println("Error marshalling event payload:", err)
+		return "Error marshalling event payload: " + err.Error()
+	}
+
+	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		fmt.Println("Error creating HTTP request:", err)
+		return "Error creating HTTP request: " + err.Error()
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error creating event request:", err)
+		return "Error creating event request: " + err.Error()
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		fmt.Println("Error creating event:", string(bodyBytes))
+		return "Error creating event: " + string(bodyBytes)
+	}
+
+	return "Event created successfully!"
 }
