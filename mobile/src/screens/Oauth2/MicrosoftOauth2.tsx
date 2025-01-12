@@ -18,6 +18,8 @@ async function HandleMicrosoftLogin(
       'User.Read',
       'Mail.Send',
       'offline_access',
+      'calendars.Read',
+      'calendars.ReadWrite',
     ],
     serviceConfiguration: {
       authorizationEndpoint:
