@@ -20,7 +20,7 @@ const description = ref<string>("");
 
 const validateCreation = () => {
   creationPopup.value = !creationPopup.value;
-}
+};
 
 const onCreate = async () => {
   console.log("actionId:", websiteStore.actionId);
@@ -221,7 +221,9 @@ onMounted(() => {
           />
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
-          <UButton class="text-5xl font-bold px-8 py-4" @click="validateCreation"
+          <UButton
+            class="text-5xl font-bold px-8 py-4"
+            @click="validateCreation"
             >Create</UButton
           >
         </div>
@@ -255,7 +257,7 @@ onMounted(() => {
             />
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
-                class="text-red-600 border-2 border-red-600  bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
                 @click="validateCreation"
                 >Cancel</UButton
               >
