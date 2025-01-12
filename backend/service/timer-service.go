@@ -19,8 +19,6 @@ type TimerService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	// Actions functions
 	TimerActionSpecificHour(c chan string, option json.RawMessage, idArea uint64)
@@ -31,18 +29,19 @@ type TimerService interface {
 type timerService struct {
 	repository        repository.TimerRepository
 	serviceRepository repository.ServiceRepository
-	actionsName       []string
-	reactionsName     []string
+	areaRepository    repository.AreaRepository
 	serviceInfo       schemas.Service
 }
 
 func NewTimerService(
 	repository repository.TimerRepository,
 	serviceRepository repository.ServiceRepository,
+	areaRepository repository.AreaRepository,
 ) TimerService {
 	return &timerService{
 		repository:        repository,
 		serviceRepository: serviceRepository,
+		areaRepository:    areaRepository,
 		serviceInfo: schemas.Service{
 			Name:        schemas.Timer,
 			Description: "This service is a time service",
@@ -82,7 +81,6 @@ func (service *timerService) FindReactionbyName(
 }
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
-	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
 	defaultValue := schemas.TimerActionSpecificHour{
 		Hour:   0,
 		Minute: 0,
@@ -99,16 +97,16 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.SpecificTime),
-			Description: "This action is a specific time action",
-			Service:     service.serviceInfo,
-			Option:      option,
+			Name:               string(schemas.SpecificTime),
+			Description:        "This action is a specific time action",
+			Service:            service.serviceInfo,
+			Option:             option,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
 
 func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -128,14 +126,6 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 			Option:      option,
 		},
 	}
-}
-
-func (service *timerService) GetActionsName() []string {
-	return service.actionsName
-}
-
-func (service *timerService) GetReactionsName() []string {
-	return service.reactionsName
 }
 
 // Service specific functions
@@ -176,9 +166,16 @@ func (service *timerService) TimerActionSpecificHour(
 	option json.RawMessage,
 	idArea uint64,
 ) {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
 	optionJSON := schemas.TimerActionSpecificHour{}
 
-	err := json.Unmarshal(option, &optionJSON)
+	err = json.Unmarshal(option, &optionJSON)
 	if err != nil {
 		println("error unmarshal timer option: " + err.Error())
 		time.Sleep(time.Second)
@@ -188,14 +185,89 @@ func (service *timerService) TimerActionSpecificHour(
 	actualTimeApi, err := getActualTime()
 	if err != nil {
 		println("error get actual time" + err.Error())
-	} else {
-		if actualTimeApi.Hour == optionJSON.Hour && actualTimeApi.Minute == optionJSON.Minute {
+		time.Sleep(time.Second)
+		return
+	}
+
+	databaseStored := schemas.TimerActionSpecificHourStorage{}
+	err = json.Unmarshal(area.StorageVariable, &databaseStored)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshalling storage variable: " + err.Error())
+			return
+		} else {
+			println("initializing storage variable")
+			databaseStored = schemas.TimerActionSpecificHourStorage{
+				Time: time.Now(),
+			}
+			area.StorageVariable, err = json.Marshal(databaseStored)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
+		}
+	}
+
+	if databaseStored.Time.IsZero() {
+		println("initializing storage variable")
+		databaseStored = schemas.TimerActionSpecificHourStorage{
+			Time: time.Now(),
+		}
+		area.StorageVariable, err = json.Marshal(databaseStored)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return
+		}
+	}
+
+	// generate time.Time from actualTimeApi
+	actualTime := time.Date(
+		actualTimeApi.Year,
+		time.Month(actualTimeApi.Month),
+		actualTimeApi.Day,
+		actualTimeApi.Hour,
+		actualTimeApi.Minute,
+		actualTimeApi.Seconds,
+		actualTimeApi.MilliSeconds,
+		time.Local,
+	)
+
+	if databaseStored.Time.Before(actualTime) {
+		if actualTime.Hour() == optionJSON.Hour && actualTimeApi.Minute == optionJSON.Minute {
 			response := "current time is " + actualTimeApi.Time
+			databaseStored.Time = time.Now().Add(time.Minute)
+			area.StorageVariable, err = json.Marshal(databaseStored)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
 			println(response)
 			c <- response
 		}
 	}
-	time.Sleep(time.Minute)
+
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

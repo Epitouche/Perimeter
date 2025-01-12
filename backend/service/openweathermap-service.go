@@ -49,16 +49,19 @@ type OpenweathermapService interface {
 type openweathermapService struct {
 	repository        repository.OpenweathermapRepository
 	serviceRepository repository.ServiceRepository
+	areaRepository    repository.AreaRepository
 	serviceInfo       schemas.Service
 }
 
 func NewOpenweathermapService(
 	repository repository.OpenweathermapRepository,
 	serviceRepository repository.ServiceRepository,
+	areaRepository repository.AreaRepository,
 ) OpenweathermapService {
 	return &openweathermapService{
 		repository:        repository,
 		serviceRepository: serviceRepository,
+		areaRepository:    areaRepository,
 		serviceInfo: schemas.Service{
 			Name:        schemas.Openweathermap,
 			Description: "This service is a weather service",
@@ -130,16 +133,18 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.SpecificWeather),
-			Description: "This action is a specific weather action",
-			Service:     service.serviceInfo,
-			Option:      optionSpecificWeather,
+			Name:               string(schemas.SpecificWeather),
+			Description:        "This action is a specific weather action",
+			Service:            service.serviceInfo,
+			Option:             optionSpecificWeather,
+			MinimumRefreshRate: 10,
 		},
 		{
-			Name:        string(schemas.SpecificTemperature),
-			Description: "This action is a specific temperature action",
-			Service:     service.serviceInfo,
-			Option:      optionSpecificTemperature,
+			Name:               string(schemas.SpecificTemperature),
+			Description:        "This action is a specific temperature action",
+			Service:            service.serviceInfo,
+			Option:             optionSpecificTemperature,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -279,9 +284,16 @@ func (service *openweathermapService) OpenweathermapActionSpecificWeather(
 	option json.RawMessage,
 	idArea uint64,
 ) {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
 	optionJSON := schemas.OpenweathermapActionSpecificWeather{}
 
-	err := json.Unmarshal([]byte(option), &optionJSON)
+	err = json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal weather option: " + err.Error())
 		time.Sleep(time.Second)
@@ -304,7 +316,11 @@ func (service *openweathermapService) OpenweathermapActionSpecificWeather(
 		}
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
@@ -312,9 +328,16 @@ func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
 	option json.RawMessage,
 	idArea uint64,
 ) {
+	// Find the area
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		fmt.Println("Error finding area:", err)
+		return
+	}
+
 	optionJSON := schemas.OpenweathermapActionSpecificTemperature{}
 
-	err := json.Unmarshal([]byte(option), &optionJSON)
+	err = json.Unmarshal([]byte(option), &optionJSON)
 	if err != nil {
 		println("error unmarshal temperature option: " + err.Error())
 		time.Sleep(time.Second)
@@ -337,7 +360,11 @@ func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
 		}
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

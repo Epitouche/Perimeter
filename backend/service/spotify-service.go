@@ -109,10 +109,11 @@ func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.MusicPlayed),
-			Description: "This action check if a music is played",
-			Service:     service.serviceInfo,
-			Option:      option,
+			Name:               string(schemas.MusicPlayed),
+			Description:        "This action check if a music is played",
+			Service:            service.serviceInfo,
+			Option:             option,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -382,7 +383,11 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 		fmt.Println("No music is currently playing.")
 	}
 
-	time.Sleep(10 * time.Second)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

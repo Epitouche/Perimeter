@@ -1,5 +1,7 @@
 package schemas
 
+import "time"
+
 type TimerAction string
 
 const (
@@ -15,6 +17,10 @@ const (
 type TimerActionSpecificHour struct {
 	Hour   int `json:"hour"`
 	Minute int `json:"minute"`
+}
+
+type TimerActionSpecificHourStorage struct {
+	Time time.Time `json:"time"`
 }
 
 type TimerReactionGiveTime struct{}
