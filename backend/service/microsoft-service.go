@@ -146,11 +146,11 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 
 	defaultValueCreateEvent := schemas.MicrosoftCreateEventOptions{
-		Subject:     "",
-		Body:        "",
-		Location:    "",
-		Start:       "",
-		End:         "",
+		Subject:  "",
+		Body:     "",
+		Location: "",
+		Start:    "",
+		End:      "",
 	}
 	optionCreateEvent, err := json.Marshal(defaultValueCreateEvent)
 	if err != nil {
@@ -658,7 +658,6 @@ func (service *microsoftService) MicrosoftReactionCreateEvent(
 		area.UserId,
 		area.Reaction.ServiceId,
 	)
-
 	if err != nil {
 		fmt.Println("Error finding token:", err)
 		return "Error finding token: " + err.Error()
@@ -687,8 +686,11 @@ func (service *microsoftService) MicrosoftReactionCreateEvent(
 		"subject":  options.Subject,
 		"body":     map[string]string{"contentType": "Text", "content": options.Body},
 		"location": map[string]string{"displayName": options.Location},
-		"start":    map[string]string{"dateTime": startTime.Format(time.RFC3339), "timeZone": "UTC"},
-		"end":      map[string]string{"dateTime": endTime.Format(time.RFC3339), "timeZone": "UTC"},
+		"start": map[string]string{
+			"dateTime": startTime.Format(time.RFC3339),
+			"timeZone": "UTC",
+		},
+		"end": map[string]string{"dateTime": endTime.Format(time.RFC3339), "timeZone": "UTC"},
 	}
 
 	payloadBytes, err := json.Marshal(payload)
