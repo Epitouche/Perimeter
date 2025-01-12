@@ -39,7 +39,7 @@ func (m *MockgoogleController) GetUserInfo(ctx *gin.Context) (schemas.UserCreden
 	return args.Get(0).(schemas.UserCredentials), args.Error(1)
 }
 
-func TestgoogleAPI(t *testing.T) {
+func TestGoogleAPI(t *testing.T) {
 	t.Parallel()
 
 	mockController := new(MockgoogleController)
