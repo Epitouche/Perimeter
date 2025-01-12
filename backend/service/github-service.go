@@ -80,22 +80,25 @@ func (service *githubService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.UpdateCommitInRepo),
-			Description: "This action trigger when a new commit is pushed to a repository",
-			Service:     service.serviceInfo,
-			Option:      actionOption,
+			Name:               string(schemas.UpdateCommitInRepo),
+			Description:        "This action trigger when a new commit is pushed to a repository",
+			Service:            service.serviceInfo,
+			Option:             actionOption,
+			MinimumRefreshRate: 10,
 		},
 		{
-			Name:        string(schemas.UpdatePullRequestInRepo),
-			Description: "This action trigger when a new pullrequest is open to a repository",
-			Service:     service.serviceInfo,
-			Option:      actionOption,
+			Name:               string(schemas.UpdatePullRequestInRepo),
+			Description:        "This action trigger when a new pullrequest is open to a repository",
+			Service:            service.serviceInfo,
+			Option:             actionOption,
+			MinimumRefreshRate: 10,
 		},
 		{
-			Name:        string(schemas.UpdateWorkflowRunInRepo),
-			Description: "This action trigger when a new workflow is run in a repository",
-			Service:     service.serviceInfo,
-			Option:      actionOption,
+			Name:               string(schemas.UpdateWorkflowRunInRepo),
+			Description:        "This action trigger when a new workflow is run in a repository",
+			Service:            service.serviceInfo,
+			Option:             actionOption,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -611,7 +614,11 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 		channel <- response
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 func (service *githubService) GithubActionUpdatePullRequestInRepo(
@@ -715,7 +722,11 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 		channel <- response
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
@@ -819,7 +830,11 @@ func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
 		channel <- response
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

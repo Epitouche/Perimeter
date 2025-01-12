@@ -99,10 +99,11 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.UpdateInFolder),
-			Description: "This reaction save content from a URL to a file in Dropbox",
-			Service:     service.serviceInfo,
-			Option:      actionUpdateInFolder,
+			Name:               string(schemas.UpdateInFolder),
+			Description:        "This reaction save content from a URL to a file in Dropbox",
+			Service:            service.serviceInfo,
+			Option:             actionUpdateInFolder,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -593,7 +594,11 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 		channel <- response
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

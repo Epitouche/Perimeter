@@ -206,7 +206,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
 
           <div>
             <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
-            <p class="text-4xl">Desc will go here</p>
+            <p class="text-4xl">{{ area.description }}</p>
           </div>
 
           <UTooltip text="Delete" class="self-end w-fit">

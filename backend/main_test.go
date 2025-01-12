@@ -134,7 +134,7 @@ func TestNotFoundRoute(t *testing.T) {
 // 	assert.Panics(t, func() { setupRouter() }, "expected panic")
 // }
 
-func TestGmailRedirectToServiceRoute(t *testing.T) {
+func TestGoogleRedirectToServiceRoute(t *testing.T) {
 	t.Parallel() // Run this test in parallel with other tests
 	ctx := context.Background()
 
@@ -154,7 +154,7 @@ func TestGmailRedirectToServiceRoute(t *testing.T) {
 
 	// Perform the HTTP request
 	responseRecorder := httptest.NewRecorder()
-	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/gmail/auth", nil)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/api/v1/google/auth", nil)
 	router.ServeHTTP(responseRecorder, req)
 
 	// Assert the response

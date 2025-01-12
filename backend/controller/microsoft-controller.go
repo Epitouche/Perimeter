@@ -43,7 +43,7 @@ func (controller *microsoftController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Microsoft,
 		"https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-		"Mail.ReadWrite, Mail.Read, User.Read, Mail.Send, offline_access",
+		"Mail.ReadWrite, Mail.Read, User.Read, Mail.Send, offline_access, calendars.Read, calendars.ReadWrite",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)

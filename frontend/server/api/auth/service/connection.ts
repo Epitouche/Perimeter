@@ -1,4 +1,4 @@
-import { handleErrorStatus } from "~/utils/handleErrorStatus";
+import { handleError } from "~/utils/handleErrors";
 
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
@@ -25,10 +25,6 @@ export default defineEventHandler(async (event) => {
     //console.log(response);
     return response;
   } catch (error: unknown) {
-    const errorMessage = handleErrorStatus(error);
-    if (errorMessage === "An unknown error occurred") {
-      console.error("An unknown error occurred", error);
-    }
-    throw new Error(errorMessage || "Failed to fetch service connection info.");
+    handleError(error);
   }
 });
