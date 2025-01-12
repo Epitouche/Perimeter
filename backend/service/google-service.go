@@ -105,10 +105,11 @@ func (service *googleService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.ReceiveGoogleMail),
-			Description: "Receive an email with google service",
-			Service:     service.serviceInfo,
-			Option:      option,
+			Name:               string(schemas.ReceiveGoogleMail),
+			Description:        "Receive an email with google service",
+			Service:            service.serviceInfo,
+			Option:             option,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -437,6 +438,7 @@ func getLastEmailDetails(id string, token schemas.Token) (schemas.EmailDetails, 
 }
 
 // Actions functions
+
 func (service *googleService) GoogleActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
@@ -514,7 +516,12 @@ func (service *googleService) GoogleActionReceiveMail(
 	} else {
 		println("No new emails")
 	}
-	time.Sleep(time.Minute)
+
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

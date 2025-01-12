@@ -130,16 +130,18 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.SpecificWeather),
-			Description: "This action is a specific weather action",
-			Service:     service.serviceInfo,
-			Option:      optionSpecificWeather,
+			Name:               string(schemas.SpecificWeather),
+			Description:        "This action is a specific weather action",
+			Service:            service.serviceInfo,
+			Option:             optionSpecificWeather,
+			MinimumRefreshRate: 10,
 		},
 		{
-			Name:        string(schemas.SpecificTemperature),
-			Description: "This action is a specific temperature action",
-			Service:     service.serviceInfo,
-			Option:      optionSpecificTemperature,
+			Name:               string(schemas.SpecificTemperature),
+			Description:        "This action is a specific temperature action",
+			Service:            service.serviceInfo,
+			Option:             optionSpecificTemperature,
+			MinimumRefreshRate: 10,
 		},
 	}
 }

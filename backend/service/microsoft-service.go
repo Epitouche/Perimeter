@@ -93,10 +93,11 @@ func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.ReceiveMicrosoftMail),
-			Description: "Receive a mail using Microsoft services",
-			Service:     service.serviceInfo,
-			Option:      option,
+			Name:               string(schemas.ReceiveMicrosoftMail),
+			Description:        "Receive a mail using Microsoft services",
+			Service:            service.serviceInfo,
+			Option:             option,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -346,6 +347,8 @@ func getNewEmails(
 	return emailResponse, nil
 }
 
+// Actions functions
+
 func (service *microsoftService) MicrosoftActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
@@ -405,8 +408,15 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 	} else {
 		println("No new emails")
 	}
-	time.Sleep(time.Second * 10)
+
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
+
+// Reactions functions
 
 func (service *microsoftService) MicrosoftReactionSendMail(
 	option json.RawMessage,

@@ -102,10 +102,11 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.SpecificTime),
-			Description: "This action is a specific time action",
-			Service:     service.serviceInfo,
-			Option:      option,
+			Name:               string(schemas.SpecificTime),
+			Description:        "This action is a specific time action",
+			Service:            service.serviceInfo,
+			Option:             option,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
@@ -275,7 +276,7 @@ func (service *timerService) TimerActionSpecificHour(
 			c <- response
 		}
 	}
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
 }
 
 // Reactions functions
