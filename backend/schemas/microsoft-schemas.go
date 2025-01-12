@@ -30,11 +30,11 @@ type MicrosoftReactionSendMailOptions struct {
 }
 
 type MicrosoftCreateEventOptions struct {
-	Subject     string `json:"subject"`
-	Body        string `json:"body"`
-	Location    string `json:"location"`
-	Start       string `json:"start"`
-	End         string `json:"end"`
+	Subject  string `json:"subject"`
+	Body     string `json:"body"`
+	Location string `json:"location"`
+	Start    string `json:"start"`
+	End      string `json:"end"`
 }
 
 type MicrosoftTokenResponse struct {
