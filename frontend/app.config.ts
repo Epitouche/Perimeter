@@ -35,7 +35,7 @@ export default defineAppConfig({
     },
     tooltip: {
       default: {
-        openDelay: 600,
+        openDelay: 500,
       },
       popper: {
         placement: "auto",

@@ -1,129 +1,137 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
-import type { OAuthLink } from "~/interfaces/authLink";
+import type { Token, ServiceResponse } from "~/interfaces/serviceResponse";
+import { fetchServices } from "~/utils/fetchServices";
+import { handleClick } from "~/utils/authUtils";
+import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js";
 
 defineProps<{
   apps: {
     name: string;
-    icon: string;
   }[];
 }>();
 
 const tokenCookie = useCookie("token");
-const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
+const isLoading = ref(true);
+const isPopupVisible = ref(false);
 const services = ref<ServiceInfo[]>([]);
-
-let serviceConnected: string[] = [];
+const serviceConnected = ref<string[]>([]);
+const tokens = ref<Token[]>([]);
+const infosConnection = ref<ServiceResponse | null>(null);
+const selectedService = ref<string | null>(null);
 
 onMounted(() => {
-  servicesConnectionInfos();
-  fetchServices();
+  loadConnectionInfos();
+  loadServices();
 });
 
-async function servicesConnectionInfos() {
+async function loadConnectionInfos() {
   try {
-    const response = await $fetch("/api/auth/service/infos", {
-      method: "POST",
-      body: {
-        authorization: tokenCookie.value,
-      },
-    });
+    if (tokenCookie.value) {
+      infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
 
-    if (
-      typeof response === "object" &&
-      response !== null &&
-      "tokens" in response &&
-      Array.isArray((response as { tokens: unknown }).tokens)
-    ) {
-      const tokens = (
-        response as { tokens: Array<{ service: { name: string } }> }
-      ).tokens;
-      serviceConnected = tokens.map((token) => token.service.name);
+      if (infosConnection.value) {
+        tokens.value = infosConnection.value.tokens;
+
+        serviceConnected.value = tokens.value.map(
+          (token) => token.service.name,
+        );
+      }
+
       isLoading.value = false;
-    } else {
-      console.error("Response does not contain valid tokens.");
-      return [];
     }
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
-    if (errorMessage.value === "An unknown error occurred") {
-      console.error("An unknown error occurred", error);
-    }
+    console.error("Error loading connections infos:", error);
   }
 }
 
-const fetchServices = async () => {
+const loadServices = async () => {
   try {
     errorMessage.value = null;
-    const result = await $fetch<ServiceInfo[]>("/api/workflow/services", {
-      method: "POST",
-      body: {
-        token: tokenCookie.value,
-      },
-    });
-    services.value = result;
+    services.value = await fetchServices();
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
-
-    if (errorMessage.value === "An unknown error occurred") {
-      console.error("An unknown error occurred", error);
-    }
+    console.error("Error loading services:", error);
   }
 };
 
-const authApiCall = async (label: string) => {
-  try {
-    const response = await $fetch<OAuthLink>("/api/auth/service/redirect", {
-      method: "POST",
-      body: {
-        link: label,
-      },
-    });
-    navigateTo(response.authentication_url, { external: true });
-    return response;
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error(err.message);
-    } else {
-      console.error("Unexpected error:", err);
-    }
-    throw err;
-  }
-};
-
-const handleClick = (label: string) => {
-  const normalizedLabel = label.toLowerCase();
-  const serviceNames = services.value.map((service) =>
-    service.name.toLowerCase(),
-  );
-  if (
-    serviceConnected.map((name) => name.toLowerCase()).includes(normalizedLabel)
-  ) {
-    //disconnectService(label);
-  } else {
-    const apiLink = `http://server:8080/api/v1/${normalizedLabel}/auth/`;
-
-    if (serviceNames.includes(normalizedLabel)) {
-      authApiCall(apiLink);
-    } else {
-      console.log(`${label} unknown icon clicked`);
-    }
-  }
-};
+const serviceDetails = computed(() =>
+  services.value.map((service) => ({
+    name: service.name,
+    color: service.color,
+    icon: service.icon,
+    oauth: service.oauth,
+  })),
+);
 
 const getServiceStateText = (appName: string) => {
-  if (["openweathermap", "timer"].includes(appName.toLowerCase())) {
-    return `Automatically connected`;
-  }
+  const matchingService = services.value.find(
+    (service) => service.name === appName && !service.oauth,
+  );
 
-  const isConnected = serviceConnected.includes(appName.toLowerCase());
+  if (matchingService) {
+    return "Automatically connected";
+  }
+  const isConnected = serviceConnected.value.includes(appName);
   const message = isConnected ? `Disconnect ${appName}` : `Connect ${appName}`;
   return message;
 };
 
-const isSpecialCase = (appName: string) => {
-  return ["openweathermap", "timer"].includes(appName.toLowerCase());
+const isServiceConnectedOrInvalid = (appName: string): boolean => {
+  const matchingService = services.value.find(
+    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+  );
+
+  if (
+    serviceConnected.value.includes(appName) ||
+    (matchingService && matchingService.oauth === false)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const getServiceDetails = (appName: string) =>
+  serviceDetails.value.find((service) => service.name === appName);
+
+const onClick = (label: string) => {
+  if (isServiceConnectedOrInvalid(label)) {
+    selectedService.value = label;
+    isPopupVisible.value = true;
+  } else {
+    executeHandleClick(label);
+  }
+};
+
+const confirmAction = async () => {
+  if (!selectedService.value) return;
+  await executeHandleClick(selectedService.value);
+  isPopupVisible.value = false;
+  selectedService.value = null;
+};
+
+const executeHandleClick = async (label: string) => {
+  try {
+    const response = await handleClick(
+      label,
+      services,
+      tokens,
+      tokenCookie.value || undefined,
+    );
+    if (response) {
+      loadConnectionInfos();
+    }
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error executing handleClick:", error);
+  }
+};
+
+const cancelAction = () => {
+  isPopupVisible.value = false;
+  selectedService.value = null;
 };
 </script>
 
@@ -132,32 +140,60 @@ const isSpecialCase = (appName: string) => {
     <UButton
       v-for="(app, index) in apps"
       :key="index"
-      :icon="app.icon"
+      :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }"
       :class="[
-        `bg-custom_color-${app.name}`,
-        `app_button flex flex-col items-center justify-start relative w-[15rem] h-[15rem] rounded-[25%] overflow-hidden transition-transform hover:scale-105`,
+        `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] shadow-lg font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]"
-      @click="handleClick(app.name)"
+      @click="onClick(app.name)"
     >
-      <span class="text-3xl font-bold text-white mt-auto mb-[2.25rem]">{{
-        app.name
-      }}</span>
+      <img
+        v-if="getServiceDetails(app.name)?.icon"
+        :src="getServiceDetails(app.name)?.icon"
+        alt=""
+        class="w-20 h-20"
+      />
+
+      <span
+        class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"
+        >{{ app.name }}</span
+      >
 
       <div
         v-if="!isLoading"
         class="absolute bottom-0 w-full h-[3rem] flex items-center justify-center text-2x1 font-bold"
         :class="{
-          'bg-black text-white':
-            isSpecialCase(app.name) ||
-            serviceConnected.includes(app.name.toLowerCase()),
-          'bg-white text-black':
-            !isSpecialCase(app.name) &&
-            !serviceConnected.includes(app.name.toLowerCase()),
+          'bg-black text-white': isServiceConnectedOrInvalid(app.name),
+          'bg-white text-black': !isServiceConnectedOrInvalid(app.name),
         }"
       >
         {{ getServiceStateText(app.name) }}
       </div>
     </UButton>
+  </div>
+  <div
+    v-if="isPopupVisible"
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+  >
+    <div
+      class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+    >
+      <h2 class="text-4xl font-semibold mb-2">
+        Are you sure you want to disconnect from this service?
+      </h2>
+      <p class="text-2xl mb-5">This action cannot be undone!</p>
+      <div class="flex flex-row justify-end items-center gap-5 pt-5">
+        <UButton
+          class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+          @click="cancelAction"
+          >No</UButton
+        >
+        <UButton
+          class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+          @click="confirmAction"
+          >Yes</UButton
+        >
+      </div>
+    </div>
   </div>
 </template>
 
@@ -166,5 +202,23 @@ const isSpecialCase = (appName: string) => {
   height: 5rem;
   width: 5rem;
   color: white;
+}
+
+.clamp-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  transition: all 1s ease-in-out;
+}
+
+.hover-expand-text:hover {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+  white-space: normal;
 }
 </style>

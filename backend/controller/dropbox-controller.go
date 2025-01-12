@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/service"
+	"area/schemas"
+	"area/service"
 )
 
 type DropboxController interface {
@@ -14,7 +14,8 @@ type DropboxController interface {
 	HandleServiceCallback(ctx *gin.Context) (string, error)
 	HandleServiceCallbackMobile(ctx *gin.Context) (string, error)
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
-	GetUserFile(ctx *gin.Context) (userFile []schemas.DropboxFile, err error)
+	GetUserFile(ctx *gin.Context) (userFile []string, err error)
+	GetUserFolder(ctx *gin.Context) (userFile []string, err error)
 }
 
 type dropboxController struct {
@@ -44,7 +45,7 @@ func (controller *dropboxController) RedirectToService(
 	oauthURL, err = controller.serviceService.RedirectToServiceOauthPage(
 		schemas.Dropbox,
 		"https://www.dropbox.com/oauth2/authorize",
-		"account_info.read profile email openid",
+		"account_info.read files.content.read files.content.write files.metadata.read profile email openid",
 	)
 	if err != nil {
 		return "", fmt.Errorf("unable to redirect to service oauth page because %w", err)
@@ -100,7 +101,11 @@ func (controller *dropboxController) HandleServiceCallbackMobile(
 	if err != nil {
 		return "", fmt.Errorf("can't bind credentials: %w", err)
 	}
+
+	authHeader := ctx.GetHeader("Authorization")
+
 	bearer, err := controller.serviceService.HandleServiceCallbackMobile(
+		authHeader,
 		schemas.Dropbox,
 		credentials,
 		controller.serviceUser,
@@ -138,7 +143,7 @@ func (controller *dropboxController) GetUserInfo(
 
 func (controller *dropboxController) GetUserFile(
 	ctx *gin.Context,
-) (userFile []schemas.DropboxFile, err error) {
+) (userFile []string, err error) {
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len("Bearer "):]
 
@@ -152,11 +157,46 @@ func (controller *dropboxController) GetUserFile(
 		return userFile, fmt.Errorf("unable to get token because %w", err)
 	}
 
-	dropboxFile, err := controller.service.GetUserFileList(DropboxToken.Token)
+	dropboxAllFolderAndFileList, err := controller.service.GetUserAllFolderAndFileList(
+		DropboxToken.Token,
+	)
 	if err != nil {
 		return userFile, fmt.Errorf("unable to get user info because %w", err)
 	}
 
-	userFile = dropboxFile
+	userFile = controller.service.GetPathDisplayDropboxEntry(
+		controller.service.GetUserFileList(dropboxAllFolderAndFileList),
+	)
+
+	return userFile, nil
+}
+
+func (controller *dropboxController) GetUserFolder(
+	ctx *gin.Context,
+) (userFile []string, err error) {
+	authHeader := ctx.GetHeader("Authorization")
+	tokenString := authHeader[len("Bearer "):]
+
+	user, err := controller.serviceUser.GetUserInfo(tokenString)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	DropboxToken, err := controller.serviceToken.GetTokenById(user.Id)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get token because %w", err)
+	}
+
+	dropboxAllFolderAndFileList, err := controller.service.GetUserAllFolderAndFileList(
+		DropboxToken.Token,
+	)
+	if err != nil {
+		return userFile, fmt.Errorf("unable to get user info because %w", err)
+	}
+
+	userFile = controller.service.GetPathDisplayDropboxEntry(
+		controller.service.GetUserFolderList(dropboxAllFolderAndFileList),
+	)
+
 	return userFile, nil
 }

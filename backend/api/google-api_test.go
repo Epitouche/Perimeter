@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/Epitouche/Perimeter/api"
-	"github.com/Epitouche/Perimeter/schemas"
-	"github.com/Epitouche/Perimeter/test"
+	"area/api"
+	"area/schemas"
+	"area/test"
 )
 
 type MockGmailController struct {
@@ -46,7 +46,7 @@ func TestGmailAPI(t *testing.T) {
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 	mockUserService := new(test.MockUserService)
-	api.NewGmailAPI(mockController, apiRoutes, mockUserService)
+	api.NewGoogleAPI(mockController, apiRoutes, mockUserService)
 
 	t.Run("TestRedirectToService", func(t *testing.T) {
 		t.Parallel()

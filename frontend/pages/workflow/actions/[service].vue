@@ -78,7 +78,8 @@ onMounted(() => {
     <UContainer
       v-else-if="serviceInfo"
       :ui="{ constrained: 'max-w-none' }"
-      :class="[`bg-custom_color-${serviceInfo.name}`, 'pt-16 pb-16']"
+      class="pt-16 pb-16"
+      :style="{ backgroundColor: serviceInfo.color }"
     >
       <div class="px-20">
         <BackButton link="/workflow/actions" :is-white="true" />
@@ -87,8 +88,9 @@ onMounted(() => {
         <h1 class="text-8xl text-white font-custom_weight_title">
           Add an action
         </h1>
-        <UIcon
-          :name="`my-icons:white-${serviceInfo.name}`"
+        <img
+          :src="serviceInfo.icon"
+          :alt="serviceInfo.name"
           class="w-[8em] h-[8em]"
         />
         <h2 class="capitalize text-white text-7xl font-bold">

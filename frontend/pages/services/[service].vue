@@ -6,6 +6,7 @@ interface ApiResponse {
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
 const token = useCookie("token");
+const loadingPath = "/myservices";
 
 onMounted(() => {
   connectToService();
@@ -38,9 +39,8 @@ async function connectToService() {
       ),
     ]);
 
-    //console.log("Service token is:", response.token);
     token.value = response.token;
-    navigateTo("/");
+    navigateTo("/workflow");
   } catch (error) {
     if (error instanceof Error) {
       showError(`Failed to connect to service: ${error.message}`);
@@ -65,7 +65,7 @@ function showError(message: string) {
 
 <template>
   <div class="flex flex-col items-center justify-center">
-    <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
+    <LoadingScreen v-if="isLoading" :path="loadingPath" :timeout="3000" />
 
     <div
       v-if="errorMessage"
