@@ -3,6 +3,7 @@ export interface Area {
   createdAt: string;
   title: string;
   description: string;
+  enable: boolean;
   action: {
     id: number;
     name: string;
