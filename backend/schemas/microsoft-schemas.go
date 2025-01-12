@@ -8,6 +8,7 @@ import (
 type MicrosoftAction string
 
 const (
+	EventStarting        MicrosoftAction = "EventStarting"
 	ReceiveMicrosoftMail MicrosoftAction = "ReceiveMicrosoftMail"
 )
 
@@ -16,6 +17,10 @@ type MicrosoftReaction string
 const (
 	SendMicrosoftMail MicrosoftReaction = "SendMicrosoftMail"
 )
+
+type MicrosoftEventIncomingOptions struct {
+	Name string `json:"name"`
+}
 
 type MicrosoftReactionSendMailOptions struct {
 	Subject   string `json:"subject"`
@@ -31,7 +36,7 @@ type MicrosoftTokenResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-type MicrosoftVariableReceiveMail struct {
+type MicrosoftVariableTime struct {
 	Time time.Time `json:"time"`
 }
 
@@ -57,5 +62,17 @@ type MicrosoftEmailResponse struct {
 			} `json:"emailAddress"`
 		} `json:"from"`
 		ReceivedDateTime string `json:"receivedDateTime"`
+	} `json:"value"`
+}
+
+type MicrosoftEventListResponse struct {
+	Value []struct {
+		Subject string `json:"subject"`
+		Start   struct {
+			DateTime string `json:"dateTime"`
+		} `json:"start"`
+		End struct {
+			DateTime string `json:"dateTime"`
+		} `json:"end"`
 	} `json:"value"`
 }

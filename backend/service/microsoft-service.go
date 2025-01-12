@@ -35,6 +35,11 @@ type MicrosoftService interface {
 		option json.RawMessage,
 		idArea uint64,
 	)
+	MicrosoftActionEventStarting(
+		channel chan string,
+		option json.RawMessage,
+		idArea uint64,
+	)
 	// Reactions functions
 	MicrosoftReactionSendMail(
 		option json.RawMessage,
@@ -91,12 +96,29 @@ func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 	if err != nil {
 		println("error find service by name: " + err.Error())
 	}
+
+	defaultValueEventIncoming := schemas.MicrosoftEventIncomingOptions{
+		Name: "",
+	}
+	optionEventIncoming, err := json.Marshal(defaultValueEventIncoming)
+	if err != nil {
+		fmt.Println("Error marshalling default options:", err)
+	}
+	if err != nil {
+		println("error find service by name: " + err.Error())
+	}
 	return []schemas.Action{
 		{
 			Name:        string(schemas.ReceiveMicrosoftMail),
 			Description: "Receive a mail using Microsoft services",
 			Service:     service.serviceInfo,
 			Option:      option,
+		},
+		{
+			Name:        string(schemas.EventStarting),
+			Description: "Event starting using Microsoft services",
+			Service:     service.serviceInfo,
+			Option:      optionEventIncoming,
 		},
 	}
 }
@@ -134,6 +156,8 @@ func (service *microsoftService) FindActionbyName(
 	switch name {
 	case string(schemas.ReceiveMicrosoftMail):
 		return service.MicrosoftActionReceiveMail
+	case string(schemas.EventStarting):
+		return service.MicrosoftActionEventStarting
 	default:
 		return nil
 	}
@@ -258,11 +282,111 @@ func (service *microsoftService) GetUserInfo(
 	return user, nil
 }
 
+// Actions functions
+func (service *microsoftService) MicrosoftActionEventStarting(
+	channel chan string,
+	option json.RawMessage,
+	idArea uint64,
+) {
+	options := schemas.MicrosoftEventIncomingOptions{}
+	err := json.Unmarshal(option, &options)
+	if err != nil {
+		println("error unmarshalling options: " + err.Error())
+		return
+	}
+	area, err := service.areaRepository.FindById(idArea)
+	if err != nil {
+		println("error finding area: " + err.Error())
+		return
+	}
+
+	variable, err := initializedMicrosoftStorageVariable(area, *service)
+	if err != nil {
+		println("error initializing storage variable: " + err.Error())
+		return
+	}
+
+	token, err := service.tokenRepository.FindByUserIdAndServiceId(
+		area.UserId,
+		area.Action.ServiceId,
+	)
+	if err != nil {
+		println("error retrieving token: " + err.Error())
+		return
+	}
+
+	apiURL := "https://graph.microsoft.com/v1.0/me/events?$select=subject,start,end"
+
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	if err != nil {
+		println("error creating request: " + err.Error())
+		return
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.Token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		println("error making request: " + err.Error())
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		return
+	}
+
+	var response schemas.MicrosoftEventListResponse
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	if err != nil {
+		println("error decoding response: " + err.Error())
+		return
+	}
+
+	for _, event := range response.Value {
+		if event.Subject == options.Name {
+			eventStartTime, err := time.Parse("2006-01-02T15:04:05.0000000", event.Start.DateTime)
+			if err != nil {
+				println("error parsing event start time: " + err.Error())
+				continue
+			}
+			eventEndTime, err := time.Parse("2006-01-02T15:04:05.0000000", event.End.DateTime)
+			if err != nil {
+				println("error parsing event end time: " + err.Error())
+				continue
+			}
+
+			if variable.Time.After(eventStartTime) && variable.Time.Before(eventEndTime) {
+				variable.Time = eventEndTime.Add(time.Second)
+				area.StorageVariable, err = json.Marshal(variable)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+				channel <- fmt.Sprintf("Event '%s' is starting at %s", event.Subject, event.Start.DateTime)
+				time.Sleep(time.Second * 10)
+				return
+			}
+		}
+	}
+
+	println("no matching events found")
+	time.Sleep(time.Second * 10)
+}
+
 func initializedMicrosoftStorageVariable(
 	area schemas.Area,
 	service microsoftService,
-) (schemas.MicrosoftVariableReceiveMail, error) {
-	variable := schemas.MicrosoftVariableReceiveMail{}
+) (schemas.MicrosoftVariableTime, error) {
+	variable := schemas.MicrosoftVariableTime{}
 	err := json.Unmarshal(area.StorageVariable, &variable)
 	if err != nil {
 		toto := struct{}{}
@@ -272,7 +396,7 @@ func initializedMicrosoftStorageVariable(
 			return variable, err
 		} else {
 			println("initializing storage variable")
-			variable = schemas.MicrosoftVariableReceiveMail{
+			variable = schemas.MicrosoftVariableTime{
 				Time: time.Now(),
 			}
 			area.StorageVariable, err = json.Marshal(variable)
@@ -289,7 +413,7 @@ func initializedMicrosoftStorageVariable(
 	}
 
 	if variable.Time.IsZero() {
-		variable = schemas.MicrosoftVariableReceiveMail{
+		variable = schemas.MicrosoftVariableTime{
 			Time: time.Now(),
 		}
 		area.StorageVariable, err = json.Marshal(variable)
@@ -308,7 +432,7 @@ func initializedMicrosoftStorageVariable(
 
 func getNewEmails(
 	token schemas.Token,
-	variable schemas.MicrosoftVariableReceiveMail,
+	variable schemas.MicrosoftVariableTime,
 ) (schemas.MicrosoftEmailResponse, error) {
 	var emailResponse schemas.MicrosoftEmailResponse
 	apiURL := "https://graph.microsoft.com/v1.0/me/messages?$filter=receivedDateTime+gt+" + variable.Time.Format(
