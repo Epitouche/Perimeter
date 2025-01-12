@@ -138,6 +138,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "name": "action_refresh_rate",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "name": "createdAt",
                         "in": "path"
@@ -167,6 +173,15 @@ const docTemplate = `{
                         "name": "reaction_option",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "storage_variable",
+                        "in": "path"
                     },
                     {
                         "type": "string",
@@ -1646,6 +1661,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "description",
+                "minimum_refresh_rate",
                 "name",
                 "option",
                 "service"
@@ -1655,22 +1671,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "description": "The description of the action",
                     "type": "string"
                 },
                 "id": {
+                    "description": "The unique identifier for the action",
+                    "type": "integer"
+                },
+                "minimum_refresh_rate": {
                     "type": "integer"
                 },
                 "name": {
+                    "description": "The name of the action",
                     "type": "string"
                 },
                 "option": {
+                    "description": "The option of the action",
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
                 },
                 "service": {
-                    "$ref": "#/definitions/schemas.Service"
+                    "description": "The service that the action belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Service"
+                        }
+                    ]
                 },
                 "update_at": {
                     "type": "string"
@@ -1682,6 +1710,7 @@ const docTemplate = `{
             "required": [
                 "action",
                 "action_option",
+                "action_refresh_rate",
                 "description",
                 "reaction",
                 "reaction_option",
@@ -1697,6 +1726,9 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                },
+                "action_refresh_rate": {
+                    "type": "integer"
                 },
                 "createdAt": {
                     "type": "string"
@@ -1719,6 +1751,12 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "storage_variable": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "title": {
                     "type": "string"
                 },
@@ -1734,6 +1772,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "action_option",
+                "action_refresh_rate",
                 "description",
                 "reaction_option",
                 "title"
@@ -1748,6 +1787,9 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                },
+                "action_refresh_rate": {
+                    "type": "integer"
                 },
                 "description": {
                     "type": "string"
@@ -1887,7 +1929,7 @@ const docTemplate = `{
                 "Spotify",
                 "OpenWeatherMap",
                 "Timer",
-                "Gmail",
+                "Google",
                 "Github",
                 "Dropbox",
                 "Microsoft"
@@ -1896,7 +1938,7 @@ const docTemplate = `{
                 "Spotify",
                 "Openweathermap",
                 "Timer",
-                "Gmail",
+                "Google",
                 "Github",
                 "Dropbox",
                 "Microsoft"
