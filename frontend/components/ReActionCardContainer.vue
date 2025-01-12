@@ -86,16 +86,18 @@ onMounted(() => {
         }"
         :style="{ borderColor: props.serviceInfo?.color || 'black' }"
       >
-      <template #default>
-        <UForm
-        :state="state[type.id]"
-        class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
+        <template #default>
+          <UForm
+            :state="state[type.id]"
+            class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)"
           >
             <h2 class="text-center text-6xl font-semibold m-0">
               {{ formatString(type.name) }}
             </h2>
-            <h2 class="text-center text-2xl font-medium -mt-6"> {{ type.description }} </h2>
+            <h2 class="text-center text-2xl font-medium -mt-6">
+              {{ type.description }}
+            </h2>
 
             <UFormGroup
               v-for="(value, key) in state[type.id]"
