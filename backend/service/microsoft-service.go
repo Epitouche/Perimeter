@@ -24,8 +24,6 @@ type MicrosoftService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -47,8 +45,6 @@ type microsoftService struct {
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
-	actionName        []string
-	reactionName      []string
 	serviceInfo       schemas.Service
 }
 
@@ -103,7 +99,6 @@ func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionName = append(service.reactionName, string(schemas.SendMicrosoftMail))
 	defaultValue := schemas.MicrosoftReactionSendMailOptions{
 		Subject:   "",
 		Body:      "",
@@ -149,14 +144,6 @@ func (service *microsoftService) FindReactionbyName(
 	default:
 		return nil
 	}
-}
-
-func (service *microsoftService) GetActionsName() []string {
-	return service.actionName
-}
-
-func (service *microsoftService) GetReactionsName() []string {
-	return service.reactionName
 }
 
 func (service *microsoftService) AuthGetServiceAccessToken(

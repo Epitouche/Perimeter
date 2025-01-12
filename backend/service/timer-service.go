@@ -19,8 +19,6 @@ type TimerService interface {
 	GetServiceReactionInfo() []schemas.Reaction
 	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
 	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
-	GetActionsName() []string
-	GetReactionsName() []string
 	// Service specific functions
 	// Actions functions
 	TimerActionSpecificHour(c chan string, option json.RawMessage, idArea uint64)
@@ -32,8 +30,6 @@ type timerService struct {
 	repository        repository.TimerRepository
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
-	actionsName       []string
-	reactionsName     []string
 	serviceInfo       schemas.Service
 }
 
@@ -85,7 +81,6 @@ func (service *timerService) FindReactionbyName(
 }
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
-	service.actionsName = append(service.actionsName, string(schemas.SpecificTime))
 	defaultValue := schemas.TimerActionSpecificHour{
 		Hour:   0,
 		Minute: 0,
@@ -112,7 +107,6 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 }
 
 func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
-	service.reactionsName = append(service.reactionsName, string(schemas.GiveTime))
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -132,14 +126,6 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 			Option:      option,
 		},
 	}
-}
-
-func (service *timerService) GetActionsName() []string {
-	return service.actionsName
-}
-
-func (service *timerService) GetReactionsName() []string {
-	return service.reactionsName
 }
 
 // Service specific functions
@@ -276,7 +262,12 @@ func (service *timerService) TimerActionSpecificHour(
 			c <- response
 		}
 	}
-	time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions

@@ -35,7 +35,7 @@ type GoogleService interface {
 }
 
 type googleService struct {
-	repository        repository.GooglelRepository
+	repository        repository.GoogleRepository
 	serviceRepository repository.ServiceRepository
 	areaRepository    repository.AreaRepository
 	tokenRepository   repository.TokenRepository
@@ -43,7 +43,7 @@ type googleService struct {
 }
 
 func NewGoogleService(
-	repository repository.GooglelRepository,
+	repository repository.GoogleRepository,
 	serviceRepository repository.ServiceRepository,
 	areaRepository repository.AreaRepository,
 	tokenRepository repository.TokenRepository,
