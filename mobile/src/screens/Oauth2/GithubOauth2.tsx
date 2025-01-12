@@ -1,5 +1,5 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
+import { GITHUB_MOBILE_SECRET, GITHUB_MOBILE_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
@@ -10,10 +10,10 @@ async function HandleGithubLogin(
   login: boolean = false,
 ) {
   const config: AuthConfiguration = {
-    clientId: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_SECRET,
+    clientId: GITHUB_MOBILE_CLIENT_ID,
+    clientSecret: GITHUB_MOBILE_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['user', 'repo'],
+    scopes: ['user', 'repo', 'user:email'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://github.com/login/oauth/authorize',
       tokenEndpoint: 'https://github.com/login/oauth/access_token',
