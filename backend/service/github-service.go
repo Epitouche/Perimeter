@@ -207,6 +207,18 @@ func (service *githubService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.Token{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -215,8 +227,6 @@ func (service *githubService) AuthGetServiceAccessToken(
 			err,
 		)
 	}
-
-	resp.Body.Close()
 
 	token = schemas.Token{
 		Token: result.AccessToken,
@@ -252,6 +262,8 @@ func (service *githubService) GetUserEmail(accessToken string) (email string, er
 		return email, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
 		errorBody, _ := io.ReadAll(resp.Body)
@@ -267,8 +279,6 @@ func (service *githubService) GetUserEmail(accessToken string) (email string, er
 	if err != nil {
 		return email, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	for _, email := range result {
 		if email.Primary {
@@ -300,13 +310,23 @@ func (service *githubService) GetUserInfoAccount(
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.User{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	result := schemas.GithubUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	user = schemas.User{
 		Username: result.Login,
@@ -372,7 +392,8 @@ func (service *githubService) CommitList(
 	if err != nil {
 		return commitList, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
@@ -431,7 +452,8 @@ func (service *githubService) PullRequestList(
 	if err != nil {
 		return pullRequestList, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
@@ -490,7 +512,8 @@ func (service *githubService) WorkflowRunList(
 	if err != nil {
 		return workflowRunList, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
