@@ -1,26 +1,27 @@
 <script setup lang="ts">
 const props = defineProps<{
   timeout: number;
-  path: string;
+  isLoading: boolean;
 }>();
 
+const emit = defineEmits(['update:isLoading']);
 const timedOut = ref(false);
-const newPath = "/" + props.path;
 
 onMounted(() => {
   setTimeout(() => {
     timedOut.value = true;
-    navigateTo(newPath);
+    emit('update:isLoading', false);
   }, props.timeout);
 });
 </script>
 
 <template>
-  <div v-if="!timedOut" class="loading-screen">
+  <div v-if="!timedOut && props.isLoading" class="loading-screen">
     <div class="loader" />
     <p class="text6x1 font-extrabold">Loading...</p>
   </div>
 </template>
+
 
 <style scoped>
 .loading-screen {

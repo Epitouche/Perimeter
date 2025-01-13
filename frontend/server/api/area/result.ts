@@ -9,13 +9,11 @@ export default defineEventHandler(async (event) => {
         message: "Missing parameters",
       });
     }
-    const response = await $fetch(`http://server:8080/api/v1/area/`, {
-      method: "DELETE",
+
+    const response = await $fetch(`http://server:8080/api/v1/area-result/${params.areaId}`, {
+      method: "GET",
       headers: {
         Authorization: "Bearer " + params.token,
-      },
-      body: {
-        id: params.areaId,
       },
     });
     return response;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LocationQueryValue } from "vue-router";
 import type { Area } from "@/interfaces/areas";
+import type { AreaResult } from "@/interfaces/areaResult"
 
 const props = defineProps<{
   areas: Area[];
@@ -39,6 +40,7 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 }
 
 const componentKey = ref(0);
+const selectedAreaResult = ref<string>("");
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
@@ -59,6 +61,8 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
+  if (areaIsOpen[areaId])
+    fetchAreaResult(areaId);
 };
 
 const toggleAreaEnableSwitch = async (areaId: number) => {
@@ -86,7 +90,6 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
 
     console.log("response:", response);
   } catch (error) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
   }
 
@@ -110,7 +113,6 @@ const onDelete = async (areaId: number) => {
       });
       console.log("response:", response);
     } catch (error: unknown) {
-      console.log("error:", error);
       errorMessage.value = handleErrorStatus(error);
       if (errorMessage.value === "An unknown error occurred") {
         console.error("An unknown error occurred", error);
@@ -157,14 +159,13 @@ const updateAreaValue = async (
     return;
   }
 
-  // Deep clone to avoid Proxy issues
   const updatedArea = JSON.parse(
     JSON.stringify(props.areas[areaIndex]),
   ) as Area;
 
   if (typeName === "action") {
     if (!updatedArea.action_option) {
-      updatedArea.action_option = {}; // Initialize if null or undefined
+      updatedArea.action_option = {};
     }
 
     (updatedArea.action_option as { [key: string]: string | number })[
@@ -183,7 +184,7 @@ const updateAreaValue = async (
     console.log("After updating action_option:", updatedArea.action_option);
   } else if (typeName === "reaction") {
     if (!updatedArea.reaction_option) {
-      updatedArea.reaction_option = {}; // Initialize if null or undefined
+      updatedArea.reaction_option = {};
     }
 
     (updatedArea.reaction_option as { [key: string]: string | number })[
@@ -210,7 +211,7 @@ const updateAreaValue = async (
   try {
     errorMessage.value = null;
 
-    const response = await $fetch("/api/area/update", {
+    await $fetch("/api/area/update", {
       method: "POST",
       body: {
         token: token.value,
@@ -218,14 +219,38 @@ const updateAreaValue = async (
       },
     });
 
-    console.log("response:", response);
   } catch (error) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
   }
 
   router.push("myareas");
 };
+
+const fetchAreaResult = async (areaId: number) => {
+  if (token.value) {
+    try {
+      errorMessage.value = null;
+      selectedAreaResult.value = "";
+
+      const response = await $fetch<AreaResult[]>("/api/area/result", {
+        method: "POST",
+        body: {
+          token: token.value,
+          areaId: areaId,
+        },
+      });
+
+      if (response) {
+          selectedAreaResult.value = response[0].result;
+      } else {
+          console.error("Response doesn't have a valid result.");
+      }
+    } catch (error) {
+      errorMessage.value = handleErrorStatus(error);
+      console.error(errorMessage.value);
+    }
+  }
+}
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
@@ -253,19 +278,19 @@ if (areaIdNumber !== null && valueNumber !== null) {
         <h2
           class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
         >
-          {{ formatName(area.action.name) }}
+          {{ formatName(area.title) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
           <img
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          />
+          >
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          />
+          >
         </div>
       </UContainer>
       <UModal
@@ -324,7 +349,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
             <div class="mb-6" />
             <div class="flex justify-center">
               <div class="w-full bg-white p-16 rounded-lg shadow-md">
-                <h2 class="text-black text-2xl font-semibold">No Result</h2>
+                <h2 v-if="!selectedAreaResult" class="text-black text-2xl font-semibold">No Result</h2>
+                <h2 v-else class="text-black text-2xl font-semibold">{{ selectedAreaResult }}</h2>
               </div>
             </div>
           </div>

@@ -35,7 +35,7 @@ const getServiceInfo = async () => {
         serviceId,
       },
     });
-    console.log("serviceInfo: ", serviceInfo.value);
+    //console.log("serviceInfo: ", serviceInfo.value);
   } catch (err) {
     console.error("Error fetching service info:", err);
     error.value = "Failed to load service information.";

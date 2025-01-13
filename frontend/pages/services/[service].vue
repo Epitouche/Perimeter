@@ -6,7 +6,6 @@ interface ApiResponse {
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
 const token = useCookie("token");
-const loadingPath = "/myservices";
 
 onMounted(() => {
   connectToService();
@@ -40,7 +39,9 @@ async function connectToService() {
     ]);
 
     token.value = response.token;
-    navigateTo("/workflow");
+    isLoading.value = false;
+    navigateTo("/myservices")
+
   } catch (error) {
     if (error instanceof Error) {
       showError(`Failed to connect to service: ${error.message}`);
@@ -48,8 +49,6 @@ async function connectToService() {
       showError("Failed to connect to service: An unknown error occurred.");
       console.error("Unexpected error:", error);
     }
-  } finally {
-    isLoading.value = false;
   }
 }
 
@@ -65,7 +64,7 @@ function showError(message: string) {
 
 <template>
   <div class="flex flex-col items-center justify-center">
-    <LoadingScreen v-if="isLoading" :path="loadingPath" :timeout="3000" />
+    <LoadingScreen v-if="isLoading" v-model:is-loading="isLoading" :timeout="5000" />
 
     <div
       v-if="errorMessage"
