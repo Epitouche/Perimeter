@@ -111,6 +111,7 @@ const onDelete = async (areaId: number) => {
         },
       });
       console.log("response:", response);
+      emit("refreshAreas");
     } catch (error: unknown) {
       console.log("error:", error);
       errorMessage.value = handleErrorStatus(error);
@@ -220,6 +221,7 @@ const updateAreaValue = async (
     });
 
     console.log("response:", response);
+    emit("refreshAreas");
   } catch (error) {
     console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
