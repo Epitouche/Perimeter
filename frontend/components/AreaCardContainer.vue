@@ -308,27 +308,34 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
-v-model="areaIsOpen[area.id]" :ui="{
-        width: 'w-1/2',
-      }">
+        v-model="areaIsOpen[area.id]"
+        :ui="{
+          width: 'w-1/2',
+        }"
+      >
         <div
-class="flex flex-col gap-20 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
-          :style="{ backgroundColor: area.action.service.color }">
+          class="flex flex-col gap-20 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+          :style="{ backgroundColor: area.action.service.color }"
+        >
           <div>
-            <div class="flex flex-row justify-between items-center w-full overflow-y-auto px-1">
+            <div
+              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1"
+            >
               <div class="flex flex-row items-center gap-3">
                 <UToggle
-size="2xl" :model-value="areaIsEnabled(area.id)"
-                  @update:model-value="toggleAreaEnableSwitch(area.id)" />
+                  size="2xl"
+                  :model-value="areaIsEnabled(area.id)"
+                  @update:model-value="toggleAreaEnableSwitch(area.id)"
+                />
                 <div v-if="areaIsEnabled(area.id)" class="text-2xl">
                   <p>Enabled</p>
                 </div>
@@ -352,23 +359,36 @@ size="2xl" :model-value="areaIsEnabled(area.id)"
 
           <div class="flex flex-col gap-10">
             <UpdateAreaOptions
-:area-id="area.id" type-name="action" :color="area.action.service.color"
-              :type="area.action" :type-options="area.action_option" @update-area-value="updateAreaValue" />
-
+              :area-id="area.id"
+              type-name="action"
+              :color="area.action.service.color"
+              :type="area.action"
+              :type-options="area.action_option"
+              @update-area-value="updateAreaValue"
+            />
 
             <UpdateAreaOptions
-:area-id="area.id" type-name="reaction" :color="area.action.service.color"
-              :type="area.reaction" :type-options="area.reaction_option" @update-area-value="updateAreaValue" />
+              :area-id="area.id"
+              type-name="reaction"
+              :color="area.action.service.color"
+              :type="area.reaction"
+              :type-options="area.reaction_option"
+              @update-area-value="updateAreaValue"
+            />
           </div>
           <div>
             <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
             <p class="text-4xl pl-10">{{ area.description }}</p>
           </div>
 
-
           <div class="flex justify-center">
-            <div class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto scrollable-element">
-              <h2 v-if="!selectedAreaResult" class="text-black text-2xl font-semibold">
+            <div
+              class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto scrollable-element"
+            >
+              <h2
+                v-if="!selectedAreaResult"
+                class="text-black text-2xl font-semibold"
+              >
                 No Result
               </h2>
               <h2 v-else class="text-black text-2xl font-semibold">
@@ -376,7 +396,6 @@ size="2xl" :model-value="areaIsEnabled(area.id)"
               </h2>
             </div>
           </div>
-
 
           <div class="flex flex-row justify-end items-center gap-5">
             <UTooltip text="Edit" class="self-end w-fit">
@@ -403,20 +422,25 @@ size="2xl" :model-value="areaIsEnabled(area.id)"
                 >
                   <div class="flex flex-row justify-center items-center gap-3">
                     <UInput
-v-model="state[area.id][
-                      key as keyof Pick<Area, 'title' | 'description'>
-                    ]
-                      " :ui="{
+                      v-model="
+                        state[area.id][
+                          key as keyof Pick<Area, 'title' | 'description'>
+                        ]
+                      "
+                      :ui="{
                         placeholder: '!px-5 !py-2 font-light',
                         size: { sm: 'text-lg' },
-                      }" :placeholder="key + '...'" />
+                      }"
+                      :placeholder="key + '...'"
+                    />
                     <UButton
-@click="
-                      isValidKey(key) &&
-                      state[area.id][key] !==
-                      props.areas.find((a) => a.id === area.id)?.[key] &&
-                      updateAreaValue(area.id, null, key, state[area.id][key])
-                      ">
+                      @click="
+                        isValidKey(key) &&
+                        state[area.id][key] !==
+                          props.areas.find((a) => a.id === area.id)?.[key] &&
+                        updateAreaValue(area.id, null, key, state[area.id][key])
+                      "
+                    >
                       <UIcon name="i-bytesize-checkmark" />
                     </UButton>
                   </div>
