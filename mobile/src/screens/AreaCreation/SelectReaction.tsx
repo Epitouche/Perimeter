@@ -49,6 +49,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         }
         setLoading(false);
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error fetching services:', error);
         setServices([]);
         setFilteredServices([]);
@@ -93,20 +96,30 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleSaveOptions = async () => {
     console.log('Selected Action:', selectedReaction);
     console.log('Configured Options:', selectedReactionOptions);
-    const res = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        action_id: actionId,
-        action_option: actionOptions,
-        reaction_id: selectedReaction.id,
-        reaction_option: selectedReactionOptions,
-      }),
-    });
-    const data = await res.json();
+    let res;
+    let data;
+    try {
+      res = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          action_id: actionId,
+          action_option: actionOptions,
+          reaction_id: selectedReaction.id,
+          reaction_option: selectedReactionOptions,
+        }),
+      });
+      data = await res.json();
+    } catch (error) {
+      if (error.code === 401) {
+        navigation.navigate('Login');
+      }
+      console.error('Error creating area:', error);
+      return;
+    }
     console.log('Area Creation:', data);
 
     navigation.navigate('AreaView');

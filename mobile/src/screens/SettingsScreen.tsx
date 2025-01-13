@@ -1,5 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { AppContext } from '../context/AppContext';
 import BottomNavBar from './NavBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -7,8 +13,8 @@ import { RootStackParamList } from '../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SettingsScreen'>;
 
-const SettingsScreen = (navigation: any) => {
-  const { ipAddress, setIpAddress } = useContext(AppContext);
+const SettingsScreen = ({navigation}: {navigation: any}) => {
+  const { ipAddress, setIpAddress, setToken } = useContext(AppContext);
   // const [timezone, setTimezone] = useState('GMT');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -23,6 +29,9 @@ const SettingsScreen = (navigation: any) => {
         setUsername(data.username);
         setEmail(data.email);
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error fetching user info:', error);
       }
     };
@@ -79,6 +88,18 @@ const SettingsScreen = (navigation: any) => {
           </Picker>
         </View> */}
       </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.button}>Save</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity
+        onPress={() => {
+          setToken('');
+          navigation.navigate('Login');
+        }}>
+        <Text style={styles.disconnectButton}>Disconnect</Text>
+      </TouchableOpacity>
       <BottomNavBar navigation={navigation} />
     </View>
   );
@@ -142,6 +163,23 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 40,
+  },
+  button: {
+    color: 'white',
+    backgroundColor: '#007AFF',
+    paddingVertical: 10,
+    textAlign: 'center',
+    borderRadius: 5,
+  },
+  disconnectButton: {
+    color: 'red',
+    backgroundColor: '#FF0000',
+    paddingVertical: 10,
+    textAlign: 'center',
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    marginTop: 20,
   },
 });
 

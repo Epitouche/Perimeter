@@ -27,22 +27,41 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
   const [loading, setLoading] = useState(true);
   const { ipAddress, token, setToken } = useContext(AppContext);
 
+  const handleDisconnect = async (id: string, name: string) => {
+    try {
+      await fetch(`http://${ipAddress}:8080/api/v1/token`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id }),
+      });
+      setConnectedServices(connectedServices.filter(s => s !== name));
+    } catch (error) {
+      if (error.code === 401) {
+        navigation.navigate('Login');
+      }
+      console.error('Error disconnecting:', error);
+    }
+  };
+
   function connectService(service: string) {
+    console.log('Connecting to:', service);
     switch (service) {
-      case 'spotify':
+      case 'Spotify':
         HandleSpotifyLogin(setToken, navigation, ipAddress, false, token);
         break;
-      case 'google':
-        HandleGoogleLogin(setToken, navigation, ipAddress);
+      case 'Google':
+        HandleGoogleLogin(setToken, navigation, ipAddress, false, token);
         break;
-      case 'dropbox':
-        HandleDropboxLogin(setToken, navigation, ipAddress);
+      case 'Dropbox':
+        HandleDropboxLogin(setToken, navigation, ipAddress, false, token);
         break;
-      case 'github':
-        HandleGithubLogin(setToken, navigation, ipAddress);
+      case 'Github':
+        HandleGithubLogin(setToken, navigation, ipAddress, false, token);
         break;
-      case 'microsoft':
-        HandleMicrosoftLogin(setToken, navigation, ipAddress);
+      case 'Microsoft':
+        HandleMicrosoftLogin(setToken, navigation, ipAddress, false, token);
         break;
       default:
         break;
@@ -77,6 +96,9 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
         const connected = userData.tokens.map(token => token.service.name);
         setConnectedServices(connected);
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error fetching services:', error);
       } finally {
         setLoading(false);
@@ -113,7 +135,11 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
     return (
       <TouchableOpacity
         style={[styles.serviceButton, { backgroundColor: item.color }]}
-        onPress={!isConnected ? () => connectService(item.name) : undefined}>
+        onPress={
+          !isConnected
+            ? () => connectService(item.name)
+            : () => handleDisconnect(item.id, item.name)
+        }>
         <SvgFromUri uri={item.icon} width={50} height={50} />
         <Text style={styles.serviceText}>{item.name}</Text>
         <Text style={styles.serviceText}>
