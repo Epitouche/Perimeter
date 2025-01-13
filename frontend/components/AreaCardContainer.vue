@@ -260,12 +260,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -278,12 +278,16 @@ if (areaIdNumber !== null && valueNumber !== null) {
           class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }"
         >
-          <div class="flex flex-row justify-between pb-2 w-full overflow-y-auto">
+          <div
+            class="flex flex-row justify-between pb-2 w-full overflow-y-auto"
+          >
             <UToggle
               :model-value="areaIsEnabled(area.id)"
               @update:model-value="toggleAreaEnableSwitch(area.id)"
             />
-            <h2 class="text-6xl text-center w-full"><b>{{ area.title }}</b></h2>
+            <h2 class="text-6xl text-center w-full">
+              <b>{{ area.title }}</b>
+            </h2>
             <UButton
               variant="ghost"
               class="self-end w-fit"
@@ -294,7 +298,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
           </div>
           <div
             class="overflow-y-auto scrollable-element"
-            style="height: 40vh; padding-right: 2%;"
+            style="height: 40vh; padding-right: 2%"
           >
             <UpdateAreaSlideover
               :area-id="area.id"
@@ -303,7 +307,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
               :type="area.action"
               @update-area-value="updateAreaValue"
             />
-            <div class="mb-6"/>
+            <div class="mb-6" />
             <UpdateAreaSlideover
               :area-id="area.id"
               type-name="reaction"
@@ -311,13 +315,13 @@ if (areaIdNumber !== null && valueNumber !== null) {
               :type="area.reaction"
               @update-area-value="updateAreaValue"
             />
-            <div class="mb-6"/>
+            <div class="mb-6" />
 
             <div>
               <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
               <p class="text-4xl">{{ area.description }}</p>
             </div>
-            <div class="mb-6"/>
+            <div class="mb-6" />
             <div class="flex justify-center">
               <div class="w-full bg-white p-16 rounded-lg shadow-md">
                 <h2 class="text-black text-2xl font-semibold">No Result</h2>
