@@ -323,12 +323,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
         }"
       >
         <div
-          class="flex flex-col gap-20 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+          class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius px-20 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
             <div
-              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1"
+              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1 pb-4"
             >
               <div class="flex flex-row items-center gap-3">
                 <UToggle
