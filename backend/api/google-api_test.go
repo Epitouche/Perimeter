@@ -15,26 +15,26 @@ import (
 	"area/test"
 )
 
-type MockgoogleController struct {
+type MockGoogleController struct {
 	mock.Mock
 }
 
-func (m *MockgoogleController) RedirectToService(ctx *gin.Context) (string, error) {
+func (m *MockGoogleController) RedirectToService(ctx *gin.Context) (string, error) {
 	args := m.Called(ctx)
 	return args.String(0), args.Error(1)
 }
 
-func (m *MockgoogleController) HandleServiceCallback(ctx *gin.Context) (string, error) {
+func (m *MockGoogleController) HandleServiceCallback(ctx *gin.Context) (string, error) {
 	args := m.Called(ctx)
 	return args.String(0), args.Error(1)
 }
 
-func (m *MockgoogleController) HandleServiceCallbackMobile(ctx *gin.Context) (string, error) {
+func (m *MockGoogleController) HandleServiceCallbackMobile(ctx *gin.Context) (string, error) {
 	args := m.Called(ctx)
 	return args.String(0), args.Error(1)
 }
 
-func (m *MockgoogleController) GetUserInfo(ctx *gin.Context) (schemas.UserCredentials, error) {
+func (m *MockGoogleController) GetUserInfo(ctx *gin.Context) (schemas.UserCredentials, error) {
 	args := m.Called(ctx)
 	return args.Get(0).(schemas.UserCredentials), args.Error(1)
 }
@@ -42,7 +42,7 @@ func (m *MockgoogleController) GetUserInfo(ctx *gin.Context) (schemas.UserCreden
 func TestGoogleAPI(t *testing.T) {
 	t.Parallel()
 
-	mockController := new(MockgoogleController)
+	mockController := new(MockGoogleController)
 	router := gin.Default()
 	apiRoutes := router.Group("/api")
 	mockUserService := new(test.MockUserService)
