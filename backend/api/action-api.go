@@ -39,28 +39,66 @@ func NewActionApi(
 	}
 	apiRoutes = apiRoutes.Group("/info")
 	api.GetActionsInfo(apiRoutes)
+	api.GetServiceInfo(apiRoutes)
 
 	return &api
 }
 
 // GetActionsInfo godoc
 //
-//	@Summary		get action info
+//	@Summary		get action info of service id
 //	@Description	get action info of service id
 //	@Tags			Action
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
-//	@Param			id	path		int	true	"Service ID"
 //	@Success		200	{object}	[]schemas.Action
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
-//	@Router			/action/info/:id [get]
+//	@Router			/action/info/:idService [get]
 func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/:id", func(ctx *gin.Context) {
-		id := ctx.Param("id")
+	apiRoutes.GET("/:idService", func(ctx *gin.Context) {
+		idService := ctx.Param("idService")
 
-		idInt, err := strconv.ParseUint(id, 10, 64)
+		idInt, err := strconv.ParseUint(idService, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+
+			return
+		}
+
+		response, err := api.controller.GetActionsInfo(idInt)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+				Error: err.Error(),
+			})
+
+			return
+		}
+
+		ctx.JSON(http.StatusOK, response)
+	})
+}
+
+// GetServiceInfo godoc
+//
+//	@Summary		get service info of action id
+//	@Description	get service info of action id
+//	@Tags			Action
+//	@Accept			json
+//	@Produce		json
+//	@Security		bearerAuth
+//	@Success		200	{object}	[]schemas.Action
+//	@Failure		401	{object}	schemas.ErrorResponse
+//	@Failure		500	{object}	schemas.ErrorResponse
+//	@Router			/action/info/service/:idAction [get]
+func (api *ActionApi) GetServiceInfo(apiRoutes *gin.RouterGroup) {
+	apiRoutes.GET("/service/:id", func(ctx *gin.Context) {
+		idAction := ctx.Param("idAction")
+
+		idInt, err := strconv.ParseUint(idAction, 10, 64)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
 				Error: err.Error(),
