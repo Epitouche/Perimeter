@@ -90,12 +90,12 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
-//	@Success		200	{object}	[]schemas.Action
+//	@Success		200	{object}	schemas.Service
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/action/info/service/:idAction [get]
 func (api *ActionApi) GetServiceInfo(apiRoutes *gin.RouterGroup) {
-	apiRoutes.GET("/service/:id", func(ctx *gin.Context) {
+	apiRoutes.GET("/service/:idAction", func(ctx *gin.Context) {
 		idAction := ctx.Param("idAction")
 
 		idInt, err := strconv.ParseUint(idAction, 10, 64)
