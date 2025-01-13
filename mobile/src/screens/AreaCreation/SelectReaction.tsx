@@ -131,12 +131,14 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
           ))}
           <TouchableOpacity
             style={styles.saveButton}
-            onPress={() => navigation.navigate('ValidateAreaScreen', {
-              actionId,
-              actionOptions,
-              reactionId: selectedReaction.id,
-              reactionOptions: selectedReactionOptions,
-            })}>
+            onPress={() =>
+              navigation.navigate('ValidateAreaScreen', {
+                actionId,
+                actionOptions,
+                reactionId: selectedReaction.id,
+                reactionOptions: selectedReactionOptions,
+              })
+            }>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity
