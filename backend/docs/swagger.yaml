@@ -317,9 +317,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/schemas.Action'
-            type: array
+            $ref: '#/definitions/schemas.Service'
         "401":
           description: Unauthorized
           schema:

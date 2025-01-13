@@ -80,10 +80,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/schemas.Action"
-                            }
+                            "$ref": "#/definitions/schemas.Service"
                         }
                     },
                     "401": {
