@@ -40,7 +40,7 @@ const filteredApps = computed(() => {
       class="flex flex-col justify-center items-start gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
     >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
-        <SearchBar v-model:search-query="searchQuery" />
+        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" />
       </div>
 
       <UContainer

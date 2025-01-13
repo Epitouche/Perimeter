@@ -6,14 +6,14 @@ import (
 	"area/schemas"
 )
 
-type GooglelRepository interface{}
+type GoogleRepository interface{}
 
-// Define a struct that embeds `*schemas.Database` and implements `GooglelRepository`.
+// Define a struct that embeds `*schemas.Database` and implements `GoogleRepository`.
 type gmailRepository struct {
 	db *schemas.Database
 }
 
-func NewGoogleRepository(conn *gorm.DB) GooglelRepository {
+func NewGoogleRepository(conn *gorm.DB) GoogleRepository {
 	return &gmailRepository{
 		db: &schemas.Database{
 			Connection: conn,

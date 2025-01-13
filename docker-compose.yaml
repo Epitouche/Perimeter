@@ -2,9 +2,9 @@ name: area-prod
 services:
   client_mobile:
     build:
-      context: ./mobile
+      context: ./
       target: build-apk
-      dockerfile: Dockerfile
+      dockerfile: ./mobile/Dockerfile
     extends:
       file: ./docker-compose.template.yaml
       service: client_mobile
@@ -14,6 +14,8 @@ services:
       context: ./frontend
       target: run
       dockerfile: Dockerfile
+    labels:
+      - "traefik.http.routers.client_web.rule=Host(`localhost`)"
     extends:
       file: ./docker-compose.template.yaml
       service: client_web
@@ -23,6 +25,11 @@ services:
       file: ./docker-compose.template.yaml
       service: database
 
+  reverse-proxy:
+    extends:
+      file: ./docker-compose.template.yaml
+      service: reverse-proxy
+
   server:
     build:
       context: ./backend
@@ -31,6 +38,15 @@ services:
     extends:
       file: ./docker-compose.template.yaml
       service: server
+
+  server-documentation:
+    build:
+      context: ./backend
+      target: documentation
+      dockerfile: Dockerfile
+    extends:
+      file: ./docker-compose.template.yaml
+      service: server-documentation
 
 networks:
   app-networks:

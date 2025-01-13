@@ -102,10 +102,11 @@ func setupRouter() *gin.Engine {
 		areaRepository,
 		tokenRepository,
 	)
-	timerService := service.NewTimerService(timerRepository, serviceRepository)
+	timerService := service.NewTimerService(timerRepository, serviceRepository, areaRepository)
 	openweathermapService := service.NewOpenweathermapService(
 		openweathermapRepository,
 		serviceRepository,
+		areaRepository,
 	)
 	jwtService := service.NewJWTService()
 	userService := service.NewUserService(userRepository, jwtService)
@@ -173,7 +174,7 @@ func setupRouter() *gin.Engine {
 	reactionController := controller.NewReactionController(reactionService)
 	areaController := controller.NewAreaController(areaService)
 	tokenController := controller.NewTokenController(tokenService)
-	areaResultController := controller.NewAreaResultController(areaResultService)
+	areaResultController := controller.NewAreaResultController(areaResultService, areaService)
 
 	// API routes
 	api.NewActionApi(actionController, apiRoutes, userService)
@@ -189,7 +190,7 @@ func setupRouter() *gin.Engine {
 	api.NewDropboxAPI(dropboxController, apiRoutes, userService)
 	api.NewMicrosoftAPI(microsoftController, apiRoutes, userService)
 	api.NewAreaAPI(areaController, apiRoutes, userService)
-	api.NewAreaResultAPI(areaResultController, apiRoutes)
+	api.NewAreaResultAPI(areaResultController, apiRoutes, userService)
 
 	// basic about.json route
 	router.GET("/about.json", serviceAPI.AboutJSON)
