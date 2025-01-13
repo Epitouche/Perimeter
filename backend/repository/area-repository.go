@@ -99,7 +99,6 @@ func (repo *areaRepository) FindById(id uint64) (area schemas.Area, err error) {
 		Where(&schemas.Area{Id: id}).
 		First(&area).
 		Error
-
 	if err != nil {
 		return area, fmt.Errorf("failed to find action by id: %w", err)
 	}
