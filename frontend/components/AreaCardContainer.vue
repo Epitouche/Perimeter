@@ -38,6 +38,7 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 }
 
 const componentKey = ref(0);
+const focusDiv = ref<HTMLElement | null>(null);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
@@ -271,7 +272,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: area.action.service.color }"
+        tabindex="0"
         @click="toggleAreaModal(area.id)"
+        @keydown.enter="toggleAreaModal(area.id)"
       >
         <h2
           class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
@@ -292,10 +295,13 @@ if (areaIdNumber !== null && valueNumber !== null) {
         </div>
       </UContainer>
       <UModal
+        ref="focusDiv"
         v-model="areaIsOpen[area.id]"
+        tabindex="0"
         :ui="{
           width: 'w-1/2',
         }"
+
       >
         <div
           class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
@@ -307,7 +313,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 <UToggle
                   size="xl"
                   :model-value="areaIsEnabled(area.id)"
+                  tabindex="0"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
+                  @keydown.enter="toggleAreaEnableSwitch(area.id)"
+
                 />
                 <div v-if="areaIsEnabled(area.id)" class="text-xl">
                   <p>Enabled</p>
@@ -319,7 +328,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="self-end w-fit"
+                tabindex="-1"
                 @click="toggleAreaModal(area.id)"
+                @keydown.enter="toggleAreaModal(area.id)"
               >
                 <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
               </UButton>
@@ -335,14 +346,18 @@ if (areaIdNumber !== null && valueNumber !== null) {
             type-name="action"
             :color="area.action.service.color"
             :type="area.action"
+            tabindex="0"
             @update-area-value="updateAreaValue"
+            @keydown.enter="updateAreaValue"
           />
           <UpdateAreaOptions
             :area-id="area.id"
             type-name="reaction"
             :color="area.action.service.color"
             :type="area.reaction"
+            tabindex="0"
             @update-area-value="updateAreaValue"
+            @keydown.enter="updateAreaValue"
           />
 
           <div>
@@ -355,7 +370,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
+                tabindex="0"
                 @click="toggleEditArea(area.id)"
+                @keydown.enter="toggleEditArea(area.id)"                
               >
                 <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
               </UButton>
@@ -387,6 +404,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                       :placeholder="key + '...'"
                     />
                     <UButton
+                      tabindex="0"                
                       @click="
                         isValidKey(key) &&
                         state[area.id][key] !==
@@ -405,6 +423,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
+                tabindex="0"
                 @click="onDelete(area.id)"
               >
                 <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
@@ -431,12 +450,14 @@ if (areaIdNumber !== null && valueNumber !== null) {
               borderColor: area.action.service.color,
               color: area.action.service.color,
             }"
+            tabindex="0"
             @click="cancelDeletion(area.id)"
             >Cancel</UButton
           >
           <UButton
             class="text-white text-2xl font-semibold py-3 px-5"
             :style="{ backgroundColor: area.action.service.color }"
+            tabindex="0"
             @click="onDelete(area.id)"
             >Delete</UButton
           >
@@ -468,5 +489,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .hover_underline_animation:hover::after {
   transform: scaleX(0.9);
   transform-origin: bottom center;
+}
+
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
 </style>

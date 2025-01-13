@@ -21,6 +21,9 @@ const tokens = ref<Token[]>([]);
 const infosConnection = ref<ServiceResponse | null>(null);
 const selectedService = ref<string | null>(null);
 
+const isVisible = ref(false);
+const focusDiv = ref<HTMLElement | null>(null);
+
 onMounted(() => {
   loadConnectionInfos();
   loadServices();
@@ -100,6 +103,11 @@ const onClick = (label: string) => {
   if (isServiceConnectedOrInvalid(label)) {
     selectedService.value = label;
     isPopupVisible.value = true;
+    isVisible.value = !isVisible.value;
+  
+    if (isVisible.value && focusDiv.value) {
+      focusDiv.value.focus();
+    }
   } else {
     executeHandleClick(label);
   }
@@ -136,7 +144,7 @@ const cancelAction = () => {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-5 justify-center">
+  <div class="flex flex-wrap gap-5 justify-center" tabindex="0">
     <UButton
       v-for="(app, index) in apps"
       :key="index"
@@ -144,6 +152,7 @@ const cancelAction = () => {
       :class="[
         `flex flex-col items-center justify-start relative w-[15rem] h-[15rem] shadow-lg font-extrabold rounded-custom_border_radius overflow-hidden transition-transform hover:scale-105`,
       ]"
+      tabindex="0"
       @click="onClick(app.name)"
     >
       <img
@@ -172,6 +181,7 @@ const cancelAction = () => {
   </div>
   <div
     v-if="isPopupVisible"
+    ref="focusDiv"
     class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
   >
     <div
@@ -184,11 +194,13 @@ const cancelAction = () => {
       <div class="flex flex-row justify-end items-center gap-5 pt-5">
         <UButton
           class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+          tabindex="0"
           @click="cancelAction"
           >No</UButton
         >
         <UButton
           class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+          tabindex="0"
           @click="confirmAction"
           >Yes</UButton
         >
@@ -220,5 +232,10 @@ const cancelAction = () => {
   line-clamp: unset;
   overflow: visible;
   white-space: normal;
+}
+
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
 </style>

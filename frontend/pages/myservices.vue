@@ -38,15 +38,16 @@ const filteredApps = computed(() => {
     <div
       v-else
       class="flex flex-col justify-center items-start gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
-    >
+      tabindex="0"
+      >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
-        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" />
+        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" tabindex="0" />
       </div>
 
       <UContainer
         class="flex flex-wrap gap-5 justify-center p-4 bg-white rounded-lg w-full mx-auto"
       >
-        <ServiceList :apps="filteredApps" />
+        <ServiceList :apps="filteredApps"/>
       </UContainer>
     </div>
   </div>

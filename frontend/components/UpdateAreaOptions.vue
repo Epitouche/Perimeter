@@ -107,7 +107,8 @@ onMounted(() => {
             }"
             :placeholder="key + '...'"
           />
-          <UButton @click="editValue(typeName, type.id, key)">
+          <UButton 
+          @click="editValue(typeName, type.id, key) ">
             <UIcon name="i-bytesize-checkmark" />
           </UButton>
         </div>
