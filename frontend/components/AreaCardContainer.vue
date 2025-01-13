@@ -323,7 +323,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         }"
       >
         <div
-          class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius px-20 py-10 w-full"
+          class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 w-full overflow-y-auto max-h-[90vh] scrollable-element"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
@@ -383,7 +383,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
 
           <div class="flex justify-center">
             <div
-              class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto scrollable-element"
+              class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto max-h-[20vh] scrollable-element"
             >
               <h2
                 v-if="!selectedAreaResult"
@@ -520,6 +520,5 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .scrollable-element {
   scrollbar-width: thick;
   scrollbar-color: white rgba(255, 255, 255, 0.2);
-  max-height: 20vh;
 }
 </style>
