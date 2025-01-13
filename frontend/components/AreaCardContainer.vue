@@ -20,17 +20,16 @@ const getQueryParam = (
   return param ? String(param) : null;
 };
 
-// Get query parameters safely
 const areaId = getQueryParam(route.query.areaId);
 const typeName = getQueryParam(route.query.typeName);
 const keyString = getQueryParam(route.query.keyString);
 const value = getQueryParam(route.query.value);
 
-// Convert areaId, key, and value to numbers where appropriate
-const areaIdNumber = areaId ? Number(areaId) : null;
+const emit = defineEmits(["refreshAreas"]);
+
+const areaIdNumber = Number(areaId);
 const valueNumber = value ? Number(value) : null;
 
-// Ensure areaIdNumber, keyNumber, valueNumber are valid numbers
 if (areaIdNumber !== null && isNaN(areaIdNumber)) {
   console.error("Invalid areaId:", areaId);
 }
@@ -41,6 +40,10 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 const componentKey = ref(0);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
+  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+);
+
+const editAreaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
 );
 
@@ -61,6 +64,21 @@ const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
 };
 
+const toggleEditArea = (areaId: number) => {
+  editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
+  console.log("editAreaIsOpen: ", editAreaIsOpen); /////////////////////////////:
+  if (
+    editAreaIsOpen[areaId] &&
+    !state[areaId]?.title &&
+    !state[areaId]?.description
+  ) {
+    const area = props.areas.find((a) => a.id === areaId);
+    if (area) {
+      state[areaId] = { title: area.title, description: area.description };
+    }
+  }
+};
+
 const toggleAreaEnableSwitch = async (areaId: number) => {
   const areaIndex = props.areas.findIndex((area) => area.id === areaId);
   if (areaIndex === -1) {
@@ -72,6 +90,8 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
     JSON.stringify(props.areas[areaIndex]),
   ) as Area;
   updatedArea.enable = !updatedArea.enable;
+
+  console.log("updatedArea after toggling enable:", updatedArea);
 
   try {
     errorMessage.value = null;
@@ -85,12 +105,13 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
     });
 
     console.log("response:", response);
+
+    emit("refreshAreas");
   } catch (error) {
     console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
+    alert("Failed to update enable/disable status");
   }
-
-  componentKey.value += 1;
 };
 
 const toggleConfirmDeletionModal = (areaId: number) => {
@@ -109,6 +130,7 @@ const onDelete = async (areaId: number) => {
         },
       });
       console.log("response:", response);
+      emit("refreshAreas");
     } catch (error: unknown) {
       console.log("error:", error);
       errorMessage.value = handleErrorStatus(error);
@@ -136,7 +158,7 @@ function formatName(name: string): string {
 
 const updateAreaValue = async (
   areaId: number,
-  typeName: string,
+  typeName: string | null,
   keyString: string,
   value: string | number,
 ) => {
@@ -157,52 +179,29 @@ const updateAreaValue = async (
     return;
   }
 
-  // Deep clone to avoid Proxy issues
   const updatedArea = JSON.parse(
     JSON.stringify(props.areas[areaIndex]),
   ) as Area;
 
-  if (typeName === "action") {
-    if (!updatedArea.action_option) {
-      updatedArea.action_option = {}; // Initialize if null or undefined
+  if (typeName) {
+    const targetOptionKey = `${typeName}_option` as keyof Area;
+
+    if (!(targetOptionKey in updatedArea)) {
+      (updatedArea[targetOptionKey] as { [key: string]: string | number }) = {};
     }
 
-    (updatedArea.action_option as { [key: string]: string | number })[
+    (updatedArea[targetOptionKey] as { [key: string]: string | number })[
       keyString
     ] =
       typeof value === "string" && !isNaN(Number(value))
         ? Number(value)
         : value;
-    (updatedArea.action.option as { [key: string]: string | number })[
-      keyString
-    ] =
-      typeof value === "string" && !isNaN(Number(value))
-        ? Number(value)
-        : value;
-
-    console.log("After updating action_option:", updatedArea.action_option);
-  } else if (typeName === "reaction") {
-    if (!updatedArea.reaction_option) {
-      updatedArea.reaction_option = {}; // Initialize if null or undefined
-    }
-
-    (updatedArea.reaction_option as { [key: string]: string | number })[
-      keyString
-    ] =
-      typeof value === "string" && !isNaN(Number(value))
-        ? Number(value)
-        : value;
-    (updatedArea.reaction.option as { [key: string]: string | number })[
-      keyString
-    ] =
-      typeof value === "string" && !isNaN(Number(value))
-        ? Number(value)
-        : value;
-
-    console.log("After updating reaction_option:", updatedArea.reaction_option);
   } else {
-    console.error("Invalid typeName:", typeName);
-    return;
+    const targetOtherKey = `${keyString}` as keyof Area;
+    (updatedArea[targetOtherKey] as string | number) =
+      typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : value;
   }
 
   console.log("Final updatedArea:", updatedArea);
@@ -219,19 +218,43 @@ const updateAreaValue = async (
     });
 
     console.log("response:", response);
+    emit("refreshAreas");
   } catch (error) {
     console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
   }
 
   router.push("myareas");
+  toggleEditArea(areaId);
+};
+
+const state = reactive<Record<number, Pick<Area, "title" | "description">>>({});
+
+const filteredState = (areaId: number) => {
+  const areaState = state[areaId] || {};
+  return Object.entries(areaState)
+    .filter(([key]) => ["title", "description"].includes(key))
+    .reduce(
+      (obj, [key, value]) => {
+        obj[key] = value;
+        return obj;
+      },
+      {} as Record<string, string | number>,
+    );
+};
+
+const isValidKey = (key: string): key is "title" | "description" => {
+  return key === "title" || key === "description";
 };
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
+
+  props.areas.forEach((area) => {
+    state[area.id] = { title: area.title, description: area.description };
+  });
 });
 
-// When the component is mounted, we should ensure proper logic for updateAreaValue
 if (areaIdNumber !== null && valueNumber !== null) {
   updateAreaValue(areaIdNumber, typeName!, keyString!, valueNumber);
 }
@@ -253,7 +276,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         <h2
           class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
         >
-          {{ formatName(area.action.name) }}
+          {{ formatName(area.title) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
           <img
@@ -278,29 +301,43 @@ if (areaIdNumber !== null && valueNumber !== null) {
           class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }"
         >
-          <div class="flex flex-row justify-between pb-2 w-full">
-            <UToggle
-              :model-value="areaIsEnabled(area.id)"
-              @update:model-value="toggleAreaEnableSwitch(area.id)"
-            />
-            <h2 class="text-6xl text-center w-full"><b>Temp title</b></h2>
-            <UButton
-              variant="ghost"
-              class="self-end w-fit"
-              @click="toggleAreaModal(area.id)"
-            >
-              <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
-            </UButton>
+          <div>
+            <div class="flex flex-row justify-between items-center w-full">
+              <div class="flex flex-row items-center gap-3">
+                <UToggle
+                  size="xl"
+                  :model-value="areaIsEnabled(area.id)"
+                  @update:model-value="toggleAreaEnableSwitch(area.id)"
+                />
+                <div v-if="areaIsEnabled(area.id)" class="text-xl">
+                  <p>Enabled</p>
+                </div>
+                <div v-else class="text-xl">
+                  <p>Disabled</p>
+                </div>
+              </div>
+              <UButton
+                variant="ghost"
+                class="self-end w-fit"
+                @click="toggleAreaModal(area.id)"
+              >
+                <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
+              </UButton>
+            </div>
+
+            <h2 class="text-6xl text-center w-full">
+              <b>{{ area.title }}</b>
+            </h2>
           </div>
 
-          <UpdateAreaSlideover
+          <UpdateAreaOptions
             :area-id="area.id"
             type-name="action"
             :color="area.action.service.color"
             :type="area.action"
             @update-area-value="updateAreaValue"
           />
-          <UpdateAreaSlideover
+          <UpdateAreaOptions
             :area-id="area.id"
             type-name="reaction"
             :color="area.action.service.color"
@@ -313,15 +350,67 @@ if (areaIdNumber !== null && valueNumber !== null) {
             <p class="text-4xl">{{ area.description }}</p>
           </div>
 
-          <UTooltip text="Delete" class="self-end w-fit">
-            <UButton
-              variant="ghost"
-              class="hover_underline_animation items-end w-fit p-0 pb-1"
-              @click="onDelete(area.id)"
-            >
-              <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
-            </UButton>
-          </UTooltip>
+          <div class="flex flex-row justify-end items-center gap-5">
+            <UTooltip text="Edit" class="self-end w-fit">
+              <UButton
+                variant="ghost"
+                class="hover_underline_animation items-end w-fit p-0 pb-1"
+                @click="toggleEditArea(area.id)"
+              >
+                <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
+              </UButton>
+            </UTooltip>
+
+            <USlideover v-model="editAreaIsOpen[area.id]">
+              <UForm
+                :state="state[area.id]"
+                class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section"
+              >
+                <UFormGroup
+                  v-for="(value, key) in filteredState(area.id)"
+                  :key="key"
+                  :label="key"
+                  :name="key"
+                  :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
+                >
+                  <div class="flex flex-row justify-center items-center gap-3">
+                    <UInput
+                      v-model="
+                        state[area.id][
+                          key as keyof Pick<Area, 'title' | 'description'>
+                        ]
+                      "
+                      :ui="{
+                        placeholder: '!px-5 !py-2 font-light',
+                        size: { sm: 'text-lg' },
+                      }"
+                      :placeholder="key + '...'"
+                    />
+                    <UButton
+                      @click="
+                        isValidKey(key) &&
+                        state[area.id][key] !==
+                          props.areas.find((a) => a.id === area.id)?.[key] &&
+                        updateAreaValue(area.id, null, key, state[area.id][key])
+                      "
+                    >
+                      <UIcon name="i-bytesize-checkmark" />
+                    </UButton>
+                  </div>
+                </UFormGroup>
+              </UForm>
+            </USlideover>
+
+            <UTooltip text="Delete" class="self-end w-fit">
+              <UButton
+                variant="ghost"
+                class="hover_underline_animation items-end w-fit p-0 pb-1"
+                @click="onDelete(area.id)"
+              >
+                <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
+              </UButton>
+            </UTooltip>
+          </div>
         </div>
       </UModal>
       <UModal

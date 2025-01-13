@@ -154,11 +154,16 @@ func (service *tokenService) DeleteUserToken(
 		return deletedToken, fmt.Errorf("can't find token by id: %w", err)
 	}
 	if containsToken(userTokenList, tokenToDeleteDatabase) {
-		err = service.repository.Delete(tokenToDeleteDatabase)
-		if err != nil {
-			return deletedToken, fmt.Errorf("can't delete token: %w", err)
+		// can't delete oauth login token
+		if tokenToDeleteDatabase.Id != user.TokenId {
+			err = service.repository.Delete(tokenToDeleteDatabase)
+			if err != nil {
+				return deletedToken, fmt.Errorf("can't delete token: %w", err)
+			}
+			return tokenToDeleteDatabase, nil
+		} else {
+			return deletedToken, fmt.Errorf("can't delete token: %w", schemas.ErrTokenBelongToUser)
 		}
-		return tokenToDeleteDatabase, nil
 	} else {
 		return deletedToken, fmt.Errorf("token not found")
 	}
