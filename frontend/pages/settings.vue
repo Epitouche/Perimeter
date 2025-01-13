@@ -10,7 +10,6 @@ const errorMessage = ref<string | null>(null);
 const tokenCookie = useCookie("token");
 const username = ref<string>("");
 const email = ref<string>("");
-const password = ref<string>("");
 const infosConnection = ref<ServiceResponse | null>(null);
 
 onMounted(() => {
@@ -23,7 +22,6 @@ async function loadConnectionInfos() {
       infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
       username.value = infosConnection.value.user.username;
       email.value = infosConnection.value.user.email;
-      password.value = infosConnection.value.user.password;
     }
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
@@ -35,7 +33,6 @@ const handleSubmit = async () => {
   const userData = {
     username: username.value,
     email: email.value,
-    password: password.value,
   };
 
   console.log("User Data : ", userData);
@@ -53,7 +50,6 @@ const handleSubmit = async () => {
       <div class="flex flex-col justify-center items-center gap-8 w-full px-5">
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
-        <EditableInput v-model="password" name="Password" />
       </div>
       <UButton
         class="text-black bg-custom_color-bg_section border-2 border-black items-right text-2xl font-semibold py-3 px-5"

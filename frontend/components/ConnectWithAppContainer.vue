@@ -13,7 +13,6 @@ const loadServices = async () => {
   try {
     errorMessage.value = null;
     services.value = await fetchServices();
-    console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading services:", error);

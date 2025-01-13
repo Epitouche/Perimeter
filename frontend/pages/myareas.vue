@@ -28,7 +28,7 @@ const fetchAreas = async () => {
     });
     areas.value = result;
     filteredAreas.value = result;
-    console.log("filteredAreas: ", filteredAreas.value);
+    //console.log("filteredAreas: ", filteredAreas.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 

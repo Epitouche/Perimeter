@@ -112,7 +112,6 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
 
     emit("refreshAreas");
   } catch (error) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
     alert("Failed to update enable/disable status");
   }
@@ -136,7 +135,6 @@ const onDelete = async (areaId: number) => {
       console.log("response:", response);
       emit("refreshAreas");
     } catch (error: unknown) {
-      console.log("error:", error);
       errorMessage.value = handleErrorStatus(error);
       if (errorMessage.value === "An unknown error occurred") {
         console.error("An unknown error occurred", error);
@@ -237,7 +235,7 @@ const updateAreaValue = async (
   try {
     errorMessage.value = null;
 
-    const response = await $fetch("/api/area/update", {
+    await $fetch("/api/area/update", {
       method: "POST",
       body: {
         token: token.value,
@@ -245,17 +243,14 @@ const updateAreaValue = async (
       },
     });
 
-    console.log("response:", response);
+    emit("refreshAreas");
     emit("refreshAreas");
   } catch (error) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
   }
 
   router.push("myareas");
-  if (editAreaIsOpen[areaId]) {
-    toggleEditArea(areaId);
-  }
+  toggleEditArea(areaId);
 };
 
 const state = reactive<Record<number, Pick<Area, "title" | "description">>>({});
@@ -302,25 +297,25 @@ if (areaIdNumber !== null && valueNumber !== null) {
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
           <img :src="area.action.service.icon" :alt="area.action.service.name"
-            class="w-24 h-24 p-0 absolute top-1 left-12" />
+            class="w-24 h-24 p-0 absolute top-1 left-12">
           <img :src="area.reaction.service.icon" :alt="area.reaction.service.name"
-            class="w-24 h-24 p-0 absolute bottom-0 right-12" />
+            class="w-24 h-24 p-0 absolute bottom-0 right-12">
         </div>
       </UContainer>
       <UModal v-model="areaIsOpen[area.id]" :ui="{
         width: 'w-1/2',
       }">
-        <div class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+        <div class="flex flex-col gap-20 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }">
           <div>
-            <div class="flex flex-row justify-between items-center w-full overflow-y-auto">
+            <div class="flex flex-row justify-between items-center w-full overflow-y-auto px-1">
               <div class="flex flex-row items-center gap-3">
-                <UToggle size="xl" :model-value="areaIsEnabled(area.id)"
+                <UToggle size="2xl" :model-value="areaIsEnabled(area.id)"
                   @update:model-value="toggleAreaEnableSwitch(area.id)" />
-                <div v-if="areaIsEnabled(area.id)" class="text-xl">
+                <div v-if="areaIsEnabled(area.id)" class="text-2xl">
                   <p>Enabled</p>
                 </div>
-                <div v-else class="text-xl">
+                <div v-else class="text-2xl">
                   <p>Disabled</p>
                 </div>
               </div>
@@ -329,42 +324,36 @@ if (areaIdNumber !== null && valueNumber !== null) {
               </UButton>
             </div>
 
-            <h2 class="text-6xl text-center w-full">
+            <h2 class="text-7xl text-center w-full">
               <b>{{ area.title }}</b>
             </h2>
           </div>
 
-          <div class="overflow-y-auto scrollable-element" style="height: 40vh; padding-right: 2%">
-
+          <div class="flex flex-col gap-10">
             <UpdateAreaOptions :area-id="area.id" type-name="action" :color="area.action.service.color"
               :type="area.action" :type-options="area.action_option" @update-area-value="updateAreaValue" />
 
-            <div class="mb-6" />
 
             <UpdateAreaOptions :area-id="area.id" type-name="reaction" :color="area.action.service.color"
               :type="area.reaction" :type-options="area.reaction_option" @update-area-value="updateAreaValue" />
+          </div>
+          <div>
+            <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
+            <p class="text-4xl pl-10">{{ area.description }}</p>
+          </div>
 
-            <div class="mb-6" />
 
-            <div>
-              <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
-              <p class="text-4xl">{{ area.description }}</p>
-            </div>
-
-            <div class="mb-6" />
-
-            <div class="flex justify-center">
-              <div class="w-full bg-white p-16 rounded-lg shadow-md">
-                <h2 v-if="!selectedAreaResult" class="text-black text-2xl font-semibold">
-                  No Result
-                </h2>
-                <h2 v-else class="text-black text-2xl font-semibold">
-                  {{ selectedAreaResult }}
-                </h2>
-              </div>
-              type-name="action"
+          <div class="flex justify-center">
+            <div class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto scrollable-element">
+              <h2 v-if="!selectedAreaResult" class="text-black text-2xl font-semibold">
+                No Result
+              </h2>
+              <h2 v-else class="text-black text-2xl font-semibold">
+                {{ selectedAreaResult }}
+              </h2>
             </div>
           </div>
+
 
           <div class="flex flex-row justify-end items-center gap-5">
             <UTooltip text="Edit" class="self-end w-fit">
@@ -382,7 +371,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   <div class="flex flex-row justify-center items-center gap-3">
                     <UInput v-model="state[area.id][
                       key as keyof Pick<Area, 'title' | 'description'>
-                      ]
+                    ]
                       " :ui="{
                         placeholder: '!px-5 !py-2 font-light',
                         size: { sm: 'text-lg' },
@@ -392,7 +381,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
                       state[area.id][key] !==
                       props.areas.find((a) => a.id === area.id)?.[key] &&
                       updateAreaValue(area.id, null, key, state[area.id][key])
-                      // updateAreaValue(area.id, null, key, value)
                       ">
                       <UIcon name="i-bytesize-checkmark" />
                     </UButton>
@@ -452,5 +440,11 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .hover_underline_animation:hover::after {
   transform: scaleX(0.9);
   transform-origin: bottom center;
+}
+
+.scrollable-element {
+  scrollbar-width: thick;
+  scrollbar-color: white rgba(255, 255, 255, 0.2);
+  max-height: 20vh;
 }
 </style>
