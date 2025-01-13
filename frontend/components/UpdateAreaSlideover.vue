@@ -77,7 +77,7 @@ onMounted(() => {
       :src="type.service.icon"
       :alt="type.service.name"
       class="w-16 h-16 p-0"
-    >
+    />
     <h2 class="text-5xl">
       <b>{{ type.service.name }}</b
       >:
