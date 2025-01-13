@@ -10,7 +10,10 @@ import (
 )
 
 type AreaResultController interface {
-	GetUserAreaResultsByAreaID(ctx *gin.Context, areaID uint64) (areaList []schemas.AreaResult, err error)
+	GetUserAreaResultsByAreaID(
+		ctx *gin.Context,
+		areaID uint64,
+	) (areaList []schemas.AreaResult, err error)
 }
 
 type areaResultController struct {
@@ -18,7 +21,10 @@ type areaResultController struct {
 	serviceArea service.AreaService
 }
 
-func NewAreaResultController(service service.AreaResultService, serviceArea service.AreaService) AreaResultController {
+func NewAreaResultController(
+	service service.AreaResultService,
+	serviceArea service.AreaService,
+) AreaResultController {
 	return &areaResultController{
 		service:     service,
 		serviceArea: serviceArea,
