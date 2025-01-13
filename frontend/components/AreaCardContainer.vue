@@ -259,8 +259,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
     <div v-for="area in areas" :key="area.id">
       <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
-        :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)">
-        <h2 class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full">
+        :style="{ backgroundColor: area.action.service.color }"
+        @click="toggleAreaModal(area.id)"
+      >
+        <h2
+          class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
+        >
           {{ formatName(area.title) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
@@ -287,12 +291,18 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   <p>Disabled</p>
                 </div>
               </div>
-              <UButton variant="ghost" class="self-end w-fit" @click="toggleAreaModal(area.id)">
+              <UButton
+                variant="ghost"
+                class="self-end w-fit"
+                @click="toggleAreaModal(area.id)"
+              >
                 <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
               </UButton>
             </div>
 
-            <h2 class="text-6xl text-center w-full"><b>{{ area.title }}</b></h2>
+            <h2 class="text-6xl text-center w-full">
+              <b>{{ area.title }}</b>
+            </h2>
           </div>
 
           <UpdateAreaOptions :area-id="area.id" type-name="action" :color="area.action.service.color"
@@ -339,7 +349,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
               </UButton>
             </UTooltip>
           </div>
-
         </div>
       </UModal>
       <UModal v-model="confirmDeletionIsOpen[area.id]" :ui="{
