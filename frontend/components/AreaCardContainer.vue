@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LocationQueryValue } from "vue-router";
 import type { Area } from "@/interfaces/areas";
-import type { AreaResult } from "@/interfaces/areaResult"
+import type { AreaResult } from "@/interfaces/areaResult";
 
 const props = defineProps<{
   areas: Area[];
@@ -64,8 +64,7 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
-  if (areaIsOpen[areaId])
-    fetchAreaResult(areaId);
+  if (areaIsOpen[areaId]) fetchAreaResult(areaId);
 };
 
 const toggleEditArea = (areaId: number) => {
@@ -255,16 +254,16 @@ const fetchAreaResult = async (areaId: number) => {
       });
 
       if (response) {
-          selectedAreaResult.value = response[0].result;
+        selectedAreaResult.value = response[0].result;
       } else {
-          console.error("Response doesn't have a valid result.");
+        console.error("Response doesn't have a valid result.");
       }
     } catch (error) {
       errorMessage.value = handleErrorStatus(error);
       console.error(errorMessage.value);
     }
   }
-}
+};
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
@@ -302,12 +301,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -378,8 +377,15 @@ if (areaIdNumber !== null && valueNumber !== null) {
             <div class="mb-6" />
             <div class="flex justify-center">
               <div class="w-full bg-white p-16 rounded-lg shadow-md">
-                <h2 v-if="!selectedAreaResult" class="text-black text-2xl font-semibold">No Result</h2>
-                <h2 v-else class="text-black text-2xl font-semibold">{{ selectedAreaResult }}</h2>
+                <h2
+                  v-if="!selectedAreaResult"
+                  class="text-black text-2xl font-semibold"
+                >
+                  No Result
+                </h2>
+                <h2 v-else class="text-black text-2xl font-semibold">
+                  {{ selectedAreaResult }}
+                </h2>
               </div>
             </div>
           </div>
