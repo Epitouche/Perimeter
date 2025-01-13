@@ -65,7 +65,7 @@ watch(
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="w-16 h-16 p-0"
-    />
+    >
     <h2
       :class="[
         'text-white text-7xl font-custom_weight_title',
@@ -104,4 +104,9 @@ watch(
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>
