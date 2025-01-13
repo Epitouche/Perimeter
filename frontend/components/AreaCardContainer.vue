@@ -536,7 +536,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
 [tabindex="0"]:focus {
   outline: 2px solid #007bff;
   outline-offset: 2px;
- }
+}
 .scrollable-element {
   scrollbar-width: thick;
   scrollbar-color: white rgba(255, 255, 255, 0.2);
