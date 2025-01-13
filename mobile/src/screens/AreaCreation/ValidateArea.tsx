@@ -4,16 +4,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../../context/AppContext';
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'WorkflowReactionScreen'
->;
+type Props = NativeStackScreenProps<RootStackParamList, 'ValidateAreaScreen'>;
 
-const WorkflowReactionScreen = ({ navigation, route }: Props) => {
-  const { actionId, actionOptions } = route.params;
+const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
+  const { actionId, actionOptions, reactionId, reactionOptions } = route.params;
   const { ipAddress, token } = useContext(AppContext);
   let service: any;
-  const [name, setName] = React.useState('');
+  let reactionService: any;
+  const [actionName, setActionName] = React.useState('');
+  const [reactionName, setReactionName] = React.useState('');
 
   const getService = async () => {
     try {
@@ -27,6 +26,17 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
           },
         },
       );
+      const res = await fetch(
+        `http://${ipAddress}:8080/api/v1/reaction/info/${reactionId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
       const serviceResponse = await fetch(
         `http://${ipAddress}:8080/api/v1/action/info/service/${actionId}`,
         {
@@ -37,9 +47,22 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
           },
         },
       );
-      
-      setName((await response.json())[0].name);
+      const serviceRes = await fetch(
+        `http://${ipAddress}:8080/api/v1/reaction/info/service/${reactionId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setActionName((await response.json())[0].name);
+      setReactionName((await res.json())[0].name);
       service = (await serviceResponse.json())[0];
+      reactionService = (await serviceRes.json())[0];
+
     } catch (error) {
       if (error.code === 401) {
         navigation.navigate('Login');
@@ -49,33 +72,56 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
   };
   getService();
 
+  const saveButtonPressed = async () => {
+    try {
+      let data = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          action_id: actionId,
+          actionOptions,
+          reaction_id: reactionId,
+          reactionOptions,
+        }),
+      });
+      let res = await data.json();
+      navigation.navigate('AreaView');
+    } catch (error) {
+      if (error.code === 401) {
+        navigation.navigate('Login');
+      }
+      console.error('Error saving area:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
-      <View style={styles.actionBox}>
-        <Text style={styles.boxText}>{name}</Text>
-        <TouchableOpacity
-          style={[
-            styles.addButtonDisabled,
-            { backgroundColor: service?.color || '#ccc' },
-          ]}>
-          <Text style={styles.addTextDisabled}>Add</Text>
-        </TouchableOpacity>
+      <View
+        style={[
+          styles.reactionBox,
+          { backgroundColor: service?.color || '#000' },
+        ]}>
+        <Text style={styles.boxText}>{actionName}</Text>
       </View>
       <View style={styles.line} />
-      <View style={styles.actionBox}>
-        <Text style={styles.boxText}>Reaction</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() =>
-            navigation.navigate('AddReactionScreen', {
-              actionId,
-              actionOptions,
-            })
-          }>
-          <Text style={styles.addTextDisabled}>Add</Text>
-        </TouchableOpacity>
+      <View
+        style={[
+          styles.reactionBox,
+          { backgroundColor: reactionService?.color || '#000' },
+        ]}>
+        <Text style={styles.boxText}>{reactionName}</Text>
       </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+            saveButtonPressed();
+        }}>
+        <Text style={styles.addText}>Save</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -95,7 +141,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'black',
     padding: 15,
     borderRadius: 8,
     width: '80%',
@@ -105,7 +150,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'gray',
     padding: 15,
     borderRadius: 8,
     width: '80%',
@@ -143,4 +187,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WorkflowReactionScreen;
+export default ValidateAreaScreen;
