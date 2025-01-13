@@ -8,7 +8,7 @@ async function HandleGoogleLogin(
   navigation: any,
   ipAddress: string,
   login: boolean = true,
-  bearerToken: string = ''
+  bearerToken: string = '',
 ) {
   const config: AuthConfiguration = {
     issuer: 'https://accounts.google.com',
