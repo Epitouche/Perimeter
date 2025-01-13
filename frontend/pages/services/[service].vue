@@ -40,8 +40,7 @@ async function connectToService() {
 
     token.value = response.token;
     isLoading.value = false;
-    navigateTo("/myservices")
-
+    navigateTo("/myservices");
   } catch (error) {
     if (error instanceof Error) {
       showError(`Failed to connect to service: ${error.message}`);
@@ -64,7 +63,11 @@ function showError(message: string) {
 
 <template>
   <div class="flex flex-col items-center justify-center">
-    <LoadingScreen v-if="isLoading" v-model:is-loading="isLoading" :timeout="5000" />
+    <LoadingScreen
+      v-if="isLoading"
+      v-model:is-loading="isLoading"
+      :timeout="5000"
+    />
 
     <div
       v-if="errorMessage"

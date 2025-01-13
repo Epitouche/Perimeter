@@ -4,13 +4,13 @@ const props = defineProps<{
   isLoading: boolean;
 }>();
 
-const emit = defineEmits(['update:isLoading']);
+const emit = defineEmits(["update:isLoading"]);
 const timedOut = ref(false);
 
 onMounted(() => {
   setTimeout(() => {
     timedOut.value = true;
-    emit('update:isLoading', false);
+    emit("update:isLoading", false);
   }, props.timeout);
 });
 </script>
@@ -21,7 +21,6 @@ onMounted(() => {
     <p class="text6x1 font-extrabold">Loading...</p>
   </div>
 </template>
-
 
 <style scoped>
 .loading-screen {

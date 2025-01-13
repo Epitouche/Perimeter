@@ -10,12 +10,15 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const response = await $fetch(`http://server:8080/api/v1/area-result/${params.areaId}`, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + params.token,
+    const response = await $fetch(
+      `http://server:8080/api/v1/area-result/${params.areaId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + params.token,
+        },
       },
-    });
+    );
     return response;
   } catch (error: unknown) {
     console.error(error);
