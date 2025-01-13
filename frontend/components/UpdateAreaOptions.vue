@@ -86,7 +86,7 @@ onMounted(() => {
       <UIcon name="i-bytesize-edit" class="w-7 h-7" :style="{ color: color }" />
     </UButton>
   </div>
-  <USlideover v-model="isOpen" class="">
+  <USlideover v-model="isOpen">
     <UForm
       :state="state[type.id]"
       class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section"

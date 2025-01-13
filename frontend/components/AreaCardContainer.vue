@@ -27,7 +27,7 @@ const value = getQueryParam(route.query.value);
 
 const emit = defineEmits(["refreshAreas"]);
 
-const areaIdNumber = areaId ? Number(areaId) : null;
+const areaIdNumber = Number(areaId);
 const valueNumber = value ? Number(value) : null;
 
 if (areaIdNumber !== null && isNaN(areaIdNumber)) {
@@ -40,6 +40,10 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 const componentKey = ref(0);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
+  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+);
+
+const editAreaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
 );
 
@@ -58,6 +62,17 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
+};
+
+const toggleEditArea = (areaId: number) => {
+  editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
+  console.log("editAreaIsOpen: ", editAreaIsOpen); /////////////////////////////:
+  if (editAreaIsOpen[areaId] && !state[areaId]?.title && !state[areaId]?.description) {
+    const area = props.areas.find((a) => a.id === areaId);
+    if (area) {
+      state[areaId] = { title: area.title, description: area.description };
+    }
+  }
 };
 
 const toggleAreaEnableSwitch = async (areaId: number) => {
@@ -139,7 +154,7 @@ function formatName(name: string): string {
 
 const updateAreaValue = async (
   areaId: number,
-  typeName: string,
+  typeName: string | null,
   keyString: string,
   value: string | number,
 ) => {
@@ -164,47 +179,25 @@ const updateAreaValue = async (
     JSON.stringify(props.areas[areaIndex]),
   ) as Area;
 
-  if (typeName === "action") {
-    if (!updatedArea.action_option) {
-      updatedArea.action_option = {};
+  if (typeName) {
+    const targetOptionKey = `${typeName}_option` as keyof Area;
+
+    if (!(targetOptionKey in updatedArea)) {
+      (updatedArea[targetOptionKey] as { [key: string]: string | number }) = {};
     }
 
-    (updatedArea.action_option as { [key: string]: string | number })[
+    (updatedArea[targetOptionKey] as { [key: string]: string | number })[
       keyString
     ] =
       typeof value === "string" && !isNaN(Number(value))
         ? Number(value)
         : value;
-    (updatedArea.action.option as { [key: string]: string | number })[
-      keyString
-    ] =
-      typeof value === "string" && !isNaN(Number(value))
-        ? Number(value)
-        : value;
-
-    console.log("After updating action_option:", updatedArea.action_option);
-  } else if (typeName === "reaction") {
-    if (!updatedArea.reaction_option) {
-      updatedArea.reaction_option = {};
-    }
-
-    (updatedArea.reaction_option as { [key: string]: string | number })[
-      keyString
-    ] =
-      typeof value === "string" && !isNaN(Number(value))
-        ? Number(value)
-        : value;
-    (updatedArea.reaction.option as { [key: string]: string | number })[
-      keyString
-    ] =
-      typeof value === "string" && !isNaN(Number(value))
-        ? Number(value)
-        : value;
-
-    console.log("After updating reaction_option:", updatedArea.reaction_option);
   } else {
-    console.error("Invalid typeName:", typeName);
-    return;
+    const targetOtherKey = `${keyString}` as keyof Area;
+    (updatedArea[targetOtherKey] as string | number) =
+      typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : value;
   }
 
   console.log("Final updatedArea:", updatedArea);
@@ -228,10 +221,31 @@ const updateAreaValue = async (
   }
 
   router.push("myareas");
+  toggleEditArea(areaId);
+};
+
+const state = reactive<Record<number, Pick<Area, 'title' | 'description'>>>({});
+
+const filteredState = (areaId: number) => {
+  const areaState = state[areaId] || {};
+  return Object.entries(areaState)
+    .filter(([key]) => ['title', 'description'].includes(key))
+    .reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {} as Record<string, string | number>);
+};
+
+const isValidKey = (key: string): key is "title" | "description" => {
+  return key === "title" || key === "description";
 };
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
+
+  props.areas.forEach((area) => {
+    state[area.id] = { title: area.title, description: area.description };
+  });
 });
 
 if (areaIdNumber !== null && valueNumber !== null) {
@@ -240,38 +254,31 @@ if (areaIdNumber !== null && valueNumber !== null) {
 </script>
 
 <template>
-  <UContainer
-:key="componentKey" :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
+  <UContainer :key="componentKey" :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
     class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full">
     <div v-for="area in areas" :key="area.id">
-      <UContainer
-:ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+      <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)">
         <h2 class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full">
           {{ formatName(area.title) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
-          <img
-:src="area.action.service.icon" :alt="area.action.service.name"
+          <img :src="area.action.service.icon" :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12">
-          <img
-:src="area.reaction.service.icon" :alt="area.reaction.service.name"
+          <img :src="area.reaction.service.icon" :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12">
         </div>
       </UContainer>
-      <UModal
-v-model="areaIsOpen[area.id]" :ui="{
+      <UModal v-model="areaIsOpen[area.id]" :ui="{
         width: 'w-1/2',
       }">
-        <div
-class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+        <div class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }">
           <div>
             <div class="flex flex-row justify-between items-center w-full">
               <div class="flex flex-row items-center gap-3">
-                <UToggle
-size="xl" :model-value="areaIsEnabled(area.id)"
+                <UToggle size="xl" :model-value="areaIsEnabled(area.id)"
                   @update:model-value="toggleAreaEnableSwitch(area.id)" />
                 <div v-if="areaIsEnabled(area.id)" class="text-xl">
                   <p>Enabled</p>
@@ -288,11 +295,9 @@ size="xl" :model-value="areaIsEnabled(area.id)"
             <h2 class="text-6xl text-center w-full"><b>{{ area.title }}</b></h2>
           </div>
 
-          <UpdateAreaOptions
-:area-id="area.id" type-name="action" :color="area.action.service.color"
+          <UpdateAreaOptions :area-id="area.id" type-name="action" :color="area.action.service.color"
             :type="area.action" @update-area-value="updateAreaValue" />
-          <UpdateAreaOptions
-:area-id="area.id" type-name="reaction" :color="area.action.service.color"
+          <UpdateAreaOptions :area-id="area.id" type-name="reaction" :color="area.action.service.color"
             :type="area.reaction" @update-area-value="updateAreaValue" />
 
           <div>
@@ -302,16 +307,33 @@ size="xl" :model-value="areaIsEnabled(area.id)"
 
           <div class="flex flex-row justify-end items-center gap-5">
             <UTooltip text="Edit" class="self-end w-fit">
-              <UButton
-variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
-                @click="onEdit(area.id)">
+              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
+                @click="toggleEditArea(area.id)">
                 <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
               </UButton>
             </UTooltip>
 
+            <USlideover v-model="editAreaIsOpen[area.id]">
+              <UForm :state="state[area.id]"
+                class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section">
+                <UFormGroup v-for="(value, key) in filteredState(area.id)" :key="key" :label="key" :name="key"
+                  :ui="{ label: { base: 'capitalize text-xl pl-3' } }">
+                  <div class="flex flex-row justify-center items-center gap-3">
+                    <UInput v-model="state[area.id][key as keyof Pick<Area, 'title' | 'description'>]" :ui="{
+                      placeholder: '!px-5 !py-2 font-light',
+                      size: { sm: 'text-lg' },
+                    }" :placeholder="key + '...'" />
+                    <UButton
+                      @click="isValidKey(key) && state[area.id][key] !== props.areas.find(a => a.id === area.id)?.[key] && updateAreaValue(area.id, null, key, state[area.id][key])">
+                      <UIcon name="i-bytesize-checkmark" />
+                    </UButton>
+                  </div>
+                </UFormGroup>
+              </UForm>
+            </USlideover>
+
             <UTooltip text="Delete" class="self-end w-fit">
-              <UButton
-variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
+              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
                 @click="onDelete(area.id)">
                 <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
               </UButton>
@@ -320,8 +342,7 @@ variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
 
         </div>
       </UModal>
-      <UModal
-v-model="confirmDeletionIsOpen[area.id]" :ui="{
+      <UModal v-model="confirmDeletionIsOpen[area.id]" :ui="{
         base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
       }" :style="{ borderColor: area.action.service.color }">
         <h2 class="text-4xl font-semibold">
@@ -329,13 +350,11 @@ v-model="confirmDeletionIsOpen[area.id]" :ui="{
         </h2>
         <p class="text-2xl">This action cannot be undone!</p>
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
-          <UButton
-class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
+          <UButton class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
             borderColor: area.action.service.color,
             color: area.action.service.color,
           }" @click="cancelDeletion(area.id)">Cancel</UButton>
-          <UButton
-class="text-white text-2xl font-semibold py-3 px-5"
+          <UButton class="text-white text-2xl font-semibold py-3 px-5"
             :style="{ backgroundColor: area.action.service.color }" @click="onDelete(area.id)">Delete</UButton>
         </div>
       </UModal>
