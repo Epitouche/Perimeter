@@ -444,7 +444,6 @@ func (service *googleService) GoogleActionReceiveMail(
 	option json.RawMessage,
 	area schemas.Area,
 ) {
-
 	variable, err := initializedGoogleStorageVariable(area, *service)
 	if err != nil {
 		println("error initializing storage variable: " + err.Error())

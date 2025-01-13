@@ -484,7 +484,6 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 	option json.RawMessage,
 	area schemas.Area,
 ) {
-
 	variable, err := initializedMicrosoftStorageVariable(area, *service)
 	if err != nil {
 		println("error initializing storage variable: " + err.Error())

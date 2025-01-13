@@ -322,7 +322,6 @@ func (service *openweathermapService) OpenweathermapActionSpecificTemperature(
 	option json.RawMessage,
 	area schemas.Area,
 ) {
-
 	optionJSON := schemas.OpenweathermapActionSpecificTemperature{}
 
 	err := json.Unmarshal([]byte(option), &optionJSON)

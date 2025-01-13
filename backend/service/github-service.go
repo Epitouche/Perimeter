@@ -619,7 +619,6 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 	option json.RawMessage,
 	area schemas.Area,
 ) {
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -721,7 +720,6 @@ func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
 	option json.RawMessage,
 	area schemas.Area,
 ) {
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -824,7 +822,6 @@ func (service *githubService) GithubReactionGetLatestCommitInRepo(
 	option json.RawMessage,
 	area schemas.Area,
 ) string {
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -857,7 +854,6 @@ func (service *githubService) GithubReactionGetLatestWorkflowRunInRepo(
 	option json.RawMessage,
 	area schemas.Area,
 ) string {
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,

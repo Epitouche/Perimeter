@@ -389,7 +389,6 @@ func (service *spotifyService) SpotifyReactionSkipNextMusic(
 	option json.RawMessage,
 	area schemas.Area,
 ) string {
-
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,
@@ -437,7 +436,6 @@ func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
 	option json.RawMessage,
 	area schemas.Area,
 ) string {
-
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,

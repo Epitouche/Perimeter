@@ -166,7 +166,6 @@ func (service *timerService) TimerActionSpecificHour(
 	option json.RawMessage,
 	area schemas.Area,
 ) {
-
 	optionJSON := schemas.TimerActionSpecificHour{}
 
 	err := json.Unmarshal(option, &optionJSON)
