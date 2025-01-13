@@ -224,7 +224,9 @@ const updateAreaValue = async (
   }
 
   router.push("myareas");
-  toggleEditArea(areaId);
+  if (editAreaIsOpen[areaId]) {
+    toggleEditArea(areaId);
+  }
 };
 
 const state = reactive<Record<number, Pick<Area, "title" | "description">>>({});
