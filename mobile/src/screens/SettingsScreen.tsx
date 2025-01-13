@@ -13,7 +13,7 @@ import { RootStackParamList } from '../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SettingsScreen'>;
 
-const SettingsScreen = ({navigation}: {navigation: any}) => {
+const SettingsScreen = ({ navigation }: { navigation: any }) => {
   const { ipAddress, setIpAddress, setToken } = useContext(AppContext);
   // const [timezone, setTimezone] = useState('GMT');
   const [username, setUsername] = useState('');
