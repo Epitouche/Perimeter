@@ -6,7 +6,7 @@ const props = defineProps<{
   areaId: number;
   typeName: string;
   type: Area["action"] | Area["reaction"];
-  typeOptions: object;
+  typeOptions: string | object | undefined;
   color: string;
 }>();
 
