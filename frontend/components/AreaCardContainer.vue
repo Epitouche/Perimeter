@@ -278,12 +278,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
           class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }"
         >
-          <div class="flex flex-row justify-between pb-2 w-full">
+          <div class="flex flex-row justify-between pb-2 w-full overflow-y-auto">
             <UToggle
               :model-value="areaIsEnabled(area.id)"
               @update:model-value="toggleAreaEnableSwitch(area.id)"
             />
-            <h2 class="text-6xl text-center w-full"><b>Temp title</b></h2>
+            <h2 class="text-6xl text-center w-full"><b>{{ area.title }}</b></h2>
             <UButton
               variant="ghost"
               class="self-end w-fit"
@@ -292,27 +292,38 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
             </UButton>
           </div>
+          <div
+            class="overflow-y-auto scrollable-element"
+            style="height: 40vh; padding-right: 2%;"
+          >
+            <UpdateAreaSlideover
+              :area-id="area.id"
+              type-name="action"
+              :color="area.action.service.color"
+              :type="area.action"
+              @update-area-value="updateAreaValue"
+            />
+            <div class="mb-6"/>
+            <UpdateAreaSlideover
+              :area-id="area.id"
+              type-name="reaction"
+              :color="area.action.service.color"
+              :type="area.reaction"
+              @update-area-value="updateAreaValue"
+            />
+            <div class="mb-6"/>
 
-          <UpdateAreaSlideover
-            :area-id="area.id"
-            type-name="action"
-            :color="area.action.service.color"
-            :type="area.action"
-            @update-area-value="updateAreaValue"
-          />
-          <UpdateAreaSlideover
-            :area-id="area.id"
-            type-name="reaction"
-            :color="area.action.service.color"
-            :type="area.reaction"
-            @update-area-value="updateAreaValue"
-          />
-
-          <div>
-            <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
-            <p class="text-4xl">{{ area.description }}</p>
+            <div>
+              <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
+              <p class="text-4xl">{{ area.description }}</p>
+            </div>
+            <div class="mb-6"/>
+            <div class="flex justify-center">
+              <div class="w-full bg-white p-16 rounded-lg shadow-md">
+                <h2 class="text-black text-2xl font-semibold">No Result</h2>
+              </div>
+            </div>
           </div>
-
           <UTooltip text="Delete" class="self-end w-fit">
             <UButton
               variant="ghost"
@@ -379,5 +390,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .hover_underline_animation:hover::after {
   transform: scaleX(0.9);
   transform-origin: bottom center;
+}
+
+.scrollable-element {
+  scrollbar-width: thick;
+  scrollbar-color: white rgba(255, 255, 255, 0.2);
 }
 </style>
