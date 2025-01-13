@@ -51,7 +51,6 @@ func NewActionApi(
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
-//	@Param			id	path		int	true	"Service ID"
 //	@Success		200	{object}	[]schemas.Action
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse

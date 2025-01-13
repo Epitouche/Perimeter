@@ -45,7 +45,9 @@ type DropboxService interface {
 		folderAndFileList []schemas.DropboxEntry,
 	) (pathDisplay []string)
 	// Actions functions
+	DropboxActionUpdateInFolder(channel chan string, option json.RawMessage, area schemas.Area)
 	// Reactions functions
+	DropboxReactionSaveUrl(option json.RawMessage, area schemas.Area) string
 }
 
 type dropboxService struct {
@@ -100,7 +102,7 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	return []schemas.Action{
 		{
 			Name:               string(schemas.UpdateInFolder),
-			Description:        "This reaction save content from a URL to a file in Dropbox",
+			Description:        "This reaction save content from a URL to a file in Dropbox\nExample:\npath: folder/subfolder",
 			Service:            service.serviceInfo,
 			Option:             actionUpdateInFolder,
 			MinimumRefreshRate: 10,
@@ -126,7 +128,7 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SaveUrl),
-			Description: "This reaction save content from a URL to a file in Dropbox",
+			Description: "This reaction save content from a URL to a file in Dropbox\nExample:\npath: folder/subfolder\nurl: https://example.com",
 			Service:     service.serviceInfo,
 			Option:      saveUrlReactionOption,
 		},
