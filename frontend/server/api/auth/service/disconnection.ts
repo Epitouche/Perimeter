@@ -1,6 +1,5 @@
 import { handleError } from "~/utils/handleErrors";
 
-
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   if (!params.authorization || !params.tokenId) {

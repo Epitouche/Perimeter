@@ -68,7 +68,7 @@ onMounted(() => {
     <div v-for="type in props.types" :key="type.id">
       <UContainer
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        class="shadow-xl flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
+        class="flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
         @click="openConfig(type.id)"
       >
@@ -86,16 +86,18 @@ onMounted(() => {
         }"
         :style="{ borderColor: props.serviceInfo?.color || 'black' }"
       >
-      <template #default>
-        <UForm
-        :state="state[type.id]"
-        class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
+        <template #default>
+          <UForm
+            :state="state[type.id]"
+            class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)"
           >
-            <h2 class="text-center text-6xl font-semibold m-0">
+            <h2 class="text-center text-6xl font-semibold pb-2">
               {{ formatString(type.name) }}
             </h2>
-            <h2 class="text-center text-2xl font-medium -mt-6"> {{ type.description }} </h2>
+            <h2 class="text-center text-2xl font-medium -mt-6">
+              {{ type.description }}
+            </h2>
 
             <UFormGroup
               v-for="(value, key) in state[type.id]"

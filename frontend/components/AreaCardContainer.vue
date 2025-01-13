@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LocationQueryValue } from "vue-router";
 import type { Area } from "@/interfaces/areas";
 
 const props = defineProps<{
@@ -7,6 +8,35 @@ const props = defineProps<{
 
 const token = useCookie("token");
 const errorMessage = ref<string | null>(null);
+const router = useRouter();
+const route = useRoute();
+
+const getQueryParam = (
+  param: LocationQueryValue | LocationQueryValue[] | undefined,
+): string | null => {
+  if (Array.isArray(param)) {
+    return param.length > 0 ? String(param[0]) : null;
+  }
+  return param ? String(param) : null;
+};
+
+// Get query parameters safely
+const areaId = getQueryParam(route.query.areaId);
+const typeName = getQueryParam(route.query.typeName);
+const keyString = getQueryParam(route.query.keyString);
+const value = getQueryParam(route.query.value);
+
+// Convert areaId, key, and value to numbers where appropriate
+const areaIdNumber = areaId ? Number(areaId) : null;
+const valueNumber = value ? Number(value) : null;
+
+// Ensure areaIdNumber, keyNumber, valueNumber are valid numbers
+if (areaIdNumber !== null && isNaN(areaIdNumber)) {
+  console.error("Invalid areaId:", areaId);
+}
+if (valueNumber !== null && isNaN(valueNumber)) {
+  console.error("Invalid value:", value);
+}
 
 const componentKey = ref(0);
 
@@ -14,12 +44,53 @@ const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
 );
 
+const areaIsEnabled = (areaId: number) => {
+  const areaIndex = props.areas.findIndex((area) => area.id === areaId);
+  if (areaIndex === -1) {
+    console.error("Area not found");
+    return false;
+  }
+  return props.areas[areaIndex].enable;
+};
+
 const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
 );
 
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
+};
+
+const toggleAreaEnableSwitch = async (areaId: number) => {
+  const areaIndex = props.areas.findIndex((area) => area.id === areaId);
+  if (areaIndex === -1) {
+    console.error("Area not found");
+    return;
+  }
+
+  const updatedArea = JSON.parse(
+    JSON.stringify(props.areas[areaIndex]),
+  ) as Area;
+  updatedArea.enable = !updatedArea.enable;
+
+  try {
+    errorMessage.value = null;
+
+    const response = await $fetch("/api/area/update", {
+      method: "POST",
+      body: {
+        token: token.value,
+        area: updatedArea,
+      },
+    });
+
+    console.log("response:", response);
+  } catch (error) {
+    console.log("error:", error);
+    errorMessage.value = handleErrorStatus(error);
+  }
+
+  componentKey.value += 1;
 };
 
 const toggleConfirmDeletionModal = (areaId: number) => {
@@ -63,9 +134,107 @@ function formatName(name: string): string {
   return name.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
+const updateAreaValue = async (
+  areaId: number,
+  typeName: string,
+  keyString: string,
+  value: string | number,
+) => {
+  console.log(
+    "areaId:",
+    areaId,
+    "typeName:",
+    typeName,
+    "keyString:",
+    keyString,
+    "value:",
+    value,
+  );
+
+  const areaIndex = props.areas.findIndex((area) => area.id === areaId);
+  if (areaIndex === -1) {
+    console.error("Area not found");
+    return;
+  }
+
+  // Deep clone to avoid Proxy issues
+  const updatedArea = JSON.parse(
+    JSON.stringify(props.areas[areaIndex]),
+  ) as Area;
+
+  if (typeName === "action") {
+    if (!updatedArea.action_option) {
+      updatedArea.action_option = {}; // Initialize if null or undefined
+    }
+
+    (updatedArea.action_option as { [key: string]: string | number })[
+      keyString
+    ] =
+      typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : value;
+    (updatedArea.action.option as { [key: string]: string | number })[
+      keyString
+    ] =
+      typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : value;
+
+    console.log("After updating action_option:", updatedArea.action_option);
+  } else if (typeName === "reaction") {
+    if (!updatedArea.reaction_option) {
+      updatedArea.reaction_option = {}; // Initialize if null or undefined
+    }
+
+    (updatedArea.reaction_option as { [key: string]: string | number })[
+      keyString
+    ] =
+      typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : value;
+    (updatedArea.reaction.option as { [key: string]: string | number })[
+      keyString
+    ] =
+      typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : value;
+
+    console.log("After updating reaction_option:", updatedArea.reaction_option);
+  } else {
+    console.error("Invalid typeName:", typeName);
+    return;
+  }
+
+  console.log("Final updatedArea:", updatedArea);
+
+  try {
+    errorMessage.value = null;
+
+    const response = await $fetch("/api/area/update", {
+      method: "POST",
+      body: {
+        token: token.value,
+        area: updatedArea,
+      },
+    });
+
+    console.log("response:", response);
+  } catch (error) {
+    console.log("error:", error);
+    errorMessage.value = handleErrorStatus(error);
+  }
+
+  router.push("myareas");
+};
+
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
 });
+
+// When the component is mounted, we should ensure proper logic for updateAreaValue
+if (areaIdNumber !== null && valueNumber !== null) {
+  updateAreaValue(areaIdNumber, typeName!, keyString!, valueNumber);
+}
 </script>
 
 <template>
@@ -91,12 +260,12 @@ onMounted(() => {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -110,7 +279,11 @@ onMounted(() => {
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div class="flex flex-row justify-between pb-2 w-full">
-            <h2 class="text-6xl text-center w-full"><b> {{ area.title }}</b></h2>
+            <UToggle
+              :model-value="areaIsEnabled(area.id)"
+              @update:model-value="toggleAreaEnableSwitch(area.id)"
+            />
+            <h2 class="text-6xl text-center w-full"><b>Temp title</b></h2>
             <UButton
               variant="ghost"
               class="self-end w-fit"
@@ -120,12 +293,24 @@ onMounted(() => {
             </UButton>
           </div>
 
-          <UpdateAreaDropdown :type="area.action" />
-          <UpdateAreaDropdown :type="area.reaction" />
+          <UpdateAreaSlideover
+            :area-id="area.id"
+            type-name="action"
+            :color="area.action.service.color"
+            :type="area.action"
+            @update-area-value="updateAreaValue"
+          />
+          <UpdateAreaSlideover
+            :area-id="area.id"
+            type-name="reaction"
+            :color="area.action.service.color"
+            :type="area.reaction"
+            @update-area-value="updateAreaValue"
+          />
 
           <div>
             <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
-            <p class="text-4xl"> {{ area.description }}</p>
+            <p class="text-4xl">{{ area.description }}</p>
           </div>
 
           <UTooltip text="Delete" class="self-end w-fit">
