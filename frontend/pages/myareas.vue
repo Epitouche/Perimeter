@@ -84,8 +84,16 @@ onMounted(() => {
       tabindex="0"
     >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
-        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" tabindex="0" />
-        <UDropdown :items="items" :popper="{ placement: 'bottom' }" tabindex="0">
+        <SearchBar
+          v-model:search-query="searchQuery"
+          class="!w-1/4"
+          tabindex="0"
+        />
+        <UDropdown
+          :items="items"
+          :popper="{ placement: 'bottom' }"
+          tabindex="0"
+        >
           <UIcon
             name="i-bytesize-filter"
             class="text-black w-10 h-10 p-0 pb-1"
@@ -98,7 +106,7 @@ onMounted(() => {
                 :popper="{ placement: 'top' }"
                 class="w-fit"
               >
-                <UToggle v-model="dateSort"/>
+                <UToggle v-model="dateSort" />
               </UTooltip>
               <h3>Oldest</h3>
             </div>

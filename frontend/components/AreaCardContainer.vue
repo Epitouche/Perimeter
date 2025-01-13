@@ -286,12 +286,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -301,7 +301,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
         :ui="{
           width: 'w-1/2',
         }"
-
       >
         <div
           class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
@@ -316,7 +315,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   tabindex="0"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
                   @keydown.enter="toggleAreaEnableSwitch(area.id)"
-
                 />
                 <div v-if="areaIsEnabled(area.id)" class="text-xl">
                   <p>Enabled</p>
@@ -372,7 +370,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
                 tabindex="0"
                 @click="toggleEditArea(area.id)"
-                @keydown.enter="toggleEditArea(area.id)"                
+                @keydown.enter="toggleEditArea(area.id)"
               >
                 <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
               </UButton>
@@ -404,7 +402,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                       :placeholder="key + '...'"
                     />
                     <UButton
-                      tabindex="0"                
+                      tabindex="0"
                       @click="
                         isValidKey(key) &&
                         state[area.id][key] !==
