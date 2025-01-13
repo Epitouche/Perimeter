@@ -21,8 +21,8 @@ type DropboxService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -133,9 +133,9 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 }
 
-func (service *dropboxService) FindActionbyName(
+func (service *dropboxService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.UpdateInFolder):
 		return service.DropboxActionUpdateInFolder
@@ -144,9 +144,9 @@ func (service *dropboxService) FindActionbyName(
 	}
 }
 
-func (service *dropboxService) FindReactionbyName(
+func (service *dropboxService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.SaveUrl):
 		return service.DropboxReactionSaveUrl
@@ -492,15 +492,8 @@ func (service *dropboxService) IsEntryUpdate(
 func (service *dropboxService) DropboxActionUpdateInFolder(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -605,7 +598,7 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 
 func (service *dropboxService) DropboxReactionSaveUrl(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
 	optionJSON := schemas.DropboxSaveUrlReactionOption{}
 
@@ -614,13 +607,6 @@ func (service *dropboxService) DropboxReactionSaveUrl(
 		println("error unmarshal temperature option: " + err.Error())
 		time.Sleep(time.Second)
 		return "error unmarshal temperature option: " + err.Error()
-	}
-
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area" + err.Error()
 	}
 
 	// Find the token of the user

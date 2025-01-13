@@ -22,8 +22,8 @@ type MicrosoftService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -31,21 +31,21 @@ type MicrosoftService interface {
 	MicrosoftActionReceiveMail(
 		channel chan string,
 		option json.RawMessage,
-		idArea uint64,
+		area schemas.Area,
 	)
 	MicrosoftActionEventStarting(
 		channel chan string,
 		option json.RawMessage,
-		idArea uint64,
+		area schemas.Area,
 	)
 	// Reactions functions
 	MicrosoftReactionSendMail(
 		option json.RawMessage,
-		idArea uint64,
+		area schemas.Area,
 	) string
 	MicrosoftReactionCreateEvent(
 		option json.RawMessage,
-		idArea uint64,
+		area schemas.Area,
 	) string
 }
 
@@ -168,9 +168,9 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 }
 
-func (service *microsoftService) FindActionbyName(
+func (service *microsoftService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.ReceiveMicrosoftMail):
 		return service.MicrosoftActionReceiveMail
@@ -181,9 +181,9 @@ func (service *microsoftService) FindActionbyName(
 	}
 }
 
-func (service *microsoftService) FindReactionbyName(
+func (service *microsoftService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.SendMicrosoftMail):
 		return service.MicrosoftReactionSendMail
@@ -298,17 +298,12 @@ func (service *microsoftService) GetUserInfo(
 func (service *microsoftService) MicrosoftActionEventStarting(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
 	options := schemas.MicrosoftEventIncomingOptions{}
 	err := json.Unmarshal(option, &options)
 	if err != nil {
 		println("error unmarshalling options: " + err.Error())
-		return
-	}
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		println("error finding area: " + err.Error())
 		return
 	}
 
@@ -487,13 +482,8 @@ func getNewEmails(
 func (service *microsoftService) MicrosoftActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		println("error finding area: " + err.Error())
-		return
-	}
 
 	variable, err := initializedMicrosoftStorageVariable(area, *service)
 	if err != nil {
@@ -555,19 +545,13 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 
 func (service *microsoftService) MicrosoftReactionSendMail(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
 	options := schemas.MicrosoftReactionSendMailOptions{}
 	err := json.Unmarshal(option, &options)
 	if err != nil {
 		fmt.Println("Error unmarshalling options:", err)
 		return "Error unmarshalling options: " + err.Error()
-	}
-
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area: " + err.Error()
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
@@ -636,19 +620,13 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 
 func (service *microsoftService) MicrosoftReactionCreateEvent(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
 	options := schemas.MicrosoftCreateEventOptions{}
 	err := json.Unmarshal(option, &options)
 	if err != nil {
 		fmt.Println("Error unmarshalling options:", err)
 		return "Error unmarshalling options: " + err.Error()
-	}
-
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area: " + err.Error()
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
