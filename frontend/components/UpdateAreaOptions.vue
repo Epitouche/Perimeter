@@ -71,7 +71,7 @@ onMounted(() => {
       class="w-16 h-16 p-0"
     >
     <h2 class="text-5xl">
-      <b>{{ type.service.name }}</b
+      <b>{{ formatName(type.service.name) }}</b
       >:
     </h2>
     <p class="text-4xl">{{ formatName(type.name) }}</p>
