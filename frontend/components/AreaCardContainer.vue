@@ -316,15 +316,18 @@ if (areaIdNumber !== null && valueNumber !== null) {
           >
         </div>
       </UContainer>
-      <UModal v-model="areaIsOpen[area.id]" :ui="{
+      <UModal
+v-model="areaIsOpen[area.id]" :ui="{
         width: 'w-1/2',
       }">
-        <div class="flex flex-col gap-20 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+        <div
+class="flex flex-col gap-20 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }">
           <div>
             <div class="flex flex-row justify-between items-center w-full overflow-y-auto px-1">
               <div class="flex flex-row items-center gap-3">
-                <UToggle size="2xl" :model-value="areaIsEnabled(area.id)"
+                <UToggle
+size="2xl" :model-value="areaIsEnabled(area.id)"
                   @update:model-value="toggleAreaEnableSwitch(area.id)" />
                 <div v-if="areaIsEnabled(area.id)" class="text-2xl">
                   <p>Enabled</p>
@@ -348,11 +351,13 @@ if (areaIdNumber !== null && valueNumber !== null) {
           </div>
 
           <div class="flex flex-col gap-10">
-            <UpdateAreaOptions :area-id="area.id" type-name="action" :color="area.action.service.color"
+            <UpdateAreaOptions
+:area-id="area.id" type-name="action" :color="area.action.service.color"
               :type="area.action" :type-options="area.action_option" @update-area-value="updateAreaValue" />
 
 
-            <UpdateAreaOptions :area-id="area.id" type-name="reaction" :color="area.action.service.color"
+            <UpdateAreaOptions
+:area-id="area.id" type-name="reaction" :color="area.action.service.color"
               :type="area.reaction" :type-options="area.reaction_option" @update-area-value="updateAreaValue" />
           </div>
           <div>
@@ -397,14 +402,16 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
                 >
                   <div class="flex flex-row justify-center items-center gap-3">
-                    <UInput v-model="state[area.id][
+                    <UInput
+v-model="state[area.id][
                       key as keyof Pick<Area, 'title' | 'description'>
                     ]
                       " :ui="{
                         placeholder: '!px-5 !py-2 font-light',
                         size: { sm: 'text-lg' },
                       }" :placeholder="key + '...'" />
-                    <UButton @click="
+                    <UButton
+@click="
                       isValidKey(key) &&
                       state[area.id][key] !==
                       props.areas.find((a) => a.id === area.id)?.[key] &&
