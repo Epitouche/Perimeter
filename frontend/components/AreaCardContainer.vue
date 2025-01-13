@@ -311,12 +311,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -536,7 +536,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
 [tabindex="0"]:focus {
   outline: 2px solid #007bff;
   outline-offset: 2px;
- }
+}
 .scrollable-element {
   scrollbar-width: thick;
   scrollbar-color: white rgba(255, 255, 255, 0.2);
