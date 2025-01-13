@@ -9,8 +9,23 @@ type Props = NativeStackScreenProps<RootStackParamList, 'ValidateAreaScreen'>;
 const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   const { actionId, actionOptions, reactionId, reactionOptions } = route.params;
   const { ipAddress, token } = useContext(AppContext);
-  let service: any;
-  let reactionService: any;
+  interface Service {
+    color: string;
+    created_at: string;
+    description: string;
+    icon: string;
+    id: number;
+    name: string;
+    oauth: boolean;
+    update_at: string;
+  }
+
+  const [actionService, setActionService] = React.useState<Service | null>(
+    null,
+  );
+  const [reactionService, setReactionService] = React.useState<Service | null>(
+    null,
+  );
   const [actionName, setActionName] = React.useState('');
   const [reactionName, setReactionName] = React.useState('');
 
@@ -37,32 +52,12 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         },
       );
 
-      const serviceResponse = await fetch(
-        `http://${ipAddress}:8080/api/v1/action/info/service/${actionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      const serviceRes = await fetch(
-        `http://${ipAddress}:8080/api/v1/reaction/info/service/${reactionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      setActionName((await response.json())[0].name);
-      setReactionName((await res.json())[0].name);
-      service = (await serviceResponse.json())[0];
-      reactionService = (await serviceRes.json())[0];
-
+      let actionData = await response.json();
+      let reactionData = await res.json();
+      setActionName(actionData[0].name);
+      setReactionName(reactionData[0].name);
+      setActionService(actionData[0].service);
+      setReactionService(reactionData[0].service);
     } catch (error) {
       if (error.code === 401) {
         navigation.navigate('Login');
@@ -102,23 +97,23 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
       <Text style={styles.title}>Add Area</Text>
       <View
         style={[
-          styles.reactionBox,
-          { backgroundColor: service?.color || '#000' },
+          styles.actionBox,
+          { backgroundColor: actionService?.color, borderRadius: 8 },
         ]}>
         <Text style={styles.boxText}>{actionName}</Text>
       </View>
       <View style={styles.line} />
       <View
         style={[
-          styles.reactionBox,
-          { backgroundColor: reactionService?.color || '#000' },
+          styles.actionBox,
+          { backgroundColor: reactionService?.color, borderRadius: 8 },
         ]}>
         <Text style={styles.boxText}>{reactionName}</Text>
       </View>
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {
-            saveButtonPressed();
+          saveButtonPressed();
         }}>
         <Text style={styles.addText}>Save</Text>
       </TouchableOpacity>
@@ -139,20 +134,13 @@ const styles = StyleSheet.create({
   },
   actionBox: {
     flexDirection: 'row',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 15,
     borderRadius: 8,
     width: '80%',
     marginBottom: 10,
-  },
-  reactionBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 15,
-    borderRadius: 8,
-    width: '80%',
   },
   boxText: {
     color: '#fff',

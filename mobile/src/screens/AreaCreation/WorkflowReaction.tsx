@@ -12,8 +12,19 @@ type Props = NativeStackScreenProps<
 const WorkflowReactionScreen = ({ navigation, route }: Props) => {
   const { actionId, actionOptions } = route.params;
   const { ipAddress, token } = useContext(AppContext);
-  let service: any;
   const [name, setName] = React.useState('');
+  interface Service {
+    color: string;
+    created_at: string;
+    description: string;
+    icon: string;
+    id: number;
+    name: string;
+    oauth: boolean;
+    update_at: string;
+  }
+
+  const [service, setService] = React.useState<Service | null>(null);
 
   const getService = async () => {
     try {
@@ -27,19 +38,10 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
           },
         },
       );
-      const serviceResponse = await fetch(
-        `http://${ipAddress}:8080/api/v1/action/info/service/${actionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      
-      setName((await response.json())[0].name);
-      service = (await serviceResponse.json())[0];
+
+      let data = await response.json();
+      setName(data[0].name);
+      setService(data[0].service);
     } catch (error) {
       if (error.code === 401) {
         navigation.navigate('Login');
@@ -52,15 +54,12 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
-      <View style={styles.actionBox}>
+      <View
+        style={[
+          styles.actionBox,
+          { backgroundColor: service?.color, borderRadius: 8 },
+        ]}>
         <Text style={styles.boxText}>{name}</Text>
-        <TouchableOpacity
-          style={[
-            styles.addButtonDisabled,
-            { backgroundColor: service?.color || '#ccc' },
-          ]}>
-          <Text style={styles.addTextDisabled}>Add</Text>
-        </TouchableOpacity>
       </View>
       <View style={styles.line} />
       <View style={styles.actionBox}>
@@ -100,15 +99,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: '80%',
     marginBottom: 10,
-  },
-  reactionBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: 'gray',
-    padding: 15,
-    borderRadius: 8,
-    width: '80%',
   },
   boxText: {
     color: '#fff',

@@ -15,6 +15,7 @@ import AddReactionScreen from '../screens/AreaCreation/AddReaction';
 import SelectReactionScreen from '../screens/AreaCreation/SelectReaction';
 import SettingsScreen from '../screens/SettingsScreen';
 import AreaDetailsScreen from '../screens/AreaDetails';
+import ValidateAreaScreen from '../screens/AreaCreation/ValidateArea';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -38,6 +39,12 @@ export type RootStackParamList = {
     actionId: number;
     actionOptions: { [key: string]: string };
     serviceId: number;
+  };
+  ValidateAreaScreen: {
+    actionId: number;
+    actionOptions: { [key: string]: string };
+    reactionId: number;
+    reactionOptions: { [key: string]: string };
   };
   SettingsScreen: undefined;
   AreaDetails: { area: any };
@@ -80,6 +87,10 @@ const Navigation = () => {
         <Stack.Screen
           name="SelectReactionScreen"
           component={SelectReactionScreen}
+        />
+        <Stack.Screen
+          name="ValidateAreaScreen"
+          component={ValidateAreaScreen}
         />
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="AreaDetails" component={AreaDetailsScreen} />
