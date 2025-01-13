@@ -23,18 +23,18 @@ const validateCreation = () => {
 };
 
 const onCreate = async () => {
-  console.log("actionId:", websiteStore.actionId);
-  console.log("actionOptions:", websiteStore.actionOptions);
-  console.log("reactionId:", websiteStore.reactionId);
-  console.log("reactionOptions:", websiteStore.reactionOptions);
-  console.log("title: ", title.value);
-  console.log("description: ", description.value);
+  //console.log("actionId:", websiteStore.actionId);
+  //console.log("actionOptions:", websiteStore.actionOptions);
+  //console.log("reactionId:", websiteStore.reactionId);
+  //console.log("reactionOptions:", websiteStore.reactionOptions);
+  //console.log("title: ", title.value);
+  //console.log("description: ", description.value);
 
   creationPopup.value = false;
   error.value = null;
 
   try {
-    const response = await $fetch("/api/workflow/create", {
+    await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
         token: token.value,
@@ -46,7 +46,6 @@ const onCreate = async () => {
         description: description.value,
       },
     });
-    console.log("response:", response);
     createdMessage.value = "Workflow created successfully!";
     showPageContent.value = false;
     setTimeout(() => {
@@ -56,7 +55,6 @@ const onCreate = async () => {
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
   } catch (error: unknown) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);

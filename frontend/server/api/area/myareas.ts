@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
     });
     return response;
   } catch (error: unknown) {
-    console.log("error: ", error);
     console.error(error);
     handleError(error);
   }

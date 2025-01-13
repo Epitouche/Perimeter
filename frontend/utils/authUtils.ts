@@ -12,7 +12,6 @@ export const authApiCall = async (label: string) => {
         link: label,
       },
     });
-    console.log("Response of authApiCall:", response);
     navigateTo(response.authentication_url, { external: true });
     return response;
   } catch (error: unknown) {
@@ -22,7 +21,6 @@ export const authApiCall = async (label: string) => {
 
 export const disconnectService = async (token: string, tokenId: number) => {
   try {
-    console.log("Infos: ", token, " with : ", tokenId);
     const response = await $fetch("/api/auth/service/disconnection", {
       method: "POST",
       body: {
@@ -30,7 +28,6 @@ export const disconnectService = async (token: string, tokenId: number) => {
         tokenId: tokenId,
       },
     });
-    console.log("Response of disconnectService:", response);
     return response;
   } catch (error: unknown) {
     throw handleErrorStatus(error);
@@ -63,7 +60,7 @@ export const handleClick = async (
       await authApiCall(apiLink);
       return false;
     } else {
-      console.log(`Unknown service "${label}" clicked.`);
+      console.error(`Unknown service "${label}" clicked.`);
       return false;
     }
   }

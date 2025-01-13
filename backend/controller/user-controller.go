@@ -118,6 +118,8 @@ func (controller *userController) GetUserAllInfo(
 		return userInfo, fmt.Errorf("unable to get user info because %w", err)
 	}
 
+	user.Password = ""
+
 	tokens, err := controller.tokenService.GetTokenByUserId(user.Id)
 	if err != nil {
 		return userInfo, fmt.Errorf("unable to get tokens info because %w", err)

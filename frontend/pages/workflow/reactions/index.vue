@@ -22,7 +22,7 @@ const fetchServices = async () => {
     });
     services.value = result;
     filteredServices.value = result;
-    console.log("services", services.value);
+    //console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 

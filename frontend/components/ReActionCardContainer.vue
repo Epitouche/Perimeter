@@ -40,6 +40,18 @@ const openConfig = (typeId: number) => {
 const onSubmit = (typeId: number, typeTitle: string) => {
   const modifiedOptions = { ...state[typeId] };
 
+  const hasInvalidTypes = Object.entries(modifiedOptions).some(
+    ([key, value]) => {
+      const expectedType = fieldTypes[typeId][key];
+      return typeof value !== expectedType;
+    },
+  );
+
+  if (hasInvalidTypes) {
+    alert("Some fields have invalid types! Please correct them.");
+    return;
+  }
+
   router.push({
     name: "workflow",
     query: {
@@ -50,6 +62,20 @@ const onSubmit = (typeId: number, typeTitle: string) => {
     },
   });
 };
+
+const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
+  Object.fromEntries(
+    props.types.map((type) => [
+      type.id,
+      Object.fromEntries(
+        Object.keys(state[type.id]).map((key) => {
+          const value = state[type.id][key];
+          return [key, typeof value];
+        }),
+      ),
+    ]),
+  ),
+);
 
 function formatString(str: string): string {
   return str.replace(/([a-z])([A-Z])/g, "$1 $2");
@@ -108,6 +134,9 @@ onMounted(() => {
             >
               <UInput
                 v-model="state[type.id][key] as string | number | undefined"
+                :type="
+                  fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
+                "
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
                   size: { sm: 'text-3xl' },
