@@ -30,27 +30,21 @@ const state = reactive<{ [key: number]: Record<string, string | number> }>(
 );
 
 const editValue = async (typeName: string, typeId: number, key: string) => {
-  // Assuming state[typeId] returns an object and you want the key and its updated value
   const updatedValues = { ...state[typeId] };
-
-  // Get the value for the edited key (this is dynamic, not always the first key)
   const updatedValue = updatedValues[key];
 
-  console.log("editedKey: ", key); // Log the key that was edited
-  console.log("updatedValue: ", updatedValue); // Log the updated value
+  // console.log("editedKey: ", key);
+  // console.log("updatedValue: ", updatedValue);
 
-  // Emit the event with appropriate types
-  // Ensure areaId is a number and key is a valid key (should be string)
   emit("updateAreaValue", props.areaId, typeName, key, updatedValue);
 
-  // If you want to navigate, ensure the query parameters are also typed correctly
   router.push({
     name: "myareas",
     query: {
-      areaId: props.areaId.toString(), // Convert areaId to string
+      areaId: props.areaId.toString(),
       typeName: typeName,
-      keyString: key, // key should remain string if it's a string key in your data
-      value: updatedValue, // First value from updatedValues
+      keyString: key,
+      value: updatedValue,
     },
   });
   toggleSlideover();
@@ -65,7 +59,7 @@ function formatName(name: string): string {
 }
 
 onMounted(() => {
-  console.log("type: ", props.type);
+  // console.log("type: ", props.type);
 });
 </script>
 
@@ -92,7 +86,7 @@ onMounted(() => {
       <UIcon name="i-bytesize-edit" class="w-7 h-7" :style="{ color: color }" />
     </UButton>
   </div>
-  <USlideover v-model="isOpen" class="">
+  <USlideover v-model="isOpen">
     <UForm
       :state="state[type.id]"
       class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section"
