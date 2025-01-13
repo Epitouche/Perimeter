@@ -37,7 +37,7 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
           },
         },
       );
-      
+
       setName((await response.json())[0].name);
       service = (await serviceResponse.json())[0];
     } catch (error) {

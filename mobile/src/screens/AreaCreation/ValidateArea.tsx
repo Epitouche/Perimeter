@@ -62,7 +62,6 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
       setReactionName((await res.json())[0].name);
       service = (await serviceResponse.json())[0];
       reactionService = (await serviceRes.json())[0];
-
     } catch (error) {
       if (error.code === 401) {
         navigation.navigate('Login');
@@ -118,7 +117,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {
-            saveButtonPressed();
+          saveButtonPressed();
         }}>
         <Text style={styles.addText}>Save</Text>
       </TouchableOpacity>
