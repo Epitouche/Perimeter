@@ -18,8 +18,8 @@ type ServiceService interface {
 	GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error)
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	FindServiceByName(name string) schemas.Service
 	RedirectToServiceOauthPage(
 		serviceName schemas.ServiceName,
@@ -47,8 +47,8 @@ type ServiceService interface {
 }
 
 type ServiceInterface interface {
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	GetServiceInfo() schemas.Service
 }
 
@@ -357,23 +357,23 @@ func (service *serviceService) GetServices() []interface{} {
 	return service.allService
 }
 
-func (service *serviceService) FindActionbyName(
+func (service *serviceService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	for _, service := range service.allService {
-		if service.(ServiceInterface).FindActionbyName(name) != nil {
-			return service.(ServiceInterface).FindActionbyName(name)
+		if service.(ServiceInterface).FindActionByName(name) != nil {
+			return service.(ServiceInterface).FindActionByName(name)
 		}
 	}
 	return nil
 }
 
-func (service *serviceService) FindReactionbyName(
+func (service *serviceService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	for _, service := range service.allService {
-		if service.(ServiceInterface).FindReactionbyName(name) != nil {
-			return service.(ServiceInterface).FindReactionbyName(name)
+		if service.(ServiceInterface).FindReactionByName(name) != nil {
+			return service.(ServiceInterface).FindReactionByName(name)
 		}
 	}
 	return nil

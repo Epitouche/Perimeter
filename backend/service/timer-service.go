@@ -17,13 +17,13 @@ type TimerService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	// Service specific functions
 	// Actions functions
-	TimerActionSpecificHour(c chan string, option json.RawMessage, idArea uint64)
+	TimerActionSpecificHour(c chan string, option json.RawMessage, area schemas.Area)
 	// Reactions functions
-	TimerReactionGiveTime(option json.RawMessage, idArea uint64) string
+	TimerReactionGiveTime(option json.RawMessage, area schemas.Area) string
 }
 
 type timerService struct {
@@ -58,9 +58,9 @@ func (service *timerService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
-func (service *timerService) FindActionbyName(
+func (service *timerService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.SpecificTime):
 		return service.TimerActionSpecificHour
@@ -69,9 +69,9 @@ func (service *timerService) FindActionbyName(
 	}
 }
 
-func (service *timerService) FindReactionbyName(
+func (service *timerService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.GiveTime):
 		return service.TimerReactionGiveTime
@@ -164,18 +164,11 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 func (service *timerService) TimerActionSpecificHour(
 	c chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return
-	}
-
 	optionJSON := schemas.TimerActionSpecificHour{}
 
-	err = json.Unmarshal(option, &optionJSON)
+	err := json.Unmarshal(option, &optionJSON)
 	if err != nil {
 		println("error unmarshal timer option: " + err.Error())
 		time.Sleep(time.Second)
@@ -274,7 +267,7 @@ func (service *timerService) TimerActionSpecificHour(
 
 func (service *timerService) TimerReactionGiveTime(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
 	actualTimeApi, err := getActualTime()
 	if err != nil {

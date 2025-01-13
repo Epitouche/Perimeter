@@ -279,17 +279,11 @@ definitions:
 info:
   contact: {}
 paths:
-  /action/info/:id:
+  /action/info/:idService:
     get:
       consumes:
       - application/json
       description: get action info of service id
-      parameters:
-      - description: Service ID
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -309,7 +303,34 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get action info
+      summary: get action info of service id
+      tags:
+      - Action
+  /action/info/service/:idAction:
+    get:
+      consumes:
+      - application/json
+      description: get service info of action id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.Action'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: get service info of action id
       tags:
       - Action
   /area:

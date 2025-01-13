@@ -24,4 +24,5 @@ var (
 	ErrTokenAlreadyExists            = errors.New("token already exists")
 	ErrAccessTokenNotFoundInResponse = errors.New("access token not found in response")
 	ErrUnableToSaveToken             = errors.New("unable to save token")
+	ErrTokenBelongToUser             = errors.New("token belongs to user")
 )
