@@ -65,8 +65,8 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
   if (areaIsOpen[areaId]) {
-    fetchAreaResult(areaId)
-  };
+    fetchAreaResult(areaId);
+  }
 };
 
 const toggleEditArea = (areaId: number) => {
@@ -286,13 +286,21 @@ if (areaIdNumber !== null && valueNumber !== null) {
 </script>
 
 <template>
-  <UContainer :key="componentKey" :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
-    class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full">
+  <UContainer
+    :key="componentKey"
+    :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
+    class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full"
+  >
     <div v-for="area in areas" :key="area.id">
-      <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+      <UContainer
+        :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
-        :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)">
-        <h2 class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full">
+        :style="{ backgroundColor: area.action.service.color }"
+        @click="toggleAreaModal(area.id)"
+      >
+        <h2
+          class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
+        >
           {{ formatName(area.title) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
@@ -319,7 +327,11 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   <p>Disabled</p>
                 </div>
               </div>
-              <UButton variant="ghost" class="self-end w-fit" @click="toggleAreaModal(area.id)">
+              <UButton
+                variant="ghost"
+                class="self-end w-fit"
+                @click="toggleAreaModal(area.id)"
+              >
                 <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
               </UButton>
             </div>
@@ -357,17 +369,27 @@ if (areaIdNumber !== null && valueNumber !== null) {
 
           <div class="flex flex-row justify-end items-center gap-5">
             <UTooltip text="Edit" class="self-end w-fit">
-              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
-                @click="toggleEditArea(area.id)">
+              <UButton
+                variant="ghost"
+                class="hover_underline_animation items-end w-fit p-0 pb-1"
+                @click="toggleEditArea(area.id)"
+              >
                 <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
               </UButton>
             </UTooltip>
 
             <USlideover v-model="editAreaIsOpen[area.id]">
-              <UForm :state="state[area.id]"
-                class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section">
-                <UFormGroup v-for="(value, key) in filteredState(area.id)" :key="key" :label="key" :name="key"
-                  :ui="{ label: { base: 'capitalize text-xl pl-3' } }">
+              <UForm
+                :state="state[area.id]"
+                class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section"
+              >
+                <UFormGroup
+                  v-for="(value, key) in filteredState(area.id)"
+                  :key="key"
+                  :label="key"
+                  :name="key"
+                  :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
+                >
                   <div class="flex flex-row justify-center items-center gap-3">
                     <UInput v-model="state[area.id][
                       key as keyof Pick<Area, 'title' | 'description'>
@@ -390,28 +412,44 @@ if (areaIdNumber !== null && valueNumber !== null) {
             </USlideover>
 
             <UTooltip text="Delete" class="self-end w-fit">
-              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
-                @click="onDelete(area.id)">
+              <UButton
+                variant="ghost"
+                class="hover_underline_animation items-end w-fit p-0 pb-1"
+                @click="onDelete(area.id)"
+              >
                 <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
               </UButton>
             </UTooltip>
           </div>
         </div>
       </UModal>
-      <UModal v-model="confirmDeletionIsOpen[area.id]" :ui="{
-        base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
-      }" :style="{ borderColor: area.action.service.color }">
+      <UModal
+        v-model="confirmDeletionIsOpen[area.id]"
+        :ui="{
+          base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
+        }"
+        :style="{ borderColor: area.action.service.color }"
+      >
         <h2 class="text-4xl font-semibold">
           Are you sure you want to delete this area?
         </h2>
         <p class="text-2xl">This action cannot be undone!</p>
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
-          <UButton class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
-            borderColor: area.action.service.color,
-            color: area.action.service.color,
-          }" @click="cancelDeletion(area.id)">Cancel</UButton>
-          <UButton class="text-white text-2xl font-semibold py-3 px-5"
-            :style="{ backgroundColor: area.action.service.color }" @click="onDelete(area.id)">Delete</UButton>
+          <UButton
+            class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
+            :style="{
+              borderColor: area.action.service.color,
+              color: area.action.service.color,
+            }"
+            @click="cancelDeletion(area.id)"
+            >Cancel</UButton
+          >
+          <UButton
+            class="text-white text-2xl font-semibold py-3 px-5"
+            :style="{ backgroundColor: area.action.service.color }"
+            @click="onDelete(area.id)"
+            >Delete</UButton
+          >
         </div>
       </UModal>
     </div>
