@@ -7,7 +7,6 @@ export interface Area {
   action: {
     id: number;
     name: string;
-    option?: string | object;
     service: {
       name: string;
       color: string;
@@ -18,7 +17,6 @@ export interface Area {
   reaction: {
     id: number;
     name: string;
-    option?: string | object;
     service: {
       name: string;
       color: string;

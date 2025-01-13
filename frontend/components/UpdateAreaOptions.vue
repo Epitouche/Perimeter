@@ -6,6 +6,7 @@ const props = defineProps<{
   areaId: number;
   typeName: string;
   type: Area["action"] | Area["reaction"];
+  typeOptions: object;
   color: string;
 }>();
 
@@ -24,9 +25,9 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive<{ [key: number]: Record<string, string | number> }>(
-  typeof props.type.option === "string"
-    ? { [props.type.id]: JSON.parse(props.type.option) }
-    : { [props.type.id]: props.type.option || {} },
+  typeof props.typeOptions === "string"
+    ? { [props.type.id]: JSON.parse(props.typeOptions) }
+    : { [props.type.id]: props.typeOptions || {} },
 );
 
 const editValue = async (typeName: string, typeId: number, key: string) => {
@@ -59,7 +60,7 @@ function formatName(name: string): string {
 }
 
 onMounted(() => {
-  // console.log("type: ", props.type);
+  console.log("type: ", props.type);
 });
 </script>
 

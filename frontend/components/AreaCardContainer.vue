@@ -66,7 +66,6 @@ const toggleAreaModal = (areaId: number) => {
 
 const toggleEditArea = (areaId: number) => {
   editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
-  console.log("editAreaIsOpen: ", editAreaIsOpen); /////////////////////////////:
   if (
     editAreaIsOpen[areaId] &&
     !state[areaId]?.title &&
@@ -335,6 +334,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
             type-name="action"
             :color="area.action.service.color"
             :type="area.action"
+            :type-options="area.action_option"
             @update-area-value="updateAreaValue"
           />
           <UpdateAreaOptions
@@ -342,6 +342,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
             type-name="reaction"
             :color="area.action.service.color"
             :type="area.reaction"
+            :type-options="area.reaction_option"
             @update-area-value="updateAreaValue"
           />
 
@@ -392,6 +393,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                         state[area.id][key] !==
                           props.areas.find((a) => a.id === area.id)?.[key] &&
                         updateAreaValue(area.id, null, key, state[area.id][key])
+                        // updateAreaValue(area.id, null, key, value)
                       "
                     >
                       <UIcon name="i-bytesize-checkmark" />
