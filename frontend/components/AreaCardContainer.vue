@@ -181,8 +181,12 @@ const fetchAreaResult = async (areaId: number) => {
         },
       });
       if (response && response.length > 0) {
-        selectedAreaResult.value = response.map((item) => item.result).join(", ");
-        selectedAreaDates.value = response.map((item) => formatDate(item.created_at));
+        selectedAreaResult.value = response
+          .map((item) => item.result)
+          .join(", ");
+        selectedAreaDates.value = response.map((item) =>
+          formatDate(item.created_at),
+        );
         console.log("Result : ", selectedAreaResult.value);
         console.log("Dates : ", selectedAreaDates.value);
       } else {
@@ -346,12 +350,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12"
-          >
+          />
         </div>
       </UContainer>
       <UModal
