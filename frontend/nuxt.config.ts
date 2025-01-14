@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint", "@pinia/nuxt"],
+  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint", "@pinia/nuxt", "@nuxtjs/google-fonts"],
 
   icon: {
     customCollections: [
@@ -24,6 +24,12 @@ export default defineNuxtConfig({
     head: {
       titleTemplate: "Perimeter",
       link: [{ rel: "icon", type: "image/x-icon", href: "/PerimeterIcon.png" }],
+    },
+  },
+
+  googleFonts: {
+    families: {
+      "Kantumruy Pro": true,
     },
   },
 });
