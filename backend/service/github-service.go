@@ -176,7 +176,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrGithubSecretNotSet
 	}
 
-	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}

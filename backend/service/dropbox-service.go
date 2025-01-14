@@ -172,7 +172,7 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrDropboxSecretNotSet
 	}
 
-	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}

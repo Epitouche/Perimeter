@@ -161,7 +161,7 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrSpotifySecretNotSet
 	}
 
-	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
 	if err != nil {
 		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
