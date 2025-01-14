@@ -292,7 +292,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
     <div v-for="area in areas" :key="area.id">
       <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
-        :style="{ backgroundColor: area.action.service.color }" tabindex="0" @click="toggleAreaModal(area.id)"
+        :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)">
         <h2 class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full">
           {{ formatName(area.title) }}
@@ -304,7 +304,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
             class="w-24 h-24 p-0 absolute bottom-0 right-12">
         </div>
       </UContainer>
-      <UModal ref="focusDiv" v-model="areaIsOpen[area.id]" tabindex="0" :ui="{
+      <UModal ref="focusDiv" v-model="areaIsOpen[area.id]" :ui="{
         width: 'w-1/2',
       }">
         <div
@@ -313,7 +313,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
           <div>
             <div class="flex flex-row justify-between items-center w-full overflow-y-auto px-1 pb-4">
               <div class="flex flex-row items-center gap-3">
-                <UToggle size="2xl" :model-value="areaIsEnabled(area.id)" tabindex="0"
+                <UToggle size="2xl" :model-value="areaIsEnabled(area.id)"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
                   @keydown.enter="toggleAreaEnableSwitch(area.id)" />
                 <div v-if="areaIsEnabled(area.id)" class="text-2xl">
@@ -323,7 +323,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   <p>Disabled</p>
                 </div>
               </div>
-              <UButton variant="ghost" class="self-end w-fit" tabindex="-1" @click="toggleAreaModal(area.id)"
+              <UButton variant="ghost" class="self-end w-fit" @click="toggleAreaModal(area.id)"
                 @keydown.enter="toggleAreaModal(area.id)">
                 <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
               </UButton>
@@ -360,7 +360,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
 
           <div class="flex flex-row justify-end items-center gap-5">
             <UTooltip text="Edit" class="self-end w-fit">
-              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1" tabindex="0"
+              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
                 @click="toggleEditArea(area.id)" @keydown.enter="toggleEditArea(area.id)">
                 <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
               </UButton>
@@ -379,7 +379,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                         placeholder: '!px-5 !py-2 font-light',
                         size: { sm: 'text-lg' },
                       }" :placeholder="key + '...'" />
-                    <UButton tabindex="0" @click="
+                    <UButton @click="
                       isValidKey(key) &&
                       state[area.id][key] !==
                       props.areas.find((a) => a.id === area.id)?.[key] &&
@@ -393,7 +393,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
             </USlideover>
 
             <UTooltip text="Delete" class="self-end w-fit">
-              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1" tabindex="0"
+              <UButton variant="ghost" class="hover_underline_animation items-end w-fit p-0 pb-1"
                 @click="onDelete(area.id)">
                 <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
               </UButton>
@@ -412,9 +412,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
           <UButton class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
             borderColor: area.action.service.color,
             color: area.action.service.color,
-          }" tabindex="0" @click="cancelDeletion(area.id)">Cancel</UButton>
+          }" @click="cancelDeletion(area.id)">Cancel</UButton>
           <UButton class="text-white text-2xl font-semibold py-3 px-5"
-            :style="{ backgroundColor: area.action.service.color }" tabindex="0" @click="onDelete(area.id)">Delete
+            :style="{ backgroundColor: area.action.service.color }" @click="onDelete(area.id)">Delete
           </UButton>
         </div>
       </UModal>
@@ -446,13 +446,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
   transform-origin: bottom center;
 }
 
-[tabindex="0"]:focus {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
 .scrollable-element {
   scrollbar-width: thick;
-  scrollbar-color: white rgba(255, 255, 255, 0.2);
+  scrollbar-color: black rgba(255, 255, 255, 0.2);
 }
 </style>
