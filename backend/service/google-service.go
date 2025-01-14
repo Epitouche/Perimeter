@@ -145,12 +145,12 @@ func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 func (service *googleService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("GMAIL_CLIENT_ID")
+	clientID := os.Getenv("GOOGLE_CLIENT_ID")
 	if clientID == "" {
 		return schemas.Token{}, schemas.ErrGoogleClientIdNotSet
 	}
 
-	clientSecret := os.Getenv("GMAIL_SECRET")
+	clientSecret := os.Getenv("GOOGLE_SECRET")
 	if clientSecret == "" {
 		return schemas.Token{}, schemas.ErrGoogleSecretNotSet
 	}
