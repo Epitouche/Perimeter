@@ -100,23 +100,6 @@ func (service *serviceService) InitialSaveService() {
 	}
 }
 
-func getRedirectURI(
-	serviceName schemas.ServiceName,
-) (redirectURI string, err error) {
-	frontendPort := os.Getenv("FRONTEND_PORT")
-	if frontendPort == "" {
-		return "", schemas.ErrFrontendPortNotSet
-	}
-	frontendExternalHost := os.Getenv("FRONTEND_EXTERNAL_HOST")
-	if frontendExternalHost == "" {
-		return "", schemas.ErrFrontendExternalHostNotSet
-	}
-
-	return "http://" + frontendExternalHost + ":" + frontendPort + "/services/" + strings.ToLower(
-		string(serviceName),
-	), nil
-}
-
 func (service *serviceService) RedirectToServiceOauthPage(
 	serviceName schemas.ServiceName,
 	oauthUrl string,
@@ -156,6 +139,11 @@ func (service *serviceService) RedirectToServiceOauthPage(
 		return "", schemas.ErrNotOauthService
 	}
 
+	frontendPort := os.Getenv("FRONTEND_PORT")
+	if frontendPort == "" {
+		return "", schemas.ErrFrontendPortNotSet
+	}
+
 	// Generate the CSRF token
 	state, err := tools.GenerateCSRFToken()
 	if err != nil {
@@ -166,13 +154,9 @@ func (service *serviceService) RedirectToServiceOauthPage(
 	// ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the GitHub authorization URL
-	redirectURI, err := getRedirectURI(serviceName)
-	if err != nil {
-		return "", fmt.Errorf("unable to get redirect URI because %w", err)
-	}
-
-	println(redirectURI)
-
+	redirectURI := "http://localhost:" + frontendPort + "/services/" + strings.ToLower(
+		string(serviceName),
+	)
 	authURL = oauthUrl +
 		"?client_id=" + clientID +
 		"&response_type=code" +
