@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
+  telemetry: { enabled: false },
 
   postcss: {
     plugins: {
@@ -15,6 +16,7 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "@pinia/nuxt",
     "@nuxtjs/google-fonts",
+    "@nuxt/test-utils/module",
   ],
 
   css: ["~/assets/css/main.css"],
