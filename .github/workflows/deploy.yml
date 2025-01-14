@@ -38,7 +38,7 @@ jobs:
             # login to the docker registry github
             echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io --username ${{ github.ref.GITHUB_ACTOR }} --password-stdin
             # run the docker-compose.prod.yml file
-            echo ${{ secrets.ENV }} > .env
+            echo '${{ secrets.ENV }}' > .env
             sudo docker compose -f docker-compose.prod.yml up -d --force-recreate
             # cleanup
             cd /tmp
