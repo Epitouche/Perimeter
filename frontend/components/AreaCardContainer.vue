@@ -287,10 +287,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
 </script>
 
 <template>
-  <UContainer :key="componentKey" :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
+  <UContainer
+:key="componentKey" :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
     class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full">
     <div v-for="area in areas" :key="area.id">
-      <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+      <UContainer
+:ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: area.action.service.color }" @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)">
@@ -298,9 +300,11 @@ if (areaIdNumber !== null && valueNumber !== null) {
           {{ formatName(area.title) }}
         </h2>
         <div class="grid place-items-center h-36 relative w-full">
-          <img :src="area.action.service.icon" :alt="area.action.service.name"
+          <img
+:src="area.action.service.icon" :alt="area.action.service.name"
             class="w-24 h-24 p-0 absolute top-1 left-12">
-          <img :src="area.reaction.service.icon" :alt="area.reaction.service.name"
+          <img
+:src="area.reaction.service.icon" :alt="area.reaction.service.name"
             class="w-24 h-24 p-0 absolute bottom-0 right-12">
         </div>
       </UContainer>
@@ -335,9 +339,11 @@ if (areaIdNumber !== null && valueNumber !== null) {
           </div>
 
           <div class="flex flex-col gap-10">
-            <UpdateAreaOptions :area-id="area.id" type-name="action" :color="area.action.service.color"
+            <UpdateAreaOptions
+:area-id="area.id" type-name="action" :color="area.action.service.color"
               :type="area.action" :type-options="area.action_option" @update-area-value="updateAreaValue" @keydown.enter="updateAreaValue" />
-            <UpdateAreaOptions :area-id="area.id" type-name="reaction" :color="area.action.service.color"
+            <UpdateAreaOptions
+:area-id="area.id" type-name="reaction" :color="area.action.service.color"
               :type="area.reaction" :type-options="area.reaction_option" @update-area-value="updateAreaValue"
               @keydown.enter="updateAreaValue" />
           </div>
@@ -367,12 +373,15 @@ if (areaIdNumber !== null && valueNumber !== null) {
             </UTooltip>
 
             <USlideover v-model="editAreaIsOpen[area.id]">
-              <UForm :state="state[area.id]"
+              <UForm
+:state="state[area.id]"
                 class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section">
-                <UFormGroup v-for="(value, key) in filteredState(area.id)" :key="key" :label="key" :name="key"
+                <UFormGroup
+v-for="(value, key) in filteredState(area.id)" :key="key" :label="key" :name="key"
                   :ui="{ label: { base: 'capitalize text-xl pl-3' } }">
                   <div class="flex flex-row justify-center items-center gap-3">
-                    <UInput v-model="state[area.id][
+                    <UInput
+v-model="state[area.id][
                       key as keyof Pick<Area, 'title' | 'description'>
                       ]
                       " :ui="{
@@ -401,7 +410,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
           </div>
         </div>
       </UModal>
-      <UModal v-model="confirmDeletionIsOpen[area.id]" :ui="{
+      <UModal
+v-model="confirmDeletionIsOpen[area.id]" :ui="{
         base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
       }" :style="{ borderColor: area.action.service.color }">
         <h2 class="text-4xl font-semibold">
@@ -409,7 +419,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
         </h2>
         <p class="text-2xl">This action cannot be undone!</p>
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
-          <UButton class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
+          <UButton
+class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5" :style="{
             borderColor: area.action.service.color,
             color: area.action.service.color,
           }" @click="cancelDeletion(area.id)">Cancel</UButton>
