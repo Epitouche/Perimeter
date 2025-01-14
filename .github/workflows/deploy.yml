@@ -11,7 +11,7 @@ on:
       - main
 
 env:
-  REPOSITORY_NAME: echo "${{ github.ref.GITHUB_REPOSITORY }}" | cut -d'/' -f2
+  REPOSITORY_NAME: $(echo "${{ github.ref.GITHUB_REPOSITORY }}" | cut -d'/' -f2)
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -25,6 +25,8 @@ jobs:
       id-token: write
       #
     steps:
+      - run: echo ${{env.REPOSITORY_NAME}}
+
       - uses: appleboy/ssh-action@master
         with:
           host: tom-mendy.com
