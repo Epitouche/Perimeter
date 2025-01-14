@@ -90,13 +90,13 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.button}>Save</Text>
+            <Text style={styles.button}>Save</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
           onPress={() => {
-        setToken('');
-        navigation.navigate('Login');
+            setToken('');
+            navigation.navigate('Login');
           }}>
           <Text style={styles.disconnectButton}>Disconnect</Text>
         </TouchableOpacity>
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   footer: {
     justifyContent: 'flex-end',
     flex: 1,
-  }
+  },
 });
 
 export default SettingsScreen;
