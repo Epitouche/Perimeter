@@ -8,6 +8,7 @@ async function HandleGithubLogin(
   navigation: any,
   ipAddress: string,
   login: boolean = false,
+  bearerToken: string = '',
 ) {
   const config: AuthConfiguration = {
     clientId: GITHUB_MOBILE_CLIENT_ID,
@@ -22,17 +23,11 @@ async function HandleGithubLogin(
 
   try {
     const result = await authorize(config);
-    // console.log('result', result);
-    let data;
-    if (login) {
-      data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
-        result,
-      );
-    } else {
-      setToken(result.accessToken);
-      // TODO: call route when loging in from myServices page (waiting for back to be done)
-    }
+    let data = await handleCallback(
+      `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
+      result,
+      bearerToken,
+    );
     if (data.error) {
       console.error(data.error);
     } else {
