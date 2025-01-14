@@ -43,7 +43,7 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
             # run the docker-compose.prod.yml file
             echo '${{ secrets.ENV }}' > /tmp/${{env.REPOSITORY_NAME}}/.env
-            cd /tmp/${{env.REPOSITORY_NAME}} && docker compose -f docker-compose.prod.yml up -d --force-recreate
+            cd /tmp/${{env.REPOSITORY_NAME}} && docker compose -f docker-compose.prod.yaml up -d --force-recreate
             # cleanup
             rm -rf /tmp/${{env.REPOSITORY_NAME}}
             rm -rf /tmp/ssh_key
