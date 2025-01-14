@@ -38,7 +38,7 @@ jobs:
             # clone the repository
             echo '${{ secrets.SERVER_SSH_KEY }}' > /tmp/ssh_key
             chmod 400 /tmp/ssh_key
-            ssh-agent $(ssh-add /tmp/ssh_key; git clone git@github.com:${{ github.repository }}.git /tmp/${{env.REPOSITORY_NAME}})
+            eval $(ssh-agent) && ssh-add /tmp/ssh_key && git clone git@github.com:${{ github.repository }}.git /tmp/${{env.REPOSITORY_NAME}}
             # login to the docker registry github
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
             # run the docker-compose.prod.yml file
