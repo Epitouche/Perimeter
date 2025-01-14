@@ -4,21 +4,30 @@ definitions:
       createdAt:
         type: string
       description:
+        description: The description of the action
         type: string
       id:
+        description: The unique identifier for the action
+        type: integer
+      minimum_refresh_rate:
         type: integer
       name:
+        description: The name of the action
         type: string
       option:
+        description: The option of the action
         items:
           type: integer
         type: array
       service:
-        $ref: '#/definitions/schemas.Service'
+        allOf:
+        - $ref: '#/definitions/schemas.Service'
+        description: The service that the action belongs to
       update_at:
         type: string
     required:
     - description
+    - minimum_refresh_rate
     - name
     - option
     - service
@@ -31,6 +40,8 @@ definitions:
         items:
           type: integer
         type: array
+      action_refresh_rate:
+        type: integer
       createdAt:
         type: string
       description:
@@ -45,6 +56,10 @@ definitions:
         items:
           type: integer
         type: array
+      storage_variable:
+        items:
+          type: integer
+        type: array
       title:
         type: string
       update_at:
@@ -54,6 +69,7 @@ definitions:
     required:
     - action
     - action_option
+    - action_refresh_rate
     - description
     - reaction
     - reaction_option
@@ -69,6 +85,8 @@ definitions:
         items:
           type: integer
         type: array
+      action_refresh_rate:
+        type: integer
       description:
         type: string
       reaction_id:
@@ -82,6 +100,7 @@ definitions:
         type: string
     required:
     - action_option
+    - action_refresh_rate
     - description
     - reaction_option
     - title
@@ -167,7 +186,7 @@ definitions:
     - Spotify
     - OpenWeatherMap
     - Timer
-    - Gmail
+    - Google
     - Github
     - Dropbox
     - Microsoft
@@ -176,7 +195,7 @@ definitions:
     - Spotify
     - Openweathermap
     - Timer
-    - Gmail
+    - Google
     - Github
     - Dropbox
     - Microsoft
@@ -260,17 +279,11 @@ definitions:
 info:
   contact: {}
 paths:
-  /action/info/:id:
+  /action/info/:idService:
     get:
       consumes:
       - application/json
       description: get action info of service id
-      parameters:
-      - description: Service ID
-        in: path
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -290,7 +303,32 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get action info
+      summary: get action info of service id
+      tags:
+      - Action
+  /action/info/service/:idAction:
+    get:
+      consumes:
+      - application/json
+      description: get service info of action id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Service'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: get service info of action id
       tags:
       - Action
   /area:
@@ -390,6 +428,10 @@ paths:
         required: true
         type: array
       - in: path
+        name: action_refresh_rate
+        required: true
+        type: integer
+      - in: path
         name: createdAt
         type: string
       - in: path
@@ -408,6 +450,12 @@ paths:
           type: integer
         name: reaction_option
         required: true
+        type: array
+      - collectionFormat: csv
+        in: path
+        items:
+          type: integer
+        name: storage_variable
         type: array
       - in: path
         name: title
@@ -436,6 +484,33 @@ paths:
       summary: update user area
       tags:
       - Area
+  /area-result/:id:
+    get:
+      consumes:
+      - application/json
+      description: get user areas results list by area id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/schemas.Area'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: get user areas results list by area id
+      tags:
+      - AreaResults
   /dropbox/auth:
     get:
       consumes:

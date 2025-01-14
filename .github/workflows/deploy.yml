@@ -1,0 +1,49 @@
+# Push docker image to GitHub Container Registry
+name: Deploy Area application on production environment
+
+# Configures this workflow to run every time a change is pushed to the branch called `release`.
+on:
+  pull_request:
+    branches:
+      - main
+      - devops
+  push:
+    branches:
+      - main
+      - devops
+
+env:
+  REPOSITORY_NAME: $(echo "${{ github.repository }}" | cut -d'/' -f2)
+
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+jobs:
+  build-and-push-mobile-image:
+    runs-on: self-hosted
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+      #
+    steps:
+      - run: echo ${{env.REPOSITORY_NAME}}
+
+      - uses: appleboy/ssh-action@master
+        with:
+          host: tom-mendy.com
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # clone the repository
+            echo '${{ secrets.SERVER_SSH_KEY }}' > /tmp/ssh_key
+            chmod 400 /tmp/ssh_key
+            eval $(ssh-agent) && ssh-add /tmp/ssh_key && git clone git@github.com:${{ github.repository }}.git /tmp/${{env.REPOSITORY_NAME}}
+            # login to the docker registry github
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
+            # run the docker-compose.prod.yml file
+            echo '${{ secrets.ENV }}' > /tmp/${{env.REPOSITORY_NAME}}/.env
+            cd /tmp/${{env.REPOSITORY_NAME}} && docker compose -f docker-compose.prod.yaml up -d --force-recreate
+            # cleanup
+            rm -rf /tmp/${{env.REPOSITORY_NAME}}
+            rm -rf /tmp/ssh_key

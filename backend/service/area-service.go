@@ -166,14 +166,14 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				return
 			}
 			// println(area.Action.Name)
-			action := service.serviceService.FindActionbyName(area.Action.Name)
+			action := service.serviceService.FindActionByName(area.Action.Name)
 			if action == nil {
 				println("action not found")
 				return
 			}
 
 			if area.Enable {
-				action(channelArea, area.ActionOption, area.Id)
+				action(channelArea, area.ActionOption, area)
 			}
 		}
 		println("clear")
@@ -190,11 +190,11 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				return
 			}
 
-			reaction := service.serviceService.FindReactionbyName(area.Reaction.Name)
+			reaction := service.serviceService.FindReactionByName(area.Reaction.Name)
 
 			if area.Enable {
 				resultAction := <-channelArea
-				resultReaction := reaction(area.ReactionOption, area.Id)
+				resultReaction := reaction(area.ReactionOption, area)
 				service.areaResultService.Save(schemas.AreaResult{
 					Area:   area,
 					Result: resultReaction,

@@ -21,8 +21,8 @@ type DropboxService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -45,7 +45,9 @@ type DropboxService interface {
 		folderAndFileList []schemas.DropboxEntry,
 	) (pathDisplay []string)
 	// Actions functions
+	DropboxActionUpdateInFolder(channel chan string, option json.RawMessage, area schemas.Area)
 	// Reactions functions
+	DropboxReactionSaveUrl(option json.RawMessage, area schemas.Area) string
 }
 
 type dropboxService struct {
@@ -85,7 +87,7 @@ func (service *dropboxService) GetServiceInfo() schemas.Service {
 
 func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.DropboxActionUpdateInFolder{
-		Path: "",
+		Path: "folder/subfolder",
 	}
 	actionUpdateInFolder, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -99,18 +101,19 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	}
 	return []schemas.Action{
 		{
-			Name:        string(schemas.UpdateInFolder),
-			Description: "This reaction save content from a URL to a file in Dropbox",
-			Service:     service.serviceInfo,
-			Option:      actionUpdateInFolder,
+			Name:               string(schemas.UpdateInFolder),
+			Description:        "This reaction save content from a URL to a file in Dropbox",
+			Service:            service.serviceInfo,
+			Option:             actionUpdateInFolder,
+			MinimumRefreshRate: 10,
 		},
 	}
 }
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.DropboxSaveUrlReactionOption{
-		Path: "",
-		URL:  "",
+		Path: "folder/subfolder/file.txt",
+		URL:  "site.com/robot.txt",
 	}
 	saveUrlReactionOption, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -132,9 +135,9 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 }
 
-func (service *dropboxService) FindActionbyName(
+func (service *dropboxService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.UpdateInFolder):
 		return service.DropboxActionUpdateInFolder
@@ -143,9 +146,9 @@ func (service *dropboxService) FindActionbyName(
 	}
 }
 
-func (service *dropboxService) FindReactionbyName(
+func (service *dropboxService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.SaveUrl):
 		return service.DropboxReactionSaveUrl
@@ -169,12 +172,10 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrDropboxSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/dropbox"
 
 	apiURL := "https://api.dropboxapi.com/oauth2/token"
 
@@ -491,15 +492,8 @@ func (service *dropboxService) IsEntryUpdate(
 func (service *dropboxService) DropboxActionUpdateInFolder(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -593,14 +587,18 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 		channel <- response
 	}
 
-	time.Sleep(time.Minute)
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
 }
 
 // Reactions functions
 
 func (service *dropboxService) DropboxReactionSaveUrl(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
 	optionJSON := schemas.DropboxSaveUrlReactionOption{}
 
@@ -609,13 +607,6 @@ func (service *dropboxService) DropboxReactionSaveUrl(
 		println("error unmarshal temperature option: " + err.Error())
 		time.Sleep(time.Second)
 		return "error unmarshal temperature option: " + err.Error()
-	}
-
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area" + err.Error()
 	}
 
 	// Find the token of the user

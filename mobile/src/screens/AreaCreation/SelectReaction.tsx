@@ -49,6 +49,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         }
         setLoading(false);
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error fetching services:', error);
         setServices([]);
         setFilteredServices([]);
@@ -75,7 +78,6 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleActionPress = (action: any) => {
     setSelectedReaction(action);
     if (action.option) {
-      console.log('Action Options:', action.option);
       const parsedOptions = action.option;
       setSelectedReactionOptions(parsedOptions);
     } else {
@@ -88,30 +90,6 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       ...prev,
       [key]: type === 'number' ? parseFloat(value) : value,
     }));
-  };
-
-  const handleSaveOptions = async () => {
-    console.log('Selected Action:', selectedReaction);
-    console.log('Configured Options:', selectedReactionOptions);
-    const res = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        action_id: actionId,
-        action_option: actionOptions,
-        reaction_id: selectedReaction.id,
-        reaction_option: selectedReactionOptions,
-      }),
-    });
-    const data = await res.json();
-    console.log('Area Creation:', data);
-
-    navigation.navigate('AreaView');
-    setSelectedReaction(null);
-    setSelectedReactionOptions({});
   };
 
   if (loading) {
@@ -150,13 +128,20 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                     typeof selectedReactionOptions[key],
                   )
                 }
-                keyboardType="default" // Adjust as needed
+                keyboardType="default"
               />
             </View>
           ))}
           <TouchableOpacity
             style={styles.saveButton}
-            onPress={handleSaveOptions}>
+            onPress={() =>
+              navigation.navigate('ValidateAreaScreen', {
+                actionId,
+                actionOptions,
+                reactionId: selectedReaction.id,
+                reactionOptions: selectedReactionOptions,
+              })
+            }>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity

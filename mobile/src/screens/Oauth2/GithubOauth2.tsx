@@ -1,5 +1,5 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GITHUB_SECRET, GITHUB_CLIENT_ID } from '@env';
+import { GITHUB_MOBILE_SECRET, GITHUB_MOBILE_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
@@ -8,12 +8,13 @@ async function HandleGithubLogin(
   navigation: any,
   ipAddress: string,
   login: boolean = false,
+  bearerToken: string = '',
 ) {
   const config: AuthConfiguration = {
-    clientId: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_SECRET,
+    clientId: GITHUB_MOBILE_CLIENT_ID,
+    clientSecret: GITHUB_MOBILE_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['user', 'repo'],
+    scopes: ['user', 'repo', 'user:email'],
     serviceConfiguration: {
       authorizationEndpoint: 'https://github.com/login/oauth/authorize',
       tokenEndpoint: 'https://github.com/login/oauth/access_token',
@@ -22,17 +23,11 @@ async function HandleGithubLogin(
 
   try {
     const result = await authorize(config);
-    // console.log('result', result);
-    let data;
-    if (login) {
-      data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
-        result,
-      );
-    } else {
-      setToken(result.accessToken);
-      // TODO: call route when loging in from myServices page (waiting for back to be done)
-    }
+    let data = await handleCallback(
+      `http://${ipAddress}:8080/api/v1/github/auth/callback/mobile`,
+      result,
+      bearerToken,
+    );
     if (data.error) {
       console.error(data.error);
     } else {

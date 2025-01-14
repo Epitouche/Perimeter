@@ -65,8 +65,8 @@ type GmailReactionSendMailOption struct {
 
 // Errors Messages.
 var (
-	ErrGoogleSecretNotSet   = errors.New("GMAIL_SECRET is not set")
-	ErrGoogleClientIdNotSet = errors.New("GMAIL_CLIENT_ID is not set")
+	ErrGoogleSecretNotSet   = errors.New("GOOGLE_SECRET is not set")
+	ErrGoogleClientIdNotSet = errors.New("GOOGLE_CLIENT_ID is not set")
 )
 
 type GoogleVariableReceiveMail struct {

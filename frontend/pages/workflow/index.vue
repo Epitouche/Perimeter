@@ -13,14 +13,24 @@ const error = ref<string | null>(null);
 const createdMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 const showPageContent = ref(true);
+const creationPopup = ref(false);
 const isLoading = ref(false);
+const title = ref<string>("");
+const description = ref<string>("");
+
+const validateCreation = () => {
+  creationPopup.value = !creationPopup.value;
+};
 
 const onCreate = async () => {
   console.log("actionId:", websiteStore.actionId);
   console.log("actionOptions:", websiteStore.actionOptions);
   console.log("reactionId:", websiteStore.reactionId);
   console.log("reactionOptions:", websiteStore.reactionOptions);
+  console.log("title: ", title.value);
+  console.log("description: ", description.value);
 
+  creationPopup.value = false;
   error.value = null;
 
   try {
@@ -32,6 +42,8 @@ const onCreate = async () => {
         actionId: websiteStore.actionId,
         reactionOptions: websiteStore.reactionOptions,
         reactionId: websiteStore.reactionId,
+        title: title.value,
+        description: description.value,
       },
     });
     console.log("response:", response);
@@ -209,9 +221,53 @@ onMounted(() => {
           />
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
-          <UButton class="text-5xl font-bold px-8 py-4" @click="onCreate"
+          <UButton
+            class="text-5xl font-bold px-8 py-4"
+            @click="validateCreation"
             >Create</UButton
           >
+        </div>
+        <div
+          v-if="creationPopup"
+          class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+        >
+          <div
+            class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+          >
+            <h2 class="text-4xl font-semibold mb-2">
+              You're about to create a new area
+            </h2>
+            <UInput
+              v-model="title"
+              :ui="{
+                placeholder: '!px-5 !py-3 font-light',
+                size: { sm: 'text-3xl' },
+              }"
+              placeholder="Title"
+              class="flex-1 bg-white text-black pb-4 rounded-full transition-colors duration-300"
+            />
+            <UInput
+              v-model="description"
+              :ui="{
+                placeholder: '!px-5 !py-3 font-light',
+                size: { sm: 'text-3xl' },
+              }"
+              placeholder="Description"
+              class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+            />
+            <div class="flex flex-row justify-end items-center gap-5 pt-5">
+              <UButton
+                class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                @click="validateCreation"
+                >Cancel</UButton
+              >
+              <UButton
+                class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                @click="onCreate"
+                >Submit</UButton
+              >
+            </div>
+          </div>
         </div>
       </div>
     </div>

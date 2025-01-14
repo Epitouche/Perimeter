@@ -77,7 +77,6 @@ onMounted(() => {
         >
           {{ formatString(type.name) }}
         </h2>
-        <p class="text-3xl">{{ type.description }}</p>
       </UContainer>
 
       <UModal
@@ -95,6 +94,9 @@ onMounted(() => {
           >
             <h2 class="text-center text-6xl font-semibold pb-2">
               {{ formatString(type.name) }}
+            </h2>
+            <h2 class="text-center text-2xl font-medium -mt-6">
+              {{ type.description }}
             </h2>
 
             <UFormGroup

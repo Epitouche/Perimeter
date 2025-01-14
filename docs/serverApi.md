@@ -51,6 +51,13 @@ This API provides authentication and user information retrieval features for mul
 ### Swagger
 
 to access swagger local documentation
+
+install swag:
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
 launch the server and go to the next url:
 [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
@@ -58,10 +65,17 @@ launch the server and go to the next url:
 
 ---
 
-### Godoc
+## Godoc
 
-to access swagger local documentation
-launch the godoc server:
+to access godoc local documentation
+
+install godoc:
+
+```bash
+go install golang.org/x/tools/cmd/godoc@latest
+```
+
+launch the godoc server
 
 ```bash
 godoc -http :8080
