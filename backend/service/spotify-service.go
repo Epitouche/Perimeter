@@ -193,8 +193,6 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	defer resp.Body.Close()
-
 	if resp.StatusCode != http.StatusOK {
 		println("Status code", resp.StatusCode)
 		body, _ := io.ReadAll(resp.Body)
@@ -215,8 +213,11 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	}
 
 	if result.AccessToken == "" {
+		fmt.Printf("Token exchange failed. Response body: %v\n", resp.Body)
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
+
+	resp.Body.Close()
 
 	token = schemas.Token{
 		Token:        result.AccessToken,
@@ -251,7 +252,6 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		errorResponse := schemas.SpotifyErrorResponse{}
@@ -263,6 +263,7 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 			)
 		}
 
+		resp.Body.Close()
 		return schemas.User{}, fmt.Errorf(
 			"unable to get user info because %v %v",
 			errorResponse.Error.Status,
@@ -275,6 +276,8 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
+
+	resp.Body.Close()
 
 	user = schemas.User{
 		Username: result.DisplayName,
@@ -306,13 +309,8 @@ func getSpotifyPlaybackResponse(token schemas.Token) (schemas.SpotifyPlaybackRes
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return schemas.SpotifyPlaybackResponse{}, fmt.Errorf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
+		fmt.Printf("Error: Status code %d\n", resp.StatusCode)
+		return schemas.SpotifyPlaybackResponse{}, err
 	}
 
 	var playbackResponse schemas.SpotifyPlaybackResponse
@@ -428,17 +426,6 @@ func (service *spotifyService) SpotifyReactionSkipNextMusic(
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return fmt.Sprintf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
-
-	}
-
 	fmt.Println("Response Status:", resp.Status)
 	return "Response Status:" + resp.Status
 }
@@ -485,16 +472,6 @@ func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
 	}
 
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return fmt.Sprintf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
-	}
 
 	fmt.Println("Response Status:", resp.Status)
 	return "Response Status:" + resp.Status

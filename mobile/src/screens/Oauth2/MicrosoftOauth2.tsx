@@ -8,6 +8,7 @@ async function HandleMicrosoftLogin(
   navigation: any,
   ipAddress: string,
   login: boolean = false,
+  bearerToken: string = '',
 ) {
   const config: AuthConfiguration = {
     clientId: MICROSOFT_CLIENT_ID,
@@ -31,19 +32,11 @@ async function HandleMicrosoftLogin(
 
   try {
     const result = await authorize(config);
-    console.log('result', result);
-    let data;
-    if (login) {
-      data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/microsoft/auth/callback/mobile`,
-        result,
-      );
-    } else {
-      data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/microsoft/auth/callback`,
-        result,
-      );
-    }
+    let data = await handleCallback(
+      `http://${ipAddress}:8080/api/v1/microsoft/auth/callback/mobile`,
+      result,
+      bearerToken,
+    );
 
     if (data.error) {
       console.error(data.error);

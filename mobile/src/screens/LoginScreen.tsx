@@ -62,6 +62,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           Alert.alert('Error logging in, please try again');
         }
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error:', error);
       }
     }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -214,18 +213,6 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 		return coordinates, fmt.Errorf("unable to make request because %w", err)
 	}
 
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return coordinates, fmt.Errorf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
-	}
-
 	var result []schemas.OpenweathermapCityCoordinatesResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -234,6 +221,8 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 			err,
 		)
 	}
+
+	resp.Body.Close()
 
 	coordinates.Lat = result[0].Lat
 	coordinates.Lon = result[0].Lon
@@ -272,19 +261,9 @@ func getWeatherOfCoodinate(coordinates struct {
 	if err != nil {
 		return weather, fmt.Errorf("unable to make request because %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return weather, fmt.Errorf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
-	}
-
-	err = json.NewDecoder(resp.Body).Decode(&weather)
+	var result schemas.OpenweathermapCoordinatesWeatherResponse
+	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return weather, fmt.Errorf(
 			"unable to decode response because %w",
@@ -292,6 +271,9 @@ func getWeatherOfCoodinate(coordinates struct {
 		)
 	}
 
+	resp.Body.Close()
+
+	weather = result
 	return weather, nil
 }
 

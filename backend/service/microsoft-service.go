@@ -272,13 +272,7 @@ func (service *microsoftService) GetUserInfo(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return user, fmt.Errorf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
+		return schemas.User{}, fmt.Errorf("failed to fetch user info: %s", resp.Status)
 	}
 
 	var result schemas.MicrosoftUserInfo
@@ -346,14 +340,7 @@ func (service *microsoftService) MicrosoftActionEventStarting(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		err = fmt.Errorf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
-		println(err.Error())
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
 		return
 	}
 
@@ -475,13 +462,8 @@ func getNewEmails(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
-		return emailResponse, fmt.Errorf(
-			"unexpected status code: %d, response: %s",
-			resp.StatusCode,
-			string(errorBody),
-		)
+		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		return emailResponse, nil
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
