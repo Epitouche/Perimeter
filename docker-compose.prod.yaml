@@ -17,8 +17,6 @@ services:
       service: client_web
 
   database:
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     extends:
       file: ./docker-compose.template.yaml
       service: database
@@ -40,8 +38,6 @@ services:
 
   server:
     image: ghcr.io/epitouche/area-backend:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     extends:
       file: ./docker-compose.template.yaml
       service: server
