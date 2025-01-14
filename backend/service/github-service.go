@@ -66,7 +66,7 @@ func (service *githubService) GetServiceInfo() schemas.Service {
 
 func (service *githubService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.GithubActionOption{
-		RepoName: "",
+		RepoName: "OWNER/REPO",
 	}
 	actionOption, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -105,7 +105,7 @@ func (service *githubService) GetServiceActionInfo() []schemas.Action {
 
 func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.GithubActionOption{
-		RepoName: "",
+		RepoName: "OWNER/REPO",
 	}
 	actionOption, err := json.Marshal(defaultValue)
 	if err != nil {

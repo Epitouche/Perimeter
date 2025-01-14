@@ -116,9 +116,9 @@ func (service *googleService) GetServiceActionInfo() []schemas.Action {
 
 func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.GmailReactionSendMailOption{
-		To:      "",
-		Subject: "",
-		Body:    "",
+		To:      "test@example.com",
+		Subject: "Test",
+		Body:    "a beautiful email",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
