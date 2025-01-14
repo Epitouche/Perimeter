@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LocationQueryValue } from "vue-router";
 import type { Area } from "@/interfaces/areas";
+import type { AreaResult } from "@/interfaces/areaResult";
 
 const props = defineProps<{
   areas: Area[];
@@ -38,6 +39,9 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 }
 
 const componentKey = ref(0);
+const focusDiv = ref<HTMLElement | null>(null);
+const selectedAreaResult = ref<string>("");
+const selectedAreaDates = ref<string[]>([]);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
@@ -62,19 +66,26 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
+  if (areaIsOpen[areaId]) {
+    fetchAreaResult(areaId);
+  }
 };
 
 const toggleEditArea = (areaId: number) => {
   editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
-  console.log("editAreaIsOpen: ", editAreaIsOpen); /////////////////////////////:
   if (
     editAreaIsOpen[areaId] &&
     !state[areaId]?.title &&
-    !state[areaId]?.description
+    !state[areaId]?.description &&
+    !state[areaId]?.action_refresh_rate
   ) {
     const area = props.areas.find((a) => a.id === areaId);
     if (area) {
-      state[areaId] = { title: area.title, description: area.description };
+      state[areaId] = {
+        title: area.title,
+        description: area.description,
+        action_refresh_rate: area.action_refresh_rate,
+      };
     }
   }
 };
@@ -108,7 +119,6 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
 
     emit("refreshAreas");
   } catch (error) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
     alert("Failed to update enable/disable status");
   }
@@ -132,7 +142,6 @@ const onDelete = async (areaId: number) => {
       console.log("response:", response);
       emit("refreshAreas");
     } catch (error: unknown) {
-      console.log("error:", error);
       errorMessage.value = handleErrorStatus(error);
       if (errorMessage.value === "An unknown error occurred") {
         console.error("An unknown error occurred", error);
@@ -153,7 +162,53 @@ const cancelDeletion = (areaId: number) => {
 };
 
 function formatName(name: string): string {
-  return name.replace(/([a-z])([A-Z])/g, "$1 $2");
+  return name
+    .replace(/^action_/, "")
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
+const fetchAreaResult = async (areaId: number) => {
+  if (token.value) {
+    try {
+      errorMessage.value = null;
+      selectedAreaResult.value = "";
+      const response = await $fetch<AreaResult[]>("/api/area/result", {
+        method: "POST",
+        body: {
+          token: token.value,
+          areaId: areaId,
+        },
+      });
+      if (response && response.length > 0) {
+        selectedAreaResult.value = response
+          .map((item) => item.result)
+          .join(", ");
+        selectedAreaDates.value = response.map((item) =>
+          formatDate(item.created_at),
+        );
+        console.log("Result : ", selectedAreaResult.value);
+        console.log("Dates : ", selectedAreaDates.value);
+      } else {
+        console.error("Response doesn't have a valid result.");
+      }
+    } catch (error) {
+      errorMessage.value = handleErrorStatus(error);
+      console.error(errorMessage.value);
+    }
+  }
+};
+
+function formatDate(isoDate: string): string {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 }
 
 const updateAreaValue = async (
@@ -209,7 +264,7 @@ const updateAreaValue = async (
   try {
     errorMessage.value = null;
 
-    const response = await $fetch("/api/area/update", {
+    await $fetch("/api/area/update", {
       method: "POST",
       body: {
         token: token.value,
@@ -217,10 +272,8 @@ const updateAreaValue = async (
       },
     });
 
-    console.log("response:", response);
     emit("refreshAreas");
   } catch (error) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
   }
 
@@ -228,12 +281,16 @@ const updateAreaValue = async (
   toggleEditArea(areaId);
 };
 
-const state = reactive<Record<number, Pick<Area, "title" | "description">>>({});
+const state = reactive<
+  Record<number, Pick<Area, "title" | "description" | "action_refresh_rate">>
+>({});
 
 const filteredState = (areaId: number) => {
   const areaState = state[areaId] || {};
   return Object.entries(areaState)
-    .filter(([key]) => ["title", "description"].includes(key))
+    .filter(([key]) =>
+      ["title", "description", "action_refresh_rate"].includes(key),
+    )
     .reduce(
       (obj, [key, value]) => {
         obj[key] = value;
@@ -243,15 +300,23 @@ const filteredState = (areaId: number) => {
     );
 };
 
-const isValidKey = (key: string): key is "title" | "description" => {
-  return key === "title" || key === "description";
+const isValidKey = (
+  key: string,
+): key is "title" | "description" | "action_refresh_rate" => {
+  return (
+    key === "title" || key === "description" || key === "action_refresh_rate"
+  );
 };
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
 
   props.areas.forEach((area) => {
-    state[area.id] = { title: area.title, description: area.description };
+    state[area.id] = {
+      title: area.title,
+      description: area.description,
+      action_refresh_rate: area.action_refresh_rate,
+    };
   });
 });
 
@@ -271,7 +336,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: area.action.service.color }"
+        tabindex="0"
         @click="toggleAreaModal(area.id)"
+        @keydown.enter="toggleAreaModal(area.id)"
       >
         <h2
           class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
@@ -292,62 +359,89 @@ if (areaIdNumber !== null && valueNumber !== null) {
         </div>
       </UContainer>
       <UModal
+        ref="focusDiv"
         v-model="areaIsOpen[area.id]"
+        tabindex="0"
         :ui="{
           width: 'w-1/2',
         }"
       >
         <div
-          class="flex flex-col gap-14 font-semibold text-white rounded-custom_border_radius pl-20 pr-12 py-10 w-full"
+          class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
-            <div class="flex flex-row justify-between items-center w-full">
+            <div
+              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1 pb-4"
+            >
               <div class="flex flex-row items-center gap-3">
                 <UToggle
-                  size="xl"
+                  size="2xl"
                   :model-value="areaIsEnabled(area.id)"
+                  tabindex="0"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
+                  @keydown.enter="toggleAreaEnableSwitch(area.id)"
                 />
-                <div v-if="areaIsEnabled(area.id)" class="text-xl">
+                <div v-if="areaIsEnabled(area.id)" class="text-2xl">
                   <p>Enabled</p>
                 </div>
-                <div v-else class="text-xl">
+                <div v-else class="text-2xl">
                   <p>Disabled</p>
                 </div>
               </div>
               <UButton
                 variant="ghost"
                 class="self-end w-fit"
+                tabindex="-1"
                 @click="toggleAreaModal(area.id)"
+                @keydown.enter="toggleAreaModal(area.id)"
               >
                 <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
               </UButton>
             </div>
 
-            <h2 class="text-6xl text-center w-full">
+            <h2 class="text-7xl text-center w-full">
               <b>{{ area.title }}</b>
             </h2>
           </div>
 
-          <UpdateAreaOptions
-            :area-id="area.id"
-            type-name="action"
-            :color="area.action.service.color"
-            :type="area.action"
-            @update-area-value="updateAreaValue"
-          />
-          <UpdateAreaOptions
-            :area-id="area.id"
-            type-name="reaction"
-            :color="area.action.service.color"
-            :type="area.reaction"
-            @update-area-value="updateAreaValue"
-          />
-
+          <div class="flex flex-col gap-10">
+            <UpdateAreaOptions
+              :area-id="area.id"
+              type-name="action"
+              :color="area.action.service.color"
+              :type="area.action"
+              :type-options="area.action_option"
+              @update-area-value="updateAreaValue"
+            />
+            <UpdateAreaOptions
+              :area-id="area.id"
+              type-name="reaction"
+              :color="area.action.service.color"
+              :type="area.reaction"
+              :type-options="area.reaction_option"
+              @update-area-value="updateAreaValue"
+            />
+          </div>
           <div>
             <p class="self-start text-5xl pb-2"><b>Description</b>:</p>
-            <p class="text-4xl">{{ area.description }}</p>
+            <p class="text-4xl pl-10">{{ area.description }}</p>
+          </div>
+
+          <div class="flex justify-center">
+            <div
+              class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto max-h-[20vh] scrollable-element"
+            >
+              <h2
+                v-if="!selectedAreaResult"
+                class="text-black text-2xl font-semibold"
+              >
+                No Result
+              </h2>
+              <h2 v-else class="text-black text-2xl font-semibold">
+                {{ selectedAreaDates }} - {{ selectedAreaResult }}
+              </h2>
+            </div>
           </div>
 
           <div class="flex flex-row justify-end items-center gap-5">
@@ -355,7 +449,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
+                tabindex="0"
                 @click="toggleEditArea(area.id)"
+                @keydown.enter="toggleEditArea(area.id)"
               >
                 <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
               </UButton>
@@ -369,7 +465,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 <UFormGroup
                   v-for="(value, key) in filteredState(area.id)"
                   :key="key"
-                  :label="key"
+                  :label="formatName(key)"
                   :name="key"
                   :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
                 >
@@ -387,6 +483,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                       :placeholder="key + '...'"
                     />
                     <UButton
+                      tabindex="0"
                       @click="
                         isValidKey(key) &&
                         state[area.id][key] !==
@@ -405,6 +502,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
+                tabindex="0"
                 @click="onDelete(area.id)"
               >
                 <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
@@ -431,15 +529,17 @@ if (areaIdNumber !== null && valueNumber !== null) {
               borderColor: area.action.service.color,
               color: area.action.service.color,
             }"
+            tabindex="0"
             @click="cancelDeletion(area.id)"
             >Cancel</UButton
           >
           <UButton
             class="text-white text-2xl font-semibold py-3 px-5"
             :style="{ backgroundColor: area.action.service.color }"
+            tabindex="0"
             @click="onDelete(area.id)"
-            >Delete</UButton
-          >
+            >Delete
+          </UButton>
         </div>
       </UModal>
     </div>
@@ -468,5 +568,15 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .hover_underline_animation:hover::after {
   transform: scaleX(0.9);
   transform-origin: bottom center;
+}
+
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.scrollable-element {
+  scrollbar-width: thick;
+  scrollbar-color: black rgba(255, 255, 255, 0.2);
 }
 </style>

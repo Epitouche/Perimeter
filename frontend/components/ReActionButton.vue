@@ -38,7 +38,6 @@ const getServiceInfo = async () => {
 
 onMounted(() => {
   getServiceInfo();
-  console.log("typeName:", props.typeName);
 });
 
 watch(
@@ -60,6 +59,7 @@ watch(
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
     :style="{ backgroundColor: serviceInfo ? serviceInfo.color : 'black' }"
+    tabindex="-1"
   >
     <img
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
@@ -104,4 +104,9 @@ watch(
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

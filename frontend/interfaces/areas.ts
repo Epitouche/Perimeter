@@ -3,11 +3,11 @@ export interface Area {
   createdAt: string;
   title: string;
   description: string;
+  action_refresh_rate: number;
   enable: boolean;
   action: {
     id: number;
     name: string;
-    option?: string | object;
     service: {
       name: string;
       color: string;
@@ -18,7 +18,6 @@ export interface Area {
   reaction: {
     id: number;
     name: string;
-    option?: string | object;
     service: {
       name: string;
       color: string;
