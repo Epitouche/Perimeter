@@ -29,14 +29,6 @@ async function loadConnectionInfos() {
   }
 }
 
-const handleSubmit = async () => {
-  const userData = {
-    username: username.value,
-    email: email.value,
-  };
-
-  console.log("User Data : ", userData);
-};
 </script>
 
 <template>
@@ -51,11 +43,6 @@ const handleSubmit = async () => {
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
       </div>
-      <UButton
-        class="text-black bg-custom_color-bg_section border-2 border-black items-right text-2xl font-semibold py-3 px-5"
-        @click="handleSubmit"
-        >Submit
-      </UButton>
     </div>
   </div>
 </template>

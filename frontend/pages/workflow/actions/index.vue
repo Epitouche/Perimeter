@@ -49,7 +49,7 @@ onMounted(() => {
 <template>
   <div class="py-20">
     <div class="px-20">
-      <BackButton link="/workflow" :is-white="false" />
+      <BackButton link="/workflow" :is-white="false"/>
     </div>
     <h1
       class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
@@ -60,7 +60,7 @@ onMounted(() => {
       :ui="{ base: 'mx-auto' }"
       class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
     >
-      <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
+      <SearchBar v-model:search-query="searchQuery" class="!w-1/3" tabindex="0"/>
       <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
       <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
       <div
@@ -73,4 +73,9 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

@@ -96,7 +96,9 @@ onMounted(() => {
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
+        tabindex="0"
         @click="openConfig(type.id)"
+        @keydown.space="openConfig(type.id)"
       >
         <h2
           class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
@@ -148,11 +150,12 @@ onMounted(() => {
             <div class="flex flex-row justify-evenly gap-4 pt-4">
               <UButton
                 class="text-3xl font-semibold px-5 py-3 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
+                tabindex="0"
                 @click="openConfig(type.id)"
               >
                 Cancel
               </UButton>
-              <UButton type="submit" class="text-3xl font-semibold px-5 py-3">
+              <UButton type="submit" class="text-3xl font-semibold px-5 py-3" tabindex="0">
                 Submit
               </UButton>
             </div>
@@ -162,3 +165,10 @@ onMounted(() => {
     </div>
   </UContainer>
 </template>
+
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

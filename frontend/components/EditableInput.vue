@@ -26,7 +26,7 @@ export default {
     );
 
     const toggleEdit = () => {
-      isEditable.value = !isEditable.value;
+      isEditable.value = false;
       if (!isEditable.value) {
         emit("update:modelValue", inputValue.value);
       }
@@ -59,15 +59,6 @@ export default {
         }"
         class="flex-1 transition-colors duration-300"
       />
-      <UButton
-        class="h-12 bg-white border-2 border-black rounded-full flex items-center justify-center shadow-lg text-black font-semibold transition-colors duration-300"
-        @click="toggleEdit"
-      >
-        <Icon
-          :name="isEditable ? 'bytesize:edit' : 'mdi:lock'"
-          class="text-black text-xl"
-        />
-      </UButton>
     </div>
   </div>
 </template>
