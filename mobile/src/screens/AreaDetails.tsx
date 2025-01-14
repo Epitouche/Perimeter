@@ -53,6 +53,24 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     }));
   };
 
+  const deleteArea = async () => {
+    try {
+      const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id: area.id }),
+      });
+      if (response.ok) {
+        console.log('Area deleted successfully');
+        navigation.navigate('AreaView');
+      }
+    } catch (error) {
+      console.error('Error deleting area:', error);
+    }
+  }
+
   const handleSaveArea = async () => {
     console.log(title, description, refreshRate);
     const newArea = {
@@ -217,7 +235,15 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 </Text>
               </View>
             </View>
-            <View style={{ alignContent: 'center' }}>
+            <View style={{ alignContent: 'center', justifyContent: 'space-between' }}>
+              <TouchableOpacity onPress={() => deleteArea()}>
+                <SvgFromUri
+                  uri={'https://api.iconify.design/mdi:delete.svg'}
+                  width={50}
+                  height={50}
+                  color={'#E60000'}
+                />
+              </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
                 <SvgFromUri
                   uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
