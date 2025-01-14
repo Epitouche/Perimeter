@@ -184,6 +184,7 @@ onMounted(() => {
       <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
         <UButton
           class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
+          tabindex="0"
           @click="onCancel()"
           >Cancel</UButton
         >
@@ -223,6 +224,7 @@ onMounted(() => {
         <div v-if="websiteStore.showCreateButton" class="pt-10">
           <UButton
             class="text-5xl font-bold px-8 py-4"
+            tabindex="0"
             @click="validateCreation"
             >Create</UButton
           >
@@ -276,11 +278,13 @@ onMounted(() => {
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
                 class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                tabindex="0"
                 @click="validateCreation"
                 >Cancel</UButton
               >
               <UButton
                 class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                tabindex="0"
                 @click="onCreate"
                 >Submit</UButton
               >
