@@ -128,7 +128,7 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	return []schemas.Reaction{
 		{
 			Name:        string(schemas.SaveUrl),
-			Description: "This reaction save content from a URL to a file in Dropbox\nExample:\npath: folder/subfolder\nurl: https://example.com",
+			Description: "This reaction save content from a URL to a file in Dropbox",
 			Service:     service.serviceInfo,
 			Option:      saveUrlReactionOption,
 		},
