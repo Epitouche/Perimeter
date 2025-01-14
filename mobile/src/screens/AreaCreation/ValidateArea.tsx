@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../../context/AppContext';
@@ -28,6 +28,9 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   );
   const [actionName, setActionName] = React.useState('');
   const [reactionName, setReactionName] = React.useState('');
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [refreshTimer, setRefreshTimer] = React.useState('');
 
   useEffect(() => {
     const getService = async () => {
@@ -55,6 +58,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
 
         let actionData = await response.json();
         let reactionData = await res.json();
+        console.log("reactionData", reactionData);
         setActionName(actionData[0].name);
         setReactionName(reactionData[0].name);
         setActionService(actionData[0].service);
@@ -71,6 +75,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const saveButtonPressed = async () => {
     try {
+      console.log(parseInt(refreshTimer));
       let data = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
         method: 'POST',
         headers: {
@@ -80,8 +85,11 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         body: JSON.stringify({
           action_id: actionId,
           action_option: actionOptions,
+          action_refresh_rate: parseInt(refreshTimer),
+          description,
           reaction_id: reactionId,
           reaction_option: reactionOptions,
+          title,
         }),
       });
       let res = await data.json();
@@ -96,6 +104,31 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+    <View style={{ width: '80%', marginBottom: 20 }}>
+      <Text style={styles.label}>Title</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter title"
+        onChangeText={(text) => setTitle(text)}
+      />
+    </View>
+    <View style={{ width: '80%', marginBottom: 20 }}>
+      <Text style={styles.label}>Description</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter description"
+        onChangeText={(text) => setDescription(text)}
+      />
+    </View>
+    <View style={{ width: '80%', marginBottom: 20 }}>
+      <Text style={styles.label}>Refresh Timer (in seconds)</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter refresh timer"
+        keyboardType="numeric"
+        onChangeText={(text) => setRefreshTimer(text)}
+      />
+    </View>
       <Text style={styles.title}>Add Area</Text>
       <View
         style={[
@@ -113,7 +146,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         <Text style={styles.boxText}>{reactionName}</Text>
       </View>
       <TouchableOpacity
-        style={styles.addButton}
+        style={styles.saveButton}
         onPress={() => {
           saveButtonPressed();
         }}>
@@ -174,6 +207,27 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: 'black',
     marginVertical: 10,
+  },
+  saveButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    width: '100%',
+    marginVertical: 5,
+    paddingHorizontal: 10,
+    color: 'black',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 2,
   },
 });
 

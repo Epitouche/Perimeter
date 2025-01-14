@@ -27,6 +27,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const [selectedReactionOptions, setSelectedReactionOptions] = useState<{
     [key: string]: any;
   }>({});
+  console.log('Area refreshrate:', area.action_refresh_rate);
 
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -184,7 +185,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
           <View style={[{ flexDirection: 'column' }]}>
             <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
-              <Text style={[styles.label, { color: 'black' }]}>title:</Text>
+              <Text style={[styles.label, { color: 'black' }]}>Title:</Text>
               <Text style={[styles.value, { color: 'black' }]}>
                 {title == '' ? area.title : title}
               </Text>
@@ -202,7 +203,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 Refresh rate:
               </Text>
               <Text style={[styles.value, { color: 'black' }]}>
-                {refreshRate == undefined ? area.refresh_rate : refreshRate}
+                {!refreshRate ? area.refresh_rate : refreshRate}
               </Text>
             </View>
           </View>
