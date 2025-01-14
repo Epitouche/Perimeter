@@ -40,6 +40,18 @@ const openConfig = (typeId: number) => {
 const onSubmit = (typeId: number, typeTitle: string) => {
   const modifiedOptions = { ...state[typeId] };
 
+  const hasInvalidTypes = Object.entries(modifiedOptions).some(
+    ([key, value]) => {
+      const expectedType = fieldTypes[typeId][key];
+      return typeof value !== expectedType;
+    },
+  );
+
+  if (hasInvalidTypes) {
+    alert("Some fields have invalid types! Please correct them.");
+    return;
+  }
+
   router.push({
     name: "workflow",
     query: {
@@ -50,6 +62,20 @@ const onSubmit = (typeId: number, typeTitle: string) => {
     },
   });
 };
+
+const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
+  Object.fromEntries(
+    props.types.map((type) => [
+      type.id,
+      Object.fromEntries(
+        Object.keys(state[type.id]).map((key) => {
+          const value = state[type.id][key];
+          return [key, typeof value];
+        }),
+      ),
+    ]),
+  ),
+);
 
 function formatString(str: string): string {
   return str.replace(/([a-z])([A-Z])/g, "$1 $2");
@@ -70,7 +96,9 @@ onMounted(() => {
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
+        tabindex="0"
         @click="openConfig(type.id)"
+        @keydown.space="openConfig(type.id)"
       >
         <h2
           class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
@@ -108,6 +136,9 @@ onMounted(() => {
             >
               <UInput
                 v-model="state[type.id][key] as string | number | undefined"
+                :type="
+                  fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
+                "
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
                   size: { sm: 'text-3xl' },
@@ -119,11 +150,16 @@ onMounted(() => {
             <div class="flex flex-row justify-evenly gap-4 pt-4">
               <UButton
                 class="text-3xl font-semibold px-5 py-3 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
+                tabindex="0"
                 @click="openConfig(type.id)"
               >
                 Cancel
               </UButton>
-              <UButton type="submit" class="text-3xl font-semibold px-5 py-3">
+              <UButton
+                type="submit"
+                class="text-3xl font-semibold px-5 py-3"
+                tabindex="0"
+              >
                 Submit
               </UButton>
             </div>
@@ -133,3 +169,10 @@ onMounted(() => {
     </div>
   </UContainer>
 </template>
+
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>
