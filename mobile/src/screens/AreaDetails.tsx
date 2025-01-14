@@ -54,7 +54,7 @@ const AreaDetailsScreen = ({ route }: Props) => {
         acc[name] = value;
         return acc;
       },
-      {} as { [key: string]: any }
+      {} as { [key: string]: any },
     );
     setSelectedActionOptions(initialActionOptions);
   }, [area.action_option]);
