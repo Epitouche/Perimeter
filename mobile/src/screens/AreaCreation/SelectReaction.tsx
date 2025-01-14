@@ -94,8 +94,6 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleSaveOptions = async () => {
-    console.log('Selected Action:', selectedReaction);
-    console.log('Configured Options:', selectedReactionOptions);
     let res;
     let data;
     try {

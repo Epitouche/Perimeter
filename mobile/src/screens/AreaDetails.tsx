@@ -48,11 +48,16 @@ const AreaDetailsScreen = ({ route }: Props) => {
     setIsReactionModalVisible(false);
   };
 
-  for (const option of Object.entries(area.action_option).map(
-    ([name, value]) => ({ name, value }),
-  )) {
-    selectedActionOptions[option.name] = option.value;
-  }
+  React.useEffect(() => {
+    const initialActionOptions = Object.entries(area.action_option).reduce(
+      (acc, [name, value]) => {
+        acc[name] = value;
+        return acc;
+      },
+      {} as { [key: string]: any }
+    );
+    setSelectedActionOptions(initialActionOptions);
+  }, [area.action_option]);
 
   for (const option of Object.entries(area.reaction_option).map(
     ([name, value]) => ({ name, value }),
