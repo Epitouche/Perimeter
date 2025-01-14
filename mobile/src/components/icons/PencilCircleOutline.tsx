@@ -6,7 +6,10 @@ type MdiPencilCircleOutlineProps = {
   color?: string;
 };
 
-const MdiPencilCircleOutline: React.FC<MdiPencilCircleOutlineProps> = ({ size = 24, color = 'currentColor' }) => {
+const MdiPencilCircleOutline: React.FC<MdiPencilCircleOutlineProps> = ({
+  size = 24,
+  color = 'currentColor',
+}) => {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path

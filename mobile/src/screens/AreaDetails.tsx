@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
 import MdiPencilCircleOutline from '../components/icons/PencilCircleOutline';
@@ -11,8 +18,8 @@ const AreaDetailsScreen = ({ route }: Props) => {
   const [isActionModalVisible, setIsActionModalVisible] = useState(false);
   const [isReactionModalVisible, setIsReactionModalVisible] = useState(false);
   const [selectedActionOptions, setSelectedActionOptions] = useState<{
-      [key: string]: any;
-    }>({});
+    [key: string]: any;
+  }>({});
   const [selectedReactionOptions, setSelectedReactionOptions] = useState<{
     [key: string]: any;
   }>({});
@@ -40,12 +47,16 @@ const AreaDetailsScreen = ({ route }: Props) => {
     console.log(selectedReactionOptions);
     setIsReactionModalVisible(false);
   };
-  
-  for (const option of Object.entries(area.action_option).map(([name, value]) => ({ name, value }))) {
+
+  for (const option of Object.entries(area.action_option).map(
+    ([name, value]) => ({ name, value }),
+  )) {
     selectedActionOptions[option.name] = option.value;
   }
 
-  for (const option of Object.entries(area.reaction_option).map(([name, value]) => ({ name, value }))) {
+  for (const option of Object.entries(area.reaction_option).map(
+    ([name, value]) => ({ name, value }),
+  )) {
     selectedReactionOptions[option.name] = option.value;
   }
 
@@ -56,7 +67,11 @@ const AreaDetailsScreen = ({ route }: Props) => {
       <Text style={styles.header}>Area Details</Text>
 
       {/* Action Section */}
-      <View style={[styles.subContainer, { backgroundColor: area.action.service.color }]}>
+      <View
+        style={[
+          styles.subContainer,
+          { backgroundColor: area.action.service.color },
+        ]}>
         <View style={styles.ActionReactionHeader}>
           <Text style={styles.label}>Action</Text>
         </View>
@@ -77,7 +92,11 @@ const AreaDetailsScreen = ({ route }: Props) => {
       </View>
 
       {/* Reaction Section */}
-      <View style={[styles.subContainer, { backgroundColor: area.reaction.service.color }]}>
+      <View
+        style={[
+          styles.subContainer,
+          { backgroundColor: area.reaction.service.color },
+        ]}>
         <View style={styles.ActionReactionHeader}>
           <Text style={styles.label}>Reaction</Text>
         </View>
@@ -98,38 +117,50 @@ const AreaDetailsScreen = ({ route }: Props) => {
       </View>
 
       {/* Action Modal */}
-      <Modal visible={isActionModalVisible} transparent={true} animationType="slide">
+      <Modal
+        visible={isActionModalVisible}
+        transparent={true}
+        animationType="slide">
         <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { backgroundColor: area.action.service.color }]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: area.action.service.color },
+            ]}>
             <Text style={styles.modalHeader}>Modify Action</Text>
-            <View style={[{flexDirection: 'column'}]}>
+            <View style={[{ flexDirection: 'column' }]}>
               {Object.keys(selectedActionOptions).map(key => (
-                          <View key={key} style={styles.optionRow}>
-                            <Text style={styles.optionLabel}>{key}</Text>
-                            <TextInput
-                              style={styles.optionInput}
-                              value={String(selectedActionOptions[key])}
-                              onChangeText={text =>
-                                handleActionOptionChange(
-                                  key,
-                                  text,
-                                  typeof selectedActionOptions[key],
-                                )
-                              }
-                              keyboardType="default" // Adjust as needed
-                            />
-                          </View>
-                        ))}
+                <View key={key} style={styles.optionRow}>
+                  <Text style={styles.optionLabel}>{key}</Text>
+                  <TextInput
+                    style={styles.optionInput}
+                    value={String(selectedActionOptions[key])}
+                    onChangeText={text =>
+                      handleActionOptionChange(
+                        key,
+                        text,
+                        typeof selectedActionOptions[key],
+                      )
+                    }
+                    keyboardType="default" // Adjust as needed
+                  />
+                </View>
+              ))}
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <TouchableOpacity onPress={handleSaveAction}>
                 <View style={styles.saveButton}>
-                  <Text style={[{color: "white"}, {fontSize: 16}]}>Save</Text>
+                  <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
+                    Save
+                  </Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsActionModalVisible(false)}>
                 <View style={styles.cancelButton}>
-                  <Text style={[{color: "red"}, {fontSize: 16}]}>Cancel</Text>
+                  <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
+                    Cancel
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -138,38 +169,51 @@ const AreaDetailsScreen = ({ route }: Props) => {
       </Modal>
 
       {/* Reaction Modal */}
-      <Modal visible={isReactionModalVisible} transparent={true} animationType="slide">
+      <Modal
+        visible={isReactionModalVisible}
+        transparent={true}
+        animationType="slide">
         <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { backgroundColor: area.reaction.service.color }]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: area.reaction.service.color },
+            ]}>
             <Text style={styles.modalHeader}>Modify Reaction</Text>
-            <View style={[{flexDirection: 'column'}]}>
+            <View style={[{ flexDirection: 'column' }]}>
               {Object.keys(selectedReactionOptions).map(key => (
-                          <View key={key} style={styles.optionRow}>
-                            <Text style={styles.optionLabel}>{key}</Text>
-                            <TextInput
-                              style={styles.optionInput}
-                              value={String(selectedReactionOptions[key])}
-                              onChangeText={text =>
-                                handleReactionOptionChange(
-                                  key,
-                                  text,
-                                  typeof selectedReactionOptions[key],
-                                )
-                              }
-                              keyboardType="default" // Adjust as needed
-                            />
-                          </View>
-                        ))}
+                <View key={key} style={styles.optionRow}>
+                  <Text style={styles.optionLabel}>{key}</Text>
+                  <TextInput
+                    style={styles.optionInput}
+                    value={String(selectedReactionOptions[key])}
+                    onChangeText={text =>
+                      handleReactionOptionChange(
+                        key,
+                        text,
+                        typeof selectedReactionOptions[key],
+                      )
+                    }
+                    keyboardType="default" // Adjust as needed
+                  />
+                </View>
+              ))}
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <TouchableOpacity onPress={handleSaveReaction}>
                 <View style={styles.saveButton}>
-                  <Text style={[{color: "white"}, {fontSize: 16}]}>Save</Text>
+                  <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
+                    Save
+                  </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsReactionModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() => setIsReactionModalVisible(false)}>
                 <View style={styles.cancelButton}>
-                  <Text style={[{color: "red"}, {fontSize: 16}]}>Cancel</Text>
+                  <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
+                    Cancel
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>
