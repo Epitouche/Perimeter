@@ -3,14 +3,17 @@ name: Deploy Area application on production environment
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
-  pull_request:
-    branches:
-      - main
-      - devops
   push:
     branches:
       - main
-      - devops
+  workflow_run:
+    workflows:
+      - "Create and publish a backend documentation Docker image"
+      - "Create and publish a backend Docker image"
+      - "Create and publish a mobile Docker image"
+      - "Create and publish a frontend Docker image"
+    types:
+      - completed
 
 env:
   REPOSITORY_NAME: $(echo "${{ github.repository }}" | cut -d'/' -f2)

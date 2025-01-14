@@ -1,0 +1,65 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f4f4f4;
+  font-family: "Kantumuruy Pro", sans-serif;
+  font-display: swap;
+}
+
+h1 {
+  font-size: 5vw;
+  font-weight: 900;
+}
+
+h2 {
+  font-size: 2.5vw;
+  font-weight: 800;
+}
+
+h3 {
+  font-size: 1.5vw;
+  font-weight: 800;
+}
+
+h4 {
+  font-size: 1vw;
+  font-weight: 800;
+}
+
+.custom_card {
+  width: 12.5vw;
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1vh;
+}
+
+/* Mobile Portrait (small screens) */
+/* @media (max-width: 480px) {
+} */
+
+/* Mobile Landscape / Tablet Portrait */
+/* @media (min-width: 481px) and (max-width: 767px) {
+} */
+
+/* Tablet Landscape / Small Laptop */
+/* @media (min-width: 768px) and (max-width: 1023px) {
+} */
+
+/* Laptop / Small Desktop */
+/* @media (min-width: 1024px) and (max-width: 1279px) {
+} */
+
+/* Medium Desktop */
+/* @media (min-width: 1280px) and (max-width: 1440px) {
+} */
+
+/* Large Desktop */
+/* @media (min-width: 1440px) {
+} */
+
+/* Extra Large Screens */
+/* @media (min-width: 1920px) {
+} */
