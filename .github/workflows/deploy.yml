@@ -36,7 +36,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             # clone the repository
-            git clone git@github.com:${{ github.repository }}.git /tmp/${{env.REPOSITORY_NAME}}
+            echo '${{ secrets.SERVER_SSH_KEY }}' > /tmp/ssh_key
+            chmod 400 /tmp/ssh_key
+            ssh-agent $(ssh-add /tmp/ssh_key; git clone git@github.com:${{ github.repository }}.git /tmp/${{env.REPOSITORY_NAME}})
             # login to the docker registry github
             echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io --username ${{ github.actor }} --password-stdin
             # run the docker-compose.prod.yml file
@@ -44,3 +46,4 @@ jobs:
             cd /tmp/${{env.REPOSITORY_NAME}} && sudo docker compose -f docker-compose.prod.yml up -d --force-recreate
             # cleanup
             rm -rf /tmp/${{env.REPOSITORY_NAME}}
+            rm -rf /tmp/ssh_key
