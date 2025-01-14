@@ -309,13 +309,17 @@ if (areaIdNumber !== null && valueNumber !== null) {
       }">
         <div
           class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 w-full overflow-y-auto max-h-[90vh] scrollable-element"
-          :style="{ backgroundColor: area.action.service.color }">
+          :style="{ backgroundColor: area.action.service.color }"
+        >
           <div>
-            <div class="flex flex-row justify-between items-center w-full overflow-y-auto px-1 pb-4">
+            <div
+              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1 pb-4"
+            >
               <div class="flex flex-row items-center gap-3">
                 <UToggle size="2xl" :model-value="areaIsEnabled(area.id)" tabindex="0"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
-                  @keydown.enter="toggleAreaEnableSwitch(area.id)" />
+                  @keydown.enter="toggleAreaEnableSwitch(area.id)"
+                />
                 <div v-if="areaIsEnabled(area.id)" class="text-2xl">
                   <p>Enabled</p>
                 </div>
@@ -347,8 +351,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
 
           <div class="flex justify-center">
             <div
-              class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto max-h-[20vh] scrollable-element">
-              <h2 v-if="!selectedAreaResult" class="text-black text-2xl font-semibold">
+              class="w-full bg-custom_color-bg_section p-16 rounded-lg shadow-md overflow-y-auto max-h-[20vh] scrollable-element"
+            >
+              <h2
+                v-if="!selectedAreaResult"
+                class="text-black text-2xl font-semibold"
+              >
                 No Result
               </h2>
               <h2 v-else class="text-black text-2xl font-semibold">

@@ -63,10 +63,16 @@ onMounted(() => {
 
 <template>
   <div
-    class="capitalize self-start flex flex-row items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-fit py-2 px-4">
-    <img :src="type.service.icon" :alt="type.service.name" class="w-16 h-16 p-0">
+    class="capitalize self-start flex flex-row items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-fit py-2 px-4"
+  >
+    <img
+      :src="type.service.icon"
+      :alt="type.service.name"
+      class="w-16 h-16 p-0"
+    />
     <h2 class="text-5xl">
-      <b>{{ formatName(type.service.name) }}</b>:
+      <b>{{ formatName(type.service.name) }}</b
+      >:
     </h2>
     <p class="text-4xl">{{ formatName(type.name) }}</p>
     <UButton color="white" :ui="{ rounded: 'rounded-full' }"
