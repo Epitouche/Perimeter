@@ -9,7 +9,13 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@nuxt/ui", "@nuxt/icon", "@nuxt/eslint", "@pinia/nuxt", "@nuxtjs/google-fonts"],
+  modules: [
+    "@nuxt/ui",
+    "@nuxt/icon",
+    "@nuxt/eslint",
+    "@pinia/nuxt",
+    "@nuxtjs/google-fonts",
+  ],
 
   icon: {
     customCollections: [
