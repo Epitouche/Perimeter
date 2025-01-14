@@ -144,7 +144,7 @@ const cancelAction = () => {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-5 justify-center" tabindex="0">
+  <div class="flex flex-wrap gap-5 justify-center">
     <UButton
       v-for="(app, index) in apps"
       :key="index"

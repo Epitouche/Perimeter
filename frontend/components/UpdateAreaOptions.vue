@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Area } from "@/interfaces/areas";
-import { defineEmits } from "vue";
 
 const props = defineProps<{
   areaId: number;
