@@ -41,6 +41,7 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 const componentKey = ref(0);
 const focusDiv = ref<HTMLElement | null>(null);
 const selectedAreaResult = ref<string>("");
+const selectedAreaDates = ref<string[]>([]);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
@@ -179,8 +180,11 @@ const fetchAreaResult = async (areaId: number) => {
           areaId: areaId,
         },
       });
-      if (response) {
-        selectedAreaResult.value = response[0].result;
+      if (response && response.length > 0) {
+        selectedAreaResult.value = response.map((item) => item.result).join(", ");
+        selectedAreaDates.value = response.map((item) => formatDate(item.created_at));
+        console.log("Result : ", selectedAreaResult.value);
+        console.log("Dates : ", selectedAreaDates.value);
       } else {
         console.error("Response doesn't have a valid result.");
       }
@@ -190,6 +194,18 @@ const fetchAreaResult = async (areaId: number) => {
     }
   }
 };
+
+function formatDate(isoDate: string): string {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+}
 
 const updateAreaValue = async (
   areaId: number,
@@ -252,7 +268,6 @@ const updateAreaValue = async (
       },
     });
 
-    emit("refreshAreas");
     emit("refreshAreas");
   } catch (error) {
     errorMessage.value = handleErrorStatus(error);
@@ -348,7 +363,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         }"
       >
         <div
-          class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 w-full overflow-y-auto max-h-[90vh] scrollable-element"
+          class="flex flex-col gap-16 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 w-full"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
@@ -420,7 +435,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 No Result
               </h2>
               <h2 v-else class="text-black text-2xl font-semibold">
-                {{ selectedAreaResult }}
+                {{ selectedAreaDates }} - {{ selectedAreaResult }}
               </h2>
             </div>
           </div>
