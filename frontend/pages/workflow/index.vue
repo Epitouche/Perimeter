@@ -190,16 +190,19 @@ onMounted(() => {
         </h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
-          <ReActionButton title="Action" link="/workflow/actions" :is-disabled="false"
+          <ReActionButton
+title="Action" link="/workflow/actions" :is-disabled="false"
             :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)"
             :type-name="websiteStore.actionName" />
-          <div :class="[
+          <div
+:class="[
             'bg-black min-w-4 min-h-28',
             websiteStore.reactionButtonisDisabled
               ? 'bg-opacity-60'
               : 'bg-opacity-100',
           ]" />
-          <ReActionButton title="Reaction" link="/workflow/reactions"
+          <ReActionButton
+title="Reaction" link="/workflow/reactions"
             :is-disabled="websiteStore.reactionButtonisDisabled" :is-selected="websiteStore.reactionIsSelected"
             :service-id="Number(websiteStore.reactionServiceId)" :type-name="websiteStore.reactionName" />
         </div>
@@ -214,14 +217,16 @@ onMounted(() => {
             </h2>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Title</h3>
-              <UInput v-model="title" :ui="{
+              <UInput
+v-model="title" :ui="{
                 placeholder: '!px-5 !py-3 font-light',
                 size: { sm: 'text-3xl' },
               }" placeholder="Title" class="flex-1 bg-white text-black rounded-full transition-colors duration-300" />
             </div>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Description</h3>
-              <UInput v-model="description" :ui="{
+              <UInput
+v-model="description" :ui="{
                 placeholder: '!px-5 !py-3 font-light',
                 size: { sm: 'text-3xl' },
               }" placeholder="Description"
@@ -229,16 +234,19 @@ onMounted(() => {
             </div>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Refresh Rate</h3>
-              <UInput v-model="refreshRate" :ui="{
+              <UInput
+v-model="refreshRate" :ui="{
                 placeholder: '!px-5 !py-3 font-light',
                 size: { sm: 'text-3xl' },
               }" placeholder="Refresh Rate"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300" />
             </div>
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
-              <UButton class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+              <UButton
+class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
                 @click="validateCreation">Cancel</UButton>
-              <UButton class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+              <UButton
+class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
                 @click="onCreate">Submit</UButton>
             </div>
           </div>
