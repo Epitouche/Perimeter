@@ -94,15 +94,13 @@ onMounted(() => {
     <div v-for="type in props.types" :key="type.id">
       <UContainer
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        class="flex flex-col justify-evenly items-center gap-4 text-white font-bold text-6xl p-8 rounded-custom_border_radius w-[5em] h-[4.5em]"
+        class="custom_card flex flex-col justify-evenly items-center gap-4 text-white rounded-custom_border_radius"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
         tabindex="0"
         @click="openConfig(type.id)"
         @keydown.space="openConfig(type.id)"
       >
-        <h2
-          class="clamp-2-lines capitalize text-5xl text-center break-words w-full"
-        >
+        <h2 class="clamp-2-lines capitalize text-center break-words w-full">
           {{ formatString(type.name) }}
         </h2>
       </UContainer>
