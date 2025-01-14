@@ -12,7 +12,6 @@ services:
       - "traefik.http.routers.client_web.rule=Host(`tom-mendy.com`)"
       - "traefik.http.routers.client_web.entrypoints=websecure"
       - "traefik.http.routers.client_web.tls.certresolver=myresolver"
-      - "com.centurylinklabs.watchtower.enable=true"
     extends:
       file: ./docker-compose.template.yaml
       service: client_web
@@ -49,21 +48,10 @@ services:
 
   server-documentation:
     image: ghcr.io/epitouche/area-backend-documentation:main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     extends:
       file: ./docker-compose.template.yaml
       service: server-documentation
 
-  watchtower:
-    image: containrrr/watchtower:1.7
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    command:
-      - "--label-enable"
-      - "--interval"
-      - "30"
-      - "--rolling-restart"
 
 networks:
   app-networks:
