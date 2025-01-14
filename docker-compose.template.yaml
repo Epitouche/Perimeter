@@ -8,7 +8,7 @@ services:
       - .env
     networks:
       - app-networks
-    restart: always
+    restart: no
     pull_policy: always
 
   client_web:
@@ -77,6 +77,9 @@ services:
     command:
       - "--api.insecure=true"
       - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
     restart: always
 
   server:
@@ -103,8 +106,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
-    labels:
-      - "traefik.enable=true"
     pull_policy: always
 
   server-documentation:

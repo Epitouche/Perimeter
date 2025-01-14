@@ -25,10 +25,8 @@ services:
     volumes:
       - letsencrypt:/letsencrypt
     labels:
-      - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=tom.mendy@tom-mendy.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
