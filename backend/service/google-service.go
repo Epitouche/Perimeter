@@ -155,12 +155,10 @@ func (service *googleService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrGoogleSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/google"
 
 	apiURL := "https://oauth2.googleapis.com/token"
 
@@ -187,6 +185,18 @@ func (service *googleService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.Token{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	var result schemas.GoogleTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -199,8 +209,6 @@ func (service *googleService) AuthGetServiceAccessToken(
 	if (result.AccessToken == "") || (result.TokenType == "") {
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
-
-	resp.Body.Close()
 
 	token = schemas.Token{
 		Token:        result.AccessToken,
@@ -233,12 +241,23 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 		return schemas.GmailProfile{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.GmailProfile{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.GmailProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	resp.Body.Close()
 	return result, nil
 }
 
@@ -263,12 +282,23 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 		return schemas.GoogleProfile{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.GoogleProfile{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.GoogleProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	resp.Body.Close()
 	return result, nil
 }
 
@@ -367,11 +397,17 @@ func getLastEmailId(
 		println("error making request: " + err.Error())
 		return emailResponse, err
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
-		return emailResponse, err
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return emailResponse, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&emailResponse)
@@ -379,6 +415,7 @@ func getLastEmailId(
 		println("error decoding response: " + err.Error())
 		return emailResponse, err
 	}
+
 	return emailResponse, nil
 }
 
@@ -405,12 +442,19 @@ func getLastEmailDetails(id string, token schemas.Token) (schemas.EmailDetails, 
 		println("error making request: " + err.Error())
 		return emailDetails, err
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
-		return emailDetails, err
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return emailDetails, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
+
 	var emailAllDetails schemas.GmailMessageResponse
 	err = json.NewDecoder(resp.Body).Decode(&emailAllDetails)
 	if err != nil {

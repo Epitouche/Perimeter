@@ -202,12 +202,10 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrMicrosoftClientIdNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/microsoft"
 
 	apiURL := "https://login.microsoftonline.com/common/oauth2/v2.0/token"
 
@@ -274,7 +272,13 @@ func (service *microsoftService) GetUserInfo(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return schemas.User{}, fmt.Errorf("failed to fetch user info: %s", resp.Status)
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return user, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
 	var result schemas.MicrosoftUserInfo
@@ -342,7 +346,14 @@ func (service *microsoftService) MicrosoftActionEventStarting(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		err = fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+		println(err.Error())
 		return
 	}
 
@@ -464,8 +475,13 @@ func getNewEmails(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		println("error status code: " + fmt.Sprint(resp.StatusCode))
-		return emailResponse, nil
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return emailResponse, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&emailResponse)

@@ -172,12 +172,10 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrDropboxSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/dropbox"
 
 	apiURL := "https://api.dropboxapi.com/oauth2/token"
 
@@ -202,6 +200,18 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.Token{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	var result schemas.DropboxTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -214,8 +224,6 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 	if (result.AccessToken == "") || (result.TokenType == "") {
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
-
-	resp.Body.Close()
 
 	token = schemas.Token{
 		Token:        result.AccessToken,
@@ -249,13 +257,23 @@ func (service *dropboxService) GetUserInfo(
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// Read and log the error response for debugging
+		errorBody, _ := io.ReadAll(resp.Body)
+		return schemas.User{}, fmt.Errorf(
+			"unexpected status code: %d, response: %s",
+			resp.StatusCode,
+			string(errorBody),
+		)
+	}
+
 	result := schemas.DropboxUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	user = schemas.User{
 		Email:    result.Email,
@@ -298,7 +316,8 @@ func (service *dropboxService) GetUserFolderAndFileList(
 	if err != nil {
 		return nil, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
@@ -309,8 +328,6 @@ func (service *dropboxService) GetUserFolderAndFileList(
 			string(errorBody),
 		)
 	}
-
-	println("Response status code: ", resp.StatusCode)
 
 	// Decode the JSON response into the result struct
 	result := schemas.DropboxListFolderResult{}
@@ -407,7 +424,8 @@ func (service *dropboxService) SaveUrl(
 	if err != nil {
 		return fileJobStatus, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
@@ -455,7 +473,8 @@ func (service *dropboxService) SaveUrlCheckJobStatus(
 	if err != nil {
 		return saveUrlFile, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
