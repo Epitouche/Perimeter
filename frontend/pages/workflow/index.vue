@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LocationQueryValue } from "vue-router";
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -15,21 +16,32 @@ const errorMessage = ref<string | null>(null);
 const showPageContent = ref(true);
 const creationPopup = ref(false);
 const isLoading = ref(false);
-const title = ref<string>("");
-const description = ref<string>("");
-const refreshRate = ref(0);
+const title = ref<string>();
+const description = ref<string>();
+const refreshRate = ref<number>();
 
 const validateCreation = () => {
   creationPopup.value = !creationPopup.value;
 };
 
 const onCreate = async () => {
-  //console.log("actionId:", websiteStore.actionId);
-  //console.log("actionOptions:", websiteStore.actionOptions);
-  //console.log("reactionId:", websiteStore.reactionId);
-  //console.log("reactionOptions:", websiteStore.reactionOptions);
-  //console.log("title: ", title.value);
-  //console.log("description: ", description.value);
+  // console.log("actionId:", websiteStore.actionId);
+  // console.log("actionOptions:", websiteStore.actionOptions);
+  // console.log("reactionId:", websiteStore.reactionId);
+  // console.log("reactionOptions:", websiteStore.reactionOptions);
+  // console.log("title: ", title.value);
+  // console.log("description: ", description.value);
+  // console.log("refreshRate: ", refreshRate.value);
+
+  if (!title.value || !description.value || !refreshRate.value) {
+    alert("Please fill out all fields");
+    return;
+  }
+
+  if (isNaN(refreshRate.value)) {
+    alert("Refresh rate must be a number");
+    return;
+  }
 
   creationPopup.value = false;
   error.value = null;
@@ -39,13 +51,13 @@ const onCreate = async () => {
       method: "POST",
       body: {
         token: token.value,
-        actionOptions: websiteStore.actionOptions,
         actionId: websiteStore.actionId,
-        reactionOptions: websiteStore.reactionOptions,
-        reactionId: websiteStore.reactionId,
-        title: title.value,
-        description: description.value,
+        actionOptions: websiteStore.actionOptions,
         refreshRate: refreshRate.value,
+        description: description.value,
+        reactionId: websiteStore.reactionId,
+        reactionOptions: websiteStore.reactionOptions,
+        title: title.value,
       },
     });
     createdMessage.value = "Workflow created successfully!";
@@ -191,9 +203,7 @@ onMounted(() => {
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
-        <h1 class="text-custom_size_title font-custom_weight_title pb-5">
-          Workflow
-        </h1>
+        <h1 class="pb-5">Workflow</h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
           <ReActionButton
@@ -271,7 +281,7 @@ onMounted(() => {
                   placeholder: '!px-5 !py-3 font-light',
                   size: { sm: 'text-3xl' },
                 }"
-                placeholder="Refresh Rate"
+                placeholder="Ex: 0"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
               />
             </div>

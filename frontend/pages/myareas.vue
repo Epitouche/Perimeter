@@ -75,12 +75,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col justify-center items-center gap-10 w-full">
-    <h1 class="text-custom_size_title font-custom_weight_title">My Areas</h1>
+  <div class="flex flex-col justify-center items-center gap-5 w-full">
+    <h1>My Areas</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div
       v-else
-      class="flex flex-col justify-center items-start gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
+      class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
       tabindex="0"
     >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
@@ -122,7 +122,7 @@ onMounted(() => {
       <div v-else-if="filteredAreas.length === 0" class="w-full">
         <p>No areas found, create some!</p>
       </div>
-      <div v-else class="w-full overflow-y-scroll max-h-[64vh]">
+      <div v-else class="w-[95%] overflow-y-scroll max-h-[64vh]">
         <AreaCardContainer :areas="filteredAreas" @refresh-areas="fetchAreas" />
       </div>
     </div>

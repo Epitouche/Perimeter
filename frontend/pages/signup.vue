@@ -78,11 +78,7 @@ const handleSignUp = async () => {
       }"
       class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
     >
-      <h1
-        class="text-custom_size_title font-custom_weight_connection_title pb-5"
-      >
-        Sign up
-      </h1>
+      <h1 class="pb-5">Sign up</h1>
       <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
         <div class="flex flex-col">
           <h2 class="text-xl px-5">Email</h2>
