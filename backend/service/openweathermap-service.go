@@ -108,8 +108,8 @@ func (service *openweathermapService) FindReactionByName(
 func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 	// SpecificWeather
 	defaultValueSpecificWeather := schemas.OpenweathermapActionSpecificWeather{
-		City:    "",
-		Weather: "",
+		City:    "Bordeaux",
+		Weather: "Rain",
 	}
 	optionSpecificWeather, err := json.Marshal(defaultValueSpecificWeather)
 	if err != nil {
@@ -117,8 +117,8 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 	}
 	// SpecificTemperature
 	defaultValueSpecificTemperature := schemas.OpenweathermapActionSpecificTemperature{
-		City:        "",
-		Temperature: 0,
+		City:        "Bordeaux",
+		Temperature: 12,
 	}
 	optionSpecificTemperature, err := json.Marshal(defaultValueSpecificTemperature)
 	if err != nil {
@@ -151,7 +151,7 @@ func (service *openweathermapService) GetServiceActionInfo() []schemas.Action {
 
 func (service *openweathermapService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.OpenweathermapReactionOption{
-		City: "",
+		City: "Bordeaux",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
