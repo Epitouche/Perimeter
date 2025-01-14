@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,13 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
 import MdiPencilCircleOutline from '../components/icons/PencilCircleOutline';
+import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 
 const AreaDetailsScreen = ({ route }: Props) => {
   const { area } = route.params;
+  const { ipAddress } = useContext(AppContext);
   const [isActionModalVisible, setIsActionModalVisible] = useState(false);
   const [isReactionModalVisible, setIsReactionModalVisible] = useState(false);
   const [selectedActionOptions, setSelectedActionOptions] = useState<{
@@ -39,7 +41,31 @@ const AreaDetailsScreen = ({ route }: Props) => {
   };
 
   const handleSaveAction = () => {
-    console.log(selectedActionOptions);
+    fetch(`http://${ipAddress}:8080/api/v1/area`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action_option: Object.values(selectedActionOptions),
+        action_refresh_rate: area.action_refresh_rate,
+        createdAt: area.createdAt,
+        description: area.description,
+        enable: area.enable,
+        id: area.id,
+        reaction_option: Object.values(selectedReactionOptions),
+        storage_variable: area.storage_variable,
+        title: area.title,
+        update_at: new Date().toISOString(),
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     setIsActionModalVisible(false);
   };
 
