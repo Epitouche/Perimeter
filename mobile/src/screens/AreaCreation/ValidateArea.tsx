@@ -1,5 +1,11 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../../context/AppContext';
@@ -58,7 +64,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
 
         let actionData = await response.json();
         let reactionData = await res.json();
-        console.log("reactionData", reactionData);
+        console.log('reactionData', reactionData);
         setActionName(actionData[0].name);
         setReactionName(reactionData[0].name);
         setActionService(actionData[0].service);
@@ -104,31 +110,31 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-    <View style={{ width: '80%', marginBottom: 20 }}>
-      <Text style={styles.label}>Title</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter title"
-        onChangeText={(text) => setTitle(text)}
-      />
-    </View>
-    <View style={{ width: '80%', marginBottom: 20 }}>
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter description"
-        onChangeText={(text) => setDescription(text)}
-      />
-    </View>
-    <View style={{ width: '80%', marginBottom: 20 }}>
-      <Text style={styles.label}>Refresh Timer (in seconds)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter refresh timer"
-        keyboardType="numeric"
-        onChangeText={(text) => setRefreshTimer(text)}
-      />
-    </View>
+      <View style={{ width: '80%', marginBottom: 20 }}>
+        <Text style={styles.label}>Title</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter title"
+          onChangeText={text => setTitle(text)}
+        />
+      </View>
+      <View style={{ width: '80%', marginBottom: 20 }}>
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter description"
+          onChangeText={text => setDescription(text)}
+        />
+      </View>
+      <View style={{ width: '80%', marginBottom: 20 }}>
+        <Text style={styles.label}>Refresh Timer (in seconds)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter refresh timer"
+          keyboardType="numeric"
+          onChangeText={text => setRefreshTimer(text)}
+        />
+      </View>
       <Text style={styles.title}>Add Area</Text>
       <View
         style={[
