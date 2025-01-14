@@ -36,7 +36,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const [refreshRate, setRefreshRate] = useState<number>();
 
   const [areaResults, setAreaResults] = useState([
-      { created_at: '', result: '' },
+    { created_at: '', result: '' },
   ]);
 
   const handleActionOptionChange = (key: string, value: any, type: any) => {
@@ -69,7 +69,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     } catch (error) {
       console.error('Error deleting area:', error);
     }
-  }
+  };
 
   const handleSaveArea = async () => {
     console.log(title, description, refreshRate);
@@ -191,7 +191,11 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     fetchAreaResults();
   }, []);
 
-  const renderItem = ({ item }: { item: { created_at: string, result: string } }) => (
+  const renderItem = ({
+    item,
+  }: {
+    item: { created_at: string; result: string };
+  }) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{item.created_at.substring(0, 19)}</Text>
       <Text style={styles.cell}>{item.result}</Text>
@@ -212,13 +216,15 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           <View
             style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
             <View style={[{ flexDirection: 'column' }]}>
-              <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
+              <View
+                style={[styles.detailContainer, { flexDirection: 'column' }]}>
                 <Text style={[styles.label, { color: 'black' }]}>title:</Text>
                 <Text style={[styles.value, { color: 'black' }]}>
                   {title == '' ? area.title : title}
                 </Text>
               </View>
-              <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
+              <View
+                style={[styles.detailContainer, { flexDirection: 'column' }]}>
                 <Text style={[styles.label, { color: 'black' }]}>
                   Description:
                 </Text>
@@ -235,7 +241,11 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 </Text>
               </View>
             </View>
-            <View style={{ alignContent: 'center', justifyContent: 'space-between' }}>
+            <View
+              style={{
+                alignContent: 'center',
+                justifyContent: 'space-between',
+              }}>
               <TouchableOpacity onPress={() => deleteArea()}>
                 <SvgFromUri
                   uri={'https://api.iconify.design/mdi:delete.svg'}
@@ -246,7 +256,9 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
                 <SvgFromUri
-                  uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
+                  uri={
+                    'https://api.iconify.design/mdi:pencil-circle-outline.svg'
+                  }
                   width={50}
                   height={50}
                   color={'black'}
@@ -265,7 +277,8 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           <View style={styles.ActionReactionHeader}>
             <Text style={styles.label}>Action</Text>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View>
               <View style={styles.detailContainer}>
                 <Text style={styles.label}>Service:</Text>
@@ -300,7 +313,8 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           <View style={styles.ActionReactionHeader}>
             <Text style={styles.label}>Reaction</Text>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View>
               <View style={styles.detailContainer}>
                 <Text style={styles.label}>Service:</Text>
@@ -328,7 +342,10 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
 
         {/* Area Results */}
         <Text style={[styles.header, { marginTop: 16 }]}>Area Results</Text>
-        <View style={[{ borderColor: 'black', borderWidth: 1, borderRadius: 10, flex: 1 }]}>
+        <View
+          style={[
+            { borderColor: 'black', borderWidth: 1, borderRadius: 10, flex: 1 },
+          ]}>
           <View style={[styles.row, { backgroundColor: 'white' }]}>
             <Text style={styles.cell}>created_at</Text>
             <Text style={styles.cell}>result</Text>
@@ -336,7 +353,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           <FlatList
             data={areaResults}
             renderItem={renderItem}
-            keyExtractor={(item) => item.created_at}
+            keyExtractor={item => item.created_at}
             style={{ flex: 1 }}
           />
         </View>
@@ -396,7 +413,10 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 </View>
               </View>
               <View
-                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
                 <TouchableOpacity onPress={handleSaveArea}>
                   <View style={[styles.saveButton, { borderColor: 'black' }]}>
                     <Text style={[{ color: 'black' }, { fontSize: 16 }]}>
@@ -454,7 +474,10 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 ))}
               </View>
               <View
-                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
                 <TouchableOpacity onPress={handleSaveAction}>
                   <View style={styles.saveButton}>
                     <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
@@ -462,7 +485,8 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                     </Text>
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setIsActionModalVisible(false)}>
+                <TouchableOpacity
+                  onPress={() => setIsActionModalVisible(false)}>
                   <View style={styles.cancelButton}>
                     <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
                       Cancel
@@ -506,7 +530,10 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 ))}
               </View>
               <View
-                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
                 <TouchableOpacity onPress={handleSaveReaction}>
                   <View style={styles.saveButton}>
                     <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
@@ -528,7 +555,13 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
         </Modal>
         <TouchableOpacity onPress={() => navigation.navigate('AreaView')}>
           <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-            <Text style={[styles.cancelButton , { color: '#E60000', width: "20%", margin: 10}]}>Back</Text>
+            <Text
+              style={[
+                styles.cancelButton,
+                { color: '#E60000', width: '20%', margin: 10 },
+              ]}>
+              Back
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
