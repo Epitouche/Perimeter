@@ -17,6 +17,7 @@ const creationPopup = ref(false);
 const isLoading = ref(false);
 const title = ref<string>("");
 const description = ref<string>("");
+const refreshRate = ref(0);
 
 const validateCreation = () => {
   creationPopup.value = !creationPopup.value;
@@ -44,6 +45,7 @@ const onCreate = async () => {
         reactionId: websiteStore.reactionId,
         title: title.value,
         description: description.value,
+        refreshRate: refreshRate.value,
       },
     });
     createdMessage.value = "Workflow created successfully!";
@@ -230,29 +232,47 @@ onMounted(() => {
           class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
           <div
-            class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
           >
-            <h2 class="text-4xl font-semibold mb-2">
-              You're about to create a new area
+            <h2 class="text-4xl font-semibold text-center mb-2">
+              You're about to create a new area!
             </h2>
-            <UInput
-              v-model="title"
-              :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }"
-              placeholder="Title"
-              class="flex-1 bg-white text-black pb-4 rounded-full transition-colors duration-300"
-            />
-            <UInput
-              v-model="description"
-              :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }"
-              placeholder="Description"
-              class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
-            />
+            <div class="flex flex-col gap-1 w-full">
+              <h3 class="text-2xl pl-6">Title</h3>
+              <UInput
+                v-model="title"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Title"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
+            </div>
+            <div class="flex flex-col gap-1 w-full">
+              <h3 class="text-2xl pl-6">Description</h3>
+              <UInput
+                v-model="description"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Description"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
+            </div>
+            <div class="flex flex-col gap-1 w-full">
+              <h3 class="text-2xl pl-6">Refresh Rate</h3>
+              <UInput
+                v-model="refreshRate"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Refresh Rate"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
+            </div>
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
                 class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"

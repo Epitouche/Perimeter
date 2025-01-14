@@ -75,11 +75,16 @@ const toggleEditArea = (areaId: number) => {
   if (
     editAreaIsOpen[areaId] &&
     !state[areaId]?.title &&
-    !state[areaId]?.description
+    !state[areaId]?.description &&
+    !state[areaId]?.action_refresh_rate
   ) {
     const area = props.areas.find((a) => a.id === areaId);
     if (area) {
-      state[areaId] = { title: area.title, description: area.description };
+      state[areaId] = {
+        title: area.title,
+        description: area.description,
+        action_refresh_rate: area.action_refresh_rate,
+      };
     }
   }
 };
@@ -156,7 +161,10 @@ const cancelDeletion = (areaId: number) => {
 };
 
 function formatName(name: string): string {
-  return name.replace(/([a-z])([A-Z])/g, "$1 $2");
+  return name
+    .replace(/^action_/, "")
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
 const fetchAreaResult = async (areaId: number) => {
@@ -254,12 +262,16 @@ const updateAreaValue = async (
   toggleEditArea(areaId);
 };
 
-const state = reactive<Record<number, Pick<Area, "title" | "description">>>({});
+const state = reactive<
+  Record<number, Pick<Area, "title" | "description" | "action_refresh_rate">>
+>({});
 
 const filteredState = (areaId: number) => {
   const areaState = state[areaId] || {};
   return Object.entries(areaState)
-    .filter(([key]) => ["title", "description"].includes(key))
+    .filter(([key]) =>
+      ["title", "description", "action_refresh_rate"].includes(key),
+    )
     .reduce(
       (obj, [key, value]) => {
         obj[key] = value;
@@ -269,15 +281,23 @@ const filteredState = (areaId: number) => {
     );
 };
 
-const isValidKey = (key: string): key is "title" | "description" => {
-  return key === "title" || key === "description";
+const isValidKey = (
+  key: string,
+): key is "title" | "description" | "action_refresh_rate" => {
+  return (
+    key === "title" || key === "description" || key === "action_refresh_rate"
+  );
 };
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
 
   props.areas.forEach((area) => {
-    state[area.id] = { title: area.title, description: area.description };
+    state[area.id] = {
+      title: area.title,
+      description: area.description,
+      action_refresh_rate: area.action_refresh_rate,
+    };
   });
 });
 
@@ -372,18 +392,16 @@ if (areaIdNumber !== null && valueNumber !== null) {
               type-name="action"
               :color="area.action.service.color"
               :type="area.action"
-              tabindex="0"
+              :type-options="area.action_option"
               @update-area-value="updateAreaValue"
-              @keydown.enter="updateAreaValue"
             />
             <UpdateAreaOptions
               :area-id="area.id"
               type-name="reaction"
               :color="area.action.service.color"
               :type="area.reaction"
-              tabindex="0"
+              :type-options="area.reaction_option"
               @update-area-value="updateAreaValue"
-              @keydown.enter="updateAreaValue"
             />
           </div>
           <div>
@@ -428,7 +446,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 <UFormGroup
                   v-for="(value, key) in filteredState(area.id)"
                   :key="key"
-                  :label="key"
+                  :label="formatName(key)"
                   :name="key"
                   :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
                 >
@@ -501,8 +519,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :style="{ backgroundColor: area.action.service.color }"
             tabindex="0"
             @click="onDelete(area.id)"
-            >Delete</UButton
-          >
+            >Delete
+          </UButton>
         </div>
       </UModal>
     </div>
@@ -537,8 +555,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
   outline: 2px solid #007bff;
   outline-offset: 2px;
 }
+
 .scrollable-element {
   scrollbar-width: thick;
-  scrollbar-color: white rgba(255, 255, 255, 0.2);
+  scrollbar-color: black rgba(255, 255, 255, 0.2);
 }
 </style>

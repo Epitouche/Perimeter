@@ -10,7 +10,8 @@ export default defineEventHandler(async (event) => {
       !params.reactionOptions ||
       !params.reactionId ||
       !params.title ||
-      !params.description
+      !params.description ||
+      !params.refreshRate
     ) {
       //console.log("params.token", params.token);
       //console.log("params.actionOptions", params.actionOptions);
@@ -36,6 +37,7 @@ export default defineEventHandler(async (event) => {
         reaction_id: Number(params.reactionId),
         title: params.title,
         description: params.description,
+        action_refresh_rate: Number(params.refreshRate),
       },
     });
     return response;

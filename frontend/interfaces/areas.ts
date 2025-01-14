@@ -3,6 +3,7 @@ export interface Area {
   createdAt: string;
   title: string;
   description: string;
+  action_refresh_rate: number;
   enable: boolean;
   action: {
     id: number;
