@@ -214,6 +214,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 width={50}
                 height={50}
                 color={'black'}
+                accessibilityLabel='Edit Area button'
               />
             </TouchableOpacity>
           </View>
@@ -250,6 +251,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
               width={50}
               height={50}
               color={'white'}
+              accessibilityLabel='Edit Action button'
             />
           </TouchableOpacity>
         </View>
@@ -285,6 +287,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
               width={50}
               height={50}
               color={'white'}
+              accessibilityLabel='Edit Reaction button'
             />
           </TouchableOpacity>
         </View>

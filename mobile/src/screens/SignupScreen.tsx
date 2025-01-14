@@ -224,7 +224,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
                     break;
                 }
               }}>
-              <SvgFromUri uri={service.icon} width={50} height={50} />
+              <SvgFromUri uri={service.icon} width={50} height={50} accessibilityLabel={`Connect with ${service.name}`}/>
             </TouchableOpacity>
           ))}
       </View>
