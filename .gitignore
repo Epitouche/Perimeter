@@ -7,3 +7,4 @@ package.json
 **/dist/
 .gitignore
 create_runner.sh
+**/.docker_runner_name

@@ -161,12 +161,10 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrSpotifySecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/spotify"
 
 	apiURL := "https://accounts.spotify.com/api/token"
 

@@ -90,6 +90,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           );
         }
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error', error);
       }
     }

@@ -49,7 +49,7 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         </Svg>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate('Profile')}
+        onPress={() => navigation.navigate('SettingsScreen')}
         style={styles.navButton}>
         <Svg
           xmlns="http://www.w3.org/2000/svg"

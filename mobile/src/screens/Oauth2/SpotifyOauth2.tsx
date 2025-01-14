@@ -28,18 +28,11 @@ async function HandleSpotifyLogin(
 
   try {
     const result = await authorize(config);
-    let data;
-    if (login) {
-      data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
-        result,
-      );
-    } else {
-      data = await handleCallback(
-        `http://${ipAddress}:8080/api/v1/spotify/auth/callback/`,
-        result,
-      );
-    }
+    let data = await handleCallback(
+      `http://${ipAddress}:8080/api/v1/spotify/auth/callback/mobile`,
+      result,
+      bearerToken,
+    );
     if (data.error) {
       console.error(data.error);
     } else {
