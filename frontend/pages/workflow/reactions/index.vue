@@ -58,7 +58,11 @@ onMounted(() => {
       :ui="{ base: 'mx-auto' }"
       class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
     >
-      <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
+      <SearchBar
+        v-model:search-query="searchQuery"
+        class="!w-1/3"
+        tabindex="0"
+      />
       <div v-if="errorMessage">Error: {{ errorMessage }}</div>
       <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
       <div
@@ -71,4 +75,9 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>
