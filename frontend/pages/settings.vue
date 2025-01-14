@@ -28,7 +28,6 @@ async function loadConnectionInfos() {
     console.error("Error loading connections infos:", error);
   }
 }
-
 </script>
 
 <template>

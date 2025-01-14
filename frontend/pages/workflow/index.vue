@@ -183,7 +183,7 @@ onMounted(() => {
       </div>
       <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
         <UButton
-        class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
+          class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
           tabindex="0"
           @click="onCancel()"
           >Cancel</UButton

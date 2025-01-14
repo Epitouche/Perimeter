@@ -155,7 +155,11 @@ onMounted(() => {
               >
                 Cancel
               </UButton>
-              <UButton type="submit" class="text-3xl font-semibold px-5 py-3" tabindex="0">
+              <UButton
+                type="submit"
+                class="text-3xl font-semibold px-5 py-3"
+                tabindex="0"
+              >
                 Submit
               </UButton>
             </div>
