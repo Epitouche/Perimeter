@@ -402,7 +402,7 @@ func initializedMicrosoftStorageVariable(
 		} else {
 			println("initializing storage variable")
 			variable = schemas.MicrosoftVariableTime{
-				Time: time.Now(),
+				Time: time.Now().UTC(),
 			}
 			area.StorageVariable, err = json.Marshal(variable)
 			if err != nil {
@@ -419,7 +419,7 @@ func initializedMicrosoftStorageVariable(
 
 	if variable.Time.IsZero() {
 		variable = schemas.MicrosoftVariableTime{
-			Time: time.Now(),
+			Time: time.Now().UTC(),
 		}
 		area.StorageVariable, err = json.Marshal(variable)
 		if err != nil {
