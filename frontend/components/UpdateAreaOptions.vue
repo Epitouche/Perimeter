@@ -63,48 +63,27 @@ onMounted(() => {
 
 <template>
   <div
-    class="capitalize self-start flex flex-row items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-fit py-2 px-4"
-  >
-    <img
-      :src="type.service.icon"
-      :alt="type.service.name"
-      class="w-16 h-16 p-0"
-    >
+    class="capitalize self-start flex flex-row items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-fit py-2 px-4">
+    <img :src="type.service.icon" :alt="type.service.name" class="w-16 h-16 p-0">
     <h2 class="text-5xl">
-      <b>{{ formatName(type.service.name) }}</b
-      >:
+      <b>{{ formatName(type.service.name) }}</b>:
     </h2>
     <p class="text-4xl">{{ formatName(type.name) }}</p>
-    <UButton
-      color="white"
-      :ui="{ rounded: 'rounded-full' }"
-      class="w-11 h-11 shadow-2xl active:shadow-sm transition-shadow"
-      @click="toggleSlideover"
-    >
+    <UButton color="white" :ui="{ rounded: 'rounded-full' }"
+      class="w-11 h-11 shadow-2xl active:shadow-sm transition-shadow" @click="toggleSlideover">
       <UIcon name="i-bytesize-edit" class="w-7 h-7" :style="{ color: color }" />
     </UButton>
   </div>
   <USlideover v-model="isOpen">
-    <UForm
-      :state="state[type.id]"
-      class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section"
-    >
-      <UFormGroup
-        v-for="(value, key) in state[type.id]"
-        :key="key"
-        :label="key"
-        :name="key"
-        :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
-      >
+    <UForm :state="state[type.id]"
+      class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section">
+      <UFormGroup v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key"
+        :ui="{ label: { base: 'capitalize text-xl pl-3' } }">
         <div class="flex flex-row justify-center items-center gap-3">
-          <UInput
-            v-model="state[type.id][key] as string | number | undefined"
-            :ui="{
-              placeholder: '!px-5 !py-2 font-light',
-              size: { sm: 'text-lg' },
-            }"
-            :placeholder="key + '...'"
-          />
+          <UInput v-model="state[type.id][key] as string | number | undefined" :ui="{
+            placeholder: '!px-5 !py-2 font-light',
+            size: { sm: 'text-lg' },
+          }" :placeholder="key + '...'" />
           <UButton @click="editValue(typeName, type.id, key)">
             <UIcon name="i-bytesize-checkmark" />
           </UButton>
