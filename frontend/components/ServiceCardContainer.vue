@@ -70,12 +70,12 @@ function formatName(name: string): string {
       >
         <UContainer
           :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-          class="flex flex-col justify-end items-center gap-5 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius overflow-hidden w-[5em] h-[4.5em]"
+          class="custom_card flex flex-col !gap-0 text-white rounded-custom_border_radius overflow-hidden"
           :style="{ backgroundColor: service.color }"
         >
           <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" />
           <h2
-            class="clamp-1-line capitalize text-5xl text-center break-words w-full hover-expand-text"
+            class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
           >
             {{ formatName(service.name) }}
           </h2>
@@ -84,12 +84,12 @@ function formatName(name: string): string {
       <UContainer
         v-else
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        class="flex flex-col justify-end items-center gap-5 text-white font-extrabold text-6xl p-8 rounded-custom_border_radius overflow-hidden w-[5em] h-[4.5em] opacity-40 cursor-not-allowed"
+        class="custom_card flex flex-col !gap-0 text-white rounded-custom_border_radius overflow-hidden opacity-40 cursor-not-allowed"
         :style="{ backgroundColor: service.color }"
       >
         <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" />
         <h2
-          class="clamp-1-line capitalize text-5xl text-center break-words w-full"
+          class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
         >
           {{ formatName(service.name) }}
         </h2>

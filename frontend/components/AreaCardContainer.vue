@@ -333,28 +333,26 @@ if (areaIdNumber !== null && valueNumber !== null) {
   >
     <div v-for="area in areas" :key="area.id">
       <UContainer
-        :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
+        :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+        class="custom_card text-white rounded-custom_border_radius"
         :style="{ backgroundColor: area.action.service.color }"
         tabindex="0"
         @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)"
       >
-        <h2
-          class="clamp-2-lines capitalize text-4xl text-center break-words pb-2 w-full"
-        >
+        <h3 class="clamp-2-lines capitalize text-center break-words w-full">
           {{ formatName(area.title) }}
-        </h2>
-        <div class="grid place-items-center h-36 relative w-full">
+        </h3>
+        <div class="grid place-items-center h-32 relative w-full">
           <img
             :src="area.action.service.icon"
             :alt="area.action.service.name"
-            class="w-24 h-24 p-0 absolute top-1 left-12"
+            class="w-20 h-20 p-0 absolute top-1 left-12"
           />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
-            class="w-24 h-24 p-0 absolute bottom-0 right-12"
+            class="w-20 h-20 p-0 absolute bottom-0 right-12"
           />
         </div>
       </UContainer>

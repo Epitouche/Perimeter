@@ -85,9 +85,7 @@ onMounted(() => {
         <BackButton link="/workflow/actions" :is-white="true" />
       </div>
       <div class="flex flex-col justify-center items-center gap-8">
-        <h1 class="text-8xl text-white font-custom_weight_title">
-          Add an action
-        </h1>
+        <h1 class="text-white">Add an action</h1>
         <img
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"

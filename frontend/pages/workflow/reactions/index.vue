@@ -49,11 +49,7 @@ onMounted(() => {
 <template>
   <div class="p-10">
     <BackButton link="/workflow" :is-white="false" />
-    <h1
-      class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
-    >
-      Add a reaction
-    </h1>
+    <h1 class="flex justify-center w-full pb-20">Add a reaction</h1>
     <UContainer
       :ui="{ base: 'mx-auto' }"
       class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
