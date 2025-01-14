@@ -43,7 +43,7 @@ export default {
 
 <template>
   <div class="flex flex-col w-[50%]">
-    <h2 class="text-xl px-5">{{ name }}</h2>
+    <h2 class="px-5">{{ name }}</h2>
     <div class="flex items-center gap-3 justify-center">
       <UInput
         v-model="inputValue"

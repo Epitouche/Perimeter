@@ -191,7 +191,7 @@ const cancelAction = () => {
       <div
         class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
       >
-        <h2 class="text-4xl font-semibold mb-2">
+        <h2 class="mb-2">
           Are you sure you want to disconnect from this service?
         </h2>
         <p class="text-2xl mb-5">This action cannot be undone!</p>

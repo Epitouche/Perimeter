@@ -68,7 +68,7 @@ watch(
     />
     <h2
       :class="[
-        'text-white text-7xl font-custom_weight_title',
+        'text-white',
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
       ]"
     >

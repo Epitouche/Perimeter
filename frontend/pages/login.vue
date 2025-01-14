@@ -67,7 +67,7 @@ const handleLogin = async () => {
       <h1 class="pb-5">Log in</h1>
       <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
         <div class="flex flex-col">
-          <h2 class="text-xl px-5">Username</h2>
+          <h2 class="px-5">Username</h2>
           <UInput
             v-model="username"
             :ui="{
@@ -77,7 +77,7 @@ const handleLogin = async () => {
           />
         </div>
         <div class="flex flex-col">
-          <h2 class="text-xl px-5">Password</h2>
+          <h2 class="px-5">Password</h2>
           <UInput
             v-model="password"
             type="password"

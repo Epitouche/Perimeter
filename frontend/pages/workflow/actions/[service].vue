@@ -91,7 +91,7 @@ onMounted(() => {
           :alt="serviceInfo.name"
           class="w-[8em] h-[8em]"
         />
-        <h2 class="capitalize text-white text-7xl font-bold">
+        <h2 class="capitalize text-white">
           {{ serviceInfo.name }}
         </h2>
       </div>

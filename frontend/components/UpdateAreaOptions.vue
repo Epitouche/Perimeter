@@ -69,11 +69,11 @@ onMounted(() => {
       :alt="type.service.name"
       class="w-16 h-16 p-0"
     />
-    <h2 class="text-5xl">
+    <h4>
       <b>{{ formatName(type.service.name) }}</b
       >:
-    </h2>
-    <p class="text-4xl">{{ formatName(type.name) }}</p>
+    </h4>
+    <h5>{{ formatName(type.name) }}</h5>
     <UButton
       color="white"
       :ui="{ rounded: 'rounded-full' }"

@@ -118,10 +118,10 @@ onMounted(() => {
             class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)"
           >
-            <h2 class="text-center text-6xl font-semibold pb-2">
+            <h2 class="text-center pb-2">
               {{ formatString(type.name) }}
             </h2>
-            <h2 class="text-center text-2xl font-medium -mt-6">
+            <h2 class="text-center -mt-6">
               {{ type.description }}
             </h2>
 
