@@ -41,7 +41,7 @@ const handleSubmit = async () => {
 
 <template>
   <div class="flex flex-col justify-center items-center gap-10 w-full">
-    <h1 class="text-custom_size_title font-custom_weight_title">Settings</h1>
+    <h1>Settings</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div
       v-else

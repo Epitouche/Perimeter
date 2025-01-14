@@ -202,7 +202,7 @@ onMounted(() => {
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
-        <h1 class="text-custom_size_title font-custom_weight_title pb-5">
+        <h1 class="pb-5">
           Workflow
         </h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>

@@ -52,7 +52,7 @@ onMounted(() => {
       <BackButton link="/workflow" :is-white="false" />
     </div>
     <h1
-      class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
+      class="flex justify-center w-full pb-20"
     >
       Add an action
     </h1>

@@ -1,19 +1,39 @@
 body {
-  width: 100vw;
-  height: 100vh;
-  background-color: #f4f4f4;
-  font-family: "Kantumuruy Pro", sans-serif;
-  font-display: swap;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f4f4f4;
+    font-family: "Kantumuruy Pro", sans-serif;
+    font-display: swap;
 }
 
 h1 {
-  font-size: 5vw;
-  font-weight: 900;
+    font-size: 5vw;
+    font-weight: 900;
+}
+
+h2 {
+    font-size: 2.5vw;
+    font-weight: 800;
+}
+
+h3 {
+    font-size: 1.5vw;
+    font-weight: 800;
+}
+
+h4 {
+    font-size: 1vw;
+    font-weight: 800;
 }
 
 .custom_card {
-  width: 18vw;
-  height: 20vh;
+    width: 12.5vw;
+    height: 20vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1vh;
 }
 
 /* Mobile Portrait (small screens) */

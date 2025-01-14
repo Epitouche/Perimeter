@@ -50,7 +50,7 @@ onMounted(() => {
   <div class="p-10">
     <BackButton link="/workflow" :is-white="false" />
     <h1
-      class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
+      class="flex justify-center w-full pb-20"
     >
       Add a reaction
     </h1>

@@ -94,7 +94,7 @@ onMounted(() => {
         <BackButton link="/workflow/reactions" :is-white="true" />
       </div>
       <div class="flex flex-col justify-center items-center gap-2">
-        <h1 class="text-8xl text-white font-custom_weight_title">
+        <h1 class="text-white">
           Add a reaction
         </h1>
         <img

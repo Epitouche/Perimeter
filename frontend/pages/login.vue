@@ -65,7 +65,7 @@ const handleLogin = async () => {
       class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
     >
       <h1
-        class="text-custom_size_title font-custom_weight_connection_title pb-5"
+        class="pb-5"
       >
         Log in
       </h1>
