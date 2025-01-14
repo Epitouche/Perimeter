@@ -82,8 +82,8 @@ func (service *timerService) FindReactionByName(
 
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.TimerActionSpecificHour{
-		Hour:   0,
-		Minute: 0,
+		Hour:   13,
+		Minute: 7,
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
