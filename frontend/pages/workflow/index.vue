@@ -171,7 +171,10 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-if="createdMessage" class="flex justify-center items-center text-7xl font-bold h-screen w-screen">
+    <div
+      v-if="createdMessage"
+      class="flex justify-center items-center text-7xl font-bold h-screen w-screen"
+    >
       {{ createdMessage }}
     </div>
     <div v-if="showPageContent">
@@ -181,7 +184,9 @@ onMounted(() => {
       <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
         <UButton
           class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
-          @click="onCancel()">Cancel</UButton>
+          @click="onCancel()"
+          >Cancel</UButton
+        >
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
@@ -191,63 +196,94 @@ onMounted(() => {
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
           <ReActionButton
-title="Action" link="/workflow/actions" :is-disabled="false"
-            :is-selected="websiteStore.actionIsSelected" :service-id="Number(websiteStore.actionServiceId)"
-            :type-name="websiteStore.actionName" />
+            title="Action"
+            link="/workflow/actions"
+            :is-disabled="false"
+            :is-selected="websiteStore.actionIsSelected"
+            :service-id="Number(websiteStore.actionServiceId)"
+            :type-name="websiteStore.actionName"
+          />
           <div
-:class="[
-            'bg-black min-w-4 min-h-28',
-            websiteStore.reactionButtonisDisabled
-              ? 'bg-opacity-60'
-              : 'bg-opacity-100',
-          ]" />
+            :class="[
+              'bg-black min-w-4 min-h-28',
+              websiteStore.reactionButtonisDisabled
+                ? 'bg-opacity-60'
+                : 'bg-opacity-100',
+            ]"
+          />
           <ReActionButton
-title="Reaction" link="/workflow/reactions"
-            :is-disabled="websiteStore.reactionButtonisDisabled" :is-selected="websiteStore.reactionIsSelected"
-            :service-id="Number(websiteStore.reactionServiceId)" :type-name="websiteStore.reactionName" />
+            title="Reaction"
+            link="/workflow/reactions"
+            :is-disabled="websiteStore.reactionButtonisDisabled"
+            :is-selected="websiteStore.reactionIsSelected"
+            :service-id="Number(websiteStore.reactionServiceId)"
+            :type-name="websiteStore.reactionName"
+          />
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
-          <UButton class="text-5xl font-bold px-8 py-4" @click="validateCreation">Create</UButton>
+          <UButton
+            class="text-5xl font-bold px-8 py-4"
+            @click="validateCreation"
+            >Create</UButton
+          >
         </div>
-        <div v-if="creationPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div
+          v-if="creationPopup"
+          class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+        >
           <div
-            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full">
+            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+          >
             <h2 class="text-4xl font-semibold text-center mb-2">
               You're about to create a new area!
             </h2>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Title</h3>
               <UInput
-v-model="title" :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }" placeholder="Title" class="flex-1 bg-white text-black rounded-full transition-colors duration-300" />
+                v-model="title"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Title"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
             </div>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Description</h3>
               <UInput
-v-model="description" :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }" placeholder="Description"
-                class="flex-1 bg-white text-black rounded-full transition-colors duration-300" />
+                v-model="description"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Description"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
             </div>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Refresh Rate</h3>
               <UInput
-v-model="refreshRate" :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }" placeholder="Refresh Rate"
-                class="flex-1 bg-white text-black rounded-full transition-colors duration-300" />
+                v-model="refreshRate"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Refresh Rate"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
             </div>
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
-class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
-                @click="validateCreation">Cancel</UButton>
+                class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                @click="validateCreation"
+                >Cancel</UButton
+              >
               <UButton
-class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
-                @click="onCreate">Submit</UButton>
+                class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                @click="onCreate"
+                >Submit</UButton
+              >
             </div>
           </div>
         </div>
