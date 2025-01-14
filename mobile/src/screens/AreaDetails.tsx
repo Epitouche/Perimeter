@@ -152,24 +152,26 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     const fetchAreaResults = async () => {
       console.log('Fetching area results');
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/area-result/${area.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/area-result/${area.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        })
+        );
         if (response.ok) {
           const body = await response.json();
           setAreaResults(body);
           console.log('Area results:', body);
         }
       } catch (error) {
-        console.error('Error fetching area results:', error
-        );
+        console.error('Error fetching area results:', error);
       }
-    }
+    };
     fetchAreaResults();
-  },[]);
+  }, []);
 
   const renderItem = ({ item }: { item: { created_at: string, result: string } }) => (
     <View style={styles.row}>
