@@ -8,7 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import  { RootStackParamList } from '../Navigation/navigate';
+import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
 import { SvgFromUri } from 'react-native-svg';
 import BottomNavBar from './NavBar';
@@ -31,7 +31,6 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [refreshRate, setRefreshRate] = useState<number>();
-
 
   const handleActionOptionChange = (key: string, value: any, type: any) => {
     setSelectedActionOptions(prev => ({
@@ -57,16 +56,13 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     };
     console.log(newArea);
     try {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/area`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(newArea),
+      const response = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(newArea),
+      });
       console.log('body:', JSON.stringify(newArea));
       console.log(response);
       if (response.ok) {
@@ -76,7 +72,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
       console.error('Error update area:', error);
     }
     setIsAreaModalVisible(false);
-  }
+  };
 
   const handleSaveAction = async () => {
     const newArea = {
@@ -84,16 +80,13 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
       action_option: selectedActionOptions,
     };
     try {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/area`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(newArea),
+      const response = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(newArea),
+      });
       console.log(response);
       if (response.ok) {
         const body = await response.json();
@@ -114,16 +107,13 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
       reaction_option: selectedReactionOptions,
     };
     try {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/area`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(newArea),
+      const response = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(newArea),
+      });
       console.log(response);
       if (response.ok) {
         console.log('Area updated successfully');
@@ -156,26 +146,41 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
       <Text style={styles.header}>Area Details</Text>
 
       {/* Area Section */}
-      <View style={[styles.subContainer, { borderColor: 'black', borderWidth: 1 , borderRadius: 10}]}>
-        <View style={[{flexDirection: 'row', justifyContent: 'space-between'}]}>
-            <View style={[{flexDirection: 'column'}]}>
-            <View style={[styles.detailContainer, {flexDirection: 'column'}]}>
-              <Text style={[styles.label, {color: "black"}]}>title:</Text>
-              <Text style={[styles.value, {color: "black"}]}>{title == '' ? area.title : title}</Text>
+      <View
+        style={[
+          styles.subContainer,
+          { borderColor: 'black', borderWidth: 1, borderRadius: 10 },
+        ]}>
+        <View
+          style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
+          <View style={[{ flexDirection: 'column' }]}>
+            <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
+              <Text style={[styles.label, { color: 'black' }]}>title:</Text>
+              <Text style={[styles.value, { color: 'black' }]}>
+                {title == '' ? area.title : title}
+              </Text>
             </View>
-            <View style={[styles.detailContainer, {flexDirection: 'column'}]}>
-              <Text style={[styles.label, {color: "black"}]}>Description:</Text>
-              <Text style={[styles.value, {color: "black"}]}>{description == '' ? area.description : description}</Text>
+            <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
+              <Text style={[styles.label, { color: 'black' }]}>
+                Description:
+              </Text>
+              <Text style={[styles.value, { color: 'black' }]}>
+                {description == '' ? area.description : description}
+              </Text>
             </View>
             <View style={styles.detailContainer}>
-              <Text style={[styles.label, {color: "black"}]}>Refresh rate:</Text>
-              <Text style={[styles.value, {color: "black"}]}>{refreshRate == undefined ? area.refresh_rate : refreshRate}</Text>
+              <Text style={[styles.label, { color: 'black' }]}>
+                Refresh rate:
+              </Text>
+              <Text style={[styles.value, { color: 'black' }]}>
+                {refreshRate == undefined ? area.refresh_rate : refreshRate}
+              </Text>
             </View>
           </View>
-          <View style={({alignContent: 'center'})}>
+          <View style={{ alignContent: 'center' }}>
             <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
               <SvgFromUri
-                uri={"https://api.iconify.design/mdi:pencil-circle-outline.svg"}
+                uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
                 width={50}
                 height={50}
                 color={'black'}
@@ -183,9 +188,8 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
             </TouchableOpacity>
           </View>
         </View>
-
       </View>
-      
+
       {/* Action Section */}
       <View
         style={[
@@ -212,7 +216,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           </View>
           <TouchableOpacity onPress={() => setIsActionModalVisible(true)}>
             <SvgFromUri
-              uri={"https://api.iconify.design/mdi:pencil-circle-outline.svg"}
+              uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
               width={50}
               height={50}
               color={'white'}
@@ -247,7 +251,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           </View>
           <TouchableOpacity onPress={() => setIsReactionModalVisible(true)}>
             <SvgFromUri
-              uri={"https://api.iconify.design/mdi:pencil-circle-outline.svg"}
+              uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
               width={50}
               height={50}
               color={'white'}
@@ -265,12 +269,21 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           <View
             style={[
               styles.modalContent,
-              { backgroundColor: 'white', borderColor: 'black', borderWidth: 1, borderRadius: 10 },
+              {
+                backgroundColor: 'white',
+                borderColor: 'black',
+                borderWidth: 1,
+                borderRadius: 10,
+              },
             ]}>
-            <Text style={[styles.modalHeader, {color: 'black'}]}>Modify Area</Text>
+            <Text style={[styles.modalHeader, { color: 'black' }]}>
+              Modify Area
+            </Text>
             <View style={[{ flexDirection: 'column' }]}>
               <View style={[styles.optionRow]}>
-                <Text style={[styles.optionLabel, {color: 'black'}]}>Title</Text>
+                <Text style={[styles.optionLabel, { color: 'black' }]}>
+                  Title
+                </Text>
                 <TextInput
                   style={styles.optionInput}
                   value={title}
@@ -279,20 +292,24 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                 />
               </View>
               <View style={[styles.optionRow]}>
-                <Text style={[styles.optionLabel, {color: 'black'}]}>Description</Text>
+                <Text style={[styles.optionLabel, { color: 'black' }]}>
+                  Description
+                </Text>
                 <TextInput
                   style={styles.optionInput}
                   value={description}
-                  onChangeText={text => (setDescription(text))}
+                  onChangeText={text => setDescription(text)}
                   keyboardType="default" // Adjust as needed
                 />
               </View>
               <View style={[styles.optionRow]}>
-                <Text style={[styles.optionLabel, {color: 'black'}]}>Refresh rate</Text>
+                <Text style={[styles.optionLabel, { color: 'black' }]}>
+                  Refresh rate
+                </Text>
                 <TextInput
                   style={[styles.optionInput]}
-                  value={refreshRate ? String(refreshRate) : ""}
-                  onChangeText={text => (setRefreshRate(Number(text)))}
+                  value={refreshRate ? String(refreshRate) : ''}
+                  onChangeText={text => setRefreshRate(Number(text))}
                   keyboardType="numeric" // Adjust as needed
                 />
               </View>
@@ -306,12 +323,13 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
                   </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                setIsAreaModalVisible(false);
-                setDescription(area.description);
-                setTitle(area.title);
-                setRefreshRate(area.refresh_rate);
-              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsAreaModalVisible(false);
+                  setDescription(area.description);
+                  setTitle(area.title);
+                  setRefreshRate(area.refresh_rate);
+                }}>
                 <View style={styles.cancelButton}>
                   <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
                     Cancel
@@ -427,7 +445,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           </View>
         </View>
       </Modal>
-      <BottomNavBar navigation={navigation}/>
+      <BottomNavBar navigation={navigation} />
     </View>
   );
 };
