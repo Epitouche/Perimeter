@@ -6,13 +6,11 @@ on:
       - dev
       - backend
       - backend-feature/**
-      - devops-feature/**
   push:
     branches:
       - dev
       - backend
       - backend-feature/**
-      - devops-feature/**
 
 env:
   GO_VERSION: stable
