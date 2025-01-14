@@ -1,0 +1,42 @@
+body {
+    height: 100vh;
+    width: 100vw;
+    background-color: #F4F4F4;
+    font-family: 'Kantumuruy Pro', sans-serif;
+    font-display: swap;
+}
+
+h1 {
+    font-size: 5vw;
+    font-weight: 900;
+}
+
+
+
+/* Mobile Portrait (small screens) */
+/* @media (max-width: 480px) {
+} */
+
+/* Mobile Landscape / Tablet Portrait */
+/* @media (min-width: 481px) and (max-width: 767px) {
+} */
+
+/* Tablet Landscape / Small Laptop */
+/* @media (min-width: 768px) and (max-width: 1023px) {
+} */
+
+/* Laptop / Small Desktop */
+/* @media (min-width: 1024px) and (max-width: 1279px) {
+} */
+
+/* Medium Desktop */
+/* @media (min-width: 1280px) and (max-width: 1440px) {
+} */
+
+/* Large Desktop */
+/* @media (min-width: 1440px) {
+} */
+
+/* Extra Large Screens */
+/* @media (min-width: 1920px) {
+} */

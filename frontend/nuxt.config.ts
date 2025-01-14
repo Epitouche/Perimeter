@@ -17,14 +17,7 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
   ],
 
-  icon: {
-    customCollections: [
-      {
-        prefix: "my-icons",
-        dir: "./assets/my-icons",
-      },
-    ],
-  },
+  css: ['~/assets/css/main.css'],
 
   app: {
     head: {
@@ -35,7 +28,7 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      "Kantumruy Pro": true,
+      'Kantumruy Pro': true,
     },
   },
 });
