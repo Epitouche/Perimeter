@@ -40,10 +40,10 @@ jobs:
             chmod 400 /tmp/ssh_key
             ssh-agent $(ssh-add /tmp/ssh_key; git clone git@github.com:${{ github.repository }}.git /tmp/${{env.REPOSITORY_NAME}})
             # login to the docker registry github
-            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io --username ${{ github.actor }} --password-stdin
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.actor }} --password-stdin
             # run the docker-compose.prod.yml file
             echo '${{ secrets.ENV }}' > /tmp/${{env.REPOSITORY_NAME}}/.env
-            cd /tmp/${{env.REPOSITORY_NAME}} && sudo docker compose -f docker-compose.prod.yml up -d --force-recreate
+            cd /tmp/${{env.REPOSITORY_NAME}} && docker compose -f docker-compose.prod.yml up -d --force-recreate
             # cleanup
             rm -rf /tmp/${{env.REPOSITORY_NAME}}
             rm -rf /tmp/ssh_key
