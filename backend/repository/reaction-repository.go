@@ -73,7 +73,10 @@ func (repo *reactionRepository) FindAll() (reactions []schemas.Reaction, err err
 func (repo *reactionRepository) FindByName(
 	actionName string,
 ) (reactions []schemas.Reaction, err error) {
-	err = repo.db.Connection.Where(&schemas.Reaction{Name: actionName}).Find(&reactions).Error
+	err = repo.db.Connection.Preload("Service").
+		Where(&schemas.Reaction{Name: actionName}).
+		Find(&reactions).
+		Error
 	if err != nil {
 		return reactions, fmt.Errorf("failed to find reaction by name: %w", err)
 	}
@@ -83,7 +86,7 @@ func (repo *reactionRepository) FindByName(
 func (repo *reactionRepository) FindByServiceId(
 	serviceId uint64,
 ) (reactions []schemas.Reaction, err error) {
-	err = repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceId}).
+	err = repo.db.Connection.Preload("Service").Where(&schemas.Reaction{ServiceId: serviceId}).
 		Find(&reactions).Error
 	if err != nil {
 		panic(fmt.Errorf("failed to find reaction by service id: %w", err))
@@ -95,8 +98,10 @@ func (repo *reactionRepository) FindByServiceByName(
 	serviceID uint64,
 	actionName string,
 ) (reactions []schemas.Reaction, err error) {
-	err = repo.db.Connection.Where(&schemas.Reaction{ServiceId: serviceID, Name: actionName}).
-		Find(&reactions).Error
+	err = repo.db.Connection.Preload("Service").
+		Where(&schemas.Reaction{ServiceId: serviceID, Name: actionName}).
+		Find(&reactions).
+		Error
 	if err != nil {
 		panic(fmt.Errorf("failed to find reaction by service name: %w", err))
 	}
@@ -104,7 +109,10 @@ func (repo *reactionRepository) FindByServiceByName(
 }
 
 func (repo *reactionRepository) FindById(actionId uint64) (reaction schemas.Reaction, err error) {
-	err = repo.db.Connection.Where(&schemas.Reaction{Id: actionId}).First(&reaction).Error
+	err = repo.db.Connection.Preload("Service").
+		Where(&schemas.Reaction{Id: actionId}).
+		First(&reaction).
+		Error
 	if err != nil {
 		return reaction, fmt.Errorf("failed to find reaction by id: %w", err)
 	}
