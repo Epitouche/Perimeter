@@ -202,12 +202,10 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrMicrosoftClientIdNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/microsoft"
 
 	apiURL := "https://login.microsoftonline.com/common/oauth2/v2.0/token"
 

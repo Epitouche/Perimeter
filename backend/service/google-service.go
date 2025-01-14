@@ -155,12 +155,10 @@ func (service *googleService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrGoogleSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(schemas.Dropbox)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/google"
 
 	apiURL := "https://oauth2.googleapis.com/token"
 
