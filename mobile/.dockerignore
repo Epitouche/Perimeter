@@ -1,7 +1,6 @@
 node_modules/
 .dockerignore
 Dockerfile
-.env
 .env.example
 android/app/build/
 android/.gradle/

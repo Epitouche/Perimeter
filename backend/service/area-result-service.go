@@ -8,6 +8,7 @@ import (
 type AreaResultService interface {
 	Save(newAreaResult schemas.AreaResult)
 	FindAll() []schemas.AreaResult
+	FindByAreaID(areaID uint64) []schemas.AreaResult
 }
 
 type areaResultService struct {
@@ -29,4 +30,8 @@ func (service *areaResultService) Save(newAreaResult schemas.AreaResult) {
 
 func (service *areaResultService) FindAll() []schemas.AreaResult {
 	return service.repository.FindAll()
+}
+
+func (service *areaResultService) FindByAreaID(areaID uint64) []schemas.AreaResult {
+	return service.repository.FindByAreaId(areaID)
 }

@@ -61,6 +61,9 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
         }
         setLoading(false);
       } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error fetching services:', error);
         setServices([]);
         setFilteredServices([]);
