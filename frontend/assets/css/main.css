@@ -1,19 +1,19 @@
 body {
-    width: 100vw;
-    height: 100vh;
-    background-color: #f4f4f4;
-    font-family: "Kantumuruy Pro", sans-serif;
-    font-display: swap;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f4f4f4;
+  font-family: "Kantumuruy Pro", sans-serif;
+  font-display: swap;
 }
 
 h1 {
-    font-size: 5vw;
-    font-weight: 900;
+  font-size: 5vw;
+  font-weight: 900;
 }
 
 .custom_card {
-    width: 18vw;
-    height: 20vh;
+  width: 18vw;
+  height: 20vh;
 }
 
 /* Mobile Portrait (small screens) */
