@@ -75,11 +75,16 @@ const toggleEditArea = (areaId: number) => {
   if (
     editAreaIsOpen[areaId] &&
     !state[areaId]?.title &&
-    !state[areaId]?.description
+    !state[areaId]?.description &&
+    !state[areaId]?.action_refresh_rate
   ) {
     const area = props.areas.find((a) => a.id === areaId);
     if (area) {
-      state[areaId] = { title: area.title, description: area.description };
+      state[areaId] = {
+        title: area.title,
+        description: area.description,
+        action_refresh_rate: area.action_refresh_rate,
+      };
     }
   }
 };
@@ -156,7 +161,10 @@ const cancelDeletion = (areaId: number) => {
 };
 
 function formatName(name: string): string {
-  return name.replace(/([a-z])([A-Z])/g, "$1 $2");
+  return name
+    .replace(/^action_/, "")
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
 const fetchAreaResult = async (areaId: number) => {
@@ -254,12 +262,16 @@ const updateAreaValue = async (
   toggleEditArea(areaId);
 };
 
-const state = reactive<Record<number, Pick<Area, "title" | "description">>>({});
+const state = reactive<
+  Record<number, Pick<Area, "title" | "description" | "action_refresh_rate">>
+>({});
 
 const filteredState = (areaId: number) => {
   const areaState = state[areaId] || {};
   return Object.entries(areaState)
-    .filter(([key]) => ["title", "description"].includes(key))
+    .filter(([key]) =>
+      ["title", "description", "action_refresh_rate"].includes(key),
+    )
     .reduce(
       (obj, [key, value]) => {
         obj[key] = value;
@@ -269,15 +281,23 @@ const filteredState = (areaId: number) => {
     );
 };
 
-const isValidKey = (key: string): key is "title" | "description" => {
-  return key === "title" || key === "description";
+const isValidKey = (
+  key: string,
+): key is "title" | "description" | "action_refresh_rate" => {
+  return (
+    key === "title" || key === "description" || key === "action_refresh_rate"
+  );
 };
 
 onMounted(() => {
   console.log("areas in AreaCardContainer", props.areas);
 
   props.areas.forEach((area) => {
-    state[area.id] = { title: area.title, description: area.description };
+    state[area.id] = {
+      title: area.title,
+      description: area.description,
+      action_refresh_rate: area.action_refresh_rate,
+    };
   });
 });
 
@@ -297,6 +317,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="flex flex-col justify-center items-center text-white font-extrabold text-6xl rounded-custom_border_radius w-[5em] h-[4.5em]"
         :style="{ backgroundColor: area.action.service.color }"
+        tabindex="0"
         @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)"
       >
@@ -321,6 +342,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
       <UModal
         ref="focusDiv"
         v-model="areaIsOpen[area.id]"
+        tabindex="0"
         :ui="{
           width: 'w-1/2',
         }"
@@ -337,6 +359,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 <UToggle
                   size="2xl"
                   :model-value="areaIsEnabled(area.id)"
+                  tabindex="0"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
                   @keydown.enter="toggleAreaEnableSwitch(area.id)"
                 />
@@ -350,6 +373,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="self-end w-fit"
+                tabindex="-1"
                 @click="toggleAreaModal(area.id)"
                 @keydown.enter="toggleAreaModal(area.id)"
               >
@@ -370,7 +394,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
               :type="area.action"
               :type-options="area.action_option"
               @update-area-value="updateAreaValue"
-              @keydown.enter="updateAreaValue"
             />
             <UpdateAreaOptions
               :area-id="area.id"
@@ -379,7 +402,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
               :type="area.reaction"
               :type-options="area.reaction_option"
               @update-area-value="updateAreaValue"
-              @keydown.enter="updateAreaValue"
             />
           </div>
           <div>
@@ -408,6 +430,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
+                tabindex="0"
                 @click="toggleEditArea(area.id)"
                 @keydown.enter="toggleEditArea(area.id)"
               >
@@ -423,7 +446,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 <UFormGroup
                   v-for="(value, key) in filteredState(area.id)"
                   :key="key"
-                  :label="key"
+                  :label="formatName(key)"
                   :name="key"
                   :ui="{ label: { base: 'capitalize text-xl pl-3' } }"
                 >
@@ -441,6 +464,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                       :placeholder="key + '...'"
                     />
                     <UButton
+                      tabindex="0"
                       @click="
                         isValidKey(key) &&
                         state[area.id][key] !==
@@ -459,6 +483,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
               <UButton
                 variant="ghost"
                 class="hover_underline_animation items-end w-fit p-0 pb-1"
+                tabindex="0"
                 @click="onDelete(area.id)"
               >
                 <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
@@ -485,12 +510,14 @@ if (areaIdNumber !== null && valueNumber !== null) {
               borderColor: area.action.service.color,
               color: area.action.service.color,
             }"
+            tabindex="0"
             @click="cancelDeletion(area.id)"
             >Cancel</UButton
           >
           <UButton
             class="text-white text-2xl font-semibold py-3 px-5"
             :style="{ backgroundColor: area.action.service.color }"
+            tabindex="0"
             @click="onDelete(area.id)"
             >Delete
           </UButton>
@@ -522,6 +549,11 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .hover_underline_animation:hover::after {
   transform: scaleX(0.9);
   transform-origin: bottom center;
+}
+
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
 
 .scrollable-element {
