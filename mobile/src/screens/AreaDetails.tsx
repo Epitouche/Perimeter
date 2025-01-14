@@ -33,7 +33,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const [refreshRate, setRefreshRate] = useState<number>();
 
   const [areaResults, setAreaResults] = useState([
-      { created_at: '', value: '' },
+    { created_at: '', value: '' },
   ]);
 
   const handleActionOptionChange = (key: string, value: any, type: any) => {
@@ -149,24 +149,26 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     const fetchAreaResults = async () => {
       console.log('Fetching area results');
       try {
-        const response = await fetch(`http://${ipAddress}:8080/api/v1/area-result/${area.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/area-result/${area.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        })
+        );
         if (response.ok) {
           const body = await response.json();
           setAreaResults(body);
           console.log('Area results:', body);
         }
       } catch (error) {
-        console.error('Error fetching area results:', error
-        );
+        console.error('Error fetching area results:', error);
       }
-    }
+    };
     fetchAreaResults();
-  },[]);
+  }, []);
 
   return (
     <View style={styles.container}>
