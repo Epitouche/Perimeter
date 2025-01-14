@@ -171,9 +171,11 @@ func (service *serviceService) RedirectToServiceOauthPage(
 	// ctx.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:" + frontendPort + "/services/" + strings.ToLower(
-		string(serviceName),
-	)
+	redirectURI, err := getRedirectURI(serviceName)
+	if err != nil {
+		return "", fmt.Errorf("unable to get redirect URI because %w", err)
+	}
+
 	authURL = oauthUrl +
 		"?client_id=" + clientID +
 		"&response_type=code" +
