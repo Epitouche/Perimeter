@@ -47,46 +47,6 @@
                 }
             }
         },
-        "/action/info/service/:idAction": {
-            "get": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "get service info of action id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Action"
-                ],
-                "summary": "get service info of action id",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Service"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/area": {
             "get": {
                 "security": [
@@ -351,7 +311,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/schemas.Area"
+                                "$ref": "#/definitions/schemas.AreaResult"
                             }
                         }
                     },
@@ -1868,6 +1828,39 @@
                     }
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.AreaResult": {
+            "type": "object",
+            "required": [
+                "area",
+                "result"
+            ],
+            "properties": {
+                "area": {
+                    "description": "Area that the result belongs to",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schemas.Area"
+                        }
+                    ]
+                },
+                "created_at": {
+                    "description": "Time when the area result was created",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Unique identifier for the area result",
+                    "type": "integer"
+                },
+                "result": {
+                    "description": "Result of the area",
+                    "type": "string"
+                },
+                "update_at": {
+                    "description": "Time when the area result was last updated",
                     "type": "string"
                 }
             }

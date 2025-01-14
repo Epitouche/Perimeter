@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
@@ -29,43 +29,45 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   const [actionName, setActionName] = React.useState('');
   const [reactionName, setReactionName] = React.useState('');
 
-  const getService = async () => {
-    try {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+  useEffect(() => {
+    const getService = async () => {
+      try {
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
-      const res = await fetch(
-        `http://${ipAddress}:8080/api/v1/reaction/info/${reactionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+        );
+        const res = await fetch(
+          `http://${ipAddress}:8080/api/v1/reaction/info/${reactionId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
+        );
 
-      let actionData = await response.json();
-      let reactionData = await res.json();
-      setActionName(actionData[0].name);
-      setReactionName(reactionData[0].name);
-      setActionService(actionData[0].service);
-      setReactionService(reactionData[0].service);
-    } catch (error) {
-      if (error.code === 401) {
-        navigation.navigate('Login');
+        let actionData = await response.json();
+        let reactionData = await res.json();
+        setActionName(actionData[0].name);
+        setReactionName(reactionData[0].name);
+        setActionService(actionData[0].service);
+        setReactionService(reactionData[0].service);
+      } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
+        console.error('Error fetching service:', error);
       }
-      console.error('Error fetching service:', error);
-    }
-  };
-  getService();
+    };
+    getService();
+  }, [token, ipAddress, actionId, reactionId]);
 
   const saveButtonPressed = async () => {
     try {
@@ -77,9 +79,9 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         },
         body: JSON.stringify({
           action_id: actionId,
-          actionOptions,
+          action_option: actionOptions,
           reaction_id: reactionId,
-          reactionOptions,
+          reaction_option: reactionOptions,
         }),
       });
       let res = await data.json();
