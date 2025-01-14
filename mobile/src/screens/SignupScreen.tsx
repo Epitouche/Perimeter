@@ -15,7 +15,7 @@ import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleMicrosoftLogin } from './Oauth2/MicrosoftOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
-import { SvgFromUri } from'react-native-svg';
+import { SvgFromUri } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -199,32 +199,31 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           .map(service => (
             <TouchableOpacity
               style={{
-              backgroundColor: service.color,
-              borderRadius: 8,
-              marginHorizontal: 10,
-              padding: 5,
+                backgroundColor: service.color,
+                borderRadius: 8,
+                marginHorizontal: 10,
+                padding: 5,
               }}
               key={service.name}
               onPress={() => {
-              setService(service.name);
-              switch (service.name) {
-                case 'Github':
-                HandleGithubLogin(setToken, navigation, ipAddress, true);
-                break;
-                case 'Microsoft':
-                HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
-                break;
-                case 'Spotify':
-                HandleSpotifyLogin(setToken, navigation, ipAddress, true);
-                break;
-                case 'Google':
-                HandleGoogleLogin(setToken, navigation, ipAddress, true);
-                break;
-                default:
-                break;
-              }
-              }}
-            >
+                setService(service.name);
+                switch (service.name) {
+                  case 'Github':
+                    HandleGithubLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Microsoft':
+                    HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Spotify':
+                    HandleSpotifyLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Google':
+                    HandleGoogleLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  default:
+                    break;
+                }
+              }}>
               <SvgFromUri uri={service.icon} width={50} height={50} />
             </TouchableOpacity>
           ))}

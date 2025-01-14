@@ -156,32 +156,31 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           .map(service => (
             <TouchableOpacity
               style={{
-              backgroundColor: service.color,
-              borderRadius: 8,
-              marginHorizontal: 10,
-              padding: 5,
+                backgroundColor: service.color,
+                borderRadius: 8,
+                marginHorizontal: 10,
+                padding: 5,
               }}
               key={service.name}
               onPress={() => {
-              setService(service.name);
-              switch (service.name) {
-                case 'Github':
-                HandleGithubLogin(setToken, navigation, ipAddress, true);
-                break;
-                case 'Microsoft':
-                HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
-                break;
-                case 'Spotify':
-                HandleSpotifyLogin(setToken, navigation, ipAddress, true);
-                break;
-                case 'Google':
-                HandleGoogleLogin(setToken, navigation, ipAddress, true);
-                break;
-                default:
-                break;
-              }
-              }}
-            >
+                setService(service.name);
+                switch (service.name) {
+                  case 'Github':
+                    HandleGithubLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Microsoft':
+                    HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Spotify':
+                    HandleSpotifyLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Google':
+                    HandleGoogleLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  default:
+                    break;
+                }
+              }}>
               <SvgFromUri uri={service.icon} width={50} height={50} />
             </TouchableOpacity>
           ))}
