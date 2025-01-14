@@ -1,7 +1,7 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
-import { GMAIL_MOBILE_CLIENT_ID } from '@env';
+import { GOOGLE_MOBILE_CLIENT_ID } from '@env';
 
 async function HandleGoogleLogin(
   setToken: any,
@@ -12,8 +12,8 @@ async function HandleGoogleLogin(
 ) {
   const config: AuthConfiguration = {
     issuer: 'https://accounts.google.com',
-    clientId: `${GMAIL_MOBILE_CLIENT_ID}.apps.googleusercontent.com`,
-    redirectUrl: `com.googleusercontent.apps.${GMAIL_MOBILE_CLIENT_ID}:/oauth2redirect/google`,
+    clientId: `${GOOGLE_MOBILE_CLIENT_ID}.apps.googleusercontent.com`,
+    redirectUrl: `com.googleusercontent.apps.${GOOGLE_MOBILE_CLIENT_ID}:/oauth2redirect/google`,
     scopes: ['https://mail.google.com/', 'profile', 'email'],
   };
 
