@@ -18,8 +18,8 @@ type ServiceService interface {
 	GetAllServices() (allServicesJSON []schemas.ServiceJSON, err error)
 	GetServices() []interface{}
 	GetServicesInfo() (allService []schemas.Service, err error)
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	FindServiceByName(name string) schemas.Service
 	RedirectToServiceOauthPage(
 		serviceName schemas.ServiceName,
@@ -47,8 +47,8 @@ type ServiceService interface {
 }
 
 type ServiceInterface interface {
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	GetServiceInfo() schemas.Service
 }
 
@@ -100,6 +100,23 @@ func (service *serviceService) InitialSaveService() {
 	}
 }
 
+func getRedirectURI(
+	serviceName schemas.ServiceName,
+) (redirectURI string, err error) {
+	frontendPort := os.Getenv("FRONTEND_PORT")
+	if frontendPort == "" {
+		return "", schemas.ErrFrontendPortNotSet
+	}
+	frontendExternalHost := os.Getenv("FRONTEND_EXTERNAL_HOST")
+	if frontendExternalHost == "" {
+		return "", schemas.ErrFrontendExternalHostNotSet
+	}
+
+	return "http://" + frontendExternalHost + ":" + frontendPort + "/services/" + strings.ToLower(
+		string(serviceName),
+	), nil
+}
+
 func (service *serviceService) RedirectToServiceOauthPage(
 	serviceName schemas.ServiceName,
 	oauthUrl string,
@@ -114,7 +131,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 			return "", schemas.ErrSpotifyClientIdNotSet
 		}
 	case schemas.Google:
-		clientID = os.Getenv("GMAIL_CLIENT_ID")
+		clientID = os.Getenv("GOOGLE_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrGoogleClientIdNotSet
 		}
@@ -357,23 +374,23 @@ func (service *serviceService) GetServices() []interface{} {
 	return service.allService
 }
 
-func (service *serviceService) FindActionbyName(
+func (service *serviceService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	for _, service := range service.allService {
-		if service.(ServiceInterface).FindActionbyName(name) != nil {
-			return service.(ServiceInterface).FindActionbyName(name)
+		if service.(ServiceInterface).FindActionByName(name) != nil {
+			return service.(ServiceInterface).FindActionByName(name)
 		}
 	}
 	return nil
 }
 
-func (service *serviceService) FindReactionbyName(
+func (service *serviceService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	for _, service := range service.allService {
-		if service.(ServiceInterface).FindReactionbyName(name) != nil {
-			return service.(ServiceInterface).FindReactionbyName(name)
+		if service.(ServiceInterface).FindReactionByName(name) != nil {
+			return service.(ServiceInterface).FindReactionByName(name)
 		}
 	}
 	return nil

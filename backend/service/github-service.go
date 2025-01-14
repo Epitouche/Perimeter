@@ -20,8 +20,8 @@ type GithubService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
@@ -66,7 +66,7 @@ func (service *githubService) GetServiceInfo() schemas.Service {
 
 func (service *githubService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.GithubActionOption{
-		RepoName: "",
+		RepoName: "OWNER/REPO",
 	}
 	actionOption, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -105,7 +105,7 @@ func (service *githubService) GetServiceActionInfo() []schemas.Action {
 
 func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.GithubActionOption{
-		RepoName: "",
+		RepoName: "OWNER/REPO",
 	}
 	actionOption, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -133,9 +133,9 @@ func (service *githubService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 }
 
-func (service *githubService) FindActionbyName(
+func (service *githubService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.UpdateCommitInRepo):
 		return service.GithubActionUpdateCommitInRepo
@@ -148,9 +148,9 @@ func (service *githubService) FindActionbyName(
 	}
 }
 
-func (service *githubService) FindReactionbyName(
+func (service *githubService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.GetLatestCommitInRepo):
 		return service.GithubReactionGetLatestCommitInRepo
@@ -176,12 +176,10 @@ func (service *githubService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrGithubSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/github"
 
 	apiURL := "https://github.com/login/oauth/access_token"
 
@@ -516,15 +514,8 @@ func (service *githubService) WorkflowRunList(
 func (service *githubService) GithubActionUpdateCommitInRepo(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -624,15 +615,8 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 func (service *githubService) GithubActionUpdatePullRequestInRepo(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -732,15 +716,8 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -841,14 +818,8 @@ func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
 
 func (service *githubService) GithubReactionGetLatestCommitInRepo(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		return "Error finding area: " + err.Error()
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
@@ -879,14 +850,8 @@ func (service *githubService) GithubReactionGetLatestCommitInRepo(
 
 func (service *githubService) GithubReactionGetLatestWorkflowRunInRepo(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
-	// Find the area
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		return "Error finding area: " + err.Error()
-	}
-
 	// Find the token of the user
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,

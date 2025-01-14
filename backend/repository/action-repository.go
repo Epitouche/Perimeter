@@ -67,7 +67,9 @@ func (repo *actionRepository) FindAll() (actions []schemas.Action, err error) {
 }
 
 func (repo *actionRepository) FindByName(actionName string) (actions []schemas.Action, err error) {
-	errDatabase := repo.db.Connection.Where(&schemas.Action{Name: actionName}).Find(&actions)
+	errDatabase := repo.db.Connection.Preload("Service").
+		Where(&schemas.Action{Name: actionName}).
+		Find(&actions)
 
 	if errDatabase.Error != nil {
 		return actions, errDatabase.Error
@@ -78,7 +80,8 @@ func (repo *actionRepository) FindByName(actionName string) (actions []schemas.A
 func (repo *actionRepository) FindByServiceId(
 	serviceId uint64,
 ) (actions []schemas.Action, err error) {
-	errDatabase := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId}).
+	errDatabase := repo.db.Connection.Preload("Service").
+		Where(&schemas.Action{ServiceId: serviceId}).
 		Find(&actions)
 
 	if errDatabase.Error != nil {
@@ -91,7 +94,8 @@ func (repo *actionRepository) FindByServiceByName(
 	serviceId uint64,
 	actionName string,
 ) (actions []schemas.Action, err error) {
-	errDatabase := repo.db.Connection.Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).
+	errDatabase := repo.db.Connection.Preload("Service").
+		Where(&schemas.Action{ServiceId: serviceId, Name: actionName}).
 		Find(&actions)
 
 	if errDatabase.Error != nil {
@@ -101,7 +105,9 @@ func (repo *actionRepository) FindByServiceByName(
 }
 
 func (repo *actionRepository) FindById(actionId uint64) (action schemas.Action, err error) {
-	errDatabase := repo.db.Connection.Where(&schemas.Action{Id: actionId}).First(&action)
+	errDatabase := repo.db.Connection.Preload("Service").
+		Where(&schemas.Action{Id: actionId}).
+		First(&action)
 
 	if errDatabase.Error != nil {
 		return action, errDatabase.Error

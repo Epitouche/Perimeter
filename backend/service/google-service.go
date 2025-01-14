@@ -22,16 +22,16 @@ type GoogleService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	// Token operations
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
-	GoogleActionReceiveMail(channel chan string, option json.RawMessage, idArea uint64)
+	GoogleActionReceiveMail(channel chan string, option json.RawMessage, area schemas.Area)
 	// Reactions functions
-	GoogleReactionSendMail(option json.RawMessage, idArea uint64) string
+	GoogleReactionSendMail(option json.RawMessage, area schemas.Area) string
 }
 
 type googleService struct {
@@ -69,9 +69,9 @@ func (service *googleService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
-func (service *googleService) FindActionbyName(
+func (service *googleService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.ReceiveGoogleMail):
 		return service.GoogleActionReceiveMail
@@ -80,9 +80,9 @@ func (service *googleService) FindActionbyName(
 	}
 }
 
-func (service *googleService) FindReactionbyName(
+func (service *googleService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.SendMail):
 		return service.GoogleReactionSendMail
@@ -116,9 +116,9 @@ func (service *googleService) GetServiceActionInfo() []schemas.Action {
 
 func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.GmailReactionSendMailOption{
-		To:      "",
-		Subject: "",
-		Body:    "",
+		To:      "test@example.com",
+		Subject: "Test",
+		Body:    "a beautiful email",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -145,22 +145,20 @@ func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 func (service *googleService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("GMAIL_CLIENT_ID")
+	clientID := os.Getenv("GOOGLE_CLIENT_ID")
 	if clientID == "" {
 		return schemas.Token{}, schemas.ErrGoogleClientIdNotSet
 	}
 
-	clientSecret := os.Getenv("GMAIL_SECRET")
+	clientSecret := os.Getenv("GOOGLE_SECRET")
 	if clientSecret == "" {
 		return schemas.Token{}, schemas.ErrGoogleSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/google"
 
 	apiURL := "https://oauth2.googleapis.com/token"
 
@@ -442,14 +440,8 @@ func getLastEmailDetails(id string, token schemas.Token) (schemas.EmailDetails, 
 func (service *googleService) GoogleActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		println("error finding area: " + err.Error())
-		return
-	}
-
 	variable, err := initializedGoogleStorageVariable(area, *service)
 	if err != nil {
 		println("error initializing storage variable: " + err.Error())
@@ -528,7 +520,7 @@ func (service *googleService) GoogleActionReceiveMail(
 
 func (service *googleService) GoogleReactionSendMail(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
 	optionJSON := schemas.GmailReactionSendMailOption{}
 
@@ -537,12 +529,6 @@ func (service *googleService) GoogleReactionSendMail(
 		println("error unmarshal gmail option: " + err.Error())
 		time.Sleep(time.Second)
 		return "Error unmarshal gmail option" + err.Error()
-	}
-
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area" + err.Error()
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(

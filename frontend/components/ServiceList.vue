@@ -151,7 +151,7 @@ const cancelAction = () => {
         :src="getServiceDetails(app.name)?.icon"
         alt=""
         class="w-20 h-20"
-      />
+      >
 
       <span
         class="clamp-1-line p-4 text-2xl text-center break-words w-full hover-expand-text"

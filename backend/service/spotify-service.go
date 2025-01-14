@@ -20,18 +20,18 @@ import (
 
 type SpotifyService interface {
 	// Service interface functions
-	FindActionbyName(name string) func(c chan string, option json.RawMessage, idArea uint64)
-	FindReactionbyName(name string) func(option json.RawMessage, idArea uint64) string
+	FindActionByName(name string) func(c chan string, option json.RawMessage, area schemas.Area)
+	FindReactionByName(name string) func(option json.RawMessage, area schemas.Area) string
 	GetServiceActionInfo() []schemas.Action
 	GetServiceReactionInfo() []schemas.Reaction
 	// Service specific functions
 	AuthGetServiceAccessToken(code string) (token schemas.Token, err error)
 	GetUserInfo(accessToken string) (user schemas.User, err error)
 	// Actions functions
-	SpotifyActionMusicPlayed(c chan string, option json.RawMessage, idArea uint64)
+	SpotifyActionMusicPlayed(c chan string, option json.RawMessage, area schemas.Area)
 	// Reactions functions
-	SpotifyReactionSkipNextMusic(option json.RawMessage, idArea uint64) string
-	SpotifyReactionSkipPreviousMusic(option json.RawMessage, idArea uint64) string
+	SpotifyReactionSkipNextMusic(option json.RawMessage, area schemas.Area) string
+	SpotifyReactionSkipPreviousMusic(option json.RawMessage, area schemas.Area) string
 }
 
 type spotifyService struct {
@@ -69,9 +69,9 @@ func (service *spotifyService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
-func (service *spotifyService) FindActionbyName(
+func (service *spotifyService) FindActionByName(
 	name string,
-) func(c chan string, option json.RawMessage, idArea uint64) {
+) func(c chan string, option json.RawMessage, area schemas.Area) {
 	switch name {
 	case string(schemas.MusicPlayed):
 		return service.SpotifyActionMusicPlayed
@@ -80,9 +80,9 @@ func (service *spotifyService) FindActionbyName(
 	}
 }
 
-func (service *spotifyService) FindReactionbyName(
+func (service *spotifyService) FindReactionByName(
 	name string,
-) func(option json.RawMessage, idArea uint64) string {
+) func(option json.RawMessage, area schemas.Area) string {
 	switch name {
 	case string(schemas.SkipNextMusic):
 		return service.SpotifyReactionSkipNextMusic
@@ -95,7 +95,7 @@ func (service *spotifyService) FindReactionbyName(
 
 func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.SpotifyActionMusicPlayedOption{
-		Name: "",
+		Name: "Beliver",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -161,12 +161,10 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrSpotifySecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/spotify"
 
 	apiURL := "https://accounts.spotify.com/api/token"
 
@@ -329,18 +327,12 @@ func getSpotifyPlaybackResponse(token schemas.Token) (schemas.SpotifyPlaybackRes
 func (service *spotifyService) SpotifyActionMusicPlayed(
 	c chan string,
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) {
 	optionJSON := schemas.SpotifyActionMusicPlayedOption{}
 	err := json.Unmarshal(option, &optionJSON)
 	if err != nil {
 		fmt.Println("Error unmarshalling option:", err)
-		return
-	}
-
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
 		return
 	}
 
@@ -393,14 +385,8 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 // Reactions functions
 func (service *spotifyService) SpotifyReactionSkipNextMusic(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area:" + err.Error()
-	}
-
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,
@@ -446,14 +432,8 @@ func (service *spotifyService) SpotifyReactionSkipNextMusic(
 
 func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
 	option json.RawMessage,
-	idArea uint64,
+	area schemas.Area,
 ) string {
-	area, err := service.areaRepository.FindById(idArea)
-	if err != nil {
-		fmt.Println("Error finding area:", err)
-		return "Error finding area:" + err.Error()
-	}
-
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
 		area.UserId,
 		area.Reaction.ServiceId,
