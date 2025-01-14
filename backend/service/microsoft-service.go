@@ -98,7 +98,7 @@ func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 	}
 
 	defaultValueEventIncoming := schemas.MicrosoftEventIncomingOptions{
-		Name: "",
+		Name: "Meeting with the boss",
 	}
 	optionEventIncoming, err := json.Marshal(defaultValueEventIncoming)
 	if err != nil {
@@ -126,9 +126,9 @@ func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 
 func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.MicrosoftReactionSendMailOptions{
-		Subject:   "",
-		Body:      "",
-		Recipient: "",
+		Subject:   "newsletter",
+		Body:      "a beautiful email",
+		Recipient: "test@example.com",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -142,11 +142,11 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 
 	defaultValueCreateEvent := schemas.MicrosoftCreateEventOptions{
-		Subject:  "",
-		Body:     "",
-		Location: "",
-		Start:    "",
-		End:      "",
+		Subject:  "Meeting",
+		Body:     "Weekly meeting",
+		Location: "Bordeaux",
+		Start:    "2025-01-12T:16:06:00",
+		End:      "YYYY-MM-DDT:HH:MM:SS",
 	}
 	optionCreateEvent, err := json.Marshal(defaultValueCreateEvent)
 	if err != nil {

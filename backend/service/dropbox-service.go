@@ -87,7 +87,7 @@ func (service *dropboxService) GetServiceInfo() schemas.Service {
 
 func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.DropboxActionUpdateInFolder{
-		Path: "",
+		Path: "folder/subfolder",
 	}
 	actionUpdateInFolder, err := json.Marshal(defaultValue)
 	if err != nil {
@@ -102,7 +102,7 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	return []schemas.Action{
 		{
 			Name:               string(schemas.UpdateInFolder),
-			Description:        "This reaction save content from a URL to a file in Dropbox\nExample:\npath: folder/subfolder",
+			Description:        "This reaction save content from a URL to a file in Dropbox",
 			Service:            service.serviceInfo,
 			Option:             actionUpdateInFolder,
 			MinimumRefreshRate: 10,
@@ -112,8 +112,8 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.DropboxSaveUrlReactionOption{
-		Path: "",
-		URL:  "",
+		Path: "folder/subfolder/file.txt",
+		URL:  "site.com/robot.txt",
 	}
 	saveUrlReactionOption, err := json.Marshal(defaultValue)
 	if err != nil {

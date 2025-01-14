@@ -95,7 +95,7 @@ func (service *spotifyService) FindReactionByName(
 
 func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.SpotifyActionMusicPlayedOption{
-		Name: "",
+		Name: "Beliver",
 	}
 	option, err := json.Marshal(defaultValue)
 	if err != nil {
