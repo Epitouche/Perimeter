@@ -56,11 +56,7 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
-      <View
-        style={[
-          styles.actionBox,
-          { backgroundColor: service?.color, borderRadius: 8 },
-        ]}>
+      <View style={[styles.actionBox, { backgroundColor: service?.color }]}>
         <Text style={styles.boxText}>{name}</Text>
       </View>
       <View style={styles.line} />

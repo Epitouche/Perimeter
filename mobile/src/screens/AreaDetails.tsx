@@ -30,6 +30,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const [selectedReactionOptions, setSelectedReactionOptions] = useState<{
     [key: string]: any;
   }>({});
+  console.log('Area refreshrate:', area.action_refresh_rate);
 
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
