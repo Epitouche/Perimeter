@@ -144,7 +144,8 @@ const cancelAction = () => {
 </script>
 
 <template>
-  <UContainer :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
+  <UContainer
+:ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
   class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full">
     <div v-for="(app, index) in apps" :key="index">
     <UContainer :ui="{ padding: '!px-0', constrained: 'max-w-none' }" class="custom_card button_shadow !justify-between !gap-0 rounded-custom_border_radius overflow-hidden" tabindex="0" :style="{ backgroundColor: getServiceDetails(app.name)?.color || '#ccc' }" @click="onClick(app.name)">
@@ -158,7 +159,8 @@ const cancelAction = () => {
     </UContainer>
     </div>
 
-    <div v-if="isPopupVisible" ref="focusDiv"
+    <div
+v-if="isPopupVisible" ref="focusDiv"
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full">
         <h2 class="text-4xl font-semibold mb-2">
@@ -166,9 +168,11 @@ const cancelAction = () => {
         </h2>
         <p class="text-2xl mb-5">This action cannot be undone!</p>
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
-          <UButton class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5" tabindex="0"
+          <UButton
+class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5" tabindex="0"
             @click="cancelAction">No</UButton>
-          <UButton class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+          <UButton
+class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
             tabindex="0" @click="confirmAction">Yes</UButton>
         </div>
       </div>
