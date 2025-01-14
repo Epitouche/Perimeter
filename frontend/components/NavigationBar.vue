@@ -63,6 +63,7 @@ const clearTokenAndLogout = () => {
     <div class="ml-auto relative">
       <UButton
         class="flex items-center justify-center bg-white h-14 w-14 shadow-lg rounded-full cursor-pointer"
+        tabindex="0"
         @click="toggleMenu"
       >
         <Icon name="bytesize:user" class="text-black h-14 w-14" />
@@ -75,14 +76,22 @@ const clearTokenAndLogout = () => {
           <span class="font-[400] text-[1em]"> {{ username }}</span>
         </div>
 
-        <NuxtLink to="/settings" class="nav-link">Settings</NuxtLink>
+        <NuxtLink to="/settings" class="nav-link" tabindex="0"
+          >Settings</NuxtLink
+        >
 
         <UButton
           class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
+          tabindex="-1"
           @click="clearTokenAndLogout"
         >
           <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
-          <NuxtLink to="/login">Logout</NuxtLink>
+          <NuxtLink
+            to="/login"
+            tabindex="0"
+            @keydown.enter="clearTokenAndLogout"
+            >Logout</NuxtLink
+          >
         </UButton>
       </div>
     </div>
@@ -107,5 +116,10 @@ const clearTokenAndLogout = () => {
 
 .logout-button:hover {
   background-color: #dc2626;
+}
+
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
 </style>

@@ -90,24 +90,26 @@ const handleLogin = async () => {
               size: { sm: 'text-5xl' },
             }"
           />
-          <ULink
-            to="/forgotpassword"
-            class="text-xl text-custom_color-text_link self-end px-5"
-            >Forgot password?</ULink
-          >
         </div>
         <div class="flex flex-col justify-center items-center min-w-full pt-4">
           <div v-if="loginError" class="text-red-500 text-xl pb-1">
             {{ loginError }}
           </div>
-          <UButton class="text-center text-[2.5rem] px-12" @click="handleLogin"
+          <UButton
+            class="text-center text-[2.5rem] px-12"
+            tabindex="0"
+            @click="handleLogin"
             >Log in</UButton
           >
           <p class="text-xl">
             New?
-            <ULink to="/signup" class="hover:text-custom_color-text_link"
-              ><u>Sign Up</u></ULink
+            <ULink
+              to="/signup"
+              class="hover:text-custom_color-text_link"
+              tabindex="0"
             >
+              <u>Sign Up</u>
+            </ULink>
           </p>
         </div>
       </div>
@@ -123,4 +125,9 @@ const handleLogin = async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>
