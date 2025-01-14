@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  FlatList,
+  LayoutAnimation,
+  ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
@@ -33,7 +36,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const [refreshRate, setRefreshRate] = useState<number>();
 
   const [areaResults, setAreaResults] = useState([
-      { created_at: '', value: '' },
+      { created_at: '', result: '' },
   ]);
 
   const handleActionOptionChange = (key: string, value: any, type: any) => {
@@ -168,314 +171,340 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     fetchAreaResults();
   },[]);
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Area Details</Text>
+  const renderItem = ({ item }: { item: { created_at: string, result: string } }) => (
+    <View style={styles.row}>
+      <Text style={styles.cell}>{item.created_at.substring(0, 19)}</Text>
+      <Text style={styles.cell}>{item.result}</Text>
+    </View>
+  );
 
-      {/* Area Section */}
-      <View
-        style={[
-          styles.subContainer,
-          { borderColor: 'black', borderWidth: 1, borderRadius: 10 },
-        ]}>
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.header}>Area Details</Text>
+
+        {/* Area Section */}
         <View
-          style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
-          <View style={[{ flexDirection: 'column' }]}>
-            <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
-              <Text style={[styles.label, { color: 'black' }]}>title:</Text>
-              <Text style={[styles.value, { color: 'black' }]}>
-                {title == '' ? area.title : title}
-              </Text>
+          style={[
+            styles.subContainer,
+            { borderColor: 'black', borderWidth: 1, borderRadius: 10 },
+          ]}>
+          <View
+            style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
+            <View style={[{ flexDirection: 'column' }]}>
+              <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
+                <Text style={[styles.label, { color: 'black' }]}>title:</Text>
+                <Text style={[styles.value, { color: 'black' }]}>
+                  {title == '' ? area.title : title}
+                </Text>
+              </View>
+              <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
+                <Text style={[styles.label, { color: 'black' }]}>
+                  Description:
+                </Text>
+                <Text style={[styles.value, { color: 'black' }]}>
+                  {description == '' ? area.description : description}
+                </Text>
+              </View>
+              <View style={styles.detailContainer}>
+                <Text style={[styles.label, { color: 'black' }]}>
+                  Refresh rate:
+                </Text>
+                <Text style={[styles.value, { color: 'black' }]}>
+                  {refreshRate == undefined ? area.refresh_rate : refreshRate}
+                </Text>
+              </View>
             </View>
-            <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
-              <Text style={[styles.label, { color: 'black' }]}>
-                Description:
-              </Text>
-              <Text style={[styles.value, { color: 'black' }]}>
-                {description == '' ? area.description : description}
-              </Text>
-            </View>
-            <View style={styles.detailContainer}>
-              <Text style={[styles.label, { color: 'black' }]}>
-                Refresh rate:
-              </Text>
-              <Text style={[styles.value, { color: 'black' }]}>
-                {refreshRate == undefined ? area.refresh_rate : refreshRate}
-              </Text>
+            <View style={{ alignContent: 'center' }}>
+              <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
+                <SvgFromUri
+                  uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
+                  width={50}
+                  height={50}
+                  color={'black'}
+                />
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={{ alignContent: 'center' }}>
-            <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
+        </View>
+
+        {/* Action Section */}
+        <View
+          style={[
+            styles.subContainer,
+            { backgroundColor: area.action.service.color },
+          ]}>
+          <View style={styles.ActionReactionHeader}>
+            <Text style={styles.label}>Action</Text>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View>
+              <View style={styles.detailContainer}>
+                <Text style={styles.label}>Service:</Text>
+                <Text style={styles.value}>{area.action.service.name}</Text>
+              </View>
+              <View style={styles.detailContainer}>
+                <Text style={styles.label}>Options:</Text>
+                <Text style={styles.value}>
+                  {Object.entries(selectedActionOptions).map(
+                    ([key, value]) => `${key}: ${value} `,
+                  )}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity onPress={() => setIsActionModalVisible(true)}>
               <SvgFromUri
                 uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
                 width={50}
                 height={50}
-                color={'black'}
+                color={'white'}
               />
             </TouchableOpacity>
           </View>
         </View>
-      </View>
 
-      {/* Action Section */}
-      <View
-        style={[
-          styles.subContainer,
-          { backgroundColor: area.action.service.color },
-        ]}>
-        <View style={styles.ActionReactionHeader}>
-          <Text style={styles.label}>Action</Text>
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View>
-            <View style={styles.detailContainer}>
-              <Text style={styles.label}>Service:</Text>
-              <Text style={styles.value}>{area.action.service.name}</Text>
-            </View>
-            <View style={styles.detailContainer}>
-              <Text style={styles.label}>Options:</Text>
-              <Text style={styles.value}>
-                {Object.entries(selectedActionOptions).map(
-                  ([key, value]) => `${key}: ${value} `,
-                )}
-              </Text>
-            </View>
+        {/* Reaction Section */}
+        <View
+          style={[
+            styles.subContainer,
+            { backgroundColor: area.reaction.service.color },
+          ]}>
+          <View style={styles.ActionReactionHeader}>
+            <Text style={styles.label}>Reaction</Text>
           </View>
-          <TouchableOpacity onPress={() => setIsActionModalVisible(true)}>
-            <SvgFromUri
-              uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
-              width={50}
-              height={50}
-              color={'white'}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Reaction Section */}
-      <View
-        style={[
-          styles.subContainer,
-          { backgroundColor: area.reaction.service.color },
-        ]}>
-        <View style={styles.ActionReactionHeader}>
-          <Text style={styles.label}>Reaction</Text>
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View>
-            <View style={styles.detailContainer}>
-              <Text style={styles.label}>Service:</Text>
-              <Text style={styles.value}>{area.reaction.service.name}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View>
+              <View style={styles.detailContainer}>
+                <Text style={styles.label}>Service:</Text>
+                <Text style={styles.value}>{area.reaction.service.name}</Text>
+              </View>
+              <View style={styles.detailContainer}>
+                <Text style={styles.label}>Options:</Text>
+                <Text style={styles.value}>
+                  {Object.entries(selectedReactionOptions).map(
+                    ([key, value]) => `${key}: ${value} `,
+                  )}
+                </Text>
+              </View>
             </View>
-            <View style={styles.detailContainer}>
-              <Text style={styles.label}>Options:</Text>
-              <Text style={styles.value}>
-                {Object.entries(selectedReactionOptions).map(
-                  ([key, value]) => `${key}: ${value} `,
-                )}
-              </Text>
-            </View>
+            <TouchableOpacity onPress={() => setIsReactionModalVisible(true)}>
+              <SvgFromUri
+                uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
+                width={50}
+                height={50}
+                color={'white'}
+              />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => setIsReactionModalVisible(true)}>
-            <SvgFromUri
-              uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
-              width={50}
-              height={50}
-              color={'white'}
-            />
-          </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Area Results */}
+        {/* Area Results */}
+        <Text style={[styles.header, { marginTop: 16 }]}>Area Results</Text>
+        <View style={[{ borderColor: 'black', borderWidth: 1, borderRadius: 10, flex: 1 }]}>
+          <View style={[styles.row, { backgroundColor: 'white' }]}>
+            <Text style={styles.cell}>created_at</Text>
+            <Text style={styles.cell}>result</Text>
+          </View>
+          <FlatList
+            data={areaResults}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.created_at}
+            style={{ flex: 1 }}
+          />
+        </View>
 
-      {/* Area Modal */}
-      <Modal
-        visible={isAreaModalVisible}
-        transparent={true}
-        animationType="slide">
-        <View style={styles.modalContainer}>
-          <View
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: 'white',
-                borderColor: 'black',
-                borderWidth: 1,
-                borderRadius: 10,
-              },
-            ]}>
-            <Text style={[styles.modalHeader, { color: 'black' }]}>
-              Modify Area
-            </Text>
-            <View style={[{ flexDirection: 'column' }]}>
-              <View style={[styles.optionRow]}>
-                <Text style={[styles.optionLabel, { color: 'black' }]}>
-                  Title
-                </Text>
-                <TextInput
-                  style={styles.optionInput}
-                  value={title}
-                  onChangeText={text => setTitle(text)}
-                  keyboardType="default" // Adjust as needed
-                />
-              </View>
-              <View style={[styles.optionRow]}>
-                <Text style={[styles.optionLabel, { color: 'black' }]}>
-                  Description
-                </Text>
-                <TextInput
-                  style={styles.optionInput}
-                  value={description}
-                  onChangeText={text => setDescription(text)}
-                  keyboardType="default" // Adjust as needed
-                />
-              </View>
-              <View style={[styles.optionRow]}>
-                <Text style={[styles.optionLabel, { color: 'black' }]}>
-                  Refresh rate
-                </Text>
-                <TextInput
-                  style={[styles.optionInput]}
-                  value={refreshRate ? String(refreshRate) : ''}
-                  onChangeText={text => setRefreshRate(Number(text))}
-                  keyboardType="numeric" // Adjust as needed
-                />
-              </View>
-            </View>
+        {/* Area Modal */}
+        <Modal
+          visible={isAreaModalVisible}
+          transparent={true}
+          animationType="slide">
+          <View style={styles.modalContainer}>
             <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={handleSaveArea}>
-                <View style={[styles.saveButton, { borderColor: 'black' }]}>
-                  <Text style={[{ color: 'black' }, { fontSize: 16 }]}>
-                    Save
+              style={[
+                styles.modalContent,
+                {
+                  backgroundColor: 'white',
+                  borderColor: 'black',
+                  borderWidth: 1,
+                  borderRadius: 10,
+                },
+              ]}>
+              <Text style={[styles.modalHeader, { color: 'black' }]}>
+                Modify Area
+              </Text>
+              <View style={[{ flexDirection: 'column' }]}>
+                <View style={[styles.optionRow]}>
+                  <Text style={[styles.optionLabel, { color: 'black' }]}>
+                    Title
                   </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsAreaModalVisible(false);
-                  setDescription(area.description);
-                  setTitle(area.title);
-                  setRefreshRate(area.refresh_rate);
-                }}>
-                <View style={styles.cancelButton}>
-                  <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
-                    Cancel
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Action Modal */}
-      <Modal
-        visible={isActionModalVisible}
-        transparent={true}
-        animationType="slide">
-        <View style={styles.modalContainer}>
-          <View
-            style={[
-              styles.modalContent,
-              { backgroundColor: area.action.service.color },
-            ]}>
-            <Text style={styles.modalHeader}>Modify Action</Text>
-            <View style={[{ flexDirection: 'column' }]}>
-              {Object.keys(selectedActionOptions).map(key => (
-                <View key={key} style={styles.optionRow}>
-                  <Text style={styles.optionLabel}>{key}</Text>
                   <TextInput
                     style={styles.optionInput}
-                    value={String(selectedActionOptions[key])}
-                    onChangeText={text =>
-                      handleActionOptionChange(
-                        key,
-                        text,
-                        typeof selectedActionOptions[key],
-                      )
-                    }
+                    value={title}
+                    onChangeText={text => setTitle(text)}
                     keyboardType="default" // Adjust as needed
                   />
                 </View>
-              ))}
-            </View>
-            <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={handleSaveAction}>
-                <View style={styles.saveButton}>
-                  <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
-                    Save
+                <View style={[styles.optionRow]}>
+                  <Text style={[styles.optionLabel, { color: 'black' }]}>
+                    Description
                   </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsActionModalVisible(false)}>
-                <View style={styles.cancelButton}>
-                  <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
-                    Cancel
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Reaction Modal */}
-      <Modal
-        visible={isReactionModalVisible}
-        transparent={true}
-        animationType="slide">
-        <View style={styles.modalContainer}>
-          <View
-            style={[
-              styles.modalContent,
-              { backgroundColor: area.reaction.service.color },
-            ]}>
-            <Text style={styles.modalHeader}>Modify Reaction</Text>
-            <View style={[{ flexDirection: 'column' }]}>
-              {Object.keys(selectedReactionOptions).map(key => (
-                <View key={key} style={styles.optionRow}>
-                  <Text style={styles.optionLabel}>{key}</Text>
                   <TextInput
                     style={styles.optionInput}
-                    value={String(selectedReactionOptions[key])}
-                    onChangeText={text =>
-                      handleReactionOptionChange(
-                        key,
-                        text,
-                        typeof selectedReactionOptions[key],
-                      )
-                    }
+                    value={description}
+                    onChangeText={text => setDescription(text)}
                     keyboardType="default" // Adjust as needed
                   />
                 </View>
-              ))}
-            </View>
-            <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={handleSaveReaction}>
-                <View style={styles.saveButton}>
-                  <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
-                    Save
+                <View style={[styles.optionRow]}>
+                  <Text style={[styles.optionLabel, { color: 'black' }]}>
+                    Refresh rate
                   </Text>
+                  <TextInput
+                    style={[styles.optionInput]}
+                    value={refreshRate ? String(refreshRate) : ''}
+                    onChangeText={text => setRefreshRate(Number(text))}
+                    keyboardType="numeric" // Adjust as needed
+                  />
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setIsReactionModalVisible(false)}>
-                <View style={styles.cancelButton}>
-                  <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
-                    Cancel
-                  </Text>
-                </View>
-              </TouchableOpacity>
+              </View>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TouchableOpacity onPress={handleSaveArea}>
+                  <View style={[styles.saveButton, { borderColor: 'black' }]}>
+                    <Text style={[{ color: 'black' }, { fontSize: 16 }]}>
+                      Save
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsAreaModalVisible(false);
+                    setDescription(area.description);
+                    setTitle(area.title);
+                    setRefreshRate(area.refresh_rate);
+                  }}>
+                  <View style={styles.cancelButton}>
+                    <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
+                      Cancel
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-      <BottomNavBar navigation={navigation} />
-    </View>
+        </Modal>
+
+        {/* Action Modal */}
+        <Modal
+          visible={isActionModalVisible}
+          transparent={true}
+          animationType="slide">
+          <View style={styles.modalContainer}>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: area.action.service.color },
+              ]}>
+              <Text style={styles.modalHeader}>Modify Action</Text>
+              <View style={[{ flexDirection: 'column' }]}>
+                {Object.keys(selectedActionOptions).map(key => (
+                  <View key={key} style={styles.optionRow}>
+                    <Text style={styles.optionLabel}>{key}</Text>
+                    <TextInput
+                      style={styles.optionInput}
+                      value={String(selectedActionOptions[key])}
+                      onChangeText={text =>
+                        handleActionOptionChange(
+                          key,
+                          text,
+                          typeof selectedActionOptions[key],
+                        )
+                      }
+                      keyboardType="default" // Adjust as needed
+                    />
+                  </View>
+                ))}
+              </View>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TouchableOpacity onPress={handleSaveAction}>
+                  <View style={styles.saveButton}>
+                    <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
+                      Save
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setIsActionModalVisible(false)}>
+                  <View style={styles.cancelButton}>
+                    <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
+                      Cancel
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Reaction Modal */}
+        <Modal
+          visible={isReactionModalVisible}
+          transparent={true}
+          animationType="slide">
+          <View style={styles.modalContainer}>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: area.reaction.service.color },
+              ]}>
+              <Text style={styles.modalHeader}>Modify Reaction</Text>
+              <View style={[{ flexDirection: 'column' }]}>
+                {Object.keys(selectedReactionOptions).map(key => (
+                  <View key={key} style={styles.optionRow}>
+                    <Text style={styles.optionLabel}>{key}</Text>
+                    <TextInput
+                      style={styles.optionInput}
+                      value={String(selectedReactionOptions[key])}
+                      onChangeText={text =>
+                        handleReactionOptionChange(
+                          key,
+                          text,
+                          typeof selectedReactionOptions[key],
+                        )
+                      }
+                      keyboardType="default" // Adjust as needed
+                    />
+                  </View>
+                ))}
+              </View>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TouchableOpacity onPress={handleSaveReaction}>
+                  <View style={styles.saveButton}>
+                    <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
+                      Save
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setIsReactionModalVisible(false)}>
+                  <View style={styles.cancelButton}>
+                    <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
+                      Cancel
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <TouchableOpacity onPress={() => navigation.navigate('AreaView')}>
+          <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+            <Text style={[styles.cancelButton , { color: '#E60000', width: "20%", margin: 10}]}>Back</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -577,6 +606,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#ccc',
     borderWidth: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  cell: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 
