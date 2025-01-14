@@ -181,7 +181,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                     break;
                 }
               }}>
-              <SvgFromUri uri={service.icon} width={50} height={50} accessibilityLabel={`Connect with ${service.name}`} />
+              <SvgFromUri
+                uri={service.icon}
+                width={50}
+                height={50}
+                accessibilityLabel={`Connect with ${service.name}`}
+              />
             </TouchableOpacity>
           ))}
       </View>

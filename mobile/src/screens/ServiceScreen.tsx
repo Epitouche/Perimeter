@@ -134,14 +134,16 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
     console.log(item);
     return (
       <TouchableOpacity
-      accessibilityLabel={`${!isConnected ? 'Connect' : 'Disconnect'} from ${item.name}`}
+        accessibilityLabel={`${!isConnected ? 'Connect' : 'Disconnect'} from ${
+          item.name
+        }`}
         style={[styles.serviceButton, { backgroundColor: item.color }]}
         onPress={
           !isConnected
             ? () => connectService(item.name)
             : () => handleDisconnect(item.id, item.name)
         }>
-        <SvgFromUri uri={item.icon} width={50} height={50}/>
+        <SvgFromUri uri={item.icon} width={50} height={50} />
         <Text style={styles.serviceText}>{item.name}</Text>
         <Text style={styles.serviceText}>
           {isConnected || !item.oauth ? 'Connected' : 'Not Connected'}
