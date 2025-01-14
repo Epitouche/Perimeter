@@ -52,7 +52,6 @@ services:
       file: ./docker-compose.template.yaml
       service: server-documentation
 
-
 networks:
   app-networks:
 
