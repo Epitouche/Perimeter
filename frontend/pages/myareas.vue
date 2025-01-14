@@ -78,18 +78,34 @@ onMounted(() => {
   <div class="flex flex-col justify-center items-center gap-5 w-full">
     <h1>My Areas</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div 
-    v-else
+    <div
+      v-else
       class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
-      tabindex="0">
+      tabindex="0"
+    >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
-        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" tabindex="0" />
-        <UDropdown :items="items" :popper="{ placement: 'bottom' }" tabindex="0">
-          <UIcon name="i-bytesize-filter" class="text-black w-10 h-10 p-0 pb-1" />
+        <SearchBar
+          v-model:search-query="searchQuery"
+          class="!w-1/4"
+          tabindex="0"
+        />
+        <UDropdown
+          :items="items"
+          :popper="{ placement: 'bottom' }"
+          tabindex="0"
+        >
+          <UIcon
+            name="i-bytesize-filter"
+            class="text-black w-10 h-10 p-0 pb-1"
+          />
           <template #date="{ item }">
             <div class="flex flex-row justify-evenly items-center w-full">
               <h3>Latest</h3>
-              <UTooltip :text="`Sort by ${item.label}`" :popper="{ placement: 'top' }" class="w-fit">
+              <UTooltip
+                :text="`Sort by ${item.label}`"
+                :popper="{ placement: 'top' }"
+                class="w-fit"
+              >
                 <UToggle v-model="dateSort" />
               </UTooltip>
               <h3>Oldest</h3>

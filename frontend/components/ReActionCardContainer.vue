@@ -100,9 +100,7 @@ onMounted(() => {
         @click="openConfig(type.id)"
         @keydown.space="openConfig(type.id)"
       >
-        <h2
-          class="clamp-2-lines capitalize text-center break-words w-full"
-        >
+        <h2 class="clamp-2-lines capitalize text-center break-words w-full">
           {{ formatString(type.name) }}
         </h2>
       </UContainer>

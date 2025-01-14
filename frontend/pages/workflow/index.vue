@@ -203,9 +203,7 @@ onMounted(() => {
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
-        <h1 class="pb-5">
-          Workflow
-        </h1>
+        <h1 class="pb-5">Workflow</h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
           <ReActionButton

@@ -30,8 +30,8 @@ const filteredApps = computed(() => {
   console.log("Search Query:", searchQuery.value);
   console.log("Services:", services.value);
   return services.value.filter((app) =>
-  app.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-);
+    app.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+  );
 });
 </script>
 
@@ -39,12 +39,17 @@ const filteredApps = computed(() => {
   <div class="flex flex-col justify-center items-center gap-10 w-full">
     <h1>My Services</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div 
-    v-else
+    <div
+      v-else
       class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
-      tabindex="0">
+      tabindex="0"
+    >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
-        <SearchBar v-model:search-query="searchQuery" class="!w-1/4" tabindex="0" />
+        <SearchBar
+          v-model:search-query="searchQuery"
+          class="!w-1/4"
+          tabindex="0"
+        />
       </div>
       <div class="w-[95%] overflow-y-scroll max-h-[64vh]">
         <ServiceList :apps="filteredApps" />
