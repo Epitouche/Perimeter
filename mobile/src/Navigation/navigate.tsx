@@ -15,6 +15,7 @@ import AddReactionScreen from '../screens/AreaCreation/AddReaction';
 import SelectReactionScreen from '../screens/AreaCreation/SelectReaction';
 import SettingsScreen from '../screens/SettingsScreen';
 import AreaDetailsScreen from '../screens/AreaDetails';
+import ValidateAreaScreen from '../screens/AreaCreation/ValidateArea';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -39,6 +40,12 @@ export type RootStackParamList = {
     actionOptions: { [key: string]: string };
     serviceId: number;
   };
+  ValidateAreaScreen: {
+    actionId: number;
+    actionOptions: { [key: string]: string };
+    reactionId: number;
+    reactionOptions: { [key: string]: string };
+  };
   SettingsScreen: undefined;
   AreaDetails: { area: any };
 };
@@ -61,8 +68,20 @@ const Navigation = () => {
         initialRouteName="Home"
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignupScreen} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignupScreen}
+          options={{
+            gestureEnabled: false,
+          }}
+        />
         <Stack.Screen name="AreaView" component={AreaView} />
         <Stack.Screen name="ServicesScreen" component={ServicesScreen} />
         <Stack.Screen name="authRedirect" component={AuthRedirectScreen} />
@@ -80,6 +99,10 @@ const Navigation = () => {
         <Stack.Screen
           name="SelectReactionScreen"
           component={SelectReactionScreen}
+        />
+        <Stack.Screen
+          name="ValidateAreaScreen"
+          component={ValidateAreaScreen}
         />
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="AreaDetails" component={AreaDetailsScreen} />

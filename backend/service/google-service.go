@@ -145,22 +145,20 @@ func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 func (service *googleService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("GMAIL_CLIENT_ID")
+	clientID := os.Getenv("GOOGLE_CLIENT_ID")
 	if clientID == "" {
 		return schemas.Token{}, schemas.ErrGoogleClientIdNotSet
 	}
 
-	clientSecret := os.Getenv("GMAIL_SECRET")
+	clientSecret := os.Getenv("GOOGLE_SECRET")
 	if clientSecret == "" {
 		return schemas.Token{}, schemas.ErrGoogleSecretNotSet
 	}
 
-	appPort := os.Getenv("BACKEND_PORT")
-	if appPort == "" {
-		return schemas.Token{}, schemas.ErrBackendPortNotSet
+	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
-
-	redirectURI := "http://localhost:8081/services/google"
 
 	apiURL := "https://oauth2.googleapis.com/token"
 

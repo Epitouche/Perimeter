@@ -100,6 +100,23 @@ func (service *serviceService) InitialSaveService() {
 	}
 }
 
+func getRedirectURI(
+	serviceName schemas.ServiceName,
+) (redirectURI string, err error) {
+	frontendPort := os.Getenv("FRONTEND_PORT")
+	if frontendPort == "" {
+		return "", schemas.ErrFrontendPortNotSet
+	}
+	frontendExternalHost := os.Getenv("FRONTEND_EXTERNAL_HOST")
+	if frontendExternalHost == "" {
+		return "", schemas.ErrFrontendExternalHostNotSet
+	}
+
+	return "http://" + frontendExternalHost + ":" + frontendPort + "/services/" + strings.ToLower(
+		string(serviceName),
+	), nil
+}
+
 func (service *serviceService) RedirectToServiceOauthPage(
 	serviceName schemas.ServiceName,
 	oauthUrl string,
@@ -114,7 +131,7 @@ func (service *serviceService) RedirectToServiceOauthPage(
 			return "", schemas.ErrSpotifyClientIdNotSet
 		}
 	case schemas.Google:
-		clientID = os.Getenv("GMAIL_CLIENT_ID")
+		clientID = os.Getenv("GOOGLE_CLIENT_ID")
 		if clientID == "" {
 			return "", schemas.ErrGoogleClientIdNotSet
 		}
