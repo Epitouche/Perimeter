@@ -198,27 +198,45 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
       <View
         style={[
           styles.subContainer,
-          { backgroundColor: type == 'action' ? area.action.service.color : area.reaction.service.color },
+          {
+            backgroundColor:
+              type == 'action'
+                ? area.action.service.color
+                : area.reaction.service.color,
+          },
         ]}>
         <View style={styles.ActionReactionHeader}>
-          <Text style={styles.label}>{type == 'action' ? 'Action' : 'Reaction' }</Text>
+          <Text style={styles.label}>
+            {type == 'action' ? 'Action' : 'Reaction'}
+          </Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View>
             <View style={styles.detailContainer}>
               <Text style={styles.label}>Service:</Text>
-              <Text style={styles.value}>{type == 'action' ? area.action.service.name : area.reaction.service.name}</Text>
+              <Text style={styles.value}>
+                {type == 'action'
+                  ? area.action.service.name
+                  : area.reaction.service.name}
+              </Text>
             </View>
             <View style={styles.detailContainer}>
               <Text style={styles.label}>Options:</Text>
               <Text style={styles.value}>
-                {Object.entries(type === 'action' ? selectedActionOptions : selectedReactionOptions).map(
-                  ([key, value]) => `${key}: ${value} `,
-                )}
+                {Object.entries(
+                  type === 'action'
+                    ? selectedActionOptions
+                    : selectedReactionOptions,
+                ).map(([key, value]) => `${key}: ${value} `)}
               </Text>
             </View>
           </View>
-          <TouchableOpacity onPress={() => {type == 'action' ? setIsActionModalVisible(true) : setIsReactionModalVisible(true)}}>
+          <TouchableOpacity
+            onPress={() => {
+              type == 'action'
+                ? setIsActionModalVisible(true)
+                : setIsReactionModalVisible(true);
+            }}>
             <SvgFromUri
               uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
               width={50}
