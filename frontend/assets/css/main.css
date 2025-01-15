@@ -41,6 +41,11 @@ p {
   font-weight: 700;
 }
 
+.icon_card {
+  width: 8vw;
+  height: 8vh;
+}
+
 .icon_circle {
   width: 6vw;
   height: 6vh;
@@ -54,7 +59,7 @@ p {
   justify-content: center;
   align-items: center;
   gap: 1vh;
-  /* border-radius: ; */
+  border-radius: 25%;
 }
 
 .custom_card_circle {

@@ -94,7 +94,7 @@ onMounted(() => {
     <div v-for="type in props.types" :key="type.id">
       <UContainer
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        class="custom_card flex flex-col justify-evenly items-center gap-4 text-white rounded-custom_border_radius"
+        class="custom_card flex flex-col justify-evenly items-center gap-4 text-white"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
         tabindex="0"
         @click="openConfig(type.id)"

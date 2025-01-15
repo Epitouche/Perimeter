@@ -334,7 +334,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
     <div v-for="area in areas" :key="area.id">
       <UContainer
         :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
-        class="custom_card text-white rounded-custom_border_radius"
+        class="custom_card text-white"
         :style="{ backgroundColor: area.action.service.color }"
         tabindex="0"
         @click="toggleAreaModal(area.id)"

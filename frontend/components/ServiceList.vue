@@ -76,8 +76,10 @@ const getServiceStateText = (appName: string) => {
   );
 
   if (matchingService) {
-    return "Automatically connected";
+    // return "Automatically connected";
+    return "Disconnect";
   }
+
   const isConnected = serviceConnected.value.includes(appName);
   const message = isConnected ? 'Disconnect' : 'Connect';
   return message;
@@ -146,6 +148,13 @@ const cancelAction = () => {
 const hover = reactive<{ [key: string]: boolean }>(
   Object.fromEntries(props.apps.map((app) => [app.name, false])),
 );
+
+function formatName(name: string): string {
+  return name
+    .replace(/^action_/, "")
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
+}
 </script>
 
 <template>
@@ -158,12 +167,12 @@ const hover = reactive<{ [key: string]: boolean }>(
         class="custom_card button_shadow !justify-between !gap-0 overflow-hidden" tabindex="0" :style="{
           backgroundColor: getServiceDetails(app.name)?.color || '#ccc',
         }" @click="onClick(app.name)">
-        <h3 class="clamp-1-line break-words text-center pt-4 text-white w-full hover-expand-text">
-          {{ app.name }}
-        </h3>
+        <h5 class="clamp-1-line break-words text-center pt-4 text-white w-full hover-expand-text">
+          {{ formatName(app.name) }}
+        </h5>
         <img 
         v-if="getServiceDetails(app.name)?.icon" :src="getServiceDetails(app.name)?.icon" alt=""
-          class="icon_circle" >
+          class="icon_card" >
         <UButton 
         v-if="!isLoading" :class="[
           isServiceConnectedOrInvalid(app.name)
@@ -171,7 +180,7 @@ const hover = reactive<{ [key: string]: boolean }>(
             : 'bg-white text-black',
           'w-full min-h-[5vh] max-h-[5vh] !rounded-t-none',
         ]" @click="onClick(app.name)">
-          <h4 class="w-full">{{ getServiceStateText(app.name) }}</h4>
+          <h6 class="w-full">{{ getServiceStateText(app.name) }}</h6>
         </UButton>
       </UContainer>
 
@@ -194,18 +203,21 @@ const hover = reactive<{ [key: string]: boolean }>(
     <div 
     v-if="isPopupVisible && styling == 'card'" ref="focusDiv"
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full">
-        <h2 class="mb-2">
-          Are you sure you want to disconnect from this service?
-        </h2>
-        <p class="text-2xl mb-5">This action cannot be undone!</p>
-        <div class="flex flex-row justify-end items-center gap-5 pt-5">
+      <div class="flex flex-col justify-between items-center gap-10 bg-custom_color-bg_section px-10 py-8 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit"
+      :style="{ borderColor: selectedService ? getServiceDetails(selectedService)?.color || '#ccc' : '#ccc' }">
+        <h4>
+          Are you sure you want to <br> disconnect from this service?
+        </h4>
+        <h6>This action cannot be undone!</h6>
+        <div class="flex flex-row justify-end items-center gap-5">
           <UButton 
-          class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5" tabindex="0"
-            @click="cancelAction">No</UButton>
+          class="text-black !border-custom_border_width border-black bg-opacity-0 font-semibold py-3 px-6" tabindex="0"
+            @click="cancelAction">
+            <h6>No</h6>
+          </UButton>
           <UButton 
-          class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
-            tabindex="0" @click="confirmAction">Yes</UButton>
+          class="text-red-600 !border-custom_border_width border-red-600 bg-opacity-0 font-semibold py-3 px-6"
+            tabindex="0" @click="confirmAction"><h6>Yes</h6></UButton>
         </div>
       </div>
     </div>

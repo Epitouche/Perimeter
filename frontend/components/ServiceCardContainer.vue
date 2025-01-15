@@ -70,7 +70,7 @@ function formatName(name: string): string {
       >
         <UContainer
           :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-          class="custom_card flex flex-col !gap-0 text-white rounded-custom_border_radius overflow-hidden"
+          class="custom_card flex flex-col !gap-0 text-white overflow-hidden"
           :style="{ backgroundColor: service.color }"
         >
           <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" >
@@ -84,7 +84,7 @@ function formatName(name: string): string {
       <UContainer
         v-else
         :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
-        class="custom_card flex flex-col !gap-0 text-white rounded-custom_border_radius overflow-hidden opacity-40 cursor-not-allowed"
+        class="custom_card flex flex-col !gap-0 text-white overflow-hidden opacity-40 cursor-not-allowed"
         :style="{ backgroundColor: service.color }"
       >
         <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" >
