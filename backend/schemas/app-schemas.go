@@ -26,6 +26,7 @@ var (
 	ErrBackendPortNotSet          = errors.New("BACKEND_PORT is not set")
 	ErrFrontendPortNotSet         = errors.New("FRONTEND_PORT is not set")
 	ErrFrontendExternalHostNotSet = errors.New("FRONTEND_EXTERNAL_HOST is not set")
+	ErrIsProductionNotSet         = errors.New("IS_PRODUCTION is not set")
 	ErrMissingAuthenticationCode  = errors.New("missing authentication code")
 	ErrCreateRequest              = errors.New("error create request")
 	ErrDoRequest                  = errors.New("error do request")
