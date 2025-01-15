@@ -6,14 +6,12 @@ on:
   pull_request:
     branches:
       - backend
-      - backend-feature/**
       - dev
       - pre-prod
       - main
   push:
     branches:
       - backend
-      - backend-feature/**
       - dev
       - pre-prod
       - main
