@@ -63,7 +63,7 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   );
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: 'white' }}>
       <View style={styles.container}>
         <Text style={styles.header}>Area Details</Text>
 
