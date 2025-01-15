@@ -109,15 +109,15 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Choose reaction</Text>
+      <Text style={styles.title} accessibilityLabel="Choose reaction title">Choose reaction</Text>
       {selectedReaction ? (
         <View style={styles.optionsContainer}>
-          <Text style={styles.optionTitle}>
+          <Text style={styles.optionTitle} accessibilityLabel={`Configure Options for ${selectedReaction.name}`}>
             Configure Options for {selectedReaction.name}
           </Text>
           {Object.keys(selectedReactionOptions).map(key => (
             <View key={key} style={styles.optionRow}>
-              <Text style={styles.optionLabel}>{key}</Text>
+              <Text style={styles.optionLabel} accessibilityLabel={`Option label ${key}`}>{key}</Text>
               <TextInput
                 style={styles.optionInput}
                 value={String(selectedReactionOptions[key])}
@@ -129,6 +129,7 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                   )
                 }
                 keyboardType="default"
+                accessibilityLabel={`Option input ${key}`}
               />
             </View>
           ))}
@@ -141,12 +142,14 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                 reactionId: selectedReaction.id,
                 reactionOptions: selectedReactionOptions,
               })
-            }>
+            }
+            accessibilityLabel="Save button">
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => setSelectedReaction(null)}>
+            onPress={() => setSelectedReaction(null)}
+            accessibilityLabel="Back button">
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </View>
@@ -157,13 +160,15 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
             placeholder="Search services"
             value={search}
             onChangeText={handleSearch}
+            accessibilityLabel="Search bar"
           />
-          <ScrollView contentContainerStyle={styles.servicesContainer}>
+          <ScrollView contentContainerStyle={styles.servicesContainer}></ScrollView>
             {filteredServices?.map(service => (
               <TouchableOpacity
                 key={service.id}
                 style={styles.serviceBox}
-                onPress={() => handleActionPress(service)}>
+                onPress={() => handleActionPress(service)}
+                accessibilityLabel={`Service ${service.name}`}>
                 <Text style={styles.serviceText}>
                   {formatText(service.name)}
                 </Text>
@@ -172,7 +177,8 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
           </ScrollView>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => navigation.goBack()}
+            accessibilityLabel="Back button">
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </>

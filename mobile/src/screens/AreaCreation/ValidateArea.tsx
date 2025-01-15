@@ -111,52 +111,61 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <View style={{ width: '80%', marginBottom: 20 }}>
-        <Text style={styles.label}>Title</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter title"
-          onChangeText={text => setTitle(text)}
-        />
+      <Text style={styles.label}>Title</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter title"
+        onChangeText={text => setTitle(text)}
+        accessibilityLabel="Title Input"
+      />
       </View>
       <View style={{ width: '80%', marginBottom: 20 }}>
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter description"
-          onChangeText={text => setDescription(text)}
-        />
+      <Text style={styles.label}>Description</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter description"
+        onChangeText={text => setDescription(text)}
+        accessibilityLabel="Description Input"
+      />
       </View>
       <View style={{ width: '80%', marginBottom: 20 }}>
-        <Text style={styles.label}>Refresh Timer (in seconds)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter refresh timer"
-          keyboardType="numeric"
-          onChangeText={text => setRefreshTimer(text)}
-        />
+      <Text style={styles.label}>Refresh Timer (in seconds)</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter refresh timer"
+        keyboardType="numeric"
+        onChangeText={text => setRefreshTimer(text)}
+        accessibilityLabel="Refresh Timer Input"
+      />
       </View>
       <Text style={styles.title}>Add Area</Text>
       <View
-        style={[
-          styles.actionBox,
-          { backgroundColor: actionService?.color, borderRadius: 8 },
-        ]}>
-        <Text style={styles.boxText}>{actionName}</Text>
+      style={[
+        styles.actionBox,
+        { backgroundColor: actionService?.color, borderRadius: 8 },
+      ]}>
+      <Text style={styles.boxText} accessibilityLabel="Action Name">
+        {actionName}
+      </Text>
       </View>
       <View style={styles.line} />
       <View
-        style={[
-          styles.actionBox,
-          { backgroundColor: reactionService?.color, borderRadius: 8 },
-        ]}>
-        <Text style={styles.boxText}>{reactionName}</Text>
+      style={[
+        styles.actionBox,
+        { backgroundColor: reactionService?.color, borderRadius: 8 },
+      ]}>
+      <Text style={styles.boxText} accessibilityLabel="Reaction Name">
+        {reactionName}
+      </Text>
       </View>
       <TouchableOpacity
-        style={styles.saveButton}
-        onPress={() => {
-          saveButtonPressed();
-        }}>
-        <Text style={styles.addText}>Save</Text>
+      style={styles.saveButton}
+      onPress={() => {
+        saveButtonPressed();
+      }}
+      accessibilityLabel="Save Button"
+      >
+      <Text style={styles.addText}>Save</Text>
       </TouchableOpacity>
     </View>
   );

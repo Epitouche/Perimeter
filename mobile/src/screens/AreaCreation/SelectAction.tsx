@@ -131,6 +131,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
             <View key={key} style={styles.optionRow}>
               <Text style={styles.optionLabel}>{key}</Text>
               <TextInput
+                accessibilityLabel={key}
                 style={styles.optionInput}
                 value={String(selectedActionOptions[key])}
                 onChangeText={text =>
@@ -145,11 +146,13 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
           ))}
           <TouchableOpacity
+            accessibilityLabel="Save Button"
             style={styles.saveButton}
             onPress={handleSaveOptions}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            accessibilityLabel="Back Button"
             style={styles.backButton}
             onPress={() => setSelectedAction(null)}>
             <Text style={styles.backButtonText}>Back</Text>
@@ -158,6 +161,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
       ) : (
         <>
           <TextInput
+            accessibilityLabel="Search Bar"
             style={styles.searchBar}
             placeholder="Search services"
             value={search}
@@ -166,6 +170,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
           <ScrollView contentContainerStyle={styles.servicesContainer}>
             {filteredServices?.map(service => (
               <TouchableOpacity
+                accessibilityLabel={service.name}
                 key={service.id}
                 style={styles.serviceBox}
                 onPress={() => handleActionPress(service)}>
@@ -176,6 +181,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
             ))}
           </ScrollView>
           <TouchableOpacity
+            accessibilityLabel="Back Button"
             style={styles.backButton}
             onPress={() => navigation.goBack()}>
             <Text style={styles.backButtonText}>Back</Text>

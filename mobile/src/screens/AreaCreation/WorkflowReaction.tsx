@@ -55,23 +55,24 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add Area</Text>
+      <Text style={styles.title} accessibilityLabel="Add Area Title">Add Area</Text>
       <View style={[styles.actionBox, { backgroundColor: service?.color }]}>
-        <Text style={styles.boxText}>{name}</Text>
+      <Text style={styles.boxText} accessibilityLabel={`Service Name: ${name}`}>{name}</Text>
       </View>
-      <View style={styles.line} />
+      <View style={styles.line} accessibilityLabel="Separator Line" />
       <View style={styles.actionBox}>
-        <Text style={styles.boxText}>Reaction</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() =>
-            navigation.navigate('AddReactionScreen', {
-              actionId,
-              actionOptions,
-            })
-          }>
-          <Text style={styles.addTextDisabled}>Add</Text>
-        </TouchableOpacity>
+      <Text style={styles.boxText} accessibilityLabel="Reaction Label">Reaction</Text>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() =>
+        navigation.navigate('AddReactionScreen', {
+          actionId,
+          actionOptions,
+        })
+        }
+        accessibilityLabel="Add Reaction Button">
+        <Text style={styles.addTextDisabled}>Add</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );

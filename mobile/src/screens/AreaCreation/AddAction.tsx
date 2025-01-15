@@ -104,13 +104,14 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add action</Text>
+      <Text style={styles.title} accessibilityLabel="Add action title">Add action</Text>
       <TextInput
         style={styles.searchBar}
         placeholderTextColor="#bbbbbb"
         placeholder="Search services"
         value={search}
         onChangeText={handleSearch}
+        accessibilityLabel="Search services input"
       />
       <ScrollView contentContainerStyle={styles.servicesContainer}>
         {filteredServices?.map(service => (
@@ -133,14 +134,16 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
             }
             disabled={
               !(connectedServices.includes(service.name) || !service.oauth)
-            }>
+            }
+            accessibilityLabel={`Service ${service.name}`}>
             <Text style={styles.serviceText}>{formatText(service.name)}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.goBack()}
+        accessibilityLabel="Back button">
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
     </View>
