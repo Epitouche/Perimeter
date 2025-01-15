@@ -112,6 +112,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         placeholderTextColor="#aaa"
         value={username}
         onChangeText={text => setUsername(text)}
+        accessibilityHint="Enter your username"
       />
       {errors.username ? (
         <Text style={styles.errorText}>{errors.username}</Text>
@@ -124,22 +125,28 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         secureTextEntry
         value={password}
         onChangeText={text => setPassword(text)}
+        accessibilityHint="Enter your password"
       />
       {errors.password ? (
         <Text style={styles.errorText}>{errors.password}</Text>
       ) : null}
 
-      <TouchableOpacity>
+      <TouchableOpacity accessibilityHint="Tap to reset your password">
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={handleLogin}
+        accessibilityHint="Tap to log in">
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
 
       <View style={styles.signUpContainer}>
         <Text style={styles.newText}>New?</Text>
-        <TouchableOpacity onPress={switchToSignup}>
+        <TouchableOpacity
+          onPress={switchToSignup}
+          accessibilityHint="Tap to sign up">
           <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
@@ -180,7 +187,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   default:
                     break;
                 }
-              }}>
+              }}
+              accessibilityHint={`Tap to log in with ${service.name}`}>
               <SvgFromUri
                 uri={service.icon}
                 width={50}

@@ -9,6 +9,7 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate('AreaView')}
         accessibilityLabel="Home navigation button"
+        accessibilityHint="Navigates to the home screen"
         style={styles.navButton}>
         <Svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,6 +24,7 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityLabel="Workflow navigation button"
+        accessibilityHint="Navigates to the workflow screen"
         onPress={() => navigation.navigate('WorkflowScreen')}
         style={styles.navButton}>
         <Svg
@@ -38,6 +40,7 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityLabel="Service navigation button"
+        accessibilityHint="Navigates to the services screen"
         onPress={() => navigation.navigate('ServicesScreen')}
         style={styles.navButton}>
         <Svg
@@ -53,6 +56,7 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityLabel="Settings navigation button"
+        accessibilityHint="Navigates to the settings screen"
         onPress={() => navigation.navigate('SettingsScreen')}
         style={styles.navButton}>
         <Svg

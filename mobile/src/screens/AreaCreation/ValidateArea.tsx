@@ -116,6 +116,8 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           style={styles.input}
           placeholder="Enter title"
           onChangeText={text => setTitle(text)}
+          accessibilityLabel="Title Input"
+          accessibilityHint="Enter the title for the area"
         />
       </View>
       <View style={{ width: '80%', marginBottom: 20 }}>
@@ -124,6 +126,8 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           style={styles.input}
           placeholder="Enter description"
           onChangeText={text => setDescription(text)}
+          accessibilityLabel="Description Input"
+          accessibilityHint="Enter the description for the area"
         />
       </View>
       <View style={{ width: '80%', marginBottom: 20 }}>
@@ -133,6 +137,8 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           placeholder="Enter refresh timer"
           keyboardType="numeric"
           onChangeText={text => setRefreshTimer(text)}
+          accessibilityLabel="Refresh Timer Input"
+          accessibilityHint="Enter the refresh timer in seconds"
         />
       </View>
       <Text style={styles.title}>Add Area</Text>
@@ -141,7 +147,12 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           styles.actionBox,
           { backgroundColor: actionService?.color, borderRadius: 8 },
         ]}>
-        <Text style={styles.boxText}>{actionName}</Text>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Action Name"
+          accessibilityHint="Displays the name of the action">
+          {actionName}
+        </Text>
       </View>
       <View style={styles.line} />
       <View
@@ -149,13 +160,20 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           styles.actionBox,
           { backgroundColor: reactionService?.color, borderRadius: 8 },
         ]}>
-        <Text style={styles.boxText}>{reactionName}</Text>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Reaction Name"
+          accessibilityHint="Displays the name of the reaction">
+          {reactionName}
+        </Text>
       </View>
       <TouchableOpacity
         style={styles.saveButton}
         onPress={() => {
           saveButtonPressed();
-        }}>
+        }}
+        accessibilityLabel="Save Button"
+        accessibilityHint="Press to save the area">
         <Text style={styles.addText}>Save</Text>
       </TouchableOpacity>
     </View>

@@ -63,7 +63,8 @@ const AreasScreen = ({ navigation }: Props) => {
               styles.areaBox,
               { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' },
             ]}
-            onPress={() => navigation.navigate('AreaDetails', { area })}>
+            onPress={() => navigation.navigate('AreaDetails', { area })}
+            accessibilityHint={`Navigates to details of ${area.action.name} and ${area.reaction.name}`}>
             <Text
               style={
                 styles.areaText

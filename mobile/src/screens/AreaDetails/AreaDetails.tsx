@@ -54,15 +54,30 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     item: { created_at: string; result: string };
   }) => (
     <View style={styles.row}>
-      <Text style={styles.cell}>{item.created_at.substring(0, 19)}</Text>
-      <Text style={styles.cell}>{item.result}</Text>
+      <Text
+        style={styles.cell}
+        accessibilityLabel={`Created at: ${item.created_at.substring(0, 19)}`}
+        accessibilityHint="Displays the creation date and time of the result">
+        {item.created_at.substring(0, 19)}
+      </Text>
+      <Text
+        style={styles.cell}
+        accessibilityLabel={`Result: ${item.result}`}
+        accessibilityHint="Displays the result of the area">
+        {item.result}
+      </Text>
     </View>
   );
 
   return (
     <ScrollView style={{ backgroundColor: 'white' }}>
       <View style={styles.container}>
-        <Text style={styles.header}>Area Details</Text>
+        <Text
+          style={styles.header}
+          accessibilityLabel="Area Details Header"
+          accessibilityHint="Header for the area details section">
+          Area Details
+        </Text>
 
         {/* Area Section */}
         {AreaSections({ navigation, route })}
@@ -74,14 +89,29 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
         {ReactionsSections({ navigation, route })}
 
         {/* Area Results */}
-        <Text style={[styles.header, { marginTop: 16 }]}>Area Results</Text>
+        <Text
+          style={[styles.header, { marginTop: 16 }]}
+          accessibilityLabel="Area Results Header"
+          accessibilityHint="Header for the area results section">
+          Area Results
+        </Text>
         <View
           style={[
             { borderColor: 'black', borderWidth: 1, borderRadius: 10, flex: 1 },
           ]}>
           <View style={[styles.row, { backgroundColor: 'white' }]}>
-            <Text style={styles.cell}>created_at</Text>
-            <Text style={styles.cell}>result</Text>
+            <Text
+              style={styles.cell}
+              accessibilityLabel="Created At Column"
+              accessibilityHint="Column header for creation date and time">
+              created_at
+            </Text>
+            <Text
+              style={styles.cell}
+              accessibilityLabel="Result Column"
+              accessibilityHint="Column header for results">
+              result
+            </Text>
           </View>
           <FlatList
             data={areaResults}
@@ -91,7 +121,10 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('AreaView')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('AreaView')}
+          accessibilityLabel="Back Button"
+          accessibilityHint="Navigates back to the area view screen">
           <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
             <Text
               style={[
