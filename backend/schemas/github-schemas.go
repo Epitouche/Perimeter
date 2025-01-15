@@ -46,8 +46,10 @@ type GithubUserEmail struct {
 
 // Errors Messages.
 var (
-	ErrGithubSecretNotSet   = errors.New("GITHUB_SECRET is not set")
-	ErrGithubClientIdNotSet = errors.New("GITHUB_CLIENT_ID is not set")
+	ErrGithubSecretNotSet             = errors.New("GITHUB_SECRET is not set")
+	ErrGithubClientIdNotSet           = errors.New("GITHUB_CLIENT_ID is not set")
+	ErrGithubProductionSecretNotSet   = errors.New("GITHUB_PRODUCTION_SECRET is not set")
+	ErrGithubProductionClientIdNotSet = errors.New("GITHUB_PRODUCTION_CLIENT_ID is not set")
 )
 
 type GithubActionOption struct {
