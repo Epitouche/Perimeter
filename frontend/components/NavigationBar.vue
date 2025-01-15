@@ -79,20 +79,19 @@ const clearTokenAndLogout = () => {
         <NuxtLink to="/settings" class="nav-link" tabindex="0"
           >Settings</NuxtLink
         >
-
+        <NuxtLink
+            to="/login"
+            tabindex="0"
+            @keydown.enter="clearTokenAndLogout">
         <UButton
           class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
           tabindex="-1"
           @click="clearTokenAndLogout"
         >
           <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
-          <NuxtLink
-            to="/login"
-            tabindex="0"
-            @keydown.enter="clearTokenAndLogout"
-            >Logout</NuxtLink
-          >
+          Logout
         </UButton>
+      </NuxtLink>
       </div>
     </div>
   </div>
