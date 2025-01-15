@@ -1,5 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
+import React, { useState, useContext } from 'react';
+import {
+  Switch,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+} from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
 import { AppContext } from '../../context/AppContext';
@@ -15,6 +22,7 @@ const AreaSections = ({ navigation, route }: Props) => {
   const [description, setDescription] = useState<string>('');
   const [refreshRate, setRefreshRate] = useState<number>();
   const [isAreaModalVisible, setIsAreaModalVisible] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(area.enable);
 
   const handleSaveArea = async () => {
     console.log(title, description, refreshRate);
@@ -59,6 +67,28 @@ const AreaSections = ({ navigation, route }: Props) => {
       }
     } catch (error) {
       console.error('Error deleting area:', error);
+    }
+  };
+
+  const handleAreaStatus = async (value: boolean) => {
+    const newArea = {
+      ...area,
+      enable: value,
+    };
+    try {
+      const response = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newArea),
+      });
+      console.log(response);
+      if (response.ok) {
+        console.log('Area updated successfully');
+      }
+    } catch (error) {
+      console.error('Error update area:', error);
     }
   };
 
@@ -111,6 +141,14 @@ const AreaSections = ({ navigation, route }: Props) => {
                 color={'#E60000'}
               />
             </TouchableOpacity>
+            <Switch
+              value={isEnabled}
+              onValueChange={value => {
+                setIsEnabled(value), handleAreaStatus(value);
+              }}
+              trackColor={{ false: '#E60000', true: '#1DC000' }}
+              thumbColor={isEnabled ? '#000000' : '#000000'}
+            />
             <TouchableOpacity
               onPress={() => setIsAreaModalVisible(true)}
               accessibilityLabel="Edit Area Button"
