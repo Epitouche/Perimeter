@@ -166,19 +166,40 @@ func (service *githubService) FindReactionByName(
 func (service *githubService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
-	clientID := os.Getenv("GITHUB_CLIENT_ID")
-	if clientID == "" {
-		return schemas.Token{}, schemas.ErrGithubClientIdNotSet
+	isProd := os.Getenv("IS_PRODUCTION")
+	if isProd == "" {
+		return token, schemas.ErrIsProductionNotSet
 	}
 
-	clientSecret := os.Getenv("GITHUB_SECRET")
-	if clientSecret == "" {
-		return schemas.Token{}, schemas.ErrGithubSecretNotSet
+	clientID := ""
+	if isProd == "true" {
+		clientID = os.Getenv("GITHUB_PRODUCTION_CLIENT_ID")
+		if clientID == "" {
+			return token, schemas.ErrGithubProductionClientIdNotSet
+		}
+	} else {
+		clientID = os.Getenv("GITHUB_CLIENT_ID")
+		if clientID == "" {
+			return token, schemas.ErrGithubClientIdNotSet
+		}
+	}
+
+	clientSecret := ""
+	if isProd == "true" {
+		clientSecret = os.Getenv("GITHUB_PRODUCTION_SECRET")
+		if clientSecret == "" {
+			return token, schemas.ErrGithubProductionSecretNotSet
+		}
+	} else {
+		clientSecret = os.Getenv("GITHUB_SECRET")
+		if clientSecret == "" {
+			return token, schemas.ErrGithubSecretNotSet
+		}
 	}
 
 	redirectURI, err := getRedirectURI(service.serviceInfo.Name)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to get redirect URI because %w", err)
+		return token, fmt.Errorf("unable to get redirect URI because %w", err)
 	}
 
 	apiURL := "https://github.com/login/oauth/access_token"
@@ -193,7 +214,7 @@ func (service *githubService) AuthGetServiceAccessToken(
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, nil)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to create request because %w", err)
+		return token, fmt.Errorf("unable to create request because %w", err)
 	}
 
 	req.URL.RawQuery = data.Encode()
@@ -202,13 +223,13 @@ func (service *githubService) AuthGetServiceAccessToken(
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
+		return token, fmt.Errorf("unable to make request because %w", err)
 	}
 
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return schemas.Token{}, fmt.Errorf(
+		return token, fmt.Errorf(
 			"unable to decode response because %w",
 			err,
 		)

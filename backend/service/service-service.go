@@ -117,16 +117,14 @@ func getRedirectURI(
 		return "", schemas.ErrIsProductionNotSet
 	}
 
-	protocol := ""
+	host := ""
 	if isProd == "true" {
-		protocol = "https"
+		host = "https://" + frontendExternalHost
 	} else {
-		protocol = "http"
+		host = "http://" + frontendExternalHost + ":" + frontendPort
 	}
 
-	return protocol + "://" + frontendExternalHost + ":" + frontendPort + "/services/" + strings.ToLower(
-		string(serviceName),
-	), nil
+	return host + "/services/" + strings.ToLower(string(serviceName)), nil
 }
 
 func (service *serviceService) RedirectToServiceOauthPage(

@@ -56,6 +56,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           value={username}
           onChangeText={setUsername}
           placeholder="Enter your username"
+          accessibilityHint="Enter your username here"
         />
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -64,14 +65,15 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           onChangeText={setEmail}
           placeholder="Enter your email"
           keyboardType="email-address"
+          accessibilityHint="Enter your email address here"
         />
         <Text style={styles.label}>IpAddress</Text>
         <TextInput
           style={styles.input}
           value={ipAddress}
           onChangeText={setIpAddress}
-          placeholder="Enter your password"
-          secureTextEntry
+          placeholder="Enter your IpAddress"
+          accessibilityHint="Enter your IP address here"
         />
         {/* Time Zone setting for latter use (Maybe) */}
         {/* <Text style={styles.label}>Timezone</Text>
@@ -88,18 +90,23 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           </Picker>
         </View> */}
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.button}>Save</Text>
+      <View style={styles.footer}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            accessibilityHint="Save your changes and go back">
+            <Text style={styles.button}>Save</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            setToken('');
+            navigation.navigate('Login');
+          }}
+          accessibilityHint="Disconnect and navigate to the login screen">
+          <Text style={styles.disconnectButton}>Disconnect</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          setToken('');
-          navigation.navigate('Login');
-        }}>
-        <Text style={styles.disconnectButton}>Disconnect</Text>
-      </TouchableOpacity>
       <BottomNavBar navigation={navigation} />
     </View>
   );
@@ -153,6 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
+    color: '#000',
   },
   pickerContainer: {
     borderWidth: 1,
@@ -172,14 +180,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   disconnectButton: {
-    color: 'red',
+    color: 'white',
     backgroundColor: '#FF0000',
     paddingVertical: 10,
     textAlign: 'center',
     borderRadius: 5,
+    marginBottom: 30,
+    marginTop: 4,
   },
   buttonContainer: {
     marginTop: 20,
+  },
+  footer: {
+    justifyContent: 'flex-end',
+    flex: 1,
   },
 });
 

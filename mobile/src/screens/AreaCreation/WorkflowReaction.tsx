@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
@@ -26,44 +26,61 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
 
   const [service, setService] = React.useState<Service | null>(null);
 
-  const getService = async () => {
-    try {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+  useEffect(() => {
+    const getService = async () => {
+      try {
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
+        );
 
-      let data = await response.json();
-      setName(data[0].name);
-      setService(data[0].service);
-    } catch (error) {
-      if (error.code === 401) {
-        navigation.navigate('Login');
+        let data = await response.json();
+        setName(data[0].name);
+        setService(data[0].service);
+      } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
+        console.error('Error fetching service:', error);
       }
-      console.error('Error fetching service:', error);
-    }
-  };
-  getService();
+    };
+    getService();
+  }, [ipAddress, token]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add Area</Text>
-      <View
-        style={[
-          styles.actionBox,
-          { backgroundColor: service?.color, borderRadius: 8 },
-        ]}>
-        <Text style={styles.boxText}>{name}</Text>
+      <Text
+        style={styles.title}
+        accessibilityLabel="Add Area Title"
+        accessibilityHint="Displays the title of the screen">
+        Add Area
+      </Text>
+      <View style={[styles.actionBox, { backgroundColor: service?.color }]}>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel={`Service Name: ${name}`}
+          accessibilityHint="Displays the name of the service">
+          {name}
+        </Text>
       </View>
-      <View style={styles.line} />
+      <View
+        style={styles.line}
+        accessibilityLabel="Separator Line"
+        accessibilityHint="Separates the service name and reaction sections"
+      />
       <View style={styles.actionBox}>
-        <Text style={styles.boxText}>Reaction</Text>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Reaction Label"
+          accessibilityHint="Displays the label for the reaction section">
+          Reaction
+        </Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
@@ -71,7 +88,9 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
               actionId,
               actionOptions,
             })
-          }>
+          }
+          accessibilityLabel="Add Reaction Button"
+          accessibilityHint="Navigates to the Add Reaction screen">
           <Text style={styles.addTextDisabled}>Add</Text>
         </TouchableOpacity>
       </View>
