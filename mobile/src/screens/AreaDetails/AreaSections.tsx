@@ -1,11 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
 import { AppContext } from '../../context/AppContext';
@@ -21,13 +15,13 @@ const AreaSections = ({ navigation, route }: Props) => {
   const [description, setDescription] = useState<string>('');
   const [refreshRate, setRefreshRate] = useState<number>();
   const [isAreaModalVisible, setIsAreaModalVisible] = useState(false);
-  
+
   const handleSaveArea = async () => {
     console.log(title, description, refreshRate);
     const newArea = {
       ...area,
       title: title,
-      description: description, 
+      description: description,
       refresh_rate: refreshRate,
     };
     console.log(newArea);
@@ -78,15 +72,13 @@ const AreaSections = ({ navigation, route }: Props) => {
         <View
           style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
           <View style={[{ flexDirection: 'column' }]}>
-            <View
-              style={[styles.detailContainer, { flexDirection: 'column' }]}>
+            <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
               <Text style={[styles.label, { color: 'black' }]}>title:</Text>
               <Text style={[styles.value, { color: 'black' }]}>
                 {title == '' ? area.title : title}
               </Text>
             </View>
-            <View
-              style={[styles.detailContainer, { flexDirection: 'column' }]}>
+            <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
               <Text style={[styles.label, { color: 'black' }]}>
                 Description:
               </Text>
@@ -118,9 +110,7 @@ const AreaSections = ({ navigation, route }: Props) => {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
               <SvgFromUri
-                uri={
-                  'https://api.iconify.design/mdi:pencil-circle-outline.svg'
-                }
+                uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
                 width={50}
                 height={50}
                 color={'black'}
@@ -214,7 +204,7 @@ const AreaSections = ({ navigation, route }: Props) => {
         </View>
       </Modal>
     </View>
-  )
-}
+  );
+};
 
 export default AreaSections;
