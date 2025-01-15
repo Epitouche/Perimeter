@@ -134,6 +134,9 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
     console.log(item);
     return (
       <TouchableOpacity
+        accessibilityLabel={`${!isConnected ? 'Connect' : 'Disconnect'} from ${
+          item.name
+        }`}
         style={[styles.serviceButton, { backgroundColor: item.color }]}
         onPress={
           !isConnected

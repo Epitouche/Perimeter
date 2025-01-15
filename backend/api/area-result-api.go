@@ -49,7 +49,7 @@ func NewAreaResultAPI(
 //	@Accept			json
 //	@Produce		json
 //	@Security		bearerAuth
-//	@Success		200	{object}	[]schemas.Area
+//	@Success		200	{object}	[]schemas.AreaResult
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/area-result/:id [get]
