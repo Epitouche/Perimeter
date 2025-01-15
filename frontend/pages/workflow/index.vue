@@ -193,7 +193,7 @@ onMounted(() => {
       <div v-if="websiteStore.showNavBar" class="pb-10">
         <NavigationBar />
       </div>
-      <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
+      <div v-if="websiteStore.showCancelButton" class="pt-10 pl-10">
         <UButton
           class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
           tabindex="0"
@@ -244,9 +244,9 @@ onMounted(() => {
           class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
           <div
-            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit"
           >
-            <h2 class="text-center mb-2">You're about to create a new area!</h2>
+            <h2 class="text-center mb-2">You're about to<br>create a new area!</h2>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Title</h3>
               <UInput
@@ -285,13 +285,13 @@ onMounted(() => {
             </div>
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
-                class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                class="text-red-600 border-custom_border_width !border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
                 tabindex="0"
                 @click="validateCreation"
                 >Cancel</UButton
               >
               <UButton
-                class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                class="text-black border-custom_border_width !border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
                 tabindex="0"
                 @click="onCreate"
                 >Submit</UButton
