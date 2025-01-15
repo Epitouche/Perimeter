@@ -31,8 +31,6 @@ jobs:
       id-token: write
       #
     steps:
-      - run: echo ${{env.REPOSITORY_NAME}}
-
       - uses: appleboy/ssh-action@master
         with:
           host: tom-mendy.com
