@@ -108,7 +108,8 @@ onMounted(() => {
       <UModal
         v-model="configIsOpen[type.id]"
         :ui="{
-          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width', width: 'w-fit'
+          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
+          width: 'w-fit',
         }"
         :style="{ borderColor: props.serviceInfo?.color || 'black' }"
       >
@@ -130,7 +131,9 @@ onMounted(() => {
               :key="key"
               :label="key"
               :name="key"
-              :ui="{ label: { base: 'capitalize text-2xl pl-5 font-semibold' } }"
+              :ui="{
+                label: { base: 'capitalize text-2xl pl-5 font-semibold' },
+              }"
             >
               <UInput
                 v-model="state[type.id][key] as string | number | undefined"

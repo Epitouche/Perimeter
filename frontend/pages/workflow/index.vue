@@ -246,7 +246,9 @@ onMounted(() => {
           <div
             class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit"
           >
-            <h2 class="text-center mb-2">You're about to<br>create a new area!</h2>
+            <h2 class="text-center mb-2">
+              You're about to<br />create a new area!
+            </h2>
             <div class="flex flex-col gap-1 w-full">
               <h3 class="text-2xl pl-6">Title</h3>
               <UInput
