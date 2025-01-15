@@ -1,13 +1,13 @@
 name: area-prod
 services:
   client_mobile:
-    image: ghcr.io/epitouche/area-mobile:dev
+    image: ghcr.io/epitouche/area-mobile:main
     extends:
       file: ./docker-compose.template.yaml
       service: client_mobile
 
   client_web:
-    image: ghcr.io/epitouche/area-frontend:dev
+    image: ghcr.io/epitouche/area-frontend:main
     labels:
       - "traefik.http.routers.client_web.rule=Host(`tom-mendy.com`)"
       - "traefik.http.routers.client_web.entrypoints=websecure"
@@ -24,7 +24,7 @@ services:
   reverse-proxy:
     volumes:
       - letsencrypt:/letsencrypt
-    labels:
+    command:
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
@@ -35,13 +35,13 @@ services:
       service: reverse-proxy
 
   server:
-    image: ghcr.io/epitouche/area-backend:dev
+    image: ghcr.io/epitouche/area-backend:main
     extends:
       file: ./docker-compose.template.yaml
       service: server
 
   server-documentation:
-    image: ghcr.io/epitouche/area-backend-documentation:dev
+    image: ghcr.io/epitouche/area-backend-documentation:main
     extends:
       file: ./docker-compose.template.yaml
       service: server-documentation
