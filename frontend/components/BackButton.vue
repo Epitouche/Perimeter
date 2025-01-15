@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <UButton
-  variant="ghost"
+    variant="ghost"
     :to="link"
     :class="[
       'border-custom_border_width flex flex-row justify-between items-center max-w-[7vw] pr-4 py-3',

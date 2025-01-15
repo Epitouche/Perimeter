@@ -65,7 +65,7 @@ watch(
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="w-16 h-16 p-0"
-    >
+    />
     <h2
       :class="[
         'text-white',
@@ -99,7 +99,7 @@ watch(
         'text-black bg-white px-10 py-5',
         isDisabled ? '!text-opacity-60' : 'text-opacity-100',
       ]"
-      >
+    >
       <h5>Add</h5></UButton
     >
   </div>

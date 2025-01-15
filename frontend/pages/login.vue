@@ -111,7 +111,9 @@ const handleLogin = async () => {
           </p>
         </div>
       </div>
-      <div class="flex flex-col justify-center items-center gap-2 min-w-[85%] max-w-[85%] pt-2">
+      <div
+        class="flex flex-col justify-center items-center gap-2 min-w-[85%] max-w-[85%] pt-2"
+      >
         <UDivider
           size="xs"
           label="or log in with"
