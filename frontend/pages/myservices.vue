@@ -52,7 +52,7 @@ const filteredApps = computed(() => {
         />
       </div>
       <div class="w-[95%] overflow-y-scroll max-h-[64vh]">
-        <ServiceList :apps="filteredApps" />
+        <ServiceList styling="card" :apps="filteredApps" />
       </div>
     </div>
   </div>

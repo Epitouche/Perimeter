@@ -56,18 +56,18 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center h-screen w-screen">
+  <div class="flex justify-center items-center w-full h-screen">
     <UContainer
       :ui="{
-        padding: 'pt-8 pb-16 px-0',
-        constrained: 'min-w-[30%] max-w-[60%]',
+        padding: '!px-0',
+        constrained: 'min-w-[35%] max-w-[35%]',
       }"
-      class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
+      class="bg-custom_color-bg_section flex flex-col items-center gap-10 px-10 py-12 rounded-custom_border_radius"
     >
-      <h1 class="pb-5">Log in</h1>
+      <h1 class="pb-4">Log in</h1>
       <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
         <div class="flex flex-col">
-          <h2 class="px-5">Username</h2>
+          <h6 class="px-5">Username</h6>
           <UInput
             v-model="username"
             :ui="{
@@ -77,7 +77,7 @@ const handleLogin = async () => {
           />
         </div>
         <div class="flex flex-col">
-          <h2 class="px-5">Password</h2>
+          <h6 class="px-5">Password</h6>
           <UInput
             v-model="password"
             type="password"
@@ -87,7 +87,7 @@ const handleLogin = async () => {
             }"
           />
         </div>
-        <div class="flex flex-col justify-center items-center min-w-full pt-4">
+        <div class="flex flex-col justify-center gap-1 items-center min-w-full pt-5">
           <div v-if="loginError" class="text-red-500 text-xl pb-1">
             {{ loginError }}
           </div>
