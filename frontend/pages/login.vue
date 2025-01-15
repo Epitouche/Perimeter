@@ -60,19 +60,19 @@ const handleLogin = async () => {
     <UContainer
       :ui="{
         padding: '!px-0',
-        constrained: 'min-w-[35%] max-w-[35%]',
+        constrained: 'min-w-[40%] max-w-[40%]',
       }"
-      class="bg-custom_color-bg_section flex flex-col items-center gap-10 px-10 py-12 rounded-custom_border_radius"
+      class="bg-custom_color-bg_section flex flex-col items-center gap-10 p-10 rounded-custom_border_radius"
     >
-      <h1 class="pb-4">Log in</h1>
-      <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
+      <h1 class="pb-2">Log in</h1>
+      <div class="flex flex-col gap-10 min-w-[80%] max-w-[80%] px-5">
         <div class="flex flex-col">
           <h6 class="px-5">Username</h6>
           <UInput
             v-model="username"
             :ui="{
               placeholder: '!px-5 !py-3 font-light',
-              size: { sm: 'text-5xl' },
+              size: { sm: 'text-4xl' },
             }"
           />
         </div>
@@ -83,7 +83,7 @@ const handleLogin = async () => {
             type="password"
             :ui="{
               placeholder: '!px-5 !py-3 font-light',
-              size: { sm: 'text-5xl' },
+              size: { sm: 'text-4xl' },
             }"
           />
         </div>
@@ -111,14 +111,14 @@ const handleLogin = async () => {
           </p>
         </div>
       </div>
-      <div class="min-w-[80%] max-w-[80%] pt-2">
+      <div class="flex flex-col justify-center items-center gap-2 min-w-[85%] max-w-[85%] pt-2">
         <UDivider
           size="xs"
           label="or log in with"
           :ui="{ label: 'text-custom_color-text_other text-xl' }"
         />
+        <ConnectWithAppContainer />
       </div>
-      <ConnectWithAppContainer />
     </UContainer>
   </div>
 </template>

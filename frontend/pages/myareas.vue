@@ -84,11 +84,12 @@ onMounted(() => {
       tabindex="0"
     >
       <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
+        <div class="w-1/4">
         <SearchBar
           v-model:search-query="searchQuery"
-          class="!w-1/4"
           tabindex="0"
         />
+      </div>
         <UDropdown
           :items="items"
           :popper="{ placement: 'bottom' }"

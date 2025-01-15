@@ -47,29 +47,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="py-20">
-    <div class="px-20">
+  <div class="py-10">
+    <div class="px-10">
       <BackButton link="/workflow" :is-white="false" />
     </div>
-    <h1 class="flex justify-center w-full pb-20">Add an action</h1>
-    <UContainer
-      :ui="{ base: 'mx-auto' }"
-      class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
-    >
-      <SearchBar
-        v-model:search-query="searchQuery"
-        class="!w-1/3"
-        tabindex="0"
-      />
-      <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
-      <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
-      <div
-        v-else-if="filteredServices.length"
-        class="flex flex-row justify-evenly items-center w-full"
-      >
-        <ServiceCardContainer type="actions" :services="filteredServices" />
-      </div>
-    </UContainer>
+    <div class="flex flex-col justify-between items-center gap-10 w-full">
+      <h1>Add an action</h1>
+      <UContainer :ui="{ base: 'mx-auto' }" class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0">
+        <div class="w-1/3">
+          <SearchBar v-model:search-query="searchQuery" tabindex="0" />
+        </div>
+        <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
+        <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
+        <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full bg-blue-300">
+          <ServiceCardContainer type="actions" :services="filteredServices" />
+        </div>
+      </UContainer>
+    </div>
   </div>
 </template>
 

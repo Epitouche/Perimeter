@@ -160,7 +160,7 @@ function formatName(name: string): string {
 <template>
   <UContainer 
   :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
-    class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full rounded-custom_border_radius">
+    class="flex flex-row justify-around items-center gap-10 flex-wrap py-5 w-full h-full rounded-custom_border_radius">
     <div v-for="(app, index) in apps" :key="index">
       <UContainer 
       v-if="styling === 'card'" :ui="{ padding: '!px-0', constrained: 'max-w-none' }"

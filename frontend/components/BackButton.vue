@@ -7,14 +7,15 @@ defineProps<{
 
 <template>
   <UButton
+  variant="ghost"
     :to="link"
     :class="[
-      'bg-opacity-0 border-custom_border_width px-0 py-1 w-fit',
+      'border-custom_border_width flex flex-row justify-between items-center max-w-[7vw] pr-4 py-3',
       isWhite ? '!border-white text-white' : '!border-black text-black',
     ]"
   >
-    <UIcon name="heroicons:chevron-left-16-solid" class="w-[4em] h-[4em]" />
-    <div class="text-4xl font-bold pr-5" tabindex="0">Back</div>
+    <UIcon name="i-bytesize-chevron-left" class="w-[2.5vw] h-[2.5vh]" />
+    <h6>Back</h6>
   </UButton>
 </template>
 
