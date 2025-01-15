@@ -104,7 +104,7 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} accessibilityLabel="Add action title">Add action</Text>
+      <Text style={styles.title} accessibilityLabel="Add action title" accessibilityHint="Title of the add action screen">Add action</Text>
       <TextInput
         style={styles.searchBar}
         placeholderTextColor="#bbbbbb"
@@ -112,6 +112,7 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
         value={search}
         onChangeText={handleSearch}
         accessibilityLabel="Search services input"
+        accessibilityHint="Input field to search for services"
       />
       <ScrollView contentContainerStyle={styles.servicesContainer}>
         {filteredServices?.map(service => (
@@ -135,7 +136,8 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
             disabled={
               !(connectedServices.includes(service.name) || !service.oauth)
             }
-            accessibilityLabel={`Service ${service.name}`}>
+            accessibilityLabel={`Service ${service.name}`}
+            accessibilityHint={`Press to select the ${service.name} service`}>
             <Text style={styles.serviceText}>{formatText(service.name)}</Text>
           </TouchableOpacity>
         ))}
@@ -143,7 +145,8 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
-        accessibilityLabel="Back button">
+        accessibilityLabel="Back button"
+        accessibilityHint="Press to go back to the previous screen">
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
     </View>

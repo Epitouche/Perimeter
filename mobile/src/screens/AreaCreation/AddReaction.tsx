@@ -106,6 +106,7 @@ const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       <Text style={styles.title}>Choose reaction</Text>
       <TextInput
         accessibilityLabel='Search services'
+        accessibilityHint='Enter text to search for services'
         style={styles.searchBar}
         placeholder="Search services"
         placeholderTextColor="#bbbbbb"
@@ -116,6 +117,7 @@ const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         {filteredServices?.map(service => (
           <TouchableOpacity
             accessibilityLabel={`Select reaction for ${service.name}`}
+            accessibilityHint={`Double tap to select the reaction for ${service.name}`}
             key={service.id}
             style={[
               styles.serviceBox,
@@ -142,6 +144,7 @@ const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
       </ScrollView>
       <TouchableOpacity
         accessibilityLabel='Back button'
+        accessibilityHint='Double tap to go back to the previous screen'
         style={styles.backButton}
         onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>Back</Text>

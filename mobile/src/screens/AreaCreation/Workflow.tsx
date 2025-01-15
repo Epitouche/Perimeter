@@ -9,28 +9,30 @@ type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 const WorkflowScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title} accessibilityLabel="Add Area Title">
+      <Text style={styles.title} accessibilityLabel="Add Area Title" accessibilityHint="Displays the title of the screen">
         Add Area
       </Text>
       <View style={styles.actionBox}>
-        <Text style={styles.boxText} accessibilityLabel="Action Text">
+        <Text style={styles.boxText} accessibilityLabel="Action Text" accessibilityHint="Displays the action text">
           Action
         </Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('AddActionScreen')}
           style={styles.addButton}
-          accessibilityLabel="Add Action Button">
+          accessibilityLabel="Add Action Button"
+          accessibilityHint="Navigates to the Add Action screen">
           <Text style={styles.addText}>Add</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.line} />
       <View style={styles.reactionBox}>
-        <Text style={styles.boxText} accessibilityLabel="Reaction Text">
+        <Text style={styles.boxText} accessibilityLabel="Reaction Text" accessibilityHint="Displays the reaction text">
           Reaction
         </Text>
         <TouchableOpacity
           style={styles.addButtonDisabled}
-          accessibilityLabel="Add Reaction Button Disabled">
+          accessibilityLabel="Add Reaction Button Disabled"
+          accessibilityHint="Button is disabled and cannot be pressed">
           <Text style={styles.addTextDisabled}>Add</Text>
         </TouchableOpacity>
       </View>

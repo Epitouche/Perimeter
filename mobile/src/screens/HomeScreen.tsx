@@ -11,13 +11,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Enter the IP address to ping:</Text>
+      <Text accessibilityHint="Instruction to enter the IP address">Enter the IP address to ping:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter IP address"
         value={ipAddress}
         onChangeText={setIpAddress}
         keyboardType="numeric"
+        accessibilityHint="Input field for IP address"
       />
       <Button
         title="Connect"
@@ -25,6 +26,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           setIpAddress(ipAddress);
           navigation.navigate('Login');
         }}
+        accessibilityHint="Button to connect and navigate to the login screen"
       />
     </View>
   );

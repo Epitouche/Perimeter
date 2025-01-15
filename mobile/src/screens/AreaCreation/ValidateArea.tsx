@@ -111,61 +111,67 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <View style={{ width: '80%', marginBottom: 20 }}>
-      <Text style={styles.label}>Title</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter title"
-        onChangeText={text => setTitle(text)}
-        accessibilityLabel="Title Input"
-      />
+        <Text style={styles.label}>Title</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter title"
+          onChangeText={text => setTitle(text)}
+          accessibilityLabel="Title Input"
+          accessibilityHint="Enter the title for the area"
+        />
       </View>
       <View style={{ width: '80%', marginBottom: 20 }}>
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter description"
-        onChangeText={text => setDescription(text)}
-        accessibilityLabel="Description Input"
-      />
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter description"
+          onChangeText={text => setDescription(text)}
+          accessibilityLabel="Description Input"
+          accessibilityHint="Enter the description for the area"
+        />
       </View>
       <View style={{ width: '80%', marginBottom: 20 }}>
-      <Text style={styles.label}>Refresh Timer (in seconds)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter refresh timer"
-        keyboardType="numeric"
-        onChangeText={text => setRefreshTimer(text)}
-        accessibilityLabel="Refresh Timer Input"
-      />
+        <Text style={styles.label}>Refresh Timer (in seconds)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter refresh timer"
+          keyboardType="numeric"
+          onChangeText={text => setRefreshTimer(text)}
+          accessibilityLabel="Refresh Timer Input"
+          accessibilityHint="Enter the refresh timer in seconds"
+        />
       </View>
       <Text style={styles.title}>Add Area</Text>
       <View
-      style={[
-        styles.actionBox,
-        { backgroundColor: actionService?.color, borderRadius: 8 },
-      ]}>
-      <Text style={styles.boxText} accessibilityLabel="Action Name">
-        {actionName}
-      </Text>
+        style={[
+          styles.actionBox,
+          { backgroundColor: actionService?.color, borderRadius: 8 },
+        ]}
+      >
+        <Text style={styles.boxText} accessibilityLabel="Action Name" accessibilityHint="Displays the name of the action">
+          {actionName}
+        </Text>
       </View>
       <View style={styles.line} />
       <View
-      style={[
-        styles.actionBox,
-        { backgroundColor: reactionService?.color, borderRadius: 8 },
-      ]}>
-      <Text style={styles.boxText} accessibilityLabel="Reaction Name">
-        {reactionName}
-      </Text>
+        style={[
+          styles.actionBox,
+          { backgroundColor: reactionService?.color, borderRadius: 8 },
+        ]}
+      >
+        <Text style={styles.boxText} accessibilityLabel="Reaction Name" accessibilityHint="Displays the name of the reaction">
+          {reactionName}
+        </Text>
       </View>
       <TouchableOpacity
-      style={styles.saveButton}
-      onPress={() => {
-        saveButtonPressed();
-      }}
-      accessibilityLabel="Save Button"
+        style={styles.saveButton}
+        onPress={() => {
+          saveButtonPressed();
+        }}
+        accessibilityLabel="Save Button"
+        accessibilityHint="Press to save the area"
       >
-      <Text style={styles.addText}>Save</Text>
+        <Text style={styles.addText}>Save</Text>
       </TouchableOpacity>
     </View>
   );

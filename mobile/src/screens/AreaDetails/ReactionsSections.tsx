@@ -61,17 +61,17 @@ const ReactionsSections = ({ route }: Props) => {
         { backgroundColor: area.reaction.service.color },
       ]}>
       <View style={styles.ActionReactionHeader}>
-        <Text style={styles.label} accessibilityLabel="Reaction Label">Reaction</Text>
+        <Text style={styles.label} accessibilityLabel="Reaction Label" accessibilityHint="Indicates the reaction section">Reaction</Text>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label} accessibilityLabel="Service Label">Service:</Text>
-          <Text style={styles.value} accessibilityLabel="Service Name">{area.reaction.service.name}</Text>
+          <Text style={styles.label} accessibilityLabel="Service Label" accessibilityHint="Label for the service name">Service:</Text>
+          <Text style={styles.value} accessibilityLabel="Service Name" accessibilityHint="Name of the service">{area.reaction.service.name}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label} accessibilityLabel="Options Label">Options:</Text>
-          <Text style={styles.value} accessibilityLabel="Options Value">
+          <Text style={styles.label} accessibilityLabel="Options Label" accessibilityHint="Label for the reaction options">Options:</Text>
+          <Text style={styles.value} accessibilityLabel="Options Value" accessibilityHint="Values of the reaction options">
           {Object.entries(selectedReactionOptions).map(
             ([key, value]) => `${key}: ${value} `,
           )}
@@ -80,7 +80,8 @@ const ReactionsSections = ({ route }: Props) => {
         </View>
         <TouchableOpacity 
         onPress={() => setIsReactionModalVisible(true)} 
-        accessibilityLabel="Edit Reaction Button">
+        accessibilityLabel="Edit Reaction Button"
+        accessibilityHint="Opens the modal to edit reaction options">
         <SvgFromUri
           uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
           width={50}
@@ -95,18 +96,19 @@ const ReactionsSections = ({ route }: Props) => {
       visible={isReactionModalVisible}
       transparent={true}
       animationType="slide"
-      accessibilityLabel="Reaction Modal">
+      accessibilityLabel="Reaction Modal"
+      accessibilityHint="Modal to modify reaction options">
       <View style={styles.modalContainer}>
         <View
         style={[
           styles.modalContent,
           { backgroundColor: area.reaction.service.color },
         ]}>
-        <Text style={styles.modalHeader} accessibilityLabel="Modify Reaction Header">Modify Reaction</Text>
+        <Text style={styles.modalHeader} accessibilityLabel="Modify Reaction Header" accessibilityHint="Header for the modify reaction modal">Modify Reaction</Text>
         <View style={[{ flexDirection: 'column' }]}>
           {Object.keys(selectedReactionOptions).map(key => (
           <View key={key} style={styles.optionRow}>
-            <Text style={styles.optionLabel} accessibilityLabel={`${key} Label`}>{key}</Text>
+            <Text style={styles.optionLabel} accessibilityLabel={`${key} Label`} accessibilityHint={`Label for the ${key} option`}>{key}</Text>
             <TextInput
             style={styles.optionInput}
             value={String(selectedReactionOptions[key])}
@@ -119,6 +121,7 @@ const ReactionsSections = ({ route }: Props) => {
             }
             keyboardType="default" // Adjust as needed
             accessibilityLabel={`${key} Input`}
+            accessibilityHint={`Input field for the ${key} option`}
             />
           </View>
           ))}
@@ -130,7 +133,8 @@ const ReactionsSections = ({ route }: Props) => {
           }}>
           <TouchableOpacity 
           onPress={handleSaveReaction} 
-          accessibilityLabel="Save Reaction Button">
+          accessibilityLabel="Save Reaction Button"
+          accessibilityHint="Saves the modified reaction options">
           <View style={styles.saveButton}>
             <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
             Save
@@ -139,7 +143,8 @@ const ReactionsSections = ({ route }: Props) => {
           </TouchableOpacity>
           <TouchableOpacity
           onPress={() => setIsReactionModalVisible(false)}
-          accessibilityLabel="Cancel Reaction Button">
+          accessibilityLabel="Cancel Reaction Button"
+          accessibilityHint="Cancels the modification of reaction options">
           <View style={styles.cancelButton}>
             <Text style={[{ color: '#E60000' }, { fontSize: 16 }]}>
             Cancel
