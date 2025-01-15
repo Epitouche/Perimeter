@@ -56,6 +56,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           value={username}
           onChangeText={setUsername}
           placeholder="Enter your username"
+          accessibilityHint="Enter your username here"
         />
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -64,6 +65,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           onChangeText={setEmail}
           placeholder="Enter your email"
           keyboardType="email-address"
+          accessibilityHint="Enter your email address here"
         />
         <Text style={styles.label}>IpAddress</Text>
         <TextInput
@@ -71,6 +73,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           value={ipAddress}
           onChangeText={setIpAddress}
           placeholder="Enter your IpAddress"
+          accessibilityHint="Enter your IP address here"
         />
         {/* Time Zone setting for latter use (Maybe) */}
         {/* <Text style={styles.label}>Timezone</Text>
@@ -89,7 +92,9 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
       </View>
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            accessibilityHint="Save your changes and go back">
             <Text style={styles.button}>Save</Text>
           </TouchableOpacity>
         </View>
@@ -97,7 +102,8 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           onPress={() => {
             setToken('');
             navigation.navigate('Login');
-          }}>
+          }}
+          accessibilityHint="Disconnect and navigate to the login screen">
           <Text style={styles.disconnectButton}>Disconnect</Text>
         </TouchableOpacity>
       </View>
