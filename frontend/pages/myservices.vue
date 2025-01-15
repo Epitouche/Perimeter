@@ -45,10 +45,7 @@ const filteredApps = computed(() => {
       tabindex="0"
     >
       <div class="self-start w-1/4 px-5 pt-1">
-        <SearchBar
-          v-model:search-query="searchQuery"
-          tabindex="0"
-        />
+        <SearchBar v-model:search-query="searchQuery" tabindex="0" />
       </div>
       <div class="w-[95%] overflow-y-scroll max-h-[64vh]">
         <ServiceList styling="card" :apps="filteredApps" />

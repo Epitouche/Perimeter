@@ -17,9 +17,10 @@ const _emit = defineEmits(["update:searchQuery"]);
       class="rounded-l-custom_border_radius overflow-hidden"
       @input="$emit('update:searchQuery', $event.target.value)"
     />
-    <div 
+    <div
       class="flex justify-center items-center bg-black rounded-r-custom_border_radius"
-      style="width: 20%; min-width: 1vw; max-width: 3vw;">
+      style="width: 20%; min-width: 1vw; max-width: 3vw"
+    >
       <UIcon name="i-bytesize-search" class="round_icon text-white" />
     </div>
   </div>
