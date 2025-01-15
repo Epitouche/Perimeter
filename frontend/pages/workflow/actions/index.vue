@@ -53,7 +53,8 @@ onMounted(() => {
     </div>
     <div class="flex flex-col justify-between items-center gap-10 w-full">
       <h1>Add an action</h1>
-      <UContainer :ui="{ base: 'mx-auto' }"
+      <UContainer
+:ui="{ base: 'mx-auto' }"
         class="flex flex-col justify-center items-center gap-16 w-[80%] h-full !p-0">
         <div class="w-1/3">
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />
