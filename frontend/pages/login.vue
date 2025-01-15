@@ -87,7 +87,9 @@ const handleLogin = async () => {
             }"
           />
         </div>
-        <div class="flex flex-col justify-center gap-1 items-center min-w-full pt-5">
+        <div
+          class="flex flex-col justify-center gap-1 items-center min-w-full pt-5"
+        >
           <div v-if="loginError" class="text-red-500 text-xl pb-1">
             {{ loginError }}
           </div>

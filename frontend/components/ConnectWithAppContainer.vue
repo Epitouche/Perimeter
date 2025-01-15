@@ -29,7 +29,10 @@ const filteredServices = computed(() =>
 </script>
 
 <template>
-  <UContainer :ui="{ padding: 'px-0' }" class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly">
+  <UContainer
+    :ui="{ padding: 'px-0' }"
+    class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly"
+  >
     <ServiceList styling="button" :apps="filteredServices" />
   </UContainer>
 </template>
