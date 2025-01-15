@@ -112,7 +112,19 @@ func getRedirectURI(
 		return "", schemas.ErrFrontendExternalHostNotSet
 	}
 
-	return "http://" + frontendExternalHost + ":" + frontendPort + "/services/" + strings.ToLower(
+	isProd := os.Getenv("IS_PRODUCTION")
+	if isProd == "" {
+		return "", schemas.ErrIsProductionNotSet
+	}
+
+	protocol := ""
+	if isProd == "true" {
+		protocol = "https"
+	} else {
+		protocol = "http"
+	}
+
+	return protocol + "://" + frontendExternalHost + ":" + frontendPort + "/services/" + strings.ToLower(
 		string(serviceName),
 	), nil
 }
