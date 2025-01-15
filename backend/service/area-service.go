@@ -241,7 +241,6 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 				action(channelArea, area.ActionOption, area)
 			}
 		}
-		println("clear")
 		channelArea <- "response to clear"
 	}(areaStartValue, channelArea)
 	// area
@@ -259,6 +258,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 
 			if area.Enable {
 				resultAction := <-channelArea
+				if resultAction == "response to clear" {
+					return
+				}
 				resultReaction := reaction(area.ReactionOption, area)
 				service.areaResultService.Save(schemas.AreaResult{
 					Area:   area,
