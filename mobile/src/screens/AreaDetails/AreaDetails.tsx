@@ -68,13 +68,13 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
         <Text style={styles.header}>Area Details</Text>
 
         {/* Area Section */}
-        {AreaSections({navigation, route})}
+        {AreaSections({ navigation, route })}
 
         {/* Action Section */}
-        {ActionsSections({navigation, route})}
+        {ActionsSections({ navigation, route })}
 
         {/* Reaction Section */}
-        {ReactionsSections({navigation, route})}
+        {ReactionsSections({ navigation, route })}
 
         {/* Area Results */}
         <Text style={[styles.header, { marginTop: 16 }]}>Area Results</Text>
@@ -109,6 +109,5 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
     </ScrollView>
   );
 };
-
 
 export default AreaDetailsScreen;

@@ -1,11 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
 import { AppContext } from '../../context/AppContext';
@@ -26,17 +20,16 @@ const ActionsSections = ({ route }: Props) => {
   const [description, setDescription] = useState<string>('');
   const [refreshRate, setRefreshRate] = useState<number>();
 
-
   React.useEffect(() => {
-      const initialActionOptions = Object.entries(area.action_option).reduce(
-        (acc, [name, value]) => {
-          acc[name] = value;
-          return acc;
-        },
-        {} as { [key: string]: any },
-      );
-      setSelectedActionOptions(initialActionOptions);
-    }, [area.action_option]);
+    const initialActionOptions = Object.entries(area.action_option).reduce(
+      (acc, [name, value]) => {
+        acc[name] = value;
+        return acc;
+      },
+      {} as { [key: string]: any },
+    );
+    setSelectedActionOptions(initialActionOptions);
+  }, [area.action_option]);
 
   const handleActionOptionChange = (key: string, value: any, type: any) => {
     setSelectedActionOptions(prev => ({
@@ -75,38 +68,37 @@ const ActionsSections = ({ route }: Props) => {
   return (
     <View>
       <View
-          style={[
+        style={[
           styles.subContainer,
           { backgroundColor: area.action.service.color },
-          ]}>
-          <View style={styles.ActionReactionHeader}>
+        ]}>
+        <View style={styles.ActionReactionHeader}>
           <Text style={styles.label}>Action</Text>
-          </View>
-          <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View>
-              <View style={styles.detailContainer}>
+            <View style={styles.detailContainer}>
               <Text style={styles.label}>Service:</Text>
               <Text style={styles.value}>{area.action.service.name}</Text>
-              </View>
-              <View style={styles.detailContainer}>
+            </View>
+            <View style={styles.detailContainer}>
               <Text style={styles.label}>Options:</Text>
               <Text style={styles.value}>
-                  {Object.entries(selectedActionOptions).map(
+                {Object.entries(selectedActionOptions).map(
                   ([key, value]) => `${key}: ${value} `,
-                  )}
+                )}
               </Text>
-              </View>
+            </View>
           </View>
           <TouchableOpacity onPress={() => setIsActionModalVisible(true)}>
-              <SvgFromUri
+            <SvgFromUri
               uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
               width={50}
               height={50}
               color={'white'}
-              />
+            />
           </TouchableOpacity>
-          </View>
+        </View>
       </View>
 
       <Modal
@@ -151,8 +143,7 @@ const ActionsSections = ({ route }: Props) => {
                   </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setIsActionModalVisible(false)}>
+              <TouchableOpacity onPress={() => setIsActionModalVisible(false)}>
                 <View style={styles.cancelButton}>
                   <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
                     Cancel
@@ -164,7 +155,7 @@ const ActionsSections = ({ route }: Props) => {
         </View>
       </Modal>
     </View>
-  )
-}
+  );
+};
 
 export default ActionsSections;

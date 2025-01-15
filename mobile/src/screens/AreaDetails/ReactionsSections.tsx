@@ -1,11 +1,5 @@
 import React, { useState, useContext } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
 import { AppContext } from '../../context/AppContext';
@@ -69,8 +63,7 @@ const ReactionsSections = ({ route }: Props) => {
         <View style={styles.ActionReactionHeader}>
           <Text style={styles.label}>Reaction</Text>
         </View>
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View>
             <View style={styles.detailContainer}>
               <Text style={styles.label}>Service:</Text>
@@ -152,6 +145,6 @@ const ReactionsSections = ({ route }: Props) => {
       </Modal>
     </View>
   );
-}
+};
 
 export default ReactionsSections;
