@@ -24,7 +24,7 @@ services:
   reverse-proxy:
     volumes:
       - letsencrypt:/letsencrypt
-    labels:
+    command:
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
