@@ -1,0 +1,47 @@
+name: test frontend
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - frontend
+      - frontend-feature/**
+  push:
+    branches:
+      - dev
+      - frontend
+      - frontend-feature/**
+
+env:
+  GO_VERSION: stable
+  GOLANGCI_LINT_VERSION: v1.60
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+
+jobs:
+  detect-frontend-golang-modules:
+    name: Test Frontend
+    runs-on: self-hosted
+    steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npx vitest run
