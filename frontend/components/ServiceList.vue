@@ -203,7 +203,8 @@ function formatName(name: string): string {
     <div 
     v-if="isPopupVisible && styling == 'card'" ref="focusDiv"
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div class="flex flex-col justify-between items-center gap-10 bg-custom_color-bg_section px-10 py-8 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit"
+      <div
+class="flex flex-col justify-between items-center gap-10 bg-custom_color-bg_section px-10 py-8 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit"
       :style="{ borderColor: selectedService ? getServiceDetails(selectedService)?.color || '#ccc' : '#ccc' }">
         <h4>
           Are you sure you want to <br> disconnect from this service?
