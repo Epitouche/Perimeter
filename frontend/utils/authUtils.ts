@@ -5,7 +5,6 @@ import type { OAuthLink } from "~/interfaces/authLink";
 import type { Token } from "~/interfaces/serviceResponse";
 
 export const authApiCall = async (label: string) => {
-  console.log("authApiCall label: ", label); //////////////////////////////
   try {
     const response = await $fetch<OAuthLink>("/api/auth/service/redirect", {
       method: "POST",

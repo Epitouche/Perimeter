@@ -79,7 +79,7 @@ const getServiceStateText = (appName: string) => {
     return "Automatically connected";
   }
   const isConnected = serviceConnected.value.includes(appName);
-  const message = isConnected ? `Disconnect` : `Connect`;
+  const message = isConnected ? 'Disconnect' : 'Connect';
   return message;
 };
 
@@ -149,102 +149,63 @@ const hover = reactive<{ [key: string]: boolean }>(
 </script>
 
 <template>
-  <UContainer
-    :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
-    class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full rounded-custom_border_radius"
-  >
+  <UContainer 
+  :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
+    class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full rounded-custom_border_radius">
     <div v-for="(app, index) in apps" :key="index">
-      <UContainer
-        v-if="styling === 'card'"
-        :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
-        class="custom_card button_shadow !justify-between !gap-0 overflow-hidden"
-        tabindex="0"
-        :style="{
+      <UContainer 
+      v-if="styling === 'card'" :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+        class="custom_card button_shadow !justify-between !gap-0 overflow-hidden" tabindex="0" :style="{
           backgroundColor: getServiceDetails(app.name)?.color || '#ccc',
-        }"
-        @click="onClick(app.name)"
-      >
-        <h3
-          class="clamp-1-line break-words text-center pt-4 text-white w-full hover-expand-text"
-        >
+        }" @click="onClick(app.name)">
+        <h3 class="clamp-1-line break-words text-center pt-4 text-white w-full hover-expand-text">
           {{ app.name }}
         </h3>
-        <img
-          v-if="getServiceDetails(app.name)?.icon"
-          :src="getServiceDetails(app.name)?.icon"
-          alt=""
-          class="icon_circle"
-        />
-        <UButton
-          :class="[
-            isServiceConnectedOrInvalid(app.name)
-              ? 'bg-black text-white'
-              : 'bg-white text-black',
-            'w-full min-h-[5vh] max-h-[5vh] !rounded-t-none',
-          ]"
-          @click="onClick(app.name)"
-        >
+        <img 
+        v-if="getServiceDetails(app.name)?.icon" :src="getServiceDetails(app.name)?.icon" alt=""
+          class="icon_circle" >
+        <UButton 
+        v-if="!isLoading" :class="[
+          isServiceConnectedOrInvalid(app.name)
+            ? 'bg-black text-white'
+            : 'bg-white text-black',
+          'w-full min-h-[5vh] max-h-[5vh] !rounded-t-none',
+        ]" @click="onClick(app.name)">
           <h4 class="w-full">{{ getServiceStateText(app.name) }}</h4>
         </UButton>
       </UContainer>
 
-      <UContainer
-        v-if="styling === 'button'"
-        :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
-        class="custom_card_circle"
-        tabindex="0"
-        :style="{
+      <UContainer 
+      v-if="styling === 'button'" :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+        class="custom_card_circle" tabindex="0" :style="{
           backgroundColor: getServiceDetails(app.name)?.color || '#ccc',
-        }"
-        @mouseenter="hover[app.name] = true"
-        @mouseleave="hover[app.name] = false"
-        @click="onClick(app.name)"
-      >
-        <img
-          v-if="getServiceDetails(app.name)?.icon && !hover[app.name]"
-          :src="getServiceDetails(app.name)?.icon"
-          alt=""
-          class="icon_circle"
-        />
-        <UButton
-          v-if="hover[app.name]"
-          variant="ghost"
-          @click="onClick(app.name)"
-        >
-          <p
-            class="clamp-1-line break-words text-center text-white py-2 w-full hover-expand-text"
-          >
+        }" @mouseenter="hover[app.name] = true" @mouseleave="hover[app.name] = false" @click="onClick(app.name)">
+        <img 
+        v-if="getServiceDetails(app.name)?.icon && !hover[app.name]" :src="getServiceDetails(app.name)?.icon"
+          alt="" class="icon_circle" >
+        <UButton v-if="hover[app.name]" variant="ghost" @click="onClick(app.name)">
+          <p class="clamp-1-line break-words text-center text-white py-2 w-full hover-expand-text">
             {{ app.name }}
           </p>
         </UButton>
       </UContainer>
     </div>
 
-    <div
-      v-if="isPopupVisible"
-      ref="focusDiv"
-      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-    >
-      <div
-        class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
-      >
+    <div 
+    v-if="isPopupVisible && styling == 'card'" ref="focusDiv"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full">
         <h2 class="mb-2">
           Are you sure you want to disconnect from this service?
         </h2>
         <p class="text-2xl mb-5">This action cannot be undone!</p>
         <div class="flex flex-row justify-end items-center gap-5 pt-5">
-          <UButton
-            class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
-            tabindex="0"
-            @click="cancelAction"
-            >No</UButton
-          >
-          <UButton
-            class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
-            tabindex="0"
-            @click="confirmAction"
-            >Yes</UButton
-          >
+          <UButton 
+          class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5" tabindex="0"
+            @click="cancelAction">No</UButton>
+          <UButton 
+          class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+            tabindex="0" @click="confirmAction">Yes</UButton>
         </div>
       </div>
     </div>
