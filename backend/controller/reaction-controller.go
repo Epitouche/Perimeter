@@ -9,6 +9,7 @@ import (
 
 type ReactionController interface {
 	GetReactionsInfo(id uint64) (response []schemas.Reaction, err error)
+	GetReactionByReactionID(id uint64) (response schemas.Reaction, err error)
 }
 
 type reactionController struct {
@@ -27,6 +28,16 @@ func (controller *reactionController) GetReactionsInfo(
 	response, err = controller.service.GetReactionsInfo(id)
 	if err != nil {
 		return nil, fmt.Errorf("can't get reactions info: %w", err)
+	}
+	return response, nil
+}
+
+func (controller *reactionController) GetReactionByReactionID(
+	id uint64,
+) (response schemas.Reaction, err error) {
+	response, err = controller.service.FindById(id)
+	if err != nil {
+		return response, fmt.Errorf("unable to get actions info because %w", err)
 	}
 	return response, nil
 }
