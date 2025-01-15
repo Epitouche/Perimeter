@@ -24,6 +24,11 @@ func (m *MockActionController) GetActionsInfo(id uint64) ([]schemas.Action, erro
 	return args.Get(0).([]schemas.Action), args.Error(1)
 }
 
+func (m *MockActionController) GetActionByActionID(id uint64) (response schemas.Action, err error) {
+	args := m.Called(id)
+	return args.Get(0).(schemas.Action), args.Error(1)
+}
+
 func TestGetActionsInfo(t *testing.T) {
 	t.Parallel()
 

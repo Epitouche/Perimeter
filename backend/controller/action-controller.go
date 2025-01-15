@@ -9,6 +9,7 @@ import (
 
 type ActionController interface {
 	GetActionsInfo(id uint64) (response []schemas.Action, err error)
+	GetActionByActionID(id uint64) (response schemas.Action, err error)
 }
 
 type actionController struct {
@@ -27,6 +28,16 @@ func (controller *actionController) GetActionsInfo(
 	response, err = controller.service.GetActionsInfo(id)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get actions info because %w", err)
+	}
+	return response, nil
+}
+
+func (controller *actionController) GetActionByActionID(
+	id uint64,
+) (response schemas.Action, err error) {
+	response, err = controller.service.FindById(id)
+	if err != nil {
+		return response, fmt.Errorf("unable to get actions info because %w", err)
 	}
 	return response, nil
 }
