@@ -22,6 +22,14 @@ type AreaService interface {
 	) (deletedArea schemas.Area, err error)
 }
 
+// areaService is a struct that provides various services related to areas.
+// It includes the following fields:
+// - repository: An instance of AreaRepository for data access operations.
+// - actionService: An instance of ActionService for handling actions.
+// - reactionService: An instance of ReactionService for handling reactions.
+// - serviceUser: An instance of UserService for user-related operations.
+// - serviceService: An instance of ServiceService for service-related operations.
+// - areaResultService: An instance of AreaResultService for handling area results.
 type areaService struct {
 	repository        repository.AreaRepository
 	actionService     ActionService
@@ -31,6 +39,20 @@ type areaService struct {
 	areaResultService AreaResultService
 }
 
+// NewAreaService creates a new instance of AreaService with the provided dependencies.
+// It initializes the areaService struct with the given repository, actionService,
+// reactionService, serviceUser, serviceService, and areaResultService.
+//
+// Parameters:
+//   - repository: an instance of AreaRepository for data access.
+//   - serviceService: an instance of ServiceService for service-related operations.
+//   - actionService: an instance of ActionService for action-related operations.
+//   - reactionService: an instance of ReactionService for reaction-related operations.
+//   - serviceUser: an instance of UserService for user-related operations.
+//   - areaResultService: an instance of AreaResultService for area result-related operations.
+//
+// Returns:
+//   - AreaService: a new instance of AreaService initialized with the provided dependencies.
 func NewAreaService(
 	repository repository.AreaRepository,
 	serviceService ServiceService,
@@ -50,6 +72,9 @@ func NewAreaService(
 	return &newService
 }
 
+// FindAll retrieves all areas from the repository.
+// It returns a slice of Area schemas and an error if any occurs during the retrieval process.
+// If an error occurs, it wraps the original error with additional context.
 func (service *areaService) FindAll() (areas []schemas.Area, err error) {
 	areas, err = service.repository.FindAll()
 	if err != nil {
@@ -58,7 +83,17 @@ func (service *areaService) FindAll() (areas []schemas.Area, err error) {
 	return areas, nil
 }
 
-// compareMaps compares two maps for equality
+// compareMaps compares two maps with string keys and interface{} values.
+// It returns true if both maps have the same length and the same keys with values of the same type.
+// If the lengths of the maps are different or if any key in map1 does not exist in map2
+// or if the types of corresponding values are different, it returns false.
+//
+// Parameters:
+//   - map1: The first map to compare.
+//   - map2: The second map to compare.
+//
+// Returns:
+//   - bool: true if the maps are equal in length and have the same keys with values of the same type, false otherwise.
 func compareMaps(map1, map2 map[string]interface{}) bool {
 	if len(map1) != len(map2) {
 		return false
@@ -72,6 +107,17 @@ func compareMaps(map1, map2 map[string]interface{}) bool {
 	return true
 }
 
+// CreateArea creates a new area with the provided action and reaction options.
+// It validates the provided options against the default options for the specified action and reaction.
+// If the options are valid, it saves the new area to the repository and initializes it.
+//
+// Parameters:
+//   - result: schemas.AreaMessage containing the action and reaction options, title, and description.
+//   - token: string representing the user's authentication token.
+//
+// Returns:
+//   - string: A success message if the area is created successfully.
+//   - error: An error message if any step in the process fails.
 func (service *areaService) CreateArea(result schemas.AreaMessage, token string) (string, error) {
 	var actionOption, reactionOption json.RawMessage
 
@@ -149,11 +195,29 @@ func (service *areaService) CreateArea(result schemas.AreaMessage, token string)
 	return "Area created successfully", nil
 }
 
+// AreaExist checks if an area with the given ID exists in the repository.
+// It returns true if the area exists, otherwise it returns false.
+//
+// Parameters:
+//
+//	id (uint64): The ID of the area to check.
+//
+// Returns:
+//
+//	bool: True if the area exists, false otherwise.
 func (service *areaService) AreaExist(id uint64) bool {
 	_, err := service.repository.FindById(id)
 	return err == nil
 }
 
+// InitArea initializes the area with the given start value and starts two goroutines.
+// The first goroutine continuously checks if the area exists and is enabled, then performs the action associated with the area.
+// The second goroutine waits for the action result from the first goroutine, performs the reaction associated with the area, and saves the result.
+//
+// Parameters:
+//   - areaStartValue: The initial value of the area to be initialized.
+//
+// The function uses a channel to communicate between the two goroutines.
 func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	channelArea := make(chan string)
 	println("go routine action " + areaStartValue.Action.Name)
@@ -209,7 +273,9 @@ func (service *areaService) InitArea(areaStartValue schemas.Area) {
 	}(areaStartValue, channelArea)
 }
 
-// containsArea checks if a slice of areas contains a specific area
+// containsArea checks if a given area is present in a list of areas.
+// It takes a slice of schemas.Area and a single schemas.Area as input parameters.
+// It returns true if the area is found in the list, otherwise it returns false.
 func containsArea(areas []schemas.Area, area schemas.Area) bool {
 	for _, a := range areas {
 		if a.Id == area.Id {
@@ -219,6 +285,16 @@ func containsArea(areas []schemas.Area, area schemas.Area) bool {
 	return false
 }
 
+// GetUserAreas retrieves the areas associated with a user based on the provided token.
+// It first fetches the user information using the token, and then finds the areas
+// associated with the user's ID.
+//
+// Parameters:
+//   - token: A string representing the user's authentication token.
+//
+// Returns:
+//   - []schemas.Area: A slice of Area objects associated with the user.
+//   - error: An error object if there is any issue in fetching user information or areas.
 func (service *areaService) GetUserAreas(token string) ([]schemas.Area, error) {
 	user, err := service.serviceUser.GetUserInfo(token)
 	if err != nil {
@@ -231,6 +307,23 @@ func (service *areaService) GetUserAreas(token string) ([]schemas.Area, error) {
 	return areas, nil
 }
 
+// UpdateUserArea updates the area information for a user based on the provided token and area details.
+// It retrieves the user information using the token, finds the user's areas, and updates the specified area if it exists.
+//
+// Parameters:
+//   - token: A string representing the user's authentication token.
+//   - areaToUpdate: A schemas.Area object containing the details of the area to be updated.
+//
+// Returns:
+//   - updatedArea: A schemas.Area object representing the updated area.
+//   - err: An error object if any error occurs during the process.
+//
+// Possible errors:
+//   - If the user information cannot be retrieved using the token.
+//   - If the user's areas cannot be found by user ID.
+//   - If the area to be updated cannot be found by its ID.
+//   - If the area to be updated does not belong to the user.
+//   - If the area update operation fails.
 func (service *areaService) UpdateUserArea(
 	token string,
 	areaToUpdate schemas.Area,
@@ -258,6 +351,19 @@ func (service *areaService) UpdateUserArea(
 	}
 }
 
+// DeleteUserArea deletes a user area based on the provided token and area ID.
+// It first retrieves the user information using the provided token, then fetches
+// the areas associated with the user. If the area to be deleted is found within
+// the user's areas, it deletes the area from the repository.
+//
+// Parameters:
+//   - token: A string representing the user's authentication token.
+//   - areaToDelete: A struct containing the ID of the area to be deleted.
+//
+// Returns:
+//   - deletedArea: The deleted area if the operation is successful.
+//   - err: An error if any issues occur during the process, such as failing to
+//     retrieve user information, finding the area, or deleting the area.
 func (service *areaService) DeleteUserArea(
 	token string,
 	areaToDelete struct{ Id uint64 },
