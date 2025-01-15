@@ -3,15 +3,12 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
-  TextInput,
   FlatList,
   ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../../context/AppContext';
-import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
 import AreaSections from './AreaSections';
 import ActionsSections from './ActionsSections';
