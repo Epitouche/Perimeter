@@ -1,44 +1,44 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import { setup } from '@nuxt/test-utils';
+import { describe, it, expect } from "vitest";
+import { mount } from "@vue/test-utils";
+import { setup } from "@nuxt/test-utils";
 
-import BackButton from '../components/BackButton.vue';
+import BackButton from "../components/BackButton.vue";
 
-describe('BackButton', () => {
+describe("BackButton", () => {
   setup();
 
-  it('renders with the correct classes when isWhite is false', () => {
+  it("renders with the correct classes when isWhite is false", () => {
     const wrapper = mount(BackButton, {
       props: {
-        link: '/dashboard',
+        link: "/dashboard",
         isWhite: false,
       },
     });
 
-    expect(wrapper.find('UButton').classes()).toContain('!border-black');
-    expect(wrapper.find('UButton').classes()).toContain('text-black');
+    expect(wrapper.find("UButton").classes()).toContain("!border-black");
+    expect(wrapper.find("UButton").classes()).toContain("text-black");
   });
 
-  it('renders with the correct classes when isWhite is true', () => {
+  it("renders with the correct classes when isWhite is true", () => {
     const wrapper = mount(BackButton, {
       props: {
-        link: '/dashboard',
+        link: "/dashboard",
         isWhite: true,
       },
     });
 
-    expect(wrapper.find('UButton').classes()).toContain('!border-white');
-    expect(wrapper.find('UButton').classes()).toContain('text-white');
+    expect(wrapper.find("UButton").classes()).toContain("!border-white");
+    expect(wrapper.find("UButton").classes()).toContain("text-white");
   });
 
-  it('renders the link correctly', () => {
+  it("renders the link correctly", () => {
     const wrapper = mount(BackButton, {
       props: {
-        link: '/dashboard',
+        link: "/dashboard",
         isWhite: false,
       },
     });
 
-    expect(wrapper.find('UButton').attributes('to')).toBe('/dashboard');
+    expect(wrapper.find("UButton").attributes("to")).toBe("/dashboard");
   });
 });
