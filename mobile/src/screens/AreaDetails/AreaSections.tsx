@@ -100,7 +100,10 @@ const AreaSections = ({ navigation, route }: Props) => {
               alignContent: 'center',
               justifyContent: 'space-between',
             }}>
-            <TouchableOpacity onPress={() => deleteArea()}>
+            <TouchableOpacity
+              onPress={() => deleteArea()}
+              accessibilityLabel="Delete Area Button"
+              accessibilityHint="Deletes the current area">
               <SvgFromUri
                 uri={'https://api.iconify.design/mdi:delete.svg'}
                 width={50}
@@ -108,7 +111,10 @@ const AreaSections = ({ navigation, route }: Props) => {
                 color={'#E60000'}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsAreaModalVisible(true)}>
+            <TouchableOpacity
+              onPress={() => setIsAreaModalVisible(true)}
+              accessibilityLabel="Edit Area Button"
+              accessibilityHint="Opens a modal to edit the area details">
               <SvgFromUri
                 uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
                 width={50}
@@ -149,6 +155,8 @@ const AreaSections = ({ navigation, route }: Props) => {
                   value={title}
                   onChangeText={text => setTitle(text)}
                   keyboardType="default" // Adjust as needed
+                  accessibilityLabel="Title Input"
+                  accessibilityHint="Input field for the area title"
                 />
               </View>
               <View style={[styles.optionRow]}>
@@ -160,6 +168,8 @@ const AreaSections = ({ navigation, route }: Props) => {
                   value={description}
                   onChangeText={text => setDescription(text)}
                   keyboardType="default" // Adjust as needed
+                  accessibilityLabel="Description Input"
+                  accessibilityHint="Input field for the area description"
                 />
               </View>
               <View style={[styles.optionRow]}>
@@ -171,6 +181,8 @@ const AreaSections = ({ navigation, route }: Props) => {
                   value={refreshRate ? String(refreshRate) : ''}
                   onChangeText={text => setRefreshRate(Number(text))}
                   keyboardType="numeric" // Adjust as needed
+                  accessibilityLabel="Refresh Rate Input"
+                  accessibilityHint="Input field for the area refresh rate"
                 />
               </View>
             </View>
@@ -179,7 +191,10 @@ const AreaSections = ({ navigation, route }: Props) => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <TouchableOpacity onPress={handleSaveArea}>
+              <TouchableOpacity
+                onPress={handleSaveArea}
+                accessibilityLabel="Save Button"
+                accessibilityHint="Saves the changes made to the area">
                 <View style={[styles.saveButton, { borderColor: 'black' }]}>
                   <Text style={[{ color: 'black' }, { fontSize: 16 }]}>
                     Save
@@ -192,7 +207,9 @@ const AreaSections = ({ navigation, route }: Props) => {
                   setDescription(area.description);
                   setTitle(area.title);
                   setRefreshRate(area.refresh_rate);
-                }}>
+                }}
+                accessibilityLabel="Cancel Button"
+                accessibilityHint="Cancels the changes and closes the modal">
                 <View style={styles.cancelButton}>
                   <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
                     Cancel

@@ -147,6 +147,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         value={username}
         inputMode="text"
         onChangeText={text => setUsername(text)}
+        accessibilityHint="Enter your username"
       />
       {errors.username ? (
         <Text style={styles.errorText}>{errors.username}</Text>
@@ -159,6 +160,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         value={email}
         inputMode="email"
         onChangeText={text => setEmail(text)}
+        accessibilityHint="Enter your email address"
       />
       {errors.email ? (
         <Text style={styles.errorText}>{errors.email}</Text>
@@ -171,18 +173,24 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         secureTextEntry
         value={password}
         onChangeText={text => setPassword(text)}
+        accessibilityHint="Enter your password"
       />
       {errors.password ? (
         <Text style={styles.errorText}>{errors.password}</Text>
       ) : null}
 
-      <TouchableOpacity style={styles.registerButton} onPress={handleSignup}>
+      <TouchableOpacity
+        style={styles.registerButton}
+        onPress={handleSignup}
+        accessibilityHint="Tap to sign up">
         <Text style={styles.signupButtonText}>Sign up</Text>
       </TouchableOpacity>
 
       <View style={styles.signUpContainer}>
         <Text style={styles.alreadySignUpText}>Already sign up ?</Text>
-        <TouchableOpacity onPress={switchToLogin}>
+        <TouchableOpacity
+          onPress={switchToLogin}
+          accessibilityHint="Tap to switch to login screen">
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
       </View>
@@ -223,7 +231,8 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
                   default:
                     break;
                 }
-              }}>
+              }}
+              accessibilityHint={`Tap to sign up with ${service.name}`}>
               <SvgFromUri
                 uri={service.icon}
                 width={50}

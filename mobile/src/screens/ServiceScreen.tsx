@@ -137,6 +137,9 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
         accessibilityLabel={`${!isConnected ? 'Connect' : 'Disconnect'} from ${
           item.name
         }`}
+        accessibilityHint={`Double tap to ${
+          !isConnected ? 'connect to' : 'disconnect from'
+        } ${item.name}`}
         style={[styles.serviceButton, { backgroundColor: item.color }]}
         onPress={
           !isConnected

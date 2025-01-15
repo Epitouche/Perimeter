@@ -90,7 +90,9 @@ const ActionsSections = ({ route }: Props) => {
               </Text>
             </View>
           </View>
-          <TouchableOpacity onPress={() => setIsActionModalVisible(true)}>
+          <TouchableOpacity
+            onPress={() => setIsActionModalVisible(true)}
+            accessibilityHint="Opens a modal to modify the action options">
             <SvgFromUri
               uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
               width={50}
@@ -127,6 +129,7 @@ const ActionsSections = ({ route }: Props) => {
                       )
                     }
                     keyboardType="default" // Adjust as needed
+                    accessibilityHint={`Input for ${key}`}
                   />
                 </View>
               ))}
@@ -136,14 +139,18 @@ const ActionsSections = ({ route }: Props) => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <TouchableOpacity onPress={handleSaveAction}>
+              <TouchableOpacity
+                onPress={handleSaveAction}
+                accessibilityHint="Saves the modified action options">
                 <View style={styles.saveButton}>
                   <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
                     Save
                   </Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsActionModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() => setIsActionModalVisible(false)}
+                accessibilityHint="Closes the modal without saving changes">
                 <View style={styles.cancelButton}>
                   <Text style={[{ color: 'red' }, { fontSize: 16 }]}>
                     Cancel
