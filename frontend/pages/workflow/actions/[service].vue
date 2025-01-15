@@ -19,7 +19,7 @@ const token = useCookie("token");
 
 const isLoading = ref(true);
 const actions = ref<ActionType[] | null>(null);
-const error = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
 const serviceInfo = ref<ServiceInfo | null>(null);
 
 const getServiceInfo = async () => {
@@ -27,7 +27,7 @@ const getServiceInfo = async () => {
 
   isLoading.value = true;
   try {
-    error.value = null;
+    errorMessage.value = null;
     serviceInfo.value = await $fetch<ServiceInfo>("/api/servicebyid", {
       method: "POST",
       body: {
@@ -36,9 +36,9 @@ const getServiceInfo = async () => {
       },
     });
     console.log("serviceInfo: ", serviceInfo.value);
-  } catch (err) {
-    console.error("Error fetching service info:", err);
-    error.value = "Failed to load service information.";
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error fetching services:", errorMessage);
   } finally {
     isLoading.value = false;
   }
@@ -47,7 +47,7 @@ const getServiceInfo = async () => {
 const fetchActions = async () => {
   isLoading.value = true;
   try {
-    error.value = null;
+    errorMessage.value = null;
     actions.value = await $fetch<ActionType[]>("/api/workflow/actions", {
       method: "POST",
       body: {
@@ -55,9 +55,9 @@ const fetchActions = async () => {
         service: serviceId,
       },
     });
-  } catch (err) {
-    console.error("Error fetching actions:", err);
-    error.value = "Failed to load actions.";
+  } catch (error: unknown) {
+    errorMessage.value = handleErrorStatus(error);
+    console.error("Error fetching actions:", errorMessage);
   } finally {
     isLoading.value = false;
   }
@@ -71,8 +71,8 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-20">
-    <div v-if="error">
-      <div>Error: {{ error }}</div>
+    <div v-if="errorMessage">
+      <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
     <UContainer
@@ -85,14 +85,12 @@ onMounted(() => {
         <BackButton link="/workflow/actions" :is-white="true" />
       </div>
       <div class="flex flex-col justify-center items-center gap-8">
-        <h1 class="text-8xl text-white font-custom_weight_title">
-          Add an action
-        </h1>
+        <h1 class="text-white">Add an action</h1>
         <img
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"
           class="w-[8em] h-[8em]"
-        >
+        />
         <h2 class="capitalize text-white text-7xl font-bold">
           {{ serviceInfo.name }}
         </h2>
@@ -108,4 +106,9 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

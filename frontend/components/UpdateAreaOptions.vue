@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Area } from "@/interfaces/areas";
-import { defineEmits } from "vue";
 
 const props = defineProps<{
   areaId: number;
   typeName: string;
   type: Area["action"] | Area["reaction"];
+  typeOptions: string | object | undefined;
   color: string;
 }>();
 
@@ -24,17 +24,14 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive<{ [key: number]: Record<string, string | number> }>(
-  typeof props.type.option === "string"
-    ? { [props.type.id]: JSON.parse(props.type.option) }
-    : { [props.type.id]: props.type.option || {} },
+  typeof props.typeOptions === "string"
+    ? { [props.type.id]: JSON.parse(props.typeOptions) }
+    : { [props.type.id]: props.typeOptions || {} },
 );
 
 const editValue = async (typeName: string, typeId: number, key: string) => {
   const updatedValues = { ...state[typeId] };
   const updatedValue = updatedValues[key];
-
-  // console.log("editedKey: ", key);
-  // console.log("updatedValue: ", updatedValue);
 
   emit("updateAreaValue", props.areaId, typeName, key, updatedValue);
 
@@ -59,7 +56,7 @@ function formatName(name: string): string {
 }
 
 onMounted(() => {
-  // console.log("type: ", props.type);
+  console.log("type: ", props.type);
 });
 </script>
 
@@ -71,9 +68,9 @@ onMounted(() => {
       :src="type.service.icon"
       :alt="type.service.name"
       class="w-16 h-16 p-0"
-    >
+    />
     <h2 class="text-5xl">
-      <b>{{ type.service.name }}</b
+      <b>{{ formatName(type.service.name) }}</b
       >:
     </h2>
     <p class="text-4xl">{{ formatName(type.name) }}</p>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LocationQueryValue } from "vue-router";
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
@@ -15,38 +16,50 @@ const errorMessage = ref<string | null>(null);
 const showPageContent = ref(true);
 const creationPopup = ref(false);
 const isLoading = ref(false);
-const title = ref<string>("");
-const description = ref<string>("");
+const title = ref<string>();
+const description = ref<string>();
+const refreshRate = ref<number>();
 
 const validateCreation = () => {
   creationPopup.value = !creationPopup.value;
 };
 
 const onCreate = async () => {
-  console.log("actionId:", websiteStore.actionId);
-  console.log("actionOptions:", websiteStore.actionOptions);
-  console.log("reactionId:", websiteStore.reactionId);
-  console.log("reactionOptions:", websiteStore.reactionOptions);
-  console.log("title: ", title.value);
-  console.log("description: ", description.value);
+  // console.log("actionId:", websiteStore.actionId);
+  // console.log("actionOptions:", websiteStore.actionOptions);
+  // console.log("reactionId:", websiteStore.reactionId);
+  // console.log("reactionOptions:", websiteStore.reactionOptions);
+  // console.log("title: ", title.value);
+  // console.log("description: ", description.value);
+  // console.log("refreshRate: ", refreshRate.value);
+
+  if (!title.value || !description.value || !refreshRate.value) {
+    alert("Please fill out all fields");
+    return;
+  }
+
+  if (isNaN(refreshRate.value)) {
+    alert("Refresh rate must be a number");
+    return;
+  }
 
   creationPopup.value = false;
   error.value = null;
 
   try {
-    const response = await $fetch("/api/workflow/create", {
+    await $fetch("/api/workflow/create", {
       method: "POST",
       body: {
         token: token.value,
-        actionOptions: websiteStore.actionOptions,
         actionId: websiteStore.actionId,
-        reactionOptions: websiteStore.reactionOptions,
-        reactionId: websiteStore.reactionId,
-        title: title.value,
+        actionOptions: websiteStore.actionOptions,
+        refreshRate: refreshRate.value,
         description: description.value,
+        reactionId: websiteStore.reactionId,
+        reactionOptions: websiteStore.reactionOptions,
+        title: title.value,
       },
     });
-    console.log("response:", response);
     createdMessage.value = "Workflow created successfully!";
     showPageContent.value = false;
     setTimeout(() => {
@@ -56,7 +69,6 @@ const onCreate = async () => {
     websiteStore.resetWorkflowPage();
     router.push("/workflow");
   } catch (error: unknown) {
-    console.log("error:", error);
     errorMessage.value = handleErrorStatus(error);
     if (errorMessage.value === "An unknown error occurred") {
       console.error("An unknown error occurred", error);
@@ -184,15 +196,14 @@ onMounted(() => {
       <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
         <UButton
           class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
+          tabindex="0"
           @click="onCancel()"
           >Cancel</UButton
         >
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
-        <h1 class="text-custom_size_title font-custom_weight_title pb-5">
-          Workflow
-        </h1>
+        <h1 class="pb-5">Workflow</h1>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div class="flex flex-col justify-center items-center">
           <ReActionButton
@@ -223,6 +234,7 @@ onMounted(() => {
         <div v-if="websiteStore.showCreateButton" class="pt-10">
           <UButton
             class="text-5xl font-bold px-8 py-4"
+            tabindex="0"
             @click="validateCreation"
             >Create</UButton
           >
@@ -232,37 +244,57 @@ onMounted(() => {
           class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
           <div
-            class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
           >
-            <h2 class="text-4xl font-semibold mb-2">
-              You're about to create a new area
+            <h2 class="text-4xl font-semibold text-center mb-2">
+              You're about to create a new area!
             </h2>
-            <UInput
-              v-model="title"
-              :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }"
-              placeholder="Title"
-              class="flex-1 bg-white text-black pb-4 rounded-full transition-colors duration-300"
-            />
-            <UInput
-              v-model="description"
-              :ui="{
-                placeholder: '!px-5 !py-3 font-light',
-                size: { sm: 'text-3xl' },
-              }"
-              placeholder="Description"
-              class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
-            />
+            <div class="flex flex-col gap-1 w-full">
+              <h3 class="text-2xl pl-6">Title</h3>
+              <UInput
+                v-model="title"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Title"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
+            </div>
+            <div class="flex flex-col gap-1 w-full">
+              <h3 class="text-2xl pl-6">Description</h3>
+              <UInput
+                v-model="description"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Description"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
+            </div>
+            <div class="flex flex-col gap-1 w-full">
+              <h3 class="text-2xl pl-6">Refresh Rate</h3>
+              <UInput
+                v-model="refreshRate"
+                :ui="{
+                  placeholder: '!px-5 !py-3 font-light',
+                  size: { sm: 'text-3xl' },
+                }"
+                placeholder="Ex: 0"
+                class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
+              />
+            </div>
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
                 class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                tabindex="0"
                 @click="validateCreation"
                 >Cancel</UButton
               >
               <UButton
                 class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                tabindex="0"
                 @click="onCreate"
                 >Submit</UButton
               >
@@ -274,4 +306,9 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

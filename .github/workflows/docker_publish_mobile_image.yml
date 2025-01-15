@@ -6,14 +6,12 @@ on:
   pull_request:
     branches:
       - mobile
-      - mobile-feature/**
       - dev
       - pre-prod
       - main
   push:
     branches:
       - mobile
-      - mobile-feature/**
       - dev
       - pre-prod
       - main
@@ -81,6 +79,8 @@ jobs:
 
       - name: Security Scan ${{ env.IMAGE_NAME }} Image
         uses: aquasecurity/trivy-action@master
+        env:
+          TRIVY_DB_REPOSITORY: "ghcr.io/aquasecurity/trivy-db"
         with:
           image-ref: ${{ steps.meta.outputs.tags }}
           format: table

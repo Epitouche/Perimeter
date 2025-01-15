@@ -22,7 +22,7 @@ const fetchServices = async () => {
     });
     services.value = result;
     filteredServices.value = result;
-    console.log("services", services.value);
+    //console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
@@ -49,16 +49,16 @@ onMounted(() => {
 <template>
   <div class="p-10">
     <BackButton link="/workflow" :is-white="false" />
-    <h1
-      class="flex justify-center w-full text-8xl font-custom_weight_title pb-20"
-    >
-      Add a reaction
-    </h1>
+    <h1 class="flex justify-center w-full pb-20">Add a reaction</h1>
     <UContainer
       :ui="{ base: 'mx-auto' }"
       class="flex flex-col justify-center items-center gap-16 w-full h-full !p-0"
     >
-      <SearchBar v-model:search-query="searchQuery" class="!w-1/3" />
+      <SearchBar
+        v-model:search-query="searchQuery"
+        class="!w-1/3"
+        tabindex="0"
+      />
       <div v-if="errorMessage">Error: {{ errorMessage }}</div>
       <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
       <div
@@ -71,4 +71,9 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

@@ -78,11 +78,7 @@ const handleSignUp = async () => {
       }"
       class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
     >
-      <h1
-        class="text-custom_size_title font-custom_weight_connection_title pb-5"
-      >
-        Sign up
-      </h1>
+      <h1 class="pb-5">Sign up</h1>
       <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
         <div class="flex flex-col">
           <h2 class="text-xl px-5">Email</h2>
@@ -130,12 +126,19 @@ const handleSignUp = async () => {
           <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
-          <UButton class="text-center text-[2.5rem] px-12" @click="handleSignUp"
-            >Sign up</UButton
-          >
+          <UButton
+            class="text-center text-[2.5rem] px-12"
+            tabindex="0"
+            @click="handleSignUp"
+            >Sign up
+          </UButton>
           <p class="text-xl">
             Already signed up?
-            <ULink to="/login" class="hover:text-custom_color-text_link">
+            <ULink
+              to="/login"
+              class="hover:text-custom_color-text_link"
+              tabindex="0"
+            >
               <u>Login</u>
             </ULink>
           </p>
@@ -153,4 +156,9 @@ const handleSignUp = async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>
