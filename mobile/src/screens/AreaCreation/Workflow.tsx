@@ -9,11 +9,17 @@ type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 const WorkflowScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title} accessibilityLabel="Add Area Title" accessibilityHint="Displays the title of the screen">
+      <Text
+        style={styles.title}
+        accessibilityLabel="Add Area Title"
+        accessibilityHint="Displays the title of the screen">
         Add Area
       </Text>
       <View style={styles.actionBox}>
-        <Text style={styles.boxText} accessibilityLabel="Action Text" accessibilityHint="Displays the action text">
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Action Text"
+          accessibilityHint="Displays the action text">
           Action
         </Text>
         <TouchableOpacity
@@ -26,7 +32,10 @@ const WorkflowScreen = ({ navigation }: { navigation: any }) => {
       </View>
       <View style={styles.line} />
       <View style={styles.reactionBox}>
-        <Text style={styles.boxText} accessibilityLabel="Reaction Text" accessibilityHint="Displays the reaction text">
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Reaction Text"
+          accessibilityHint="Displays the reaction text">
           Reaction
         </Text>
         <TouchableOpacity

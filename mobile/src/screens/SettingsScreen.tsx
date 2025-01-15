@@ -92,10 +92,9 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
       </View>
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => navigation.goBack()}
-            accessibilityHint="Save your changes and go back"
-          >
+            accessibilityHint="Save your changes and go back">
             <Text style={styles.button}>Save</Text>
           </TouchableOpacity>
         </View>
@@ -104,8 +103,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
             setToken('');
             navigation.navigate('Login');
           }}
-          accessibilityHint="Disconnect and navigate to the login screen"
-        >
+          accessibilityHint="Disconnect and navigate to the login screen">
           <Text style={styles.disconnectButton}>Disconnect</Text>
         </TouchableOpacity>
       </View>

@@ -109,15 +109,28 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} accessibilityLabel="Choose reaction title" accessibilityHint="Title of the screen">Choose reaction</Text>
+      <Text
+        style={styles.title}
+        accessibilityLabel="Choose reaction title"
+        accessibilityHint="Title of the screen">
+        Choose reaction
+      </Text>
       {selectedReaction ? (
         <View style={styles.optionsContainer}>
-          <Text style={styles.optionTitle} accessibilityLabel={`Configure Options for ${selectedReaction.name}`} accessibilityHint="Title for configuring options">
+          <Text
+            style={styles.optionTitle}
+            accessibilityLabel={`Configure Options for ${selectedReaction.name}`}
+            accessibilityHint="Title for configuring options">
             Configure Options for {selectedReaction.name}
           </Text>
           {Object.keys(selectedReactionOptions).map(key => (
             <View key={key} style={styles.optionRow}>
-              <Text style={styles.optionLabel} accessibilityLabel={`Option label ${key}`} accessibilityHint={`Label for the option ${key}`}>{key}</Text>
+              <Text
+                style={styles.optionLabel}
+                accessibilityLabel={`Option label ${key}`}
+                accessibilityHint={`Label for the option ${key}`}>
+                {key}
+              </Text>
               <TextInput
                 style={styles.optionInput}
                 value={String(selectedReactionOptions[key])}

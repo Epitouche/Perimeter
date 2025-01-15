@@ -11,7 +11,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text accessibilityHint="Instruction to enter the IP address">Enter the IP address to ping:</Text>
+      <Text accessibilityHint="Instruction to enter the IP address">
+        Enter the IP address to ping:
+      </Text>
       <TextInput
         style={styles.input}
         placeholder="Enter IP address"

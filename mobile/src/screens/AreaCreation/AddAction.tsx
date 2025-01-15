@@ -104,7 +104,12 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} accessibilityLabel="Add action title" accessibilityHint="Title of the add action screen">Add action</Text>
+      <Text
+        style={styles.title}
+        accessibilityLabel="Add action title"
+        accessibilityHint="Title of the add action screen">
+        Add action
+      </Text>
       <TextInput
         style={styles.searchBar}
         placeholderTextColor="#bbbbbb"

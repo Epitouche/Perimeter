@@ -55,13 +55,32 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} accessibilityLabel="Add Area Title" accessibilityHint="Displays the title of the screen">Add Area</Text>
+      <Text
+        style={styles.title}
+        accessibilityLabel="Add Area Title"
+        accessibilityHint="Displays the title of the screen">
+        Add Area
+      </Text>
       <View style={[styles.actionBox, { backgroundColor: service?.color }]}>
-        <Text style={styles.boxText} accessibilityLabel={`Service Name: ${name}`} accessibilityHint="Displays the name of the service">{name}</Text>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel={`Service Name: ${name}`}
+          accessibilityHint="Displays the name of the service">
+          {name}
+        </Text>
       </View>
-      <View style={styles.line} accessibilityLabel="Separator Line" accessibilityHint="Separates the service name and reaction sections" />
+      <View
+        style={styles.line}
+        accessibilityLabel="Separator Line"
+        accessibilityHint="Separates the service name and reaction sections"
+      />
       <View style={styles.actionBox}>
-        <Text style={styles.boxText} accessibilityLabel="Reaction Label" accessibilityHint="Displays the label for the reaction section">Reaction</Text>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Reaction Label"
+          accessibilityHint="Displays the label for the reaction section">
+          Reaction
+        </Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>

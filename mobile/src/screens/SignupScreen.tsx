@@ -182,14 +182,15 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
       <TouchableOpacity
         style={styles.registerButton}
         onPress={handleSignup}
-        accessibilityHint="Tap to sign up"
-      >
+        accessibilityHint="Tap to sign up">
         <Text style={styles.signupButtonText}>Sign up</Text>
       </TouchableOpacity>
 
       <View style={styles.signUpContainer}>
         <Text style={styles.alreadySignUpText}>Already sign up ?</Text>
-        <TouchableOpacity onPress={switchToLogin} accessibilityHint="Tap to switch to login screen">
+        <TouchableOpacity
+          onPress={switchToLogin}
+          accessibilityHint="Tap to switch to login screen">
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
       </View>
@@ -231,8 +232,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
                     break;
                 }
               }}
-              accessibilityHint={`Tap to sign up with ${service.name}`}
-            >
+              accessibilityHint={`Tap to sign up with ${service.name}`}>
               <SvgFromUri
                 uri={service.icon}
                 width={50}

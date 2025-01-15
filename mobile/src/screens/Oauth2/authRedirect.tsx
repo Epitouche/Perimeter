@@ -20,8 +20,14 @@ const AuthRedirectScreen: React.FC<Props> = ({ navigation, route }) => {
   if (isLoading) {
     return (
       <View style={styles.container} accessibilityHint="Loading screen">
-        <ActivityIndicator size="large" color="#6200EE" accessibilityHint="Loading indicator" />
-        <Text style={styles.loadingText} accessibilityHint="Loading text">Loading...</Text>
+        <ActivityIndicator
+          size="large"
+          color="#6200EE"
+          accessibilityHint="Loading indicator"
+        />
+        <Text style={styles.loadingText} accessibilityHint="Loading text">
+          Loading...
+        </Text>
       </View>
     );
   }

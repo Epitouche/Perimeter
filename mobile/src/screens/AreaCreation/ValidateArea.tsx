@@ -146,9 +146,11 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         style={[
           styles.actionBox,
           { backgroundColor: actionService?.color, borderRadius: 8 },
-        ]}
-      >
-        <Text style={styles.boxText} accessibilityLabel="Action Name" accessibilityHint="Displays the name of the action">
+        ]}>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Action Name"
+          accessibilityHint="Displays the name of the action">
           {actionName}
         </Text>
       </View>
@@ -157,9 +159,11 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         style={[
           styles.actionBox,
           { backgroundColor: reactionService?.color, borderRadius: 8 },
-        ]}
-      >
-        <Text style={styles.boxText} accessibilityLabel="Reaction Name" accessibilityHint="Displays the name of the reaction">
+        ]}>
+        <Text
+          style={styles.boxText}
+          accessibilityLabel="Reaction Name"
+          accessibilityHint="Displays the name of the reaction">
           {reactionName}
         </Text>
       </View>
@@ -169,8 +173,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           saveButtonPressed();
         }}
         accessibilityLabel="Save Button"
-        accessibilityHint="Press to save the area"
-      >
+        accessibilityHint="Press to save the area">
         <Text style={styles.addText}>Save</Text>
       </TouchableOpacity>
     </View>
