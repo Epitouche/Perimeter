@@ -1,5 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { Switch, View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
+import {
+  Switch,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+} from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
 import { AppContext } from '../../context/AppContext';
@@ -83,7 +90,7 @@ const AreaSections = ({ navigation, route }: Props) => {
     } catch (error) {
       console.error('Error update area:', error);
     }
-  }
+  };
 
   return (
     <View>
@@ -136,9 +143,11 @@ const AreaSections = ({ navigation, route }: Props) => {
             </TouchableOpacity>
             <Switch
               value={isEnabled}
-              onValueChange={(value) => {setIsEnabled(value), handleAreaStatus(value)}}
-              trackColor={{ false: "#E60000", true: "#1DC000" }}
-              thumbColor={isEnabled ? "#000000" : "#000000"}
+              onValueChange={value => {
+                setIsEnabled(value), handleAreaStatus(value);
+              }}
+              trackColor={{ false: '#E60000', true: '#1DC000' }}
+              thumbColor={isEnabled ? '#000000' : '#000000'}
             />
             <TouchableOpacity
               onPress={() => setIsAreaModalVisible(true)}
