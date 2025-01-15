@@ -14,7 +14,7 @@ import WorkflowReactionScreen from '../screens/AreaCreation/WorkflowReaction';
 import AddReactionScreen from '../screens/AreaCreation/AddReaction';
 import SelectReactionScreen from '../screens/AreaCreation/SelectReaction';
 import SettingsScreen from '../screens/SettingsScreen';
-import AreaDetailsScreen from '../screens/AreaDetails';
+import AreaDetailsScreen from '../screens/AreaDetails/AreaDetails';
 import ValidateAreaScreen from '../screens/AreaCreation/ValidateArea';
 
 export type RootStackParamList = {
