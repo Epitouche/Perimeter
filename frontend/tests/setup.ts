@@ -1,4 +1,3 @@
-import { setup } from '@nuxt/test-utils';
+import { setup } from "@nuxt/test-utils";
 
-setup({
-});
+setup({});

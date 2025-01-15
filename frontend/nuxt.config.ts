@@ -16,7 +16,9 @@ export default defineNuxtConfig({
     "@nuxt/eslint",
     "@pinia/nuxt",
     "@nuxtjs/google-fonts",
-    ...(process.env.NODE_ENV != "production" ? ["@nuxt/test-utils/module"] : []),
+    ...(process.env.NODE_ENV != "production"
+      ? ["@nuxt/test-utils/module"]
+      : []),
   ],
 
   css: ["~/assets/css/main.css"],
