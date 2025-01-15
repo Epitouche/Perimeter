@@ -168,7 +168,7 @@ const cancelAction = () => {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="w-20 h-20"
-        />
+        >
         <UButton
           :class="[
             isServiceConnectedOrInvalid(app.name)
