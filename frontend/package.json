@@ -31,7 +31,10 @@
     "@iconify-json/bytesize": "^1.2.2",
     "@iconify-json/logos": "^1.2.4",
     "@nuxt/test-utils": "^3.15.4",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^16.6.0",
     "typescript": "^5.7.3",
+    "vitest": "^2.1.8",
     "vue-tsc": "^2.2.0"
   }
 }
