@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
@@ -26,39 +26,37 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
 
   const [service, setService] = React.useState<Service | null>(null);
 
-  const getService = async () => {
-    try {
-      const response = await fetch(
-        `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+  useEffect(() => {
+    const getService = async () => {
+      try {
+        const response = await fetch(
+          `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      );
+        );
 
-      let data = await response.json();
-      setName(data[0].name);
-      setService(data[0].service);
-    } catch (error) {
-      if (error.code === 401) {
-        navigation.navigate('Login');
+        let data = await response.json();
+        setName(data[0].name);
+        setService(data[0].service);
+      } catch (error) {
+        if (error.code === 401) {
+          navigation.navigate('Login');
+        }
+        console.error('Error fetching service:', error);
       }
-      console.error('Error fetching service:', error);
-    }
-  };
-  getService();
+    };
+    getService();
+  }, [ipAddress, token]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Area</Text>
-      <View
-        style={[
-          styles.actionBox,
-          { backgroundColor: service?.color, borderRadius: 8 },
-        ]}>
+      <View style={[styles.actionBox, { backgroundColor: service?.color }]}>
         <Text style={styles.boxText}>{name}</Text>
       </View>
       <View style={styles.line} />

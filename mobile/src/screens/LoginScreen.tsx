@@ -1,12 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image,
-  Alert,
 } from 'react-native';
 import 'url-search-params-polyfill';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,17 +14,31 @@ import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleMicrosoftLogin } from './Oauth2/MicrosoftOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
+import { SvgFromUri } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [services, setServices] = useState([
+    {
+      color: '',
+      created_at: '',
+      description: '',
+      icon: '',
+      id: 0,
+      name: '',
+      oauth: false,
+      update_at: '',
+    },
+  ]);
   const [errors, setErrors] = useState({ username: '', password: '' });
-  const { ipAddress, setToken, setService } = useContext(AppContext);
+  const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
   const handleLogin = async () => {
     let hasError = false;
+
     const newErrors = { username: '', password: '' };
 
     if (!username) {
@@ -53,14 +65,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           },
         );
 
-        if (response.ok) {
-          const data = await response.json();
-          setToken(data.token);
-          navigation.navigate('AreaView');
-        } else {
-          console.error('Error:', response.status);
-          Alert.alert('Error logging in, please try again');
-        }
+        const data = await response.json();
+        setToken(data.token);
+        navigation.navigate('AreaView');
       } catch (error) {
         if (error.code === 401) {
           navigation.navigate('Login');
@@ -74,6 +81,26 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     console.log('Switch to signup');
     navigation.navigate('SignUp');
   };
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      const serviceResponse = await fetch(
+        `http://${ipAddress}:8080/api/v1/service/info`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const serviceData = await serviceResponse.json();
+      setServices(serviceData);
+      console.log(serviceData.filter(service => service.oauth));
+    };
+
+    fetchServices();
+  }, [ipAddress]);
 
   return (
     <View style={styles.container}>
@@ -124,46 +151,44 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            setService('Microsoft');
-            HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
-          }}>
-          <Image
-            source={{ uri: 'https://img.icons8.com/color/50/microsoft.png' }}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setService('Github');
-            HandleGithubLogin(setToken, navigation, ipAddress, true);
-          }}>
-          <Image
-            source={{ uri: 'https://img.icons8.com/ios-glyphs/50/github.png' }}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setService('Spotify');
-            HandleSpotifyLogin(setToken, navigation, ipAddress);
-          }}>
-          <Image
-            source={{ uri: 'https://img.icons8.com/color/50/spotify.png' }}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setService('Google');
-            HandleGoogleLogin(setToken, navigation, ipAddress, true);
-          }}>
-          <Image
-            source={{ uri: 'https://img.icons8.com/color/50/google-logo.png' }}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
+        {services
+          .filter(service => service.oauth)
+          .map(service => (
+            <TouchableOpacity
+              style={{
+                backgroundColor: service.color,
+                borderRadius: 8,
+                marginHorizontal: 10,
+                padding: 5,
+              }}
+              key={service.name}
+              onPress={() => {
+                setService(service.name);
+                switch (service.name) {
+                  case 'Github':
+                    HandleGithubLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Microsoft':
+                    HandleMicrosoftLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Spotify':
+                    HandleSpotifyLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  case 'Google':
+                    HandleGoogleLogin(setToken, navigation, ipAddress, true);
+                    break;
+                  default:
+                    break;
+                }
+              }}>
+              <SvgFromUri
+                uri={service.icon}
+                width={50}
+                height={50}
+                accessibilityLabel={`Connect with ${service.name}`}
+              />
+            </TouchableOpacity>
+          ))}
       </View>
     </View>
   );
