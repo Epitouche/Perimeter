@@ -3,6 +3,15 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { NavigationProp } from '@react-navigation/native';
 
+/**
+ * BottomNavBar component renders a bottom navigation bar with four buttons.
+ * Each button navigates to a different screen when pressed.
+ *
+ * @param {Object} props - The component props.
+ * @param {NavigationProp<any>} props.navigation - The navigation prop used to navigate between screens.
+ *
+ * @returns {JSX.Element} The BottomNavBar component.
+ */
 const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
   return (
     <View style={styles.navbarContainer}>

@@ -3,6 +3,19 @@ import { GITHUB_MOBILE_SECRET, GITHUB_MOBILE_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
+/**
+ * Handles the GitHub login process using OAuth2.
+ *
+ * @param {Function} setToken - Function to set the authentication token.
+ * @param {Object} navigation - Navigation object to navigate between screens.
+ * @param {string} ipAddress - IP address of the server handling the OAuth callback.
+ * @param {boolean} [login=false] - Flag to indicate if the user is logging in.
+ * @param {string} [bearerToken=''] - Bearer token for authentication.
+ *
+ * @throws {Error} If the login process fails for any reason other than user cancellation.
+ *
+ * @returns {Promise<void>} A promise that resolves when the login process is complete.
+ */
 async function HandleGithubLogin(
   setToken: any,
   navigation: any,
