@@ -328,6 +328,31 @@ paths:
       summary: get action info of service id
       tags:
       - Action
+  /action/info/action/:idAction:
+    get:
+      consumes:
+      - application/json
+      description: get action info of action id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Action'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: get action info of action id
+      tags:
+      - Action
   /area:
     delete:
       consumes:
@@ -1016,6 +1041,31 @@ paths:
       security:
       - bearerAuth: []
       summary: get reaction info
+      tags:
+      - Reaction
+  /reaction/info/reaction/:idReaction:
+    get:
+      consumes:
+      - application/json
+      description: get reaction info of reaction id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Reaction'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - bearerAuth: []
+      summary: get reaction info of reaction id
       tags:
       - Reaction
   /service/info:

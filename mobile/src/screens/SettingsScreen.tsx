@@ -13,9 +13,25 @@ import { RootStackParamList } from '../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SettingsScreen'>;
 
+/**
+ * SettingsScreen component displays the settings screen where users can view and update their information.
+ *
+ * @param {object} props - The component props.
+ * @param {any} props.navigation - The navigation object used to navigate between screens.
+ *
+ * @returns {JSX.Element} The SettingsScreen component.
+ */
+
+/**
+ * Fetches user information from the server and updates the state with the fetched data.
+ * If the response status is 401, navigates to the Login screen.
+ *
+ * @async
+ * @function fetchUserInfo
+ * @returns {Promise<void>} A promise that resolves when the user information is fetched and state is updated.
+ */
 const SettingsScreen = ({ navigation }: { navigation: any }) => {
-  const { ipAddress, setIpAddress, setToken } = useContext(AppContext);
-  // const [timezone, setTimezone] = useState('GMT');
+  const { ipAddress, token, setIpAddress, setToken } = useContext(AppContext);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
@@ -24,14 +40,22 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
       try {
         const response = await fetch(
           `http://${ipAddress}:8080/api/v1/user/info`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         const data = await response.json();
+        console.log(data);
         setUsername(data.username);
         setEmail(data.email);
-      } catch (error) {
-        if (error.code === 401) {
+        if (response.status === 401) {
           navigation.navigate('Login');
         }
+      } catch (error) {
         console.error('Error fetching user info:', error);
       }
     };
@@ -43,30 +67,12 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
       <View style={styles.divider} />
-      <View style={styles.profileSection}>
-        <View style={styles.profilePicture} />
-        <Text style={styles.profileText}>
-          Change your profile picture and customize your account
-        </Text>
-      </View>
+
       <View style={styles.inputSection}>
         <Text style={styles.label}>Username</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Enter your username"
-          accessibilityHint="Enter your username here"
-        />
+        <Text style={styles.infoContainer}>{username}</Text>
         <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          accessibilityHint="Enter your email address here"
-        />
+        <Text style={styles.infoContainer}>{email}</Text>
         <Text style={styles.label}>IpAddress</Text>
         <TextInput
           style={styles.input}
@@ -75,20 +81,6 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           placeholder="Enter your IpAddress"
           accessibilityHint="Enter your IP address here"
         />
-        {/* Time Zone setting for latter use (Maybe) */}
-        {/* <Text style={styles.label}>Timezone</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={timezone}
-            onValueChange={(itemValue) => setTimezone(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="GMT" value="GMT" />
-            <Picker.Item label="UTC" value="UTC" />
-            <Picker.Item label="EST" value="EST" />
-            <Picker.Item label="PST" value="PST" />
-          </Picker>
-        </View> */}
       </View>
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
@@ -123,6 +115,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  infoContainer: {
+    marginBottom: 20,
   },
   divider: {
     height: 1,
@@ -174,14 +169,14 @@ const styles = StyleSheet.create({
   },
   button: {
     color: 'white',
-    backgroundColor: '#007AFF',
+    backgroundColor: '#001DDA',
     paddingVertical: 10,
     textAlign: 'center',
     borderRadius: 5,
   },
   disconnectButton: {
     color: 'white',
-    backgroundColor: '#FF0000',
+    backgroundColor: '#E60000',
     paddingVertical: 10,
     textAlign: 'center',
     borderRadius: 5,

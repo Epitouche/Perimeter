@@ -40,6 +40,7 @@ func NewReactionApi(
 	}
 	apiRoutes = apiRoutes.Group("/info")
 	api.GetReactionsInfo(apiRoutes)
+	api.GetRereactionInfoByReactionID(apiRoutes)
 	return &api
 }
 

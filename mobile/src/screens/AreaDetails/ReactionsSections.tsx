@@ -8,6 +8,25 @@ import { RootStackParamList } from '../../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 
+/**
+ * Component for displaying and modifying reaction options for a specific area.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {object} props.route - The route object containing navigation parameters.
+ * @param {object} props.route.params - The parameters passed to the route.
+ * @param {object} props.route.params.area - The area object containing reaction details.
+ * @param {object} props.route.params.area.reaction - The reaction object containing service and options.
+ * @param {object} props.route.params.area.reaction.service - The service object containing service details.
+ * @param {string} props.route.params.area.reaction.service.name - The name of the service.
+ * @param {string} props.route.params.area.reaction.service.color - The color associated with the service.
+ * @param {object} props.route.params.area.reaction_option - The reaction options for the area.
+ * @param {number} props.route.params.area.action_refresh_rate - The refresh rate for the area action.
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * <ReactionsSections route={route} />
+ */
 const ReactionsSections = ({ route }: Props) => {
   const { area } = route.params;
   const { ipAddress, token } = useContext(AppContext);
@@ -17,6 +36,13 @@ const ReactionsSections = ({ route }: Props) => {
   }>({});
   console.log('Area refreshrate:', area.action_refresh_rate);
 
+  /**
+   * Handles the change of reaction options.
+   *
+   * @param {string} key - The key of the reaction option to change.
+   * @param {any} value - The new value of the reaction option.
+   * @param {any} type - The type of the reaction option, used to determine if the value should be converted to a number.
+   */
   const handleReactionOptionChange = (key: string, value: any, type: any) => {
     setSelectedReactionOptions(prev => ({
       ...prev,
@@ -24,6 +50,15 @@ const ReactionsSections = ({ route }: Props) => {
     }));
   };
 
+  /**
+   * Handles the save reaction action by updating the area with the selected reaction options.
+   * Sends a PUT request to the server to update the area.
+   *
+   * @async
+   * @function handleSaveReaction
+   * @returns {Promise<void>} - A promise that resolves when the area is updated.
+   * @throws {Error} - Throws an error if the update request fails.
+   */
   const handleSaveReaction = async () => {
     const newArea = {
       ...area,

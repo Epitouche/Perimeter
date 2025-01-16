@@ -3,6 +3,19 @@ import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 import { MICROSOFT_CLIENT_ID } from '@env';
 
+/**
+ * Handles Microsoft OAuth2 login process.
+ *
+ * @param {Function} setToken - Function to set the authentication token.
+ * @param {Object} navigation - Navigation object to navigate between screens.
+ * @param {string} ipAddress - IP address of the server to handle the callback.
+ * @param {boolean} [login=false] - Flag to indicate if the user is logging in.
+ * @param {string} [bearerToken=''] - Bearer token for authentication.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the login process is complete.
+ *
+ * @throws {Error} - Throws an error if the login process fails.
+ */
 async function HandleMicrosoftLogin(
   setToken: any,
   navigation: any,
