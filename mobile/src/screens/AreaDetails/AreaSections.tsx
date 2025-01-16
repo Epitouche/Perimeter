@@ -34,11 +34,15 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 const AreaSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
   console.log('Area:', area);
-  console.log("refresh rate", area.action_refresh_rate);
+  console.log('refresh rate', area.action_refresh_rate);
   const { ipAddress, token } = useContext(AppContext);
   const [title, setTitle] = useState<string>(area.title);
   const [description, setDescription] = useState<string>(area.description);
-  const [refreshRate, setRefreshRate] = useState<number>(isNaN(Number(area.action_refresh_rate)) ? 10 : Number(area.action_refresh_rate));
+  const [refreshRate, setRefreshRate] = useState<number>(
+    isNaN(Number(area.action_refresh_rate))
+      ? 10
+      : Number(area.action_refresh_rate),
+  );
   const [isAreaModalVisible, setIsAreaModalVisible] = useState(false);
   const [isEnabled, setIsEnabled] = useState(area.enable);
 
@@ -145,10 +149,15 @@ const AreaSections = ({ navigation, route }: Props) => {
       <View
         style={[
           styles.subContainer,
-          { borderColor: 'black', borderWidth: 1, borderRadius: 10, maxWidth: '100%' },
+          {
+            borderColor: 'black',
+            borderWidth: 1,
+            borderRadius: 10,
+            maxWidth: '100%',
+          },
         ]}>
         <View
-          style={[{ flexDirection: 'row', justifyContent: 'space-between'}]}>
+          style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
           <View style={[{ flexDirection: 'column' }]}>
             <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
               <Text style={[styles.label, { color: 'black' }]}>title:</Text>
