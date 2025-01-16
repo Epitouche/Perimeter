@@ -13,6 +13,23 @@ import { RootStackParamList } from '../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SettingsScreen'>;
 
+/**
+ * SettingsScreen component displays the settings screen where users can view and update their information.
+ *
+ * @param {object} props - The component props.
+ * @param {any} props.navigation - The navigation object used to navigate between screens.
+ *
+ * @returns {JSX.Element} The SettingsScreen component.
+ */
+ 
+/**
+ * Fetches user information from the server and updates the state with the fetched data.
+ * If the response status is 401, navigates to the Login screen.
+ *
+ * @async
+ * @function fetchUserInfo
+ * @returns {Promise<void>} A promise that resolves when the user information is fetched and state is updated.
+ */
 const SettingsScreen = ({ navigation }: { navigation: any }) => {
   const { ipAddress, token, setIpAddress, setToken } = useContext(AppContext);
   const [username, setUsername] = useState('');

@@ -14,12 +14,36 @@ import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
 
+/**
+ * AreasScreen component fetches and displays a list of areas.
+ * 
+ * @param {Props} props - The props object containing navigation.
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <AreasScreen navigation={navigation} />
+ * )
+ */
 const AreasScreen = ({ navigation }: Props) => {
   const [areas, setAreas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { ipAddress, token } = useContext(AppContext);
 
   useEffect(() => {
+    /**
+     * Fetches areas from the API.
+     *
+     * This function sends a GET request to the API to retrieve area data.
+     * If the request is successful, the data is stored in the state using `setAreas`.
+     * If the request fails with a 401 status code, the user is navigated to the 'Login' screen.
+     * Regardless of the outcome, the loading state is set to false after the request completes.
+     *
+     * @async
+     * @function fetchAreas
+     * @throws Will throw an error if the fetch request fails for reasons other than a 401 status code.
+     */
     const fetchAreas = async () => {
       try {
         const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, {

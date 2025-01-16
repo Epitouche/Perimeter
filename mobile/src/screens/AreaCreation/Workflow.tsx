@@ -6,13 +6,33 @@ import { RootStackParamList } from '../../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 
+/**
+ * WorkflowScreen component renders the workflow creation screen.
+ * 
+ * @param {Object} props - The component props.
+ * @param {any} props.navigation - The navigation object used to navigate between screens.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @example
+ * <WorkflowScreen navigation={navigation} />
+ * 
+ * @component
+ * 
+ * @accessibility
+ * - The screen title has an accessibility label "Add Area Title" and hint "Displays the title of the screen".
+ * - The action text has an accessibility label "Action Text" and hint "Displays the action text".
+ * - The "Add Action" button has an accessibility label "Add Action Button" and hint "Navigates to the Add Action screen".
+ * - The reaction text has an accessibility label "Reaction Text" and hint "Displays the reaction text".
+ * - The "Add Reaction" button is disabled and has an accessibility label "Add Reaction Button Disabled" and hint "Button is disabled and cannot be pressed".
+ */
 const WorkflowScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       <Text
         style={styles.title}
         accessibilityLabel="Add Area Title"
-        accessibilityHint="Displays the title of the screen">
+        accessibilityHint="Add the title of the area">
         Add Area
       </Text>
       <View style={styles.actionBox}>

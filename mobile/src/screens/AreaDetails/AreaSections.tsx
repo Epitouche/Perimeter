@@ -15,6 +15,22 @@ import { RootStackParamList } from '../../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 
+/**
+ * Component for displaying and managing area details.
+ *
+ * @param {object} props - The component props.
+ * @param {object} props.navigation - The navigation object for navigating between screens.
+ * @param {object} props.route - The route object containing parameters passed to this screen.
+ * @param {object} props.route.params - The parameters passed to this screen.
+ * @param {object} props.route.params.area - The area object containing details of the area.
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * <AreaSections navigation={navigation} route={route} />
+ *
+ * @component
+ */
 const AreaSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
   const { ipAddress, token } = useContext(AppContext);
@@ -24,6 +40,15 @@ const AreaSections = ({ navigation, route }: Props) => {
   const [isAreaModalVisible, setIsAreaModalVisible] = useState(false);
   const [isEnabled, setIsEnabled] = useState(area.enable);
 
+  /**
+   * Handles the saving of an area by sending a PUT request to the server.
+   * Updates the area with the provided title, description, and refresh rate.
+   * 
+   * @async
+   * @function handleSaveArea
+   * @returns {Promise<void>} A promise that resolves when the area is saved.
+   * @throws Will log an error message if the request fails.
+   */
   const handleSaveArea = async () => {
     console.log(title, description, refreshRate);
     const newArea = {
@@ -52,6 +77,19 @@ const AreaSections = ({ navigation, route }: Props) => {
     setIsAreaModalVisible(false);
   };
 
+  /**
+   * Deletes an area by sending a DELETE request to the server.
+   * 
+   * @async
+   * @function deleteArea
+   * @returns {Promise<void>} A promise that resolves when the area is deleted.
+   * @throws Will throw an error if the fetch request fails.
+   * 
+   * @example
+   * deleteArea()
+   *   .then(() => console.log('Area deleted successfully'))
+   *   .catch(error => console.error('Error deleting area:', error));
+   */
   const deleteArea = async () => {
     try {
       const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, {
@@ -70,6 +108,14 @@ const AreaSections = ({ navigation, route }: Props) => {
     }
   };
 
+  /**
+   * Updates the status of an area by sending a PUT request to the server.
+   *
+   * @param {boolean} value - The new status value to set for the area.
+   * @returns {Promise<void>} A promise that resolves when the area status is updated.
+   *
+   * @throws Will throw an error if the fetch request fails.
+   */
   const handleAreaStatus = async (value: boolean) => {
     const newArea = {
       ...area,
