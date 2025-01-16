@@ -14,13 +14,27 @@ const configIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.types.map((type) => [type.id, false])),
 );
 
-const state = reactive<{ [key: number]: Record<string, string | number> }>(
+// const state = reactive<{ [key: number]: Record<string, string | number> }>(
+//   Object.fromEntries(
+//     props.types.map((type) => [
+//       type.id,
+//       typeof type.option === "string"
+//         ? JSON.parse(type.option)
+//         : type.option || {},
+//     ]),
+//   ),
+// );
+
+const state = reactive<{ [key: number]: Record<string, string | number | undefined> }>(
   Object.fromEntries(
     props.types.map((type) => [
       type.id,
       typeof type.option === "string"
         ? JSON.parse(type.option)
-        : type.option || {},
+        : Object.keys(type.option || {}).reduce((acc, key) => {
+            acc[key] = undefined;
+            return acc;
+          }, {} as Record<string, undefined>),
     ]),
   ),
 );
@@ -70,7 +84,7 @@ const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
       Object.fromEntries(
         Object.keys(state[type.id]).map((key) => {
           const value = state[type.id][key];
-          return [key, typeof value];
+          return [key, value === undefined || value === null ? "string" : typeof value];
         }),
       ),
     ]),
@@ -87,38 +101,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <UContainer
-    :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
-    class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full"
-  >
+  <UContainer :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
+    class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full">
     <div v-for="type in props.types" :key="type.id">
-      <UContainer
-        :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
+      <UContainer :ui="{ padding: 'px-0', constrained: 'max-w-none' }"
         class="custom_card flex flex-col justify-evenly items-center gap-4 text-white"
-        :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
-        tabindex="0"
-        @click="openConfig(type.id)"
-        @keydown.space="openConfig(type.id)"
-      >
+        :style="{ backgroundColor: props.serviceInfo?.color || 'black' }" tabindex="0" @click="openConfig(type.id)"
+        @keydown.space="openConfig(type.id)">
         <h4 class="clamp-1-line p-2 capitalize text-center break-words w-full">
           {{ formatString(type.name) }}
         </h4>
       </UContainer>
 
-      <UModal
-        v-model="configIsOpen[type.id]"
-        :ui="{
-          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
-          width: 'w-fit',
-        }"
-        :style="{ borderColor: props.serviceInfo?.color || 'black' }"
-      >
+      <UModal v-model="configIsOpen[type.id]" :ui="{
+        base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
+        width: 'w-fit',
+      }" :style="{ borderColor: props.serviceInfo?.color || 'black' }">
         <template #default>
-          <UForm
-            :state="state[type.id]"
-            class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
-            @submit.prevent="onSubmit(type.id, type.name)"
-          >
+          <UForm :state="state[type.id]" class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
+            @submit.prevent="onSubmit(type.id, type.name)">
             <h2 class="text-center">
               {{ formatString(type.name) }}
             </h2>
@@ -126,42 +127,25 @@ onMounted(() => {
               {{ type.description }}
             </h6>
 
-            <UFormGroup
-              v-for="(value, key) in state[type.id]"
-              :key="key"
-              :label="key"
-              :name="key"
-              :ui="{
-                label: { base: 'capitalize text-2xl pl-5 font-semibold' },
-              }"
-              class="self-center min-w-[80%]"
-            >
-              <UInput
-                v-model="state[type.id][key]"
-                :type="
-                  fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
-                "
+            <UFormGroup v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key" :ui="{
+              label: { base: 'capitalize text-2xl pl-5 font-semibold' },
+            }" class="self-center min-w-[80%]">
+              <UInput v-model="state[type.id][key]" :type="fieldTypes[type.id][key] === 'number' ? 'number' : 'text'"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
                   size: { sm: 'text-3xl' },
-                }"
-                :placeholder="'Ex: ' + value + ' ...'"
-              />
+                }" :placeholder="typeof type.option === 'object' && type.option !== null && (type.option as Record<string, any>)[key]
+                    ? 'Ex: ' + String((type.option as Record<string, any>)[key]) : 'Ex: ' + key" 
+                  :value="state[type.id][key] === undefined ? '' : 'Ex: ' + state[type.id][key]" />
             </UFormGroup>
 
             <div class="flex flex-row justify-evenly gap-4 pt-4">
               <UButton
                 class="text-3xl font-semibold px-5 py-3 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
-                tabindex="0"
-                @click="openConfig(type.id)"
-              >
+                tabindex="0" @click="openConfig(type.id)">
                 Cancel
               </UButton>
-              <UButton
-                type="submit"
-                class="text-3xl font-semibold px-5 py-3"
-                tabindex="0"
-              >
+              <UButton type="submit" class="text-3xl font-semibold px-5 py-3" tabindex="0">
                 Submit
               </UButton>
             </div>
