@@ -73,7 +73,7 @@ function formatName(name: string): string {
           class="custom_card flex flex-col !gap-0 text-white overflow-hidden"
           :style="{ backgroundColor: service.color }"
         >
-          <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" />
+          <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" >
           <h5
             class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
           >
@@ -87,7 +87,7 @@ function formatName(name: string): string {
         class="custom_card flex flex-col !gap-0 text-white overflow-hidden opacity-40 cursor-not-allowed"
         :style="{ backgroundColor: service.color }"
       >
-        <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" />
+        <img :src="service.icon" :alt="service.name" class="w-28 h-28 p-0" >
         <h5
           class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
         >
