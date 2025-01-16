@@ -1,10 +1,12 @@
 name: area-prod
 services:
   client_mobile:
+    env_file:
+      - mobile/.env
     build:
-      context: ./
+      context: mobile/
       target: build-apk
-      dockerfile: ./mobile/Dockerfile
+      dockerfile: Dockerfile
     extends:
       file: ./docker-compose.template.yaml
       service: client_mobile
