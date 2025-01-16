@@ -23,6 +23,7 @@
       - [Frontend POCs](#frontend-pocs)
       - [Backend POCs](#backend-pocs)
       - [Mobile POCs](#mobile-pocs)
+      - [Database Comparative Study](#database-comparative-study)
   - [Tech Stack](#tech-stack)
     - [Frontend Tech](#frontend-tech)
     - [Mobile Tech](#mobile-tech)
@@ -100,7 +101,11 @@ A comparative study of different backend technologies is available:
 [Comparative Study](poc/mobile/)
 
 - [React-Native Documentation](poc/mobile/react-native/README.md)
-- [Kotlin](poc/mobile/kotlin/)
+- [Kotlin Documentation](poc/mobile/kotlin/Kotlin.md)
+
+#### Database Comparative Study
+
+- [Database Documentation](poc/comparativeStudyDatabase.md)
 
 ---
 
