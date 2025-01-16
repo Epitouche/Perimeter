@@ -36,6 +36,13 @@ const getServiceInfo = async () => {
   }
 };
 
+function formatName(name: string): string {
+  return name
+    .replace(/^action_/, "")
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
 onMounted(() => {
   getServiceInfo();
 });
@@ -55,7 +62,7 @@ watch(
   <div
     v-if="isSelected"
     :class="[
-      'flex flex-row justify-evenly items-center px-12 py-7 gap-10 rounded-3xl w-full',
+      'flex flex-row justify-start items-center px-10 py-7 gap-10 rounded-3xl w-full',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
     :style="{ backgroundColor: serviceInfo ? serviceInfo.color : 'black' }"
@@ -64,7 +71,7 @@ watch(
     <img
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
-      class="w-16 h-16 p-0"
+      class="w-fit h-[8vh] p-0"
     >
     <h2
       :class="[
@@ -72,7 +79,7 @@ watch(
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
       ]"
     >
-      {{ typeName }}
+      {{ formatName(typeName) }}
     </h2>
   </div>
 

@@ -23,24 +23,28 @@ async function loadConnectionInfos() {
   }
 }
 
-function toggleMenu() {
-  menuOpen.value = !menuOpen.value;
-}
+// function toggleMenu() {
+//   menuOpen.value = !menuOpen.value;
+// }
 
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
 };
+
+const items = [
+  [{
+    label: 'Name',
+    slot: 'name',
+  }]
+]
+
 </script>
 
 <template>
   <div class="flex items-center p-[1.5em] bg-custom_color-bg_section">
     <div class="flex items-center gap-[1em] grow-[0.95]">
-      <img
-        src="../public/PerimeterIcon.png"
-        alt="perimeter-icon"
-        class="h-[4em] w-[4em]"
-      >
+      <img src="../public/PerimeterIcon.png" alt="perimeter-icon" class="h-[4em] w-[4em]">
       <span class="font-black text-[2.5em]">Perimeter</span>
     </div>
 
@@ -60,40 +64,28 @@ const clearTokenAndLogout = () => {
       </nav>
     </div>
 
-    <div class="ml-auto relative">
-      <UButton
-        class="flex items-center justify-center bg-white h-14 w-14 shadow-lg rounded-full cursor-pointer"
-        tabindex="0"
-        @click="toggleMenu"
-      >
+    <UDropdown :items="items" :popper="{ placement: 'bottom', arrow: true }">
+      <UButton class="flex items-center justify-center bg-white h-14 w-14 shadow-lg rounded-full cursor-pointer"
+        tabindex="0">
         <Icon name="bytesize:user" class="text-black h-14 w-14" />
       </UButton>
-      <div
-        v-if="menuOpen"
-        class="absolute top-full mt-4 right-0 p-4 rounded shadow-md flex flex-col gap-4 min-w-[200px] z-[1000] bg-custom_color-bg_section"
-      >
+      <div v-if="menuOpen"
+        class="absolute top-full mt-4 right-0 p-4 rounded shadow-md flex flex-col gap-4 min-w-[200px] z-[1000] bg-custom_color-bg_section">
         <div class="menu-header flex items-center justify-between gap-[1em]">
           <span class="font-[400] text-[1em]"> {{ username }}</span>
         </div>
 
-        <NuxtLink to="/settings" class="nav-link" tabindex="0"
-          >Settings</NuxtLink
-        >
-        <NuxtLink
-            to="/login"
-            tabindex="0"
-            @keydown.enter="clearTokenAndLogout">
-        <UButton
-          class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
-          tabindex="-1"
-          @click="clearTokenAndLogout"
-        >
-          <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
-          Logout
-        </UButton>
-      </NuxtLink>
+        <NuxtLink to="/settings" class="nav-link" tabindex="0">Settings</NuxtLink>
+        <NuxtLink to="/login" tabindex="0" @keydown.enter="clearTokenAndLogout">
+          <UButton
+            class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
+            tabindex="-1" @click="clearTokenAndLogout">
+            <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
+            Logout
+          </UButton>
+        </NuxtLink>
       </div>
-    </div>
+    </UDropdown>
   </div>
 </template>
 

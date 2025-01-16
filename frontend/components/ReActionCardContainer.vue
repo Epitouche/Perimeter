@@ -100,7 +100,7 @@ onMounted(() => {
         @click="openConfig(type.id)"
         @keydown.space="openConfig(type.id)"
       >
-        <h4 class="clamp-2-lines capitalize text-center break-words w-full">
+        <h4 class="clamp-1-line p-2 capitalize text-center break-words w-full">
           {{ formatString(type.name) }}
         </h4>
       </UContainer>
@@ -118,12 +118,12 @@ onMounted(() => {
             class="flex flex-col gap-12 p-5 bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)"
           >
-            <h2 class="text-center pb-2">
+            <h2 class="text-center">
               {{ formatString(type.name) }}
             </h2>
-            <h5 class="text-center -mt-6">
+            <h6 class="text-center -mt-6 flex-wrap">
               {{ type.description }}
-            </h5>
+            </h6>
 
             <UFormGroup
               v-for="(value, key) in state[type.id]"
@@ -131,9 +131,10 @@ onMounted(() => {
               :label="key"
               :name="key"
               :ui="{ label: { base: 'capitalize text-2xl pl-5 font-semibold' } }"
+              class="self-center min-w-[80%]"
             >
               <UInput
-                v-model="state[type.id][key] as string | number | undefined"
+                v-model="state[type.id][key]"
                 :type="
                   fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
                 "
@@ -141,7 +142,7 @@ onMounted(() => {
                   placeholder: '!px-5 !py-3 font-light',
                   size: { sm: 'text-3xl' },
                 }"
-                :placeholder="key + '...'"
+                :placeholder="'Ex: ' + value + ' ...'"
               />
             </UFormGroup>
 

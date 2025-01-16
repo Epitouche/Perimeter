@@ -75,33 +75,21 @@ onMounted(() => {
       <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
-    <UContainer
-      v-else-if="serviceInfo"
-      :ui="{ constrained: 'max-w-none' }"
-      class="py-10"
-      :style="{ backgroundColor: serviceInfo.color }"
-    >
+    <UContainer v-else-if="serviceInfo" :ui="{ constrained: 'max-w-none' }" class="py-10"
+      :style="{ backgroundColor: serviceInfo.color }">
       <div class="px-10">
         <BackButton link="/workflow/actions" :is-white="true" />
       </div>
       <div class="flex flex-col justify-center items-center gap-5">
         <h1 class="text-white">Add an action</h1>
-        <img
-          :src="serviceInfo.icon"
-          :alt="serviceInfo.name"
-          class="w-[10vw] h-[10vh]"
-        >
+        <img :src="serviceInfo.icon" :alt="serviceInfo.name" class="w-[10vw] h-[10vh]">
         <h2 class="capitalize text-white">
           {{ serviceInfo.name }}
         </h2>
       </div>
     </UContainer>
     <div v-if="actions">
-      <ReActionCardContainer
-        type-name="action"
-        :types="actions"
-        :service-info="serviceInfo"
-      />
+      <ReActionCardContainer type-name="action" :types="actions" :service-info="serviceInfo" />
     </div>
   </div>
 </template>
