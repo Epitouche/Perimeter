@@ -3,6 +3,19 @@ import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 import { GOOGLE_MOBILE_CLIENT_ID } from '@env';
 
+/**
+ * Handles the Google login process using OAuth2.
+ *
+ * @param {Function} setToken - Function to set the authentication token.
+ * @param {any} navigation - Navigation object to navigate between screens.
+ * @param {string} ipAddress - IP address of the backend server.
+ * @param {boolean} [login=true] - Flag to determine if the user should be navigated to the AreaView screen after login.
+ * @param {string} [bearerToken=''] - Optional bearer token for authentication.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the login process is complete.
+ *
+ * @throws {Error} - Throws an error if the login process fails, except when the user cancels the flow.
+ */
 async function HandleGoogleLogin(
   setToken: any,
   navigation: any,

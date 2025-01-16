@@ -52,6 +52,33 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+/**
+ * Navigation component that sets up the navigation structure for the application.
+ *
+ * This component uses React Navigation to define a stack navigator with various screens.
+ * It also configures deep linking for the application.
+ *
+ * @returns {JSX.Element} The NavigationContainer component with the defined stack navigator.
+ *
+ * @example
+ * ```tsx
+ * import Navigation from './Navigation';
+ *
+ * const App = () => {
+ *   return (
+ *     <Navigation />
+ *   );
+ * };
+ *
+ * export default App;
+ * ```
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Navigation />
+ * ```
+ */
 const Navigation = () => {
   const linking = {
     prefixes: ['com.perimeter-epitech://'],

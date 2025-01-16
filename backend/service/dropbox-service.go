@@ -17,6 +17,26 @@ import (
 
 // Constructor
 
+// DropboxService defines the interface for interacting with Dropbox services.
+// It includes methods for authentication, user information retrieval, file and folder management,
+// and specific actions and reactions related to Dropbox.
+//
+// Methods:
+//
+// - GetServiceActionInfo: Returns a list of available actions for the service.
+// - GetServiceReactionInfo: Returns a list of available reactions for the service.
+// - FindActionByName: Finds an action by its name and returns a function to execute the action.
+// - FindReactionByName: Finds a reaction by its name and returns a function to execute the reaction.
+// - AuthGetServiceAccessToken: Retrieves an access token using an authorization code.
+// - GetUserInfo: Retrieves user information using an access token.
+// - GetUserAllFolderAndFileList: Retrieves a list of all folders and files for a user.
+// - GetUserFolderAndFileList: Retrieves a list of folders and files for a user at a specific path.
+// - GetUserFileList: Filters and returns only files from a list of Dropbox entries.
+// - GetUserFolderList: Filters and returns only folders from a list of Dropbox entries.
+// - CountDropboxEntry: Counts the number of Dropbox entries in a list.
+// - GetPathDisplayDropboxEntry: Retrieves the display paths for a list of Dropbox entries.
+// - DropboxActionUpdateInFolder: Executes an action to update content in a folder.
+// - DropboxReactionSaveUrl: Executes a reaction to save a URL.
 type DropboxService interface {
 	// Service interface functions
 	GetServiceActionInfo() []schemas.Action
@@ -50,6 +70,15 @@ type DropboxService interface {
 	DropboxReactionSaveUrl(option json.RawMessage, area schemas.Area) string
 }
 
+// dropboxService is a struct that provides methods to interact with Dropbox services.
+// It contains repositories for Dropbox, Service, Area, and Token, as well as service information.
+//
+// Fields:
+// - repository: Interface for Dropbox repository operations.
+// - serviceRepository: Interface for service repository operations.
+// - areaRepository: Interface for area repository operations.
+// - tokenRepository: Interface for token repository operations.
+// - serviceInfo: Information about the service, represented by the Service schema.
 type dropboxService struct {
 	repository        repository.DropboxRepository
 	serviceRepository repository.ServiceRepository
@@ -58,6 +87,17 @@ type dropboxService struct {
 	serviceInfo       schemas.Service
 }
 
+// NewDropboxService creates a new instance of DropboxService with the provided repositories.
+// It initializes the service with the necessary repositories and service information.
+//
+// Parameters:
+//   - githubTokenRepository: repository.DropboxRepository
+//   - serviceRepository: repository.ServiceRepository
+//   - areaRepository: repository.AreaRepository
+//   - tokenRepository: repository.TokenRepository
+//
+// Returns:
+//   - DropboxService: a new instance of DropboxService
 func NewDropboxService(
 	githubTokenRepository repository.DropboxRepository,
 	serviceRepository repository.ServiceRepository,
@@ -81,10 +121,23 @@ func NewDropboxService(
 
 // Service interface functions
 
+// GetServiceInfo returns the service information for the Dropbox service.
+// It retrieves the service information from the dropboxService struct and
+// returns it as a schemas.Service type.
 func (service *dropboxService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
+// GetServiceActionInfo retrieves the service action information for Dropbox.
+// It constructs a default DropboxActionUpdateInFolder with a predefined path,
+// marshals it into JSON, and fetches the service information from the repository.
+// If any errors occur during marshalling or fetching the service information,
+// they are printed to the console. The function returns a slice of Action
+// containing the details of the Dropbox action.
+//
+// Returns:
+//
+//	[]schemas.Action: A slice containing the Dropbox action details.
 func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.DropboxActionUpdateInFolder{
 		Path: "folder/subfolder",
@@ -110,6 +163,12 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	}
 }
 
+// GetServiceReactionInfo retrieves the reaction information for the Dropbox service.
+// It initializes a default value for the DropboxSaveUrlReactionOption, marshals it into JSON,
+// and updates the service information by finding the service by name.
+// If any errors occur during marshaling or finding the service, they are printed to the console.
+// The function returns a slice of Reaction containing the name, description, service information,
+// and the marshaled option for saving a URL to a file in Dropbox.
 func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.DropboxSaveUrlReactionOption{
 		Path: "folder/subfolder/file.txt",
@@ -135,6 +194,14 @@ func (service *dropboxService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 }
 
+// FindActionByName returns a function that performs a specific action based on the provided name.
+// The returned function takes a channel, a JSON raw message, and an area schema as parameters.
+//
+// Parameters:
+//   - name: The name of the action to find.
+//
+// Returns:
+//   - A function that performs the specified action, or nil if the action name is not recognized.
 func (service *dropboxService) FindActionByName(
 	name string,
 ) func(c chan string, option json.RawMessage, area schemas.Area) {
@@ -146,6 +213,17 @@ func (service *dropboxService) FindActionByName(
 	}
 }
 
+// FindReactionByName returns a function that corresponds to the given reaction name.
+// The returned function takes a JSON raw message and an Area schema as parameters and returns a string.
+// If the reaction name matches a known reaction, the corresponding function is returned.
+// If the reaction name does not match any known reactions, nil is returned.
+//
+// Parameters:
+//   - name: The name of the reaction to find.
+//
+// Returns:
+//   - A function that takes a JSON raw message and an Area schema as parameters and returns a string,
+//     or nil if the reaction name does not match any known reactions.
 func (service *dropboxService) FindReactionByName(
 	name string,
 ) func(option json.RawMessage, area schemas.Area) string {
@@ -159,6 +237,17 @@ func (service *dropboxService) FindReactionByName(
 
 // Service specific functions
 
+// AuthGetServiceAccessToken exchanges an authorization code for a Dropbox access token.
+// It retrieves the client ID and client secret from environment variables, constructs
+// the request to the Dropbox API, and decodes the response into a Token schema.
+//
+// Parameters:
+//   - code: The authorization code received from Dropbox after user authorization.
+//
+// Returns:
+//   - token: A Token schema containing the access token, refresh token, and expiration time.
+//   - err: An error if the process fails at any step, including missing environment variables,
+//     request creation, or response decoding.
 func (service *dropboxService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
@@ -223,6 +312,15 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 	return token, nil
 }
 
+// GetUserInfo retrieves the current user's information from Dropbox using the provided access token.
+// It sends a POST request to the Dropbox API endpoint for getting the current account information.
+//
+// Parameters:
+//   - accessToken: A string containing the OAuth 2.0 access token for authenticating the request.
+//
+// Returns:
+//   - user: A schemas.User struct containing the user's email and display name.
+//   - err: An error if the request fails or the response cannot be decoded.
 func (service *dropboxService) GetUserInfo(
 	accessToken string,
 ) (user schemas.User, err error) {
@@ -263,12 +361,36 @@ func (service *dropboxService) GetUserInfo(
 	return user, nil
 }
 
+// GetUserAllFolderAndFileList retrieves a list of all folders and files for a user from Dropbox.
+// It takes the user's Dropbox token as an input and returns a slice of DropboxEntry schemas and an error, if any.
+//
+// Parameters:
+//   - userDropboxToken: A string representing the user's Dropbox access token.
+//
+// Returns:
+//   - folderAndFileList: A slice of DropboxEntry schemas representing the user's folders and files.
+//   - err: An error object if an error occurs during the retrieval process.
 func (service *dropboxService) GetUserAllFolderAndFileList(
 	userDropboxToken string,
 ) (folderAndFileList []schemas.DropboxEntry, err error) {
 	return service.GetUserFolderAndFileList(userDropboxToken, "")
 }
 
+// GetUserFolderAndFileList retrieves the list of folders and files from the user's Dropbox account
+// for the specified path.
+//
+// Parameters:
+//   - userDropboxToken: The OAuth token for the user's Dropbox account.
+//   - path: The path in the Dropbox account to list the folders and files from.
+//
+// Returns:
+//   - folderAndFileList: A slice of DropboxEntry structs representing the folders and files.
+//   - err: An error if the request fails or the response cannot be decoded.
+//
+// The function makes an HTTP POST request to the Dropbox API to list the folders and files
+// at the specified path. It sets the necessary headers, including the Authorization header
+// with the user's Dropbox token. The response is decoded into a DropboxListFolderResult struct,
+// and the entries are returned as a slice of DropboxEntry structs.
 func (service *dropboxService) GetUserFolderAndFileList(
 	userDropboxToken string, path string,
 ) (folderAndFileList []schemas.DropboxEntry, err error) {
@@ -323,6 +445,15 @@ func (service *dropboxService) GetUserFolderAndFileList(
 	return folderAndFileList, nil
 }
 
+// GetUserFileList filters the provided list of Dropbox entries and returns only the entries that are files.
+//
+// Parameters:
+//
+//	folderAndFileList []schemas.DropboxEntry - A list of Dropbox entries which may include both files and folders.
+//
+// Returns:
+//
+//	[]schemas.DropboxEntry - A list of Dropbox entries that are files.
 func (service *dropboxService) GetUserFileList(
 	folderAndFileList []schemas.DropboxEntry,
 ) (fileList []schemas.DropboxEntry) {
@@ -335,6 +466,15 @@ func (service *dropboxService) GetUserFileList(
 	return fileList
 }
 
+// GetUserFolderList filters the provided list of Dropbox entries and returns only the entries that are folders.
+//
+// Parameters:
+//
+//	folderAndFileList - A slice of DropboxEntry objects representing files and folders.
+//
+// Returns:
+//
+//	A slice of DropboxEntry objects that are folders.
 func (service *dropboxService) GetUserFolderList(
 	folderAndFileList []schemas.DropboxEntry,
 ) (fileList []schemas.DropboxEntry) {
@@ -347,12 +487,32 @@ func (service *dropboxService) GetUserFolderList(
 	return fileList
 }
 
+// CountDropboxEntry counts the number of entries in the provided list of Dropbox entries.
+// It takes a slice of DropboxEntry structs as input and returns the count as a uint64.
+//
+// Parameters:
+//
+//	folderAndFileList []schemas.DropboxEntry - A slice of DropboxEntry structs representing the folder and file entries.
+//
+// Returns:
+//
+//	uint64 - The count of Dropbox entries in the provided list.
 func (service *dropboxService) CountDropboxEntry(
 	folderAndFileList []schemas.DropboxEntry,
 ) uint64 {
 	return uint64(len(folderAndFileList))
 }
 
+// GetPathDisplayDropboxEntry extracts the PathDisplay field from each DropboxEntry
+// in the provided folderAndFileList and returns a slice of these path displays.
+//
+// Parameters:
+//
+//	folderAndFileList - A slice of DropboxEntry structs from which to extract the PathDisplay field.
+//
+// Returns:
+//
+//	A slice of strings containing the PathDisplay values from the provided DropboxEntry structs.
 func (service *dropboxService) GetPathDisplayDropboxEntry(
 	folderAndFileList []schemas.DropboxEntry,
 ) (pathDisplay []string) {
@@ -362,6 +522,22 @@ func (service *dropboxService) GetPathDisplayDropboxEntry(
 	return pathDisplay
 }
 
+// SaveUrl saves a file from a given URL to a specified path in the user's Dropbox.
+//
+// Parameters:
+//   - userDropboxToken: The OAuth token for the user's Dropbox account.
+//   - path: The path in the Dropbox where the file should be saved. Must not be empty and should start with '/'.
+//   - url: The URL of the file to be saved. Must not be empty and should start with "http://" or "https://".
+//
+// Returns:
+//   - fileJobStatus: A struct containing the result of the save URL operation.
+//   - err: An error if the operation fails, otherwise nil.
+//
+// Errors:
+//   - Returns an error if the path or URL is empty.
+//   - Returns an error if the HTTP request cannot be created or executed.
+//   - Returns an error if the response status code is not 200 OK.
+//   - Returns an error if the response cannot be decoded into the result struct.
 func (service *dropboxService) SaveUrl(
 	userDropboxToken string, path string, url string,
 ) (fileJobStatus schemas.DropboxSaveUrlResult, err error) {
@@ -426,6 +602,20 @@ func (service *dropboxService) SaveUrl(
 	return fileJobStatus, nil
 }
 
+// SaveUrlCheckJobStatus checks the status of a save URL job in Dropbox.
+//
+// Parameters:
+//   - userDropboxToken: The OAuth token for the user's Dropbox account.
+//   - saveUrlResult: The result of the save URL operation containing the async job ID.
+//
+// Returns:
+//   - saveUrlFile: The Dropbox entry representing the saved file.
+//   - err: An error if the operation fails.
+//
+// This function sends a request to the Dropbox API to check the status of a save URL job.
+// It prepares the request body with the async job ID, sets the necessary headers, and
+// makes the HTTP request. If the request is successful, it decodes the JSON response
+// into the saveUrlFile struct. If there is an error at any step, it returns the error.
 func (service *dropboxService) SaveUrlCheckJobStatus(
 	userDropboxToken string, saveUrlResult schemas.DropboxSaveUrlResult,
 ) (saveUrlFile schemas.DropboxEntry, err error) {
@@ -474,6 +664,18 @@ func (service *dropboxService) SaveUrlCheckJobStatus(
 	return saveUrlFile, nil
 }
 
+// IsEntryUpdate checks if any entry in the provided list of Dropbox entries
+// has been modified after the specified date.
+//
+// Parameters:
+//
+//	folderAndFileList - a slice of DropboxEntry objects to check for updates
+//	date - the time to compare each entry's modification date against
+//
+// Returns:
+//
+//	true if any entry in the list has a ClientModified date after the specified date,
+//	false otherwise.
 func (service *dropboxService) IsEntryUpdate(
 	folderAndFileList []schemas.DropboxEntry,
 	date time.Time,
@@ -489,6 +691,24 @@ func (service *dropboxService) IsEntryUpdate(
 
 // Actions functions
 
+// DropboxActionUpdateInFolder performs an update action in a specified Dropbox folder.
+// It checks for updates in the folder and sends a notification if any updates are found.
+//
+// Parameters:
+// - channel: A channel to send update notifications.
+// - option: A JSON raw message containing the options for the action.
+// - area: The area schema containing user and action information.
+//
+// The function performs the following steps:
+// 1. Retrieves the user's token for the Dropbox service.
+// 2. Initializes or retrieves the storage variable for the action.
+// 3. Unmarshals the options for the action.
+// 4. Retrieves the list of files and folders in the specified Dropbox path.
+// 5. Checks if there are any updates in the folder since the last check.
+// 6. Sends a notification if updates are found and updates the storage variable.
+// 7. Sleeps for the specified refresh rate before the next check.
+//
+// If any errors occur during these steps, appropriate error messages are printed and the function returns.
 func (service *dropboxService) DropboxActionUpdateInFolder(
 	channel chan string,
 	option json.RawMessage,
@@ -596,6 +816,24 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 
 // Reactions functions
 
+// DropboxReactionSaveUrl saves a file from a given URL to Dropbox.
+//
+// Parameters:
+//   - option: A JSON raw message containing the options for the Dropbox save URL reaction.
+//   - area: An Area schema containing user and reaction information.
+//
+// Returns:
+//
+//	A string message indicating the result of the operation.
+//
+// The function performs the following steps:
+//  1. Unmarshals the JSON options into a DropboxSaveUrlReactionOption struct.
+//  2. Finds the user's token for the Dropbox service.
+//  3. Uses the token to save the file from the provided URL to the specified path in Dropbox.
+//  4. Checks the job status of the save operation.
+//  5. Returns a message indicating the path of the saved file and the source URL.
+//
+// If any error occurs during these steps, an appropriate error message is returned.
 func (service *dropboxService) DropboxReactionSaveUrl(
 	option json.RawMessage,
 	area schemas.Area,
