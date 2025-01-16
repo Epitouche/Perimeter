@@ -174,14 +174,14 @@ const styles = StyleSheet.create({
   },
   button: {
     color: 'white',
-    backgroundColor: '#007AFF',
+    backgroundColor: '#001DDA',
     paddingVertical: 10,
     textAlign: 'center',
     borderRadius: 5,
   },
   disconnectButton: {
     color: 'white',
-    backgroundColor: '#FF0000',
+    backgroundColor: '#E60000',
     paddingVertical: 10,
     textAlign: 'center',
     borderRadius: 5,

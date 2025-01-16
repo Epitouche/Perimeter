@@ -42,7 +42,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
     const getService = async () => {
       try {
         const response = await fetch(
-          `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
+          `http://${ipAddress}:8080/api/v1/action/info/action/${actionId}`,
           {
             method: 'GET',
             headers: {
@@ -52,7 +52,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           },
         );
         const res = await fetch(
-          `http://${ipAddress}:8080/api/v1/reaction/info/${reactionId}`,
+          `http://${ipAddress}:8080/api/v1/reaction/info/reaction/${reactionId}`,
           {
             method: 'GET',
             headers: {
@@ -62,13 +62,13 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           },
         );
 
-        let actionData = await response.json();
-        let reactionData = await res.json();
+        const actionData = await response.json();
+        const reactionData = await res.json();
         console.log('reactionData', reactionData);
-        setActionName(actionData[0].name);
-        setReactionName(reactionData[0].name);
-        setActionService(actionData[0].service);
-        setReactionService(reactionData[0].service);
+        setActionName(actionData.name);
+        setReactionName(reactionData.name);
+        setActionService(actionData.service);
+        setReactionService(reactionData.service);
       } catch (error) {
         if (error.code === 401) {
           navigation.navigate('Login');
