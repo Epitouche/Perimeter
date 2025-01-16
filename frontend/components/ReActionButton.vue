@@ -72,7 +72,7 @@ watch(
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="w-fit h-[8vh] p-0"
-    />
+    >
     <h2
       :class="[
         'text-white',
@@ -83,10 +83,11 @@ watch(
     </h2>
   </div>
 
-  <div
+  <UContainer
     v-else
+    :ui="{ padding: '!px-0 !py-0', constrained: '!min-w-none !min-h-none' }"
     :class="[
-      'flex flex-row justify-evenly items-center bg-black px-12 py-7 gap-10 rounded-3xl w-full',
+      'flex flex-row justify-evenly items-center bg-black rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[70vw] max-lg:h-[12vh] max-md:h-[10vh] max-sm:h-[8vh]',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
   >
@@ -101,15 +102,15 @@ watch(
     <UButton
       :disabled="isDisabled"
       :to="link"
-      :ui="{ rounded: 'rounded-2xl' }"
+      :ui="{ rounded: 'rounded-2xl max-lg:rounded-xl' }"
       :class="[
-        'text-black bg-white px-10 py-5',
+        'text-black bg-white w-[6vw] h-[4.6vh] max-lg:w-[8vw] max-lg:h-[4vh] max-md:w-[10vw] max-md:h-[3.5vh] max-sm:w-[10vw] max-sm:h-[3vh]',
         isDisabled ? '!text-opacity-60' : 'text-opacity-100',
       ]"
     >
-      <h5>Add</h5></UButton
-    >
-  </div>
+      <h5 class="text-center w-full">Add</h5>
+    </UButton>
+  </UContainer>
 </template>
 
 <style scoped>

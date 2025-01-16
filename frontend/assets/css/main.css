@@ -41,11 +41,6 @@ p {
   font-weight: 700;
 }
 
-.icon_card {
-  width: 8vw;
-  height: 8vh;
-}
-
 .icon_circle {
   width: 6vw;
   height: 6vh;
@@ -53,7 +48,7 @@ p {
 
 .custom_card {
   width: 12vw;
-  height: 20vh;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -205,7 +205,7 @@ onMounted(() => {
       <div class="flex flex-col justify-center items-center gap-10">
         <h1 class="pb-5">Workflow</h1>
         <div v-if="isLoading"><h4>Loading...</h4></div>
-        <div class="flex flex-col justify-center items-center">
+        <div class="flex flex-col justify-center items-center w-full">
           <ReActionButton
             title="Action"
             link="/workflow/actions"

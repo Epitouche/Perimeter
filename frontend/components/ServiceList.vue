@@ -174,7 +174,7 @@ function formatName(name: string): string {
         @click="onClick(app.name)"
       >
         <h5
-          class="clamp-1-line break-words text-center pt-4 text-white w-full hover-expand-text"
+          class="clamp-1-line break-words text-center pt-4 -m-1 text-white w-full hover-expand-text"
         >
           {{ formatName(app.name) }}
         </h5>
@@ -182,16 +182,18 @@ function formatName(name: string): string {
           v-if="getServiceDetails(app.name)?.icon"
           :src="getServiceDetails(app.name)?.icon"
           alt=""
-          class="icon_card"
-        />
+          class="pb-2"
+          style="width: 40%; min-width: 1vw; max-width: 8vw"
+        >
         <UButton
           v-if="!isLoading"
           :class="[
             isServiceConnectedOrInvalid(app.name)
               ? 'bg-black text-white'
               : 'bg-white text-black',
-            'w-full min-h-[5vh] max-h-[5vh] !rounded-t-none',
+            'py-[8%] !rounded-t-none !rounded-b-[25%]',
           ]"
+          style="min-width: 100%; height: fit-content"
           @click="onClick(app.name)"
         >
           <h6 class="w-full">{{ getServiceStateText(app.name) }}</h6>
@@ -215,7 +217,7 @@ function formatName(name: string): string {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        />
+        >
         <UButton
           v-if="hover[app.name]"
           variant="ghost"
@@ -236,7 +238,7 @@ function formatName(name: string): string {
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
     >
       <div
-        class="flex flex-col justify-between items-center gap-10 bg-custom_color-bg_section px-10 py-8 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit"
+        class="flex flex-col justify-between items-center gap-10 bg-custom_color-bg_section p-10 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit h-fit"
         :style="{
           borderColor: selectedService
             ? getServiceDetails(selectedService)?.color || '#ccc'
@@ -244,24 +246,24 @@ function formatName(name: string): string {
         }"
       >
         <h4>
-          Are you sure you want to <br />
+          Are you sure you want to <br>
           disconnect from this service?
         </h4>
         <h6>This action cannot be undone!</h6>
-        <div class="flex flex-row justify-end items-center gap-5">
+        <div class="flex flex-row justify-center items-center gap-5 w-full">
           <UButton
-            class="text-black !border-custom_border_width border-black bg-opacity-0 font-semibold py-3 px-6"
+            class="text-black !border-custom_border_width border-black bg-opacity-0 font-semibold px-[4%] py-[1.5%]"
             tabindex="0"
             @click="cancelAction"
           >
             <h6>No</h6>
           </UButton>
           <UButton
-            class="text-red-600 !border-custom_border_width border-red-600 bg-opacity-0 font-semibold py-3 px-6"
+            class="text-red-600 !border-custom_border_width border-red-600 bg-opacity-0 font-semibold px-[4%] py-[1.5%]"
             tabindex="0"
-            @click="confirmAction"
-            ><h6>Yes</h6></UButton
-          >
+            @click="confirmAction">
+            <h6>Yes</h6>
+          </UButton>
         </div>
       </div>
     </div>

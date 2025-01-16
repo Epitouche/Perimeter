@@ -28,9 +28,6 @@ async function loadConnectionInfos() {
   }
 }
 
-// function toggleMenu() {
-//   menuOpen.value = !menuOpen.value;
-// }
 
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
@@ -56,56 +53,45 @@ const items = [
 </script>
 
 <template>
-  <UContainer
-    :ui="{ padding: '!p-3', constrained: 'min-w-screen' }"
-    class="flex flex-row justify-between items-center bg-custom_color-bg_section"
-  >
+  <UContainer 
+  :ui="{ padding: '!px-4 !py-2', constrained: 'min-w-screen' }"
+    class="flex flex-row justify-between items-center bg-custom_color-bg_section">
     <div class="flex flex-row items-center gap-5">
-      <img
-        src="../public/PerimeterIcon.png"
-        alt="perimeter-icon"
-        class="nav_icon"
-      />
+      <img src="../public/PerimeterIcon.png" alt="perimeter-icon" style="height: 6.5vh;">
       <h5>Perimeter</h5>
     </div>
 
     <div class="flex flex-row justify-evenly items-center gap-5">
-      <NuxtLink to="/myareas" class="nav-link">
+      <NuxtLink to="/myareas" class="hover:underline">
         <h6>My Areas</h6>
       </NuxtLink>
-      <NuxtLink to="/workflow" class="nav-link">
+      <NuxtLink to="/workflow" class="hover:underline">
         <h6>Workflow</h6>
       </NuxtLink>
-      <NuxtLink to="/myservices" class="nav-link">
+      <NuxtLink to="/myservices" class="hover:underline">
         <h6>My Services</h6>
       </NuxtLink>
 
-      <UDropdown :items="items" :popper="{ placement: 'bottom', arrow: true }">
-        <div
-          class="nav_profile_circle border-black border-custom_border_width rounded-full flex justify-center items-center"
-          tabindex="0"
-        >
-          <Icon name="bytesize:user" class="nav_profile text-black" />
-        </div>
+      <UDropdown :items="items" :popper="{ placement: 'bottom', arrow: true }" :ui="{ item: { padding: '!p-4' } }">
+       
+          <UAvatar icon="i-bytesize-user" :ui="{ size: { sm: '!h-fit !w-fit !py-[20%] !px-0' }, icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh]' } } }" />
+        
+
         <template #name>
-          <p class="w-full self-center text-black">{{ username }}</p>
+          <p class="w-full text-black">{{ username }}</p>
         </template>
+
         <template #settings>
-          <NuxtLink to="/settings" class="nav-link" tabindex="0"
-            >Settings</NuxtLink
-          >
+          <NuxtLink to="/settings" class="w-full" tabindex="0">
+            <p class="text-black"><u>Settings</u></p>
+          </NuxtLink>
         </template>
+
         <template #logout>
-          <NuxtLink
-            to="/login"
-            tabindex="0"
-            @keydown.enter="clearTokenAndLogout"
-          >
+          <NuxtLink to="/login" class="w-full self-center" tabindex="0" @keydown.enter="clearTokenAndLogout">
             <UButton
-              class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
-              tabindex="-1"
-              @click="clearTokenAndLogout"
-            >
+              class="flex items-center gap-2 py-2 px-4 w-full text-base font-bold rounded-custom_border_radius cursor-pointer self-center bg-custom_color-bg_section logout-button"
+              tabindex="-1" @click="clearTokenAndLogout">
               <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
               Logout
             </UButton>
@@ -117,21 +103,6 @@ const items = [
 </template>
 
 <style scoped>
-.nav_icon {
-  width: fit-content;
-  height: 6vh;
-}
-
-.nav_profile_circle {
-  width: 5vh;
-  height: 5vh;
-}
-
-.nav_profile {
-  width: 90%;
-  height: 90%;
-}
-
 .logout-button {
   background-color: #ef4444;
 }
