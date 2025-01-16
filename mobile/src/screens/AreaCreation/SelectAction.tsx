@@ -177,7 +177,10 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
                 accessibilityLabel={service.name}
                 accessibilityHint={`Select ${service.name}`}
                 key={service.id}
-                style={[styles.serviceBox, { backgroundColor: service.service.color }]}
+                style={[
+                  styles.serviceBox,
+                  { backgroundColor: service.service.color },
+                ]}
                 onPress={() => handleActionPress(service)}>
                 <Text style={styles.serviceText}>
                   {formatText(service.name)}
