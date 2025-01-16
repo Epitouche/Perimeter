@@ -131,7 +131,9 @@ onMounted(() => {
               :key="key"
               :label="key"
               :name="key"
-              :ui="{ label: { base: 'capitalize text-2xl pl-5 font-semibold' } }"
+              :ui="{
+                label: { base: 'capitalize text-2xl pl-5 font-semibold' },
+              }"
               class="self-center min-w-[80%]"
             >
               <UInput
