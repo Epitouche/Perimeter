@@ -78,7 +78,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         accessibilityHint="Input field for IP address"
       />
       <Button
-        color={"#001DDA"}
+        color={'#001DDA'}
         title="Connect"
         onPress={() => {
           setIpAddress(ipAddress);
