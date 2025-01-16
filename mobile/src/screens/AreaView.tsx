@@ -70,8 +70,16 @@ const AreasScreen = ({ navigation }: Props) => {
                 styles.areaText
               }>{`${area.action.name} ~ ${area.reaction.name}`}</Text>
             <View style={styles.iconsContainer}>
-              <SvgFromUri uri={area.action.service.icon} width={25} height={25} />
-              <SvgFromUri uri={area.reaction.service.icon} width={25} height={25} />
+              <SvgFromUri
+                uri={area.action.service.icon}
+                width={25}
+                height={25}
+              />
+              <SvgFromUri
+                uri={area.reaction.service.icon}
+                width={25}
+                height={25}
+              />
             </View>
           </TouchableOpacity>
         ))}
