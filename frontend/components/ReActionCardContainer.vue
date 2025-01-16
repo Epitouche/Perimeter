@@ -154,7 +154,9 @@ onMounted(() => {
               :label="key"
               :name="key"
               :ui="{
-                label: { base: 'capitalize text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg pl-5 font-semibold' },
+                label: {
+                  base: 'capitalize text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg pl-5 font-semibold',
+                },
               }"
               class="self-center min-w-[85%] max-lg:min-w-[90%] max-md:min-w-[95%] max-sm:min-w-full"
             >
@@ -165,7 +167,9 @@ onMounted(() => {
                 "
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg' },
+                  size: {
+                    sm: 'text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg',
+                  },
                 }"
                 :placeholder="
                   typeof type.option === 'object' &&

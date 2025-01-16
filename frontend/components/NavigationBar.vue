@@ -28,7 +28,6 @@ async function loadConnectionInfos() {
   }
 }
 
-
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
@@ -53,11 +52,16 @@ const items = [
 </script>
 
 <template>
-  <UContainer 
-  :ui="{ padding: '!px-4 !py-2', constrained: 'min-w-screen' }"
-    class="flex flex-row justify-between items-center bg-custom_color-bg_section">
+  <UContainer
+    :ui="{ padding: '!px-4 !py-2', constrained: 'min-w-screen' }"
+    class="flex flex-row justify-between items-center bg-custom_color-bg_section"
+  >
     <div class="flex flex-row items-center gap-5">
-      <img src="../public/PerimeterIcon.png" alt="perimeter-icon" style="height: 6.5vh;">
+      <img
+        src="../public/PerimeterIcon.png"
+        alt="perimeter-icon"
+        style="height: 6.5vh"
+      />
       <h5>Perimeter</h5>
     </div>
 
@@ -72,10 +76,18 @@ const items = [
         <h6>My Services</h6>
       </NuxtLink>
 
-      <UDropdown :items="items" :popper="{ placement: 'bottom', arrow: true }" :ui="{ item: { padding: '!p-4' } }">
-       
-          <UAvatar icon="i-bytesize-user" :ui="{ size: { sm: '!h-fit !w-fit !py-[20%] !px-0' }, icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh]' } } }" />
-        
+      <UDropdown
+        :items="items"
+        :popper="{ placement: 'bottom', arrow: true }"
+        :ui="{ item: { padding: '!p-4' } }"
+      >
+        <UAvatar
+          icon="i-bytesize-user"
+          :ui="{
+            size: { sm: '!h-fit !w-fit !py-[20%] !px-0' },
+            icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh]' } },
+          }"
+        />
 
         <template #name>
           <p class="w-full text-black">{{ username }}</p>
@@ -88,10 +100,17 @@ const items = [
         </template>
 
         <template #logout>
-          <NuxtLink to="/login" class="w-full self-center" tabindex="0" @keydown.enter="clearTokenAndLogout">
+          <NuxtLink
+            to="/login"
+            class="w-full self-center"
+            tabindex="0"
+            @keydown.enter="clearTokenAndLogout"
+          >
             <UButton
               class="flex items-center gap-2 py-2 px-4 w-full text-base font-bold rounded-custom_border_radius cursor-pointer self-center bg-custom_color-bg_section logout-button"
-              tabindex="-1" @click="clearTokenAndLogout">
+              tabindex="-1"
+              @click="clearTokenAndLogout"
+            >
               <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
               Logout
             </UButton>

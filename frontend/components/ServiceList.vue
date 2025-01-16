@@ -184,7 +184,7 @@ function formatName(name: string): string {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        >
+        />
         <UButton
           v-if="!isLoading"
           :class="[
@@ -217,7 +217,7 @@ function formatName(name: string): string {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        >
+        />
         <UButton
           v-if="hover[app.name]"
           variant="ghost"
@@ -246,7 +246,7 @@ function formatName(name: string): string {
         }"
       >
         <h4>
-          Are you sure you want to <br>
+          Are you sure you want to <br />
           disconnect from this service?
         </h4>
         <h6>This action cannot be undone!</h6>
@@ -261,7 +261,8 @@ function formatName(name: string): string {
           <UButton
             class="text-red-600 !border-custom_border_width border-red-600 bg-opacity-0 font-semibold px-[4%] py-[1.5%]"
             tabindex="0"
-            @click="confirmAction">
+            @click="confirmAction"
+          >
             <h6>Yes</h6>
           </UButton>
         </div>

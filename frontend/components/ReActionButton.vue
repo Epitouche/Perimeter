@@ -72,7 +72,7 @@ watch(
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="w-fit h-[8vh] p-0"
-    >
+    />
     <h2
       :class="[
         'text-white',

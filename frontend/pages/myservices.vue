@@ -40,9 +40,10 @@ const filteredApps = computed(() => {
     <h1>My Services</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div
-v-else
+      v-else
       class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
-      tabindex="0">
+      tabindex="0"
+    >
       <div class="self-start w-1/4 px-5 pt-1">
         <SearchBar v-model:search-query="searchQuery" tabindex="0" />
       </div>
