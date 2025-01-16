@@ -14,6 +14,31 @@ import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddActionScreen'>;
 
+/**
+ * AddActionScreen component allows users to add actions by selecting services.
+ * It fetches available services and user-specific connected services from the API.
+ * Users can search for services and select them to proceed with adding actions.
+ *
+ * @component
+ * @param {object} props - The component props.
+ * @param {object} props.navigation - The navigation object provided by React Navigation.
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * <AddActionScreen navigation={navigation} />
+ *
+ * @remarks
+ * This component uses the `useEffect` hook to fetch services and user data when the component mounts.
+ * It also provides a search functionality to filter services based on user input.
+ * The component handles loading state and displays an activity indicator while fetching data.
+ *
+ * @function
+ * @name AddActionScreen
+ *
+ * @typedef {object} Props
+ * @property {object} navigation - The navigation object provided by React Navigation.
+ */
 const AddActionScreen: React.FC<Props> = ({ navigation }) => {
   const [connectedServices, setConnectedServices] = useState<string[]>([]);
   const [services, setServices] = useState<any[]>([]);
@@ -23,6 +48,18 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
   const { ipAddress, token } = useContext(AppContext);
 
   useEffect(() => {
+    /**
+     * Fetches services and user information from the API.
+     *
+     * This function makes two asynchronous GET requests to fetch service information
+     * and user information. It then processes the responses to update the state with
+     * the fetched data.
+     *
+     * @async
+     * @function fetchServices
+     * @throws Will navigate to the 'Login' screen if the response status is 401.
+     * @throws Will log an error message if there is an error during the fetch process.
+     */
     const fetchServices = async () => {
       try {
         const response = await fetch(
@@ -74,6 +111,14 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
     fetchServices();
   }, [ipAddress]);
 
+  /**
+   * Handles the search functionality by filtering the services based on the input text.
+   *
+   * @param {string} text - The search text input by the user.
+   *
+   * - If the input text is empty, it resets the filtered services to the original list of services.
+   * - If the input text is not empty, it filters the services whose names include the input text (case insensitive).
+   */
   const handleSearch = (text: string) => {
     setSearch(text);
     if (text === '') {
@@ -95,6 +140,13 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
+  /**
+   * Formats a given text string by inserting spaces before each uppercase letter,
+   * capitalizing the first letter of the string, and trimming any leading or trailing whitespace.
+   *
+   * @param text - The input string to be formatted.
+   * @returns The formatted string with spaces before uppercase letters and the first letter capitalized.
+   */
   const formatText = (text: string): string => {
     return text
       .replace(/([A-Z])/g, ' $1')

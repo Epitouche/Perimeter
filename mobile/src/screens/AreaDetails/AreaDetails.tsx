@@ -16,6 +16,23 @@ import ReactionsSections from './ReactionsSections';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 
+/**
+ * AreaDetailsScreen component displays the details of a specific area, including its results.
+ * It fetches area results from an API and displays them in a table format.
+ *
+ * @param {object} props - The component props.
+ * @param {object} props.navigation - The navigation object provided by React Navigation.
+ * @param {object} props.route - The route object provided by React Navigation.
+ * @param {object} props.route.params - The parameters passed to the route.
+ * @param {object} props.route.params.area - The area object containing the area details.
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * <AreaDetailsScreen navigation={navigation} route={route} />
+ *
+ * @component
+ */
 const AreaDetailsScreen = ({ navigation, route }: Props) => {
   const { area } = route.params;
   const { ipAddress, token } = useContext(AppContext);
@@ -24,6 +41,20 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
   ]);
 
   useEffect(() => {
+    /**
+     * Fetches the area results from the server.
+     *
+     * This function sends a GET request to the server to retrieve the results
+     * for a specific area. The request includes an authorization token in the
+     * headers. If the request is successful, the area results are stored in the
+     * state and logged to the console. If there is an error during the fetch
+     * operation, it is caught and logged to the console.
+     *
+     * @async
+     * @function fetchAreaResults
+     * @returns {Promise<void>} A promise that resolves when the fetch operation is complete.
+     * @throws Will log an error message to the console if the fetch operation fails.
+     */
     const fetchAreaResults = async () => {
       console.log('Fetching area results');
       try {
@@ -45,9 +76,19 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
         console.error('Error fetching area results:', error);
       }
     };
+
     fetchAreaResults();
   }, []);
 
+  /**
+   * Renders an item in a list with creation date and result.
+   *
+   * @param {Object} params - The parameters for the renderItem function.
+   * @param {Object} params.item - The item to be rendered.
+   * @param {string} params.item.created_at - The creation date and time of the result.
+   * @param {string} params.item.result - The result of the area.
+   * @returns {JSX.Element} A view containing the creation date and result.
+   */
   const renderItem = ({
     item,
   }: {

@@ -20,6 +20,43 @@ import { SvgFromUri } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
+/**
+ * SignupScreen component allows users to sign up by providing their username, email, and password.
+ * It also provides options to sign up using various OAuth services.
+ *
+ * @param {Props} props - The props for the SignupScreen component.
+ * @param {object} props.navigation - The navigation object provided by React Navigation.
+ * @param {object} props.route - The route object provided by React Navigation.
+ *
+ * @returns {JSX.Element} The rendered SignupScreen component.
+ */
+
+/**
+ * Handles the URL event for OAuth redirection.
+ *
+ * @param {object} event - The event object containing the URL.
+ */
+
+/**
+ * Handles the signup process by validating the input fields and making a POST request to the server.
+ * If the signup is successful, navigates to the Login screen.
+ * If there are errors, displays appropriate error messages.
+ */
+
+/**
+ * Switches to the Login screen.
+ */
+
+/**
+ * Fetches the available services from the server and updates the state.
+ * This effect runs once when the component mounts.
+ */
+
+/**
+ * Renders the SignupScreen component.
+ *
+ * @returns {JSX.Element} The rendered SignupScreen component.
+ */
 const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -43,6 +80,12 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   });
   const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
+  /**
+   * Handles the URL event, extracting and logging the authorization code or error from the URL.
+   *
+   * @param {any} event - The event object containing the URL to be handled.
+   * @returns {void}
+   */
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
@@ -59,6 +102,24 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   };
   Linking.addEventListener('url', handleUrl);
 
+  /**
+   * Handles the signup process by validating user input and sending a registration request to the server.
+   *
+   * @async
+   * @function handleSignup
+   * @returns {Promise<void>} - A promise that resolves when the signup process is complete.
+   *
+   * @description
+   * This function performs the following steps:
+   * 1. Validates the `username`, `password`, and `email` fields.
+   * 2. Sets error messages if any of the fields are empty.
+   * 3. If there are no validation errors, sends a POST request to the server to register the user.
+   * 4. If the registration is successful, navigates to the Login screen and shows a success alert.
+   * 5. If the registration fails, logs the error and shows an error alert.
+   * 6. If a network error occurs, logs the error.
+   *
+   * @throws Will throw an error if the fetch request fails.
+   */
   const handleSignup = async () => {
     let hasError = false;
     const newErrors = { username: '', password: '', email: '' };
@@ -118,6 +179,17 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    /**
+     * Fetches services from the API and updates the state with the fetched data.
+     *
+     * This function makes a GET request to the `/api/v1/service/info` endpoint using the provided
+     * `ipAddress` and `token` for authorization. The response is then parsed as JSON and used to
+     * update the `services` state. Additionally, it logs the services that have OAuth enabled.
+     *
+     * @async
+     * @function fetchServices
+     * @returns {Promise<void>} A promise that resolves when the services have been fetched and the state has been updated.
+     */
     const fetchServices = async () => {
       const serviceResponse = await fetch(
         `http://${ipAddress}:8080/api/v1/service/info`,

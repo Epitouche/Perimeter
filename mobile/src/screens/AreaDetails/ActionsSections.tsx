@@ -8,6 +8,25 @@ import { RootStackParamList } from '../../Navigation/navigate';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 
+/**
+ * Component for displaying and modifying action options for a specific area.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.route - The route object containing navigation parameters.
+ * @param {Object} props.route.params - The parameters passed to the route.
+ * @param {Object} props.route.params.area - The area object containing action options and service details.
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @component
+ * @example
+ * <ActionsSections route={route} />
+ *
+ * @typedef {Object} Props
+ * @property {Object} route - The route object containing navigation parameters.
+ * @property {Object} route.params - The parameters passed to the route.
+ * @property {Object} route.params.area - The area object containing action options and service details.
+ */
 const ActionsSections = ({ route }: Props) => {
   const { area } = route.params;
   const [isActionModalVisible, setIsActionModalVisible] = useState(false);
@@ -21,6 +40,14 @@ const ActionsSections = ({ route }: Props) => {
   const [refreshRate, setRefreshRate] = useState<number>();
 
   React.useEffect(() => {
+    /**
+     * Initializes the action options for the area by converting the entries of the `area.action_option` object
+     * into a new object where each key-value pair is preserved.
+     *
+     * @param {Object} area - The area object containing action options.
+     * @param {Object} area.action_option - The action options of the area.
+     * @returns {Object} The initialized action options object.
+     */
     const initialActionOptions = Object.entries(area.action_option).reduce(
       (acc, [name, value]) => {
         acc[name] = value;
@@ -28,9 +55,17 @@ const ActionsSections = ({ route }: Props) => {
       },
       {} as { [key: string]: any },
     );
+
     setSelectedActionOptions(initialActionOptions);
   }, [area.action_option]);
 
+  /**
+   * Handles the change of an action option.
+   *
+   * @param {string} key - The key of the action option to change.
+   * @param {any} value - The new value of the action option.
+   * @param {any} type - The type of the action option, used to determine if the value should be converted to a number.
+   */
   const handleActionOptionChange = (key: string, value: any, type: any) => {
     setSelectedActionOptions(prev => ({
       ...prev,
@@ -38,6 +73,20 @@ const ActionsSections = ({ route }: Props) => {
     }));
   };
 
+  /**
+   * Handles the save action for updating an area.
+   *
+   * This function constructs a new area object with the selected action options,
+   * sends a PUT request to update the area on the server, and updates the local
+   * state with the response data if the request is successful.
+   *
+   * @async
+   * @function handleSaveAction
+   *
+   * @returns {Promise<void>} A promise that resolves when the save action is complete.
+   *
+   * @throws Will log an error message if the update request fails.
+   */
   const handleSaveAction = async () => {
     const newArea = {
       ...area,

@@ -19,6 +19,57 @@ import { SvgFromUri } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
+/**
+ * LoginScreen component allows users to log in using their username and password,
+ * or through various OAuth services.
+ *
+ * @param {Props} props - The props for the LoginScreen component.
+ * @param {object} props.navigation - The navigation object used to navigate between screens.
+ *
+ * @returns {JSX.Element} The rendered LoginScreen component.
+ */
+
+/**
+ * Handles the login process by validating the input fields and making a POST request
+ * to the login API endpoint. If successful, navigates to the AreaView screen.
+ *
+ * @async
+ * @function handleLogin
+ * @returns {Promise<void>}
+ */
+
+/**
+ * Switches the screen to the SignUp screen.
+ *
+ * @function switchToSignup
+ * @returns {void}
+ */
+
+/**
+ * Fetches the available services from the API and sets the services state.
+ *
+ * @async
+ * @function fetchServices
+ * @returns {Promise<void>}
+ */
+
+/**
+ * @typedef {Object} Service
+ * @property {string} color - The color associated with the service.
+ * @property {string} created_at - The creation date of the service.
+ * @property {string} description - The description of the service.
+ * @property {string} icon - The icon URL of the service.
+ * @property {number} id - The unique identifier of the service.
+ * @property {string} name - The name of the service.
+ * @property {boolean} oauth - Indicates if the service supports OAuth.
+ * @property {string} update_at - The last update date of the service.
+ */
+
+/**
+ * @typedef {Object} Errors
+ * @property {string} username - The error message for the username field.
+ * @property {string} password - The error message for the password field.
+ */
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,6 +88,17 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [errors, setErrors] = useState({ username: '', password: '' });
   const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
+  /**
+   * Handles the login process by validating the input fields and making a POST request to the login API.
+   * If the username or password fields are empty, it sets the appropriate error messages.
+   * If the fields are valid, it sends a login request to the server.
+   * On successful login, it sets the token and navigates to the 'AreaView' screen.
+   * If there is an error during the login process, it handles the error accordingly.
+   *
+   * @async
+   * @function handleLogin
+   * @returns {Promise<void>} A promise that resolves when the login process is complete.
+   */
   const handleLogin = async () => {
     let hasError = false;
 
@@ -84,6 +146,17 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   useEffect(() => {
+    /**
+     * Fetches services from the API and updates the state with the fetched data.
+     *
+     * @async
+     * @function fetchServices
+     * @returns {Promise<void>} A promise that resolves when the services are fetched and state is updated.
+     * @throws {Error} Throws an error if the fetch request fails.
+     *
+     * @example
+     * fetchServices();
+     */
     const fetchServices = async () => {
       const serviceResponse = await fetch(
         `http://${ipAddress}:8080/api/v1/service/info`,
