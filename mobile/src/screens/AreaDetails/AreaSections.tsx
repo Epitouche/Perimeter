@@ -146,7 +146,13 @@ const AreaSections = ({ navigation, route }: Props) => {
           { borderColor: 'black', borderWidth: 1, borderRadius: 10 },
         ]}>
         <View
-          style={[{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: '95%' }]}>
+          style={[
+            {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              maxWidth: '95%',
+            },
+          ]}>
           <View style={[{ flexDirection: 'column' }]}>
             <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
               <Text style={[styles.label, { color: 'black' }]}>title:</Text>

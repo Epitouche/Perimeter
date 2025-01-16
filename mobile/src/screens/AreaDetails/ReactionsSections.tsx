@@ -104,7 +104,7 @@ const ReactionsSections = ({ route }: Props) => {
           </Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View  style={{ maxWidth: '60%' }}>
+          <View style={{ maxWidth: '60%' }}>
             <View style={styles.detailContainer}>
               <Text
                 style={styles.label}
