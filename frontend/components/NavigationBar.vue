@@ -14,7 +14,11 @@ async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
       infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
-      if (infosConnection.value && infosConnection.value.user && infosConnection.value.user.username) {
+      if (
+        infosConnection.value &&
+        infosConnection.value.user &&
+        infosConnection.value.user.username
+      ) {
         username.value = infosConnection.value.user.username;
       }
     }
@@ -52,10 +56,16 @@ const items = [
 </script>
 
 <template>
-  <UContainer :ui="{ padding: '!p-3', constrained: 'min-w-screen' }"
-    class="flex flex-row justify-between items-center bg-custom_color-bg_section">
+  <UContainer
+    :ui="{ padding: '!p-3', constrained: 'min-w-screen' }"
+    class="flex flex-row justify-between items-center bg-custom_color-bg_section"
+  >
     <div class="flex flex-row items-center gap-5">
-      <img src="../public/PerimeterIcon.png" alt="perimeter-icon" class="nav_icon">
+      <img
+        src="../public/PerimeterIcon.png"
+        alt="perimeter-icon"
+        class="nav_icon"
+      />
       <h5>Perimeter</h5>
     </div>
 
@@ -73,20 +83,29 @@ const items = [
       <UDropdown :items="items" :popper="{ placement: 'bottom', arrow: true }">
         <div
           class="nav_profile_circle border-black border-custom_border_width rounded-full flex justify-center items-center"
-          tabindex="0">
+          tabindex="0"
+        >
           <Icon name="bytesize:user" class="nav_profile text-black" />
         </div>
         <template #name>
           <p class="w-full self-center text-black">{{ username }}</p>
         </template>
         <template #settings>
-          <NuxtLink to="/settings" class="nav-link" tabindex="0">Settings</NuxtLink>
+          <NuxtLink to="/settings" class="nav-link" tabindex="0"
+            >Settings</NuxtLink
+          >
         </template>
         <template #logout>
-          <NuxtLink to="/login" tabindex="0" @keydown.enter="clearTokenAndLogout">
+          <NuxtLink
+            to="/login"
+            tabindex="0"
+            @keydown.enter="clearTokenAndLogout"
+          >
             <UButton
               class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
-              tabindex="-1" @click="clearTokenAndLogout">
+              tabindex="-1"
+              @click="clearTokenAndLogout"
+            >
               <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
               Logout
             </UButton>
