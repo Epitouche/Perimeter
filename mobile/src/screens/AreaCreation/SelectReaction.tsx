@@ -183,7 +183,10 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
             {filteredServices?.map(service => (
               <TouchableOpacity
                 key={service.id}
-                style={[styles.serviceBox, { backgroundColor: service.service.color }]}
+                style={[
+                  styles.serviceBox,
+                  { backgroundColor: service.service.color },
+                ]}
                 onPress={() => handleActionPress(service)}
                 accessibilityLabel={`Service ${service.name}`}
                 accessibilityHint={`Press to select the service ${service.name}`}>
