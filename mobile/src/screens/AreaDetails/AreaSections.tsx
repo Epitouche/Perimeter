@@ -33,10 +33,12 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
  */
 const AreaSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
+  console.log('Area:', area);
+  console.log("refresh rate", area.action_refresh_rate);
   const { ipAddress, token } = useContext(AppContext);
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [refreshRate, setRefreshRate] = useState<number>();
+  const [title, setTitle] = useState<string>(area.title);
+  const [description, setDescription] = useState<string>(area.description);
+  const [refreshRate, setRefreshRate] = useState<number>(isNaN(Number(area.action_refresh_rate)) ? 10 : Number(area.action_refresh_rate));
   const [isAreaModalVisible, setIsAreaModalVisible] = useState(false);
   const [isEnabled, setIsEnabled] = useState(area.enable);
 
@@ -55,7 +57,7 @@ const AreaSections = ({ navigation, route }: Props) => {
       ...area,
       title: title,
       description: description,
-      refresh_rate: refreshRate,
+      action_refresh_rate: refreshRate,
     };
     console.log(newArea);
     try {
@@ -66,7 +68,7 @@ const AreaSections = ({ navigation, route }: Props) => {
         },
         body: JSON.stringify(newArea),
       });
-      console.log('body:', JSON.stringify(newArea));
+      console.log('bodyyyyy:', JSON.stringify(newArea));
       console.log(response);
       if (response.ok) {
         console.log('Area updated successfully');
@@ -143,10 +145,10 @@ const AreaSections = ({ navigation, route }: Props) => {
       <View
         style={[
           styles.subContainer,
-          { borderColor: 'black', borderWidth: 1, borderRadius: 10 },
+          { borderColor: 'black', borderWidth: 1, borderRadius: 10, maxWidth: '100%' },
         ]}>
         <View
-          style={[{ flexDirection: 'row', justifyContent: 'space-between', maxWidth: '95%' }]}>
+          style={[{ flexDirection: 'row', justifyContent: 'space-between'}]}>
           <View style={[{ flexDirection: 'column' }]}>
             <View style={[styles.detailContainer, { flexDirection: 'column' }]}>
               <Text style={[styles.label, { color: 'black' }]}>title:</Text>
