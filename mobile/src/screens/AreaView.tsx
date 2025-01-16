@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { SvgFromUri } from 'react-native-svg';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomNavBar from './NavBar';
 import { RootStackParamList } from '../Navigation/navigate';
@@ -14,12 +14,36 @@ import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
 
+/**
+ * AreasScreen component fetches and displays a list of areas.
+ *
+ * @param {Props} props - The props object containing navigation.
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @component
+ * @example
+ * return (
+ *   <AreasScreen navigation={navigation} />
+ * )
+ */
 const AreasScreen = ({ navigation }: Props) => {
   const [areas, setAreas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { ipAddress, token } = useContext(AppContext);
 
   useEffect(() => {
+    /**
+     * Fetches areas from the API.
+     *
+     * This function sends a GET request to the API to retrieve area data.
+     * If the request is successful, the data is stored in the state using `setAreas`.
+     * If the request fails with a 401 status code, the user is navigated to the 'Login' screen.
+     * Regardless of the outcome, the loading state is set to false after the request completes.
+     *
+     * @async
+     * @function fetchAreas
+     * @throws Will throw an error if the fetch request fails for reasons other than a 401 status code.
+     */
     const fetchAreas = async () => {
       try {
         const response = await fetch(`http://${ipAddress}:8080/api/v1/area/`, {
@@ -46,7 +70,7 @@ const AreasScreen = ({ navigation }: Props) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#001DDA" />
         <Text>Loading AREAs...</Text>
       </View>
     );
@@ -61,7 +85,7 @@ const AreasScreen = ({ navigation }: Props) => {
             key={index}
             style={[
               styles.areaBox,
-              { backgroundColor: index % 2 === 0 ? '#4CAF50' : '#2196F3' },
+              { backgroundColor: area.action.service.color },
             ]}
             onPress={() => navigation.navigate('AreaDetails', { area })}
             accessibilityHint={`Navigates to details of ${area.action.name} and ${area.reaction.name}`}>
@@ -70,15 +94,15 @@ const AreasScreen = ({ navigation }: Props) => {
                 styles.areaText
               }>{`${area.action.name} ~ ${area.reaction.name}`}</Text>
             <View style={styles.iconsContainer}>
-              <MaterialCommunityIcons
-                name={area.action.service.name.toLowerCase()}
-                size={24}
-                color="white"
+              <SvgFromUri
+                uri={area.action.service.icon}
+                width={25}
+                height={25}
               />
-              <MaterialCommunityIcons
-                name={area.reaction.service.name.toLowerCase()}
-                size={24}
-                color="white"
+              <SvgFromUri
+                uri={area.reaction.service.icon}
+                width={25}
+                height={25}
               />
             </View>
           </TouchableOpacity>

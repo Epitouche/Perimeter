@@ -55,9 +55,16 @@ func (repo *areaRepository) Save(action schemas.Area) error {
 }
 
 func (repo *areaRepository) Update(action schemas.Area) error {
-	err := repo.db.Connection.Save(&action)
-	if err.Error != nil {
-		return fmt.Errorf("failed to update area: %w", err.Error)
+	var area schemas.Area
+	err := repo.db.Connection.Where(&schemas.Area{Id: action.Id}).First(&area).Error
+	if err != nil {
+		return fmt.Errorf("failed to find area: %w", err)
+	}
+	if area.Id == action.Id {
+		err = repo.db.Connection.Save(&action).Error
+		if err != nil {
+			return fmt.Errorf("failed to update area: %w", err)
+		}
 	}
 	return nil
 }

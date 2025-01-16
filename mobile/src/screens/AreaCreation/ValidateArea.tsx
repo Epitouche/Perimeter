@@ -12,6 +12,21 @@ import { AppContext } from '../../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ValidateAreaScreen'>;
 
+/**
+ * ValidateAreaScreen component is responsible for rendering the screen where users can validate and save an area.
+ * It fetches action and reaction services based on the provided actionId and reactionId from the route parameters.
+ * Users can input a title, description, and refresh timer for the area and save it.
+ *
+ * @param {object} props - The props object.
+ * @param {object} props.navigation - The navigation object used for navigating between screens.
+ * @param {object} props.route - The route object containing parameters passed to this screen.
+ * @param {string} props.route.params.actionId - The ID of the action to fetch information for.
+ * @param {object} props.route.params.actionOptions - The options for the action.
+ * @param {string} props.route.params.reactionId - The ID of the reaction to fetch information for.
+ * @param {object} props.route.params.reactionOptions - The options for the reaction.
+ *
+ * @returns {JSX.Element} The rendered component.
+ */
 const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   const { actionId, actionOptions, reactionId, reactionOptions } = route.params;
   const { ipAddress, token } = useContext(AppContext);
@@ -39,10 +54,20 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   const [refreshTimer, setRefreshTimer] = React.useState('');
 
   useEffect(() => {
+    /**
+     * Fetches action and reaction data from the server and updates the state with the retrieved information.
+     *
+     * @async
+     * @function getService
+     * @throws Will navigate to the 'Login' screen if the response status is 401 (Unauthorized).
+     * @throws Will log an error message to the console if there is an error during the fetch operation.
+     *
+     * @returns {Promise<void>} A promise that resolves when the data has been successfully fetched and the state has been updated.
+     */
     const getService = async () => {
       try {
         const response = await fetch(
-          `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
+          `http://${ipAddress}:8080/api/v1/action/info/action/${actionId}`,
           {
             method: 'GET',
             headers: {
@@ -52,7 +77,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           },
         );
         const res = await fetch(
-          `http://${ipAddress}:8080/api/v1/reaction/info/${reactionId}`,
+          `http://${ipAddress}:8080/api/v1/reaction/info/reaction/${reactionId}`,
           {
             method: 'GET',
             headers: {
@@ -62,13 +87,13 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
           },
         );
 
-        let actionData = await response.json();
-        let reactionData = await res.json();
+        const actionData = await response.json();
+        const reactionData = await res.json();
         console.log('reactionData', reactionData);
-        setActionName(actionData[0].name);
-        setReactionName(reactionData[0].name);
-        setActionService(actionData[0].service);
-        setReactionService(reactionData[0].service);
+        setActionName(actionData.name);
+        setReactionName(reactionData.name);
+        setActionService(actionData.service);
+        setReactionService(reactionData.service);
       } catch (error) {
         if (error.code === 401) {
           navigation.navigate('Login');
@@ -76,9 +101,20 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         console.error('Error fetching service:', error);
       }
     };
+
     getService();
   }, [token, ipAddress, actionId, reactionId]);
 
+  /**
+   * Handles the save button press event by sending a POST request to the server
+   * to save the area details. If successful, navigates to the 'AreaView' screen.
+   * If there is an error and the error code is 401, navigates to the 'Login' screen.
+   *
+   * @async
+   * @function saveButtonPressed
+   * @returns {Promise<void>} A promise that resolves when the area is saved and navigation occurs.
+   * @throws Will log an error message if the area saving fails.
+   */
   const saveButtonPressed = async () => {
     try {
       console.log(parseInt(refreshTimer));
@@ -233,7 +269,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   saveButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#1DC000',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
