@@ -14,8 +14,7 @@ import { RootStackParamList } from '../Navigation/navigate';
 type Props = NativeStackScreenProps<RootStackParamList, 'SettingsScreen'>;
 
 const SettingsScreen = ({ navigation }: { navigation: any }) => {
-  const { ipAddress, setIpAddress, setToken } = useContext(AppContext);
-  // const [timezone, setTimezone] = useState('GMT');
+  const { ipAddress, token, setIpAddress, setToken } = useContext(AppContext);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
@@ -24,14 +23,22 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
       try {
         const response = await fetch(
           `http://${ipAddress}:8080/api/v1/user/info`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         const data = await response.json();
+        console.log(data);
         setUsername(data.username);
         setEmail(data.email);
-      } catch (error) {
-        if (error.code === 401) {
+        if (response.status === 401) {
           navigation.navigate('Login');
         }
+      } catch (error) {
         console.error('Error fetching user info:', error);
       }
     };
@@ -43,30 +50,12 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
       <View style={styles.divider} />
-      <View style={styles.profileSection}>
-        <View style={styles.profilePicture} />
-        <Text style={styles.profileText}>
-          Change your profile picture and customize your account
-        </Text>
-      </View>
+
       <View style={styles.inputSection}>
         <Text style={styles.label}>Username</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Enter your username"
-          accessibilityHint="Enter your username here"
-        />
+        <Text style={styles.infoContainer}>{username}</Text>
         <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          accessibilityHint="Enter your email address here"
-        />
+        <Text style={styles.infoContainer}>{email}</Text>
         <Text style={styles.label}>IpAddress</Text>
         <TextInput
           style={styles.input}
@@ -75,20 +64,6 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           placeholder="Enter your IpAddress"
           accessibilityHint="Enter your IP address here"
         />
-        {/* Time Zone setting for latter use (Maybe) */}
-        {/* <Text style={styles.label}>Timezone</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={timezone}
-            onValueChange={(itemValue) => setTimezone(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="GMT" value="GMT" />
-            <Picker.Item label="UTC" value="UTC" />
-            <Picker.Item label="EST" value="EST" />
-            <Picker.Item label="PST" value="PST" />
-          </Picker>
-        </View> */}
       </View>
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
@@ -123,6 +98,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  infoContainer: {
+    marginBottom: 20,
   },
   divider: {
     height: 1,
