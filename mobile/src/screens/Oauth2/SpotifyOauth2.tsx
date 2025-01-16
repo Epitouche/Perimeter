@@ -3,6 +3,17 @@ import { SPOTIFY_CLIENT_ID, SPOTIFY_SECRET } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
 
+/**
+ * Handles the Spotify login process using OAuth2.
+ *
+ * @param {Function} setToken - Function to set the token received from Spotify.
+ * @param {Object} navigation - Navigation object to navigate between screens.
+ * @param {string} ipAddress - IP address of the server handling the callback.
+ * @param {boolean} [login=true] - Flag to determine if the user should be navigated to the AreaView screen after login.
+ * @param {string} [bearerToken=''] - Optional bearer token for authentication.
+ * @returns {Promise<void>} - A promise that resolves when the login process is complete.
+ * @throws {Error} - Throws an error if the login process fails.
+ */
 async function HandleSpotifyLogin(
   setToken: any,
   navigation: any,

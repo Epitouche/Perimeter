@@ -21,12 +21,41 @@ import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ServicesScreen'>;
 
+/**
+ * ServicesScreen component displays a list of services that the user can connect to or disconnect from.
+ *
+ * @param {object} props - The component props.
+ * @param {object} props.navigation - The navigation object used for navigating between screens.
+ *
+ * @returns {JSX.Element} The rendered component.
+ */
 const ServicesScreen = ({ navigation }: { navigation: any }) => {
+  /**
+   * State to store the list of available services.
+   */
   const [services, setServices] = useState([]);
+
+  /**
+   * State to store the list of connected services.
+   */
   const [connectedServices, setConnectedServices] = useState<string[]>([]);
+
+  /**
+   * State to manage the loading state of the component.
+   */
   const [loading, setLoading] = useState(true);
+
+  /**
+   * Context values from AppContext.
+   */
   const { ipAddress, token, setToken } = useContext(AppContext);
 
+  /**
+   * Handles the disconnection of a service.
+   *
+   * @param {string} id - The ID of the service to disconnect.
+   * @param {string} name - The name of the service to disconnect.
+   */
   const handleDisconnect = async (id: string, name: string) => {
     try {
       await fetch(`http://${ipAddress}:8080/api/v1/token`, {
@@ -45,6 +74,11 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
     }
   };
 
+  /**
+   * Connects to a specified service.
+   *
+   * @param {string} service - The name of the service to connect to.
+   */
   function connectService(service: string) {
     console.log('Connecting to:', service);
     switch (service) {
@@ -68,6 +102,9 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
     }
   }
 
+  /**
+   * Fetches the list of services and connected services from the API.
+   */
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -108,6 +145,11 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
     fetchServices();
   }, []);
 
+  /**
+   * Handles URL events for OAuth redirection.
+   *
+   * @param {object} event - The URL event object.
+   */
   const handleUrl = (event: any) => {
     console.log('Redirect URL:', event.url);
     if (event.url) {
@@ -128,6 +170,13 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
   };
   Linking.addEventListener('url', handleUrl);
 
+  /**
+   * Renders a single service item.
+   *
+   * @param {object} item - The service item to render.
+   *
+   * @returns {JSX.Element} The rendered service item.
+   */
   const renderService = ({ item }: { item: any }) => {
     const isConnected = connectedServices.includes(item.name);
 
