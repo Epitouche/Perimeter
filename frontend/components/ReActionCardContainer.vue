@@ -108,7 +108,8 @@ onMounted(() => {
       <UModal
         v-model="configIsOpen[type.id]"
         :ui="{
-          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width', width: 'w-fit'
+          base: 'relative text-left rtl:text-right flex flex-col p-10 border-custom_border_width',
+          width: 'w-fit',
         }"
         :style="{ borderColor: props.serviceInfo?.color || 'black' }"
       >

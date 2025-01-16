@@ -60,7 +60,10 @@ onMounted(() => {
         </div>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
-        <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full">
+        <div
+          v-else-if="filteredServices.length"
+          class="flex flex-row justify-evenly items-center w-full"
+        >
           <ServiceCardContainer type="reactions" :services="filteredServices" />
         </div>
       </UContainer>
