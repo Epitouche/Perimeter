@@ -52,19 +52,28 @@ const items = [
 </script>
 
 <template>
-  <UContainer :ui="{ padding: '!p-3', constrained: 'min-w-screen' }" class="flex flex-row justify-between items-center bg-custom_color-bg_section">
+  <UContainer :ui="{ padding: '!p-3', constrained: 'min-w-screen' }"
+    class="flex flex-row justify-between items-center bg-custom_color-bg_section">
     <div class="flex flex-row items-center gap-5">
       <img src="../public/PerimeterIcon.png" alt="perimeter-icon" class="nav_icon">
       <h5>Perimeter</h5>
     </div>
 
     <div class="flex flex-row justify-evenly items-center gap-5">
-      <NuxtLink to="/myareas" class="nav-link"><h6>My Areas</h6></NuxtLink>
-      <NuxtLink to="/workflow" class="nav-link"><h6>Workflow</h6></NuxtLink>
-      <NuxtLink to="/myservices" class="nav-link"><h6>My Services</h6></NuxtLink>
+      <NuxtLink to="/myareas" class="nav-link">
+        <h6>My Areas</h6>
+      </NuxtLink>
+      <NuxtLink to="/workflow" class="nav-link">
+        <h6>Workflow</h6>
+      </NuxtLink>
+      <NuxtLink to="/myservices" class="nav-link">
+        <h6>My Services</h6>
+      </NuxtLink>
 
       <UDropdown :items="items" :popper="{ placement: 'bottom', arrow: true }">
-        <div class="nav_profile_circle border-black border-custom_border_width rounded-full flex justify-center items-center" tabindex="0">
+        <div
+          class="nav_profile_circle border-black border-custom_border_width rounded-full flex justify-center items-center"
+          tabindex="0">
           <Icon name="bytesize:user" class="nav_profile text-black" />
         </div>
         <template #name>
