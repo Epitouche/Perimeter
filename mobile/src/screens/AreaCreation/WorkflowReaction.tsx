@@ -30,7 +30,7 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
     const getService = async () => {
       try {
         const response = await fetch(
-          `http://${ipAddress}:8080/api/v1/action/info/${actionId}`,
+          `http://${ipAddress}:8080/api/v1/action/info/action/${actionId}`,
           {
             method: 'GET',
             headers: {
@@ -41,8 +41,8 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
         );
 
         let data = await response.json();
-        setName(data[0].name);
-        setService(data[0].service);
+        setName(data.name);
+        setService(data.service);
       } catch (error) {
         if (error.code === 401) {
           navigation.navigate('Login');

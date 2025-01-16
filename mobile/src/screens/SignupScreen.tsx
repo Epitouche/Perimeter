@@ -15,6 +15,7 @@ import { HandleGithubLogin } from './Oauth2/GithubOauth2';
 import { HandleMicrosoftLogin } from './Oauth2/MicrosoftOauth2';
 import { HandleSpotifyLogin } from './Oauth2/SpotifyOauth2';
 import { HandleGoogleLogin } from './Oauth2/GoogleOauth2';
+import { HandleDropboxLogin } from './Oauth2/DropboxOauth2';
 import { SvgFromUri } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
@@ -228,6 +229,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
                   case 'Google':
                     HandleGoogleLogin(setToken, navigation, ipAddress, true);
                     break;
+                  case 'Dropbox':
+                    HandleDropboxLogin(setToken, navigation, ipAddress, true);
+                    break;
                   default:
                     break;
                 }
@@ -270,7 +274,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    color: '#007BFF',
+    color: '#001DDA',
     marginBottom: 20,
   },
   registerButton: {
@@ -295,7 +299,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   loginText: {
-    color: '#007BFF',
+    color: '#001DDA',
     fontWeight: 'bold',
   },
   dividerContainer: {
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   errorText: {
-    color: 'red',
+    color: '#E60000',
     fontSize: 12,
     alignSelf: 'flex-start',
     marginBottom: 10,

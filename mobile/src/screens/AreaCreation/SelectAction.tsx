@@ -177,7 +177,10 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
                 accessibilityLabel={service.name}
                 accessibilityHint={`Select ${service.name}`}
                 key={service.id}
-                style={styles.serviceBox}
+                style={[
+                  styles.serviceBox,
+                  { backgroundColor: service.service.color },
+                ]}
                 onPress={() => handleActionPress(service)}>
                 <Text style={styles.serviceText}>
                   {formatText(service.name)}
@@ -230,7 +233,6 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 20,
-    backgroundColor: '#add8e6',
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
@@ -269,7 +271,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   saveButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#1DC000',
     borderRadius: 5,
     padding: 10,
     marginTop: 20,
