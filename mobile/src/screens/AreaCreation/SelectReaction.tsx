@@ -133,7 +133,9 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
               </Text>
               <TextInput
                 style={styles.optionInput}
-                value={String(selectedReactionOptions[key])}
+                placeholder={`Ex: ${String(selectedReactionOptions[key])}`}
+                placeholderTextColor='#999'
+                // value={String(selectedReactionOptions[key])}
                 onChangeText={text =>
                   handleOptionChange(
                     key,
@@ -141,7 +143,7 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                     typeof selectedReactionOptions[key],
                   )
                 }
-                keyboardType="default"
+                keyboardType={`${typeof selectedReactionOptions[key] == 'number' ? "numeric" : "default"}`}
                 accessibilityLabel={`Option input ${key}`}
                 accessibilityHint={`Input field for the option ${key}`}
               />
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     padding: 10,
+    color: "#000",
     borderColor: '#ccc',
     borderWidth: 1,
   },
