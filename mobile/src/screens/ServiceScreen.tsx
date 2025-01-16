@@ -23,10 +23,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'ServicesScreen'>;
 
 /**
  * ServicesScreen component displays a list of services that the user can connect to or disconnect from.
- * 
+ *
  * @param {object} props - The component props.
  * @param {object} props.navigation - The navigation object used for navigating between screens.
- * 
+ *
  * @returns {JSX.Element} The rendered component.
  */
 const ServicesScreen = ({ navigation }: { navigation: any }) => {
@@ -52,7 +52,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
 
   /**
    * Handles the disconnection of a service.
-   * 
+   *
    * @param {string} id - The ID of the service to disconnect.
    * @param {string} name - The name of the service to disconnect.
    */
@@ -76,7 +76,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
 
   /**
    * Connects to a specified service.
-   * 
+   *
    * @param {string} service - The name of the service to connect to.
    */
   function connectService(service: string) {
@@ -147,7 +147,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
 
   /**
    * Handles URL events for OAuth redirection.
-   * 
+   *
    * @param {object} event - The URL event object.
    */
   const handleUrl = (event: any) => {
@@ -172,9 +172,9 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
 
   /**
    * Renders a single service item.
-   * 
+   *
    * @param {object} item - The service item to render.
-   * 
+   *
    * @returns {JSX.Element} The rendered service item.
    */
   const renderService = ({ item }: { item: any }) => {

@@ -48,14 +48,13 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
   const { ipAddress, token } = useContext(AppContext);
 
   useEffect(() => {
-
     /**
      * Fetches services and user information from the API.
-     * 
+     *
      * This function makes two asynchronous GET requests to fetch service information
      * and user information. It then processes the responses to update the state with
      * the fetched data.
-     * 
+     *
      * @async
      * @function fetchServices
      * @throws Will navigate to the 'Login' screen if the response status is 401.
@@ -114,9 +113,9 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
 
   /**
    * Handles the search functionality by filtering the services based on the input text.
-   * 
+   *
    * @param {string} text - The search text input by the user.
-   * 
+   *
    * - If the input text is empty, it resets the filtered services to the original list of services.
    * - If the input text is not empty, it filters the services whose names include the input text (case insensitive).
    */

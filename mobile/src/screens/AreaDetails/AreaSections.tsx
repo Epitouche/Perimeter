@@ -43,7 +43,7 @@ const AreaSections = ({ navigation, route }: Props) => {
   /**
    * Handles the saving of an area by sending a PUT request to the server.
    * Updates the area with the provided title, description, and refresh rate.
-   * 
+   *
    * @async
    * @function handleSaveArea
    * @returns {Promise<void>} A promise that resolves when the area is saved.
@@ -79,12 +79,12 @@ const AreaSections = ({ navigation, route }: Props) => {
 
   /**
    * Deletes an area by sending a DELETE request to the server.
-   * 
+   *
    * @async
    * @function deleteArea
    * @returns {Promise<void>} A promise that resolves when the area is deleted.
    * @throws Will throw an error if the fetch request fails.
-   * 
+   *
    * @example
    * deleteArea()
    *   .then(() => console.log('Area deleted successfully'))

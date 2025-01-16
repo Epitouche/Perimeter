@@ -8,17 +8,17 @@ type Props = NativeStackScreenProps<RootStackParamList, 'WorkflowScreen'>;
 
 /**
  * WorkflowScreen component renders the workflow creation screen.
- * 
+ *
  * @param {Object} props - The component props.
  * @param {any} props.navigation - The navigation object used to navigate between screens.
- * 
+ *
  * @returns {JSX.Element} The rendered component.
- * 
+ *
  * @example
  * <WorkflowScreen navigation={navigation} />
- * 
+ *
  * @component
- * 
+ *
  * @accessibility
  * - The screen title has an accessibility label "Add Area Title" and hint "Displays the title of the screen".
  * - The action text has an accessibility label "Action Text" and hint "Displays the action text".

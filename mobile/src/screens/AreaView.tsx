@@ -16,10 +16,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaView'>;
 
 /**
  * AreasScreen component fetches and displays a list of areas.
- * 
+ *
  * @param {Props} props - The props object containing navigation.
  * @returns {JSX.Element} The rendered component.
- * 
+ *
  * @component
  * @example
  * return (

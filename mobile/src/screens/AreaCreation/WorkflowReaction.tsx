@@ -12,17 +12,17 @@ type Props = NativeStackScreenProps<
 /**
  * WorkflowReactionScreen component is responsible for displaying the workflow reaction screen.
  * It fetches and displays the service information based on the provided actionId.
- * 
+ *
  * @param {object} props - The props object.
  * @param {object} props.navigation - The navigation object used for navigating between screens.
  * @param {object} props.route - The route object containing route parameters.
  * @param {string} props.route.params.actionId - The ID of the action to fetch information for.
  * @param {object} props.route.params.actionOptions - Additional options for the action.
- * 
+ *
  * @returns {JSX.Element} The rendered component.
- * 
+ *
  * @component
- * 
+ *
  * @example
  * return (
  *   <WorkflowReactionScreen navigation={navigation} route={route} />
@@ -48,12 +48,12 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
   useEffect(() => {
     /**
      * Fetches service information from the API and updates the state with the retrieved data.
-     * 
+     *
      * @async
      * @function getService
      * @throws Will navigate to the 'Login' screen if the response status is 401 (Unauthorized).
      * @throws Will log an error message to the console if there is an error during the fetch operation.
-     * 
+     *
      * @returns {Promise<void>} A promise that resolves when the service information has been fetched and the state has been updated.
      */
     const getService = async () => {
@@ -79,7 +79,7 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
         console.error('Error fetching service:', error);
       }
     };
-    
+
     getService();
   }, [ipAddress, token]);
 

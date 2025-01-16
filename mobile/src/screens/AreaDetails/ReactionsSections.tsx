@@ -53,7 +53,7 @@ const ReactionsSections = ({ route }: Props) => {
   /**
    * Handles the save reaction action by updating the area with the selected reaction options.
    * Sends a PUT request to the server to update the area.
-   * 
+   *
    * @async
    * @function handleSaveReaction
    * @returns {Promise<void>} - A promise that resolves when the area is updated.

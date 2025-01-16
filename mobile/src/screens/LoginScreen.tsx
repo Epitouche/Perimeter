@@ -29,47 +29,47 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
  * @returns {JSX.Element} The rendered LoginScreen component.
  */
 
- /**
-  * Handles the login process by validating the input fields and making a POST request
-  * to the login API endpoint. If successful, navigates to the AreaView screen.
-  *
-  * @async
-  * @function handleLogin
-  * @returns {Promise<void>}
-  */
+/**
+ * Handles the login process by validating the input fields and making a POST request
+ * to the login API endpoint. If successful, navigates to the AreaView screen.
+ *
+ * @async
+ * @function handleLogin
+ * @returns {Promise<void>}
+ */
 
- /**
-  * Switches the screen to the SignUp screen.
-  *
-  * @function switchToSignup
-  * @returns {void}
-  */
+/**
+ * Switches the screen to the SignUp screen.
+ *
+ * @function switchToSignup
+ * @returns {void}
+ */
 
- /**
-  * Fetches the available services from the API and sets the services state.
-  *
-  * @async
-  * @function fetchServices
-  * @returns {Promise<void>}
-  */
+/**
+ * Fetches the available services from the API and sets the services state.
+ *
+ * @async
+ * @function fetchServices
+ * @returns {Promise<void>}
+ */
 
- /**
-  * @typedef {Object} Service
-  * @property {string} color - The color associated with the service.
-  * @property {string} created_at - The creation date of the service.
-  * @property {string} description - The description of the service.
-  * @property {string} icon - The icon URL of the service.
-  * @property {number} id - The unique identifier of the service.
-  * @property {string} name - The name of the service.
-  * @property {boolean} oauth - Indicates if the service supports OAuth.
-  * @property {string} update_at - The last update date of the service.
-  */
+/**
+ * @typedef {Object} Service
+ * @property {string} color - The color associated with the service.
+ * @property {string} created_at - The creation date of the service.
+ * @property {string} description - The description of the service.
+ * @property {string} icon - The icon URL of the service.
+ * @property {number} id - The unique identifier of the service.
+ * @property {string} name - The name of the service.
+ * @property {boolean} oauth - Indicates if the service supports OAuth.
+ * @property {string} update_at - The last update date of the service.
+ */
 
- /**
-  * @typedef {Object} Errors
-  * @property {string} username - The error message for the username field.
-  * @property {string} password - The error message for the password field.
-  */
+/**
+ * @typedef {Object} Errors
+ * @property {string} username - The error message for the username field.
+ * @property {string} password - The error message for the password field.
+ */
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -148,12 +148,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     /**
      * Fetches services from the API and updates the state with the fetched data.
-     * 
+     *
      * @async
      * @function fetchServices
      * @returns {Promise<void>} A promise that resolves when the services are fetched and state is updated.
      * @throws {Error} Throws an error if the fetch request fails.
-     * 
+     *
      * @example
      * fetchServices();
      */

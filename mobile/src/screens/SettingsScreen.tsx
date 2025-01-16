@@ -21,7 +21,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'SettingsScreen'>;
  *
  * @returns {JSX.Element} The SettingsScreen component.
  */
- 
+
 /**
  * Fetches user information from the server and updates the state with the fetched data.
  * If the response status is 401, navigates to the Login screen.

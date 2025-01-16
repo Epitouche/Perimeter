@@ -20,47 +20,47 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
  * );
  */
 
- /**
-  * Context hook to get and set the IP address.
-  * @constant
-  * @type {object}
-  * @property {string} ipAddress - The current IP address.
-  * @property {function} setIpAddress - Function to update the IP address.
-  */
+/**
+ * Context hook to get and set the IP address.
+ * @constant
+ * @type {object}
+ * @property {string} ipAddress - The current IP address.
+ * @property {function} setIpAddress - Function to update the IP address.
+ */
 
- /**
-  * Renders the main container view.
-  * @constant
-  * @type {object}
-  */
+/**
+ * Renders the main container view.
+ * @constant
+ * @type {object}
+ */
 
- /**
-  * Renders the instruction text for entering the IP address.
-  * @constant
-  * @type {object}
-  * @property {string} accessibilityHint - Accessibility hint for the instruction text.
-  */
+/**
+ * Renders the instruction text for entering the IP address.
+ * @constant
+ * @type {object}
+ * @property {string} accessibilityHint - Accessibility hint for the instruction text.
+ */
 
- /**
-  * Renders the input field for entering the IP address.
-  * @constant
-  * @type {object}
-  * @property {object} style - The style object for the input field.
-  * @property {string} placeholder - Placeholder text for the input field.
-  * @property {string} value - The current value of the input field.
-  * @property {function} onChangeText - Function to handle text change in the input field.
-  * @property {string} keyboardType - The type of keyboard to display.
-  * @property {string} accessibilityHint - Accessibility hint for the input field.
-  */
+/**
+ * Renders the input field for entering the IP address.
+ * @constant
+ * @type {object}
+ * @property {object} style - The style object for the input field.
+ * @property {string} placeholder - Placeholder text for the input field.
+ * @property {string} value - The current value of the input field.
+ * @property {function} onChangeText - Function to handle text change in the input field.
+ * @property {string} keyboardType - The type of keyboard to display.
+ * @property {string} accessibilityHint - Accessibility hint for the input field.
+ */
 
- /**
-  * Renders the connect button to set the IP address and navigate to the login screen.
-  * @constant
-  * @type {object}
-  * @property {string} title - The title of the button.
-  * @property {function} onPress - Function to handle button press.
-  * @property {string} accessibilityHint - Accessibility hint for the button.
-  */
+/**
+ * Renders the connect button to set the IP address and navigate to the login screen.
+ * @constant
+ * @type {object}
+ * @property {string} title - The title of the button.
+ * @property {function} onPress - Function to handle button press.
+ * @property {string} accessibilityHint - Accessibility hint for the button.
+ */
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { ipAddress, setIpAddress } = useContext(AppContext);
 

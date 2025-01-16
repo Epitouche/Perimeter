@@ -55,7 +55,7 @@ const ActionsSections = ({ route }: Props) => {
       },
       {} as { [key: string]: any },
     );
-    
+
     setSelectedActionOptions(initialActionOptions);
   }, [area.action_option]);
 
@@ -75,16 +75,16 @@ const ActionsSections = ({ route }: Props) => {
 
   /**
    * Handles the save action for updating an area.
-   * 
+   *
    * This function constructs a new area object with the selected action options,
    * sends a PUT request to update the area on the server, and updates the local
    * state with the response data if the request is successful.
-   * 
+   *
    * @async
    * @function handleSaveAction
-   * 
+   *
    * @returns {Promise<void>} A promise that resolves when the save action is complete.
-   * 
+   *
    * @throws Will log an error message if the update request fails.
    */
   const handleSaveAction = async () => {

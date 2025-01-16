@@ -56,12 +56,12 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     /**
      * Fetches action and reaction data from the server and updates the state with the retrieved information.
-     * 
+     *
      * @async
      * @function getService
      * @throws Will navigate to the 'Login' screen if the response status is 401 (Unauthorized).
      * @throws Will log an error message to the console if there is an error during the fetch operation.
-     * 
+     *
      * @returns {Promise<void>} A promise that resolves when the data has been successfully fetched and the state has been updated.
      */
     const getService = async () => {

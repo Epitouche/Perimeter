@@ -16,7 +16,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'SelectReactionScreen'>;
 
 /**
  * SelectReactionScreen component allows users to select and configure a reaction for a specific service.
- * 
+ *
  * @param {object} props - The props object.
  * @param {object} props.navigation - The navigation object provided by React Navigation.
  * @param {object} props.route - The route object provided by React Navigation.
@@ -24,20 +24,20 @@ type Props = NativeStackScreenProps<RootStackParamList, 'SelectReactionScreen'>;
  * @param {string} props.route.params.actionId - The ID of the action.
  * @param {object} props.route.params.actionOptions - The options for the action.
  * @param {string} props.route.params.serviceId - The ID of the service.
- * 
+ *
  * @returns {JSX.Element} The rendered component.
- * 
+ *
  * @component
- * 
+ *
  * @example
  * return (
  *   <SelectReactionScreen navigation={navigation} route={route} />
  * )
- * 
+ *
  * @remarks
  * This component fetches the available reactions for a given service and allows the user to search, select, and configure a reaction.
  * It handles the loading state, search functionality, and navigation to the next screen with the selected reaction and its options.
- * 
+ *
  * @function
  * @name SelectReactionScreen
  */
@@ -56,14 +56,14 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     /**
      * Fetches services from the API and updates the state with the fetched data.
-     * 
+     *
      * This function sends a GET request to the API endpoint to retrieve information
-     * about services. It handles the response by updating the `services` and 
+     * about services. It handles the response by updating the `services` and
      * `filteredServices` state variables. If the response is not an array, it logs
      * an error and sets the state variables to empty arrays. It also handles errors
      * during the fetch operation, including navigating to the login screen if a 401
      * Unauthorized error occurs.
-     * 
+     *
      * @async
      * @function fetchServices
      * @returns {Promise<void>} A promise that resolves when the fetch operation is complete.
@@ -129,10 +129,10 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   /**
    * Handles the press action for a given reaction.
-   * 
+   *
    * @param {any} action - The action object containing the reaction details.
    * @returns {void}
-   * 
+   *
    * This function sets the selected reaction and its options if available.
    * If the action object contains an `option` property, it parses and sets the options.
    * Otherwise, it sets the selected reaction options to an empty object.
@@ -210,7 +210,7 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
               <TextInput
                 style={styles.optionInput}
                 placeholder={`Ex: ${String(selectedReactionOptions[key])}`}
-                placeholderTextColor='#999'
+                placeholderTextColor="#999"
                 // value={String(selectedReactionOptions[key])}
                 onChangeText={text =>
                   handleOptionChange(
@@ -219,7 +219,11 @@ const SelectReactionScreen: React.FC<Props> = ({ navigation, route }) => {
                     typeof selectedReactionOptions[key],
                   )
                 }
-                keyboardType={`${typeof selectedReactionOptions[key] == 'number' ? "numeric" : "default"}`}
+                keyboardType={`${
+                  typeof selectedReactionOptions[key] == 'number'
+                    ? 'numeric'
+                    : 'default'
+                }`}
                 accessibilityLabel={`Option input ${key}`}
                 accessibilityHint={`Input field for the option ${key}`}
               />
@@ -353,7 +357,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     padding: 10,
-    color: "#000",
+    color: '#000',
     borderColor: '#ccc',
     borderWidth: 1,
   },

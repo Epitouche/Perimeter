@@ -16,48 +16,48 @@ type Props = NativeStackScreenProps<RootStackParamList, 'SelectActionScreen'>;
 
 /**
  * SelectActionScreen component allows users to select and configure actions.
- * 
+ *
  * @component
  * @param {object} props - The component props.
  * @param {object} props.navigation - The navigation object provided by React Navigation.
  * @param {object} props.route - The route object provided by React Navigation.
  * @param {object} props.route.params - The parameters passed to the route.
  * @param {string} props.route.params.serviceId - The ID of the service to fetch actions for.
- * 
+ *
  * @returns {JSX.Element} The rendered component.
- * 
+ *
  * @example
  * <SelectActionScreen navigation={navigation} route={route} />
- * 
+ *
  * @remarks
  * This component fetches actions from an API based on the provided service ID.
  * It allows users to search for actions, select an action, configure its options, and save the configuration.
  * If the user is not authenticated, they will be redirected to the login screen.
- * 
+ *
  * @function
  * @name SelectActionScreen
- * 
+ *
  * @typedef {object} Props
  * @property {object} navigation - The navigation object provided by React Navigation.
  * @property {object} route - The route object provided by React Navigation.
  * @property {object} route.params - The parameters passed to the route.
  * @property {string} route.params.serviceId - The ID of the service to fetch actions for.
- * 
+ *
  * @typedef {object} Action
  * @property {string} id - The ID of the action.
  * @property {string} name - The name of the action.
  * @property {object} option - The options available for the action.
- * 
+ *
  * @typedef {object} Service
  * @property {string} id - The ID of the service.
  * @property {string} name - The name of the service.
  * @property {object} service - The service details.
  * @property {string} service.color - The color associated with the service.
- * 
+ *
  * @typedef {object} SelectedActionOptions
  * @property {string} key - The key of the option.
  * @property {any} value - The value of the option.
- * 
+ *
  * @typedef {object} AppContext
  * @property {string} ipAddress - The IP address of the API server.
  * @property {string} token - The authentication token.
@@ -77,16 +77,16 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     /**
      * Fetches services from the API and updates the state with the retrieved data.
-     * 
+     *
      * This function makes a GET request to the API endpoint using the provided
      * `ipAddress`, `serviceId`, and `token`. If the response is an array, it updates
      * the `services` and `filteredServices` state with the data. If the response is
      * not an array, it logs an error and sets the `services` and `filteredServices`
      * state to empty arrays. In case of an error, it navigates to the 'Login' screen
-     * if the error code is 401, logs the error, and sets the `services` and 
+     * if the error code is 401, logs the error, and sets the `services` and
      * `filteredServices` state to empty arrays. The `loading` state is set to false
      * after the request completes or fails.
-     * 
+     *
      * @async
      * @function fetchServices
      * @returns {Promise<void>} A promise that resolves when the fetch operation is complete.
@@ -128,9 +128,9 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   /**
    * Handles the search functionality by filtering the services based on the input text.
-   * 
+   *
    * @param {string} text - The search text input by the user.
-   * 
+   *
    * - If the search text is empty, it resets the filtered services to the original list of services.
    * - If the search text is not empty, it filters the services whose names include the search text (case-insensitive).
    */
@@ -149,10 +149,10 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
 
   /**
    * Handles the press event for an action.
-   * 
+   *
    * @param {any} action - The action object that was pressed.
    * @returns {void}
-   * 
+   *
    * This function sets the selected action and its options (if any).
    * If the action has an `option` property, it logs the options to the console,
    * parses them, and updates the state with the parsed options.
@@ -216,7 +216,7 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
    * capitalizing the first letter of the string, and trimming any leading or trailing whitespace.
    *
    * @param text - The input string to be formatted.
-   * @returns The formatted string with spaces before uppercase letters, 
+   * @returns The formatted string with spaces before uppercase letters,
    *          the first letter capitalized, and no leading or trailing whitespace.
    */
   const formatText = (text: string): string => {
@@ -251,7 +251,11 @@ const SelectActionScreen: React.FC<Props> = ({ navigation, route }) => {
                     typeof selectedActionOptions[key],
                   )
                 }
-                keyboardType={`${typeof selectedActionOptions[key] === 'number' ? "numeric" : "default"}`}
+                keyboardType={`${
+                  typeof selectedActionOptions[key] === 'number'
+                    ? 'numeric'
+                    : 'default'
+                }`}
               />
             </View>
           ))}
