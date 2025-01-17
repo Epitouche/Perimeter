@@ -37,7 +37,10 @@ type ReactionRepository interface {
 
 	// FindByServiceByName retrieves reactions from the repository that match the given service ID and action name.
 	// Returns a slice of reactions and an error if the operation fails.
-	FindByServiceByName(serviceID uint64, actionName string) (reactions []schemas.Reaction, err error)
+	FindByServiceByName(
+		serviceID uint64,
+		actionName string,
+	) (reactions []schemas.Reaction, err error)
 
 	// FindById retrieves a reaction from the repository that matches the given action ID.
 	// Returns the reaction and an error if the operation fails.
