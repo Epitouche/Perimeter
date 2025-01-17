@@ -27,15 +27,16 @@ async function HandleDropboxLogin(
     clientId: DROPBOX_CLIENT_ID,
     clientSecret: DROPBOX_SECRET,
     redirectUrl: 'com.perimeter-epitech://oauthredirect',
-    scopes: ['account_info.read', 'profile', 'email', 'openid'],
+    scopes: [],
     serviceConfiguration: {
       authorizationEndpoint: 'https://www.dropbox.com/oauth2/authorize',
-      tokenEndpoint: 'https://api.dropboxapi.com/oauth2/token',
+      tokenEndpoint: `https://www.dropbox.com/oauth2/token`,
     },
   };
 
   try {
     const result = await authorize(config);
+
     let data = await handleCallback(
       `http://${ipAddress}:8080/api/v1/dropbox/auth/callback/mobile`,
       result,

@@ -178,9 +178,13 @@ const ActionsSections = ({ route }: Props) => {
                         typeof selectedActionOptions[key],
                       )
                     }
-                    keyboardType="default" // Adjust as needed
+                    keyboardType={`${
+                      typeof selectedActionOptions[key] === 'number'
+                        ? 'numeric'
+                        : 'default'
+                    }`}
                     accessibilityLabel="Action Option Input"
-                    accessibilityHint={`Input for ${key}`}
+                    accessibilityHint={`Input for the ${key} option`}
                   />
                 </View>
               ))}

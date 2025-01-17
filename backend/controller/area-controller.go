@@ -61,6 +61,7 @@ func (controller *areaController) CreateArea(ctx *gin.Context) (string, error) {
 	var result schemas.AreaMessage
 
 	err := json.NewDecoder(ctx.Request.Body).Decode(&result)
+	fmt.Printf("result: %v\n", result)
 	if err != nil {
 		println(fmt.Errorf("can't bind credentials: %w", err))
 		return "", fmt.Errorf("can't bind credentials: %w", err)

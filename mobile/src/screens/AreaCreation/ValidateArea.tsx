@@ -9,6 +9,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../../context/AppContext';
+import { jsxs } from 'react/jsx-runtime';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ValidateAreaScreen'>;
 
