@@ -8,3 +8,4 @@ package.json
 .gitignore
 create_runner.sh
 **/.docker_runner_name
+/mobile/docs
