@@ -85,7 +85,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       update_at: '',
     },
   ]);
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState('');
   const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
   /**
@@ -101,21 +101,21 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
    */
   const handleLogin = async () => {
     let hasError = false;
-    let newErrors = "";
+    let newErrors = '';
 
     if (!username) {
-      console.log("Username is required");
-      newErrors += " Username";
+      console.log('Username is required');
+      newErrors += ' Username';
       hasError = true;
     }
     if (!password) {
-      console.log("Password is required");
-      newErrors += " Password";
+      console.log('Password is required');
+      newErrors += ' Password';
       hasError = true;
     }
 
     if (!username || !password) {
-      newErrors += " is required"
+      newErrors += ' is required';
     }
 
     setErrors(newErrors);
@@ -138,8 +138,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         if (response.ok) {
           navigation.navigate('AreaView');
         } else if (response.status == 400 || response.status == 409) {
-          console.log("error")
-          setErrors(data.error)
+          console.log('error');
+          setErrors(data.error);
         }
       } catch (error) {
         if (error.code === 401) {
