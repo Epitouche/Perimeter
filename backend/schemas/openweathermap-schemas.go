@@ -2,18 +2,18 @@ package schemas
 
 import "errors"
 
-type OpenweathermapAction string
+type OpenWeatherMapAction string
 
 const (
-	SpecificWeather     OpenweathermapAction = "SpecificWeather"
-	SpecificTemperature OpenweathermapAction = "SpecificTemperature"
+	SpecificWeather     OpenWeatherMapAction = "SpecificWeather"
+	SpecificTemperature OpenWeatherMapAction = "SpecificTemperature"
 )
 
-type OpenweathermapReaction string
+type OpenWeatherMapReaction string
 
 const (
-	CurrentWeather     OpenweathermapReaction = "CurrentWeather"
-	CurrentTemperature OpenweathermapReaction = "CurrentTemperature"
+	CurrentWeather     OpenWeatherMapReaction = "CurrentWeather"
+	CurrentTemperature OpenWeatherMapReaction = "CurrentTemperature"
 )
 
 // https://openweathermap.org/weather-conditions
@@ -45,22 +45,30 @@ const (
 	Clouds WeatherCondition = "Clouds"
 )
 
-type OpenweathermapActionSpecificWeather struct {
+type OpenWeatherMapStorageVariable int
+
+const (
+	OpenWeatherMapStorageVariableInit  OpenWeatherMapStorageVariable = 0
+	OpenWeatherMapStorageVariableTrue  OpenWeatherMapStorageVariable = 1
+	OpenWeatherMapStorageVariableFalse OpenWeatherMapStorageVariable = 2
+)
+
+type OpenWeatherMapActionSpecificWeather struct {
 	City    string           `json:"city"`
 	Weather WeatherCondition `json:"weather"`
 }
 
-type OpenweathermapActionSpecificTemperature struct {
-	City        string  `json:"city"`
-	Temperature float64 `json:"temperature"`
+type OpenWeatherMapActionSpecificTemperature struct {
+	City        string `json:"city"`
+	Temperature int64  `json:"temperature"`
 }
 
 // all reaction options schema.
-type OpenweathermapReactionOption struct {
+type OpenWeatherMapReactionOption struct {
 	City string `json:"city"`
 }
 
-type OpenweathermapCityCoordinatesResponse struct {
+type OpenWeatherMapCityCoordinatesResponse struct {
 	Name    string  `json:"name"`
 	Lat     float64 `json:"lat"`
 	Lon     float64 `json:"lon"`
@@ -68,7 +76,7 @@ type OpenweathermapCityCoordinatesResponse struct {
 	State   string  `json:"state"`
 }
 
-type OpenweathermapCoordinatesWeatherResponse struct {
+type OpenWeatherMapCoordinatesWeatherResponse struct {
 	Coord struct {
 		Lon float64 `json:"lon"`
 		Lat float64 `json:"lat"`
@@ -115,8 +123,8 @@ type OpenweathermapCoordinatesWeatherResponse struct {
 	Cod      int    `json:"cod"`
 }
 
-type OpenweathermapReactionGiveTime struct{}
+type OpenWeatherMapReactionGiveTime struct{}
 
-type OpenweathermapReactionApiResponse struct{}
+type OpenWeatherMapReactionApiResponse struct{}
 
 var ErrOpenWeatherMapApiKeyNotSet = errors.New("OPENWEATHERMAP_API_KEY is not set")

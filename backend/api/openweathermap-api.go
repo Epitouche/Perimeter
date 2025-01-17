@@ -4,12 +4,12 @@ import (
 	"area/controller"
 )
 
-type OpenweathermapAPI struct {
-	controller controller.OpenweathermapController
+type OpenWeatherMapAPI struct {
+	controller controller.OpenWeatherMapController
 }
 
-func OewopenweathermapAPI(controller controller.OpenweathermapController) *OpenweathermapAPI {
-	return &OpenweathermapAPI{
+func OewopenweathermapAPI(controller controller.OpenWeatherMapController) *OpenWeatherMapAPI {
+	return &OpenWeatherMapAPI{
 		controller: controller,
 	}
 }

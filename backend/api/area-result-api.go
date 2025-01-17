@@ -43,7 +43,7 @@ func NewAreaResultAPI(
 
 // GetUserAreaResultsByAreaID godoc
 //
-//	@Summary		get user areas results list by area id
+//	@Summary		Get User Area Results By Area ID
 //	@Description	get user areas results list by area id
 //	@Tags			AreaResults
 //	@Accept			json

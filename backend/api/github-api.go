@@ -46,7 +46,7 @@ func NewGithubAPI(
 
 // RedirectToService godoc
 //
-//	@Summary		give url to authenticate with github
+//	@Summary		Redirect To Service
 //	@Description	give url to authenticate with github
 //	@Tags			Github
 //	@Accept			json
@@ -69,7 +69,7 @@ func (api *GithubAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with github
+//	@Summary		Handle Service Callback
 //	@Description	give url to authenticate with github
 //	@Tags			Github
 //	@Accept			json
@@ -93,7 +93,7 @@ func (api *GithubAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give authentication token to mobile
+//	@Summary		Handle Service Callback Mobile
 //	@Description	give authentication token to mobile
 //	@Tags			Github
 //	@Accept			json
@@ -118,7 +118,7 @@ func (api *GithubAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of github
+//	@Summary		Get User Info
 //	@Description	give user info of github
 //	@Tags			Github
 //	@Accept			json

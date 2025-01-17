@@ -926,7 +926,7 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 	}
 
 	if service.IsPullRequestUpdate(pullRequestList, databaseStored.Time) {
-		response := "new commit update in " + optionJSON.RepoName + " repository"
+		response := "new pull request update in " + optionJSON.RepoName + " repository"
 		databaseStored.Time = time.Now()
 		area.StorageVariable, err = json.Marshal(databaseStored)
 		if err != nil {
