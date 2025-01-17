@@ -87,6 +87,10 @@ func (service *openWeatherMapService) FindActionByName(
 		return service.OpenWeatherMapActionSpecificWeather
 	case string(schemas.SpecificTemperature):
 		return service.OpenWeatherMapActionSpecificTemperature
+	case string(schemas.AboveTemperature):
+		return service.OpenWeatherMapActionAboveTemperature
+	case string(schemas.BelowTemperature):
+		return service.OpenWeatherMapActionBelowTemperature
 	default:
 		return nil
 	}
@@ -142,7 +146,21 @@ func (service *openWeatherMapService) GetServiceActionInfo() []schemas.Action {
 		},
 		{
 			Name:               string(schemas.SpecificTemperature),
-			Description:        "This action is a specific temperature action",
+			Description:        "This action triggers when the temperature is a specific value",
+			Service:            service.serviceInfo,
+			Option:             optionSpecificTemperature,
+			MinimumRefreshRate: 10,
+		},
+		{
+			Name:               string(schemas.AboveTemperature),
+			Description:        "This action triggers when the temperature is above a specific value",
+			Service:            service.serviceInfo,
+			Option:             optionSpecificTemperature,
+			MinimumRefreshRate: 10,
+		},
+		{
+			Name:               string(schemas.BelowTemperature),
+			Description:        "This action triggers when the temperature is below a specific value",
 			Service:            service.serviceInfo,
 			Option:             optionSpecificTemperature,
 			MinimumRefreshRate: 10,
@@ -421,6 +439,146 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificTemperature(
 	if err != nil {
 		println("error get actual temperature info" + err.Error())
 		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) == optionJSON.Temperature {
+			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
+				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
+					"%f",
+					weatherOfSpecifiedCity.Main.Temp,
+				) + "°C"
+				println(response)
+				channel <- response
+				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+			}
+		} else {
+			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableTrue {
+				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableFalse
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+			}
+		}
+	}
+
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
+}
+
+func (service *openWeatherMapService) OpenWeatherMapActionAboveTemperature(
+	channel chan string,
+	option json.RawMessage,
+	area schemas.Area,
+) {
+	optionJSON := schemas.OpenWeatherMapActionSpecificTemperature{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal temperature option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	variableDatabaseStorage, err := initializedOpenWeatherMapStorageVariable(area, *service)
+	if err != nil {
+		println("error initializing storage variable: " + err.Error())
+	}
+
+	coordinates, err := getCoordinatesOfCity(optionJSON.City)
+	if err != nil {
+		fmt.Println(err)
+	}
+	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
+	if err != nil {
+		println("error get actual temperature info" + err.Error())
+		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) > optionJSON.Temperature {
+			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
+				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
+					"%f",
+					weatherOfSpecifiedCity.Main.Temp,
+				) + "°C"
+				println(response)
+				channel <- response
+				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+			}
+		} else {
+			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableTrue {
+				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableFalse
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+			}
+		}
+	}
+
+	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+	} else {
+		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+	}
+}
+
+func (service *openWeatherMapService) OpenWeatherMapActionBelowTemperature(
+	channel chan string,
+	option json.RawMessage,
+	area schemas.Area,
+) {
+	optionJSON := schemas.OpenWeatherMapActionSpecificTemperature{}
+
+	err := json.Unmarshal([]byte(option), &optionJSON)
+	if err != nil {
+		println("error unmarshal temperature option: " + err.Error())
+		time.Sleep(time.Second)
+		return
+	}
+
+	variableDatabaseStorage, err := initializedOpenWeatherMapStorageVariable(area, *service)
+	if err != nil {
+		println("error initializing storage variable: " + err.Error())
+	}
+
+	coordinates, err := getCoordinatesOfCity(optionJSON.City)
+	if err != nil {
+		fmt.Println(err)
+	}
+	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
+	if err != nil {
+		println("error get actual temperature info" + err.Error())
+		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) < optionJSON.Temperature {
 			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
 				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
 					"%f",
