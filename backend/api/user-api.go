@@ -97,10 +97,22 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/register", func(ctx *gin.Context) {
 		token, err := api.controller.Register(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
-				Error: err.Error(),
-			})
-			return
+			switch err {
+			case schemas.ErrEmailTooShort, schemas.ErrUsernameTooShort, schemas.ErrPasswordTooShort, schemas.ErrInvalidEmail:
+				ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
+					Error: err.Error(),
+				})
+				return
+			case schemas.ErrEmailAlreadyExist:
+				ctx.JSON(http.StatusConflict, &schemas.ErrorResponse{
+					Error: err.Error(),
+				})
+			default:
+				ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+					Error: err.Error(),
+				})
+				return
+			}
 		}
 
 		ctx.JSON(http.StatusCreated, &schemas.JWT{
