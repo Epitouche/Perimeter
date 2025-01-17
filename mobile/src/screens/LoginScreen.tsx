@@ -85,7 +85,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       update_at: '',
     },
   ]);
-  const [errors, setErrors] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState('');
   const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
   /**
@@ -101,16 +101,21 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
    */
   const handleLogin = async () => {
     let hasError = false;
-
-    const newErrors = { username: '', password: '' };
+    let newErrors = '';
 
     if (!username) {
-      newErrors.username = 'Username is required';
+      console.log('Username is required');
+      newErrors += ' Username';
       hasError = true;
     }
     if (!password) {
-      newErrors.password = 'Password is required';
+      console.log('Password is required');
+      newErrors += ' Password';
       hasError = true;
+    }
+
+    if (!username || !password) {
+      newErrors += ' is required';
     }
 
     setErrors(newErrors);
@@ -130,7 +135,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
         const data = await response.json();
         setToken(data.token);
-        navigation.navigate('AreaView');
+        if (response.ok) {
+          navigation.navigate('AreaView');
+        } else if (response.status == 400 || response.status == 409) {
+          console.log('error');
+          setErrors(data.error);
+        }
       } catch (error) {
         if (error.code === 401) {
           navigation.navigate('Login');
@@ -188,9 +198,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         onChangeText={text => setUsername(text)}
         accessibilityHint="Enter your username"
       />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
 
       <TextInput
         style={styles.input}
@@ -201,9 +208,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         onChangeText={text => setPassword(text)}
         accessibilityHint="Enter your password"
       />
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
-      ) : null}
+      {errors != '' ? <Text style={styles.errorText}>{errors}</Text> : null}
 
       <TouchableOpacity
         style={styles.loginButton}
