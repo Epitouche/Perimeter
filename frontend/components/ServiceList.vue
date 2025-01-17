@@ -183,7 +183,7 @@ function formatName(name: string): string {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_card"
-        >
+        />
         <UButton
           v-if="!isLoading"
           :class="[
@@ -215,7 +215,7 @@ function formatName(name: string): string {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        >
+        />
         <UButton
           v-if="hover[app.name]"
           variant="ghost"
@@ -244,7 +244,7 @@ function formatName(name: string): string {
         }"
       >
         <h4>
-          Are you sure you want to <br >
+          Are you sure you want to <br />
           disconnect from this service?
         </h4>
         <h6>This action cannot be undone!</h6>
