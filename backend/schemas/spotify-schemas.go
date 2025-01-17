@@ -73,6 +73,14 @@ type SpotifyActionMusicPlayedOption struct {
 	Name string `json:"name"`
 }
 
+type SpotifyStorageVariable int
+
+const (
+	SpotifyStorageVariableInit  SpotifyStorageVariable = 0
+	SpotifyStorageVariableTrue  SpotifyStorageVariable = 1
+	SpotifyStorageVariableFalse SpotifyStorageVariable = 2
+)
+
 // Errors Messages.
 var (
 	ErrSpotifySecretNotSet   = errors.New("SPOTIFY_SECRET is not set")

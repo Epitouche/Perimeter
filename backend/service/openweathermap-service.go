@@ -353,21 +353,23 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificWeather(
 	if err != nil {
 		println("error get actual weather info" + err.Error())
 	} else {
-		if weatherOfSpecifiedCity.Weather[0].Main == optionJSON.Weather && variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
-			response := "current weather in " + optionJSON.City + " is " + string(weatherOfSpecifiedCity.Weather[0].Main)
-			variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
-			area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
-			if err != nil {
-				println("error marshalling storage variable: " + err.Error())
-				return
+		if weatherOfSpecifiedCity.Weather[0].Main == optionJSON.Weather {
+			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
+				response := "current weather in " + optionJSON.City + " is " + string(weatherOfSpecifiedCity.Weather[0].Main)
+				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+				println(response)
+				channel <- response
 			}
-			err = service.areaRepository.Update(area)
-			if err != nil {
-				println("error updating area: " + err.Error())
-				return
-			}
-			println(response)
-			channel <- response
 		} else {
 			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableTrue {
 				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableFalse
@@ -418,24 +420,25 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificTemperature(
 	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
 	if err != nil {
 		println("error get actual temperature info" + err.Error())
-		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) == optionJSON.Temperature &&
-			variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
-			response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
-				"%f",
-				weatherOfSpecifiedCity.Main.Temp,
-			) + "°C"
-			println(response)
-			channel <- response
-			variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
-			area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
-			if err != nil {
-				println("error marshalling storage variable: " + err.Error())
-				return
-			}
-			err = service.areaRepository.Update(area)
-			if err != nil {
-				println("error updating area: " + err.Error())
-				return
+		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) == optionJSON.Temperature {
+			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
+				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
+					"%f",
+					weatherOfSpecifiedCity.Main.Temp,
+				) + "°C"
+				println(response)
+				channel <- response
+				variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
 			}
 		} else {
 			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableTrue {

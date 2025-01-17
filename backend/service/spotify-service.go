@@ -323,7 +323,51 @@ func getSpotifyPlaybackResponse(token schemas.Token) (schemas.SpotifyPlaybackRes
 	return playbackResponse, nil
 }
 
+func (service *spotifyService) InitializedSpotifyStorageVariable(
+	area schemas.Area,
+) (variable schemas.SpotifyStorageVariable, err error) {
+	variable = schemas.SpotifyStorageVariableInit
+	err = json.Unmarshal(area.StorageVariable, &variable)
+	if err != nil {
+		toto := struct{}{}
+		err = json.Unmarshal(area.StorageVariable, &toto)
+		if err != nil {
+			println("error unmarshaling storage variable: " + err.Error())
+			return variable, err
+		} else {
+			println("initializing storage variable")
+			variable = schemas.SpotifyStorageVariableFalse
+			area.StorageVariable, err = json.Marshal(variable)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return variable, err
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return variable, err
+			}
+		}
+	}
+
+	if variable == schemas.SpotifyStorageVariableInit {
+		variable = schemas.SpotifyStorageVariableFalse
+		area.StorageVariable, err = json.Marshal(variable)
+		if err != nil {
+			println("error marshalling storage variable: " + err.Error())
+			return variable, err
+		}
+		err = service.areaRepository.Update(area)
+		if err != nil {
+			println("error updating area: " + err.Error())
+			return variable, err
+		}
+	}
+	return variable, nil
+}
+
 // Actions functions
+
 func (service *spotifyService) SpotifyActionMusicPlayed(
 	c chan string,
 	option json.RawMessage,
@@ -334,6 +378,11 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 	if err != nil {
 		fmt.Println("Error unmarshalling option:", err)
 		return
+	}
+
+	variableDatabaseStorage, err := service.InitializedSpotifyStorageVariable(area)
+	if err != nil {
+		println("error initializing storage variable: " + err.Error())
 	}
 
 	token, err := service.tokenRepository.FindByUserIdAndServiceId(
@@ -357,13 +406,39 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 			artistNames = append(artistNames, artist.Name)
 		}
 		if strings.EqualFold(playbackResponse.Item.Name, optionJSON.Name) {
-			message := fmt.Sprintf("Currently playing: %s by %s",
-				playbackResponse.Item.Name,
-				strings.Join(artistNames, ", "),
-			)
-			fmt.Println(message)
-			c <- message
+			if variableDatabaseStorage == schemas.SpotifyStorageVariableFalse {
+				message := fmt.Sprintf("Currently playing: %s by %s",
+					playbackResponse.Item.Name,
+					strings.Join(artistNames, ", "),
+				)
+				variableDatabaseStorage = schemas.SpotifyStorageVariableTrue
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+				fmt.Println(message)
+				c <- message
+			}
 		} else {
+			if variableDatabaseStorage == schemas.SpotifyStorageVariableTrue {
+				variableDatabaseStorage = schemas.SpotifyStorageVariableFalse
+				area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+				if err != nil {
+					println("error marshalling storage variable: " + err.Error())
+					return
+				}
+				err = service.areaRepository.Update(area)
+				if err != nil {
+					println("error updating area: " + err.Error())
+					return
+				}
+			}
 			message := fmt.Sprintf("Currently playing: %s by %s, but expected: %s",
 				playbackResponse.Item.Name,
 				strings.Join(artistNames, ", "),
@@ -372,6 +447,19 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 			fmt.Println(message)
 		}
 	} else {
+		if variableDatabaseStorage == schemas.SpotifyStorageVariableTrue {
+			variableDatabaseStorage = schemas.SpotifyStorageVariableFalse
+			area.StorageVariable, err = json.Marshal(variableDatabaseStorage)
+			if err != nil {
+				println("error marshalling storage variable: " + err.Error())
+				return
+			}
+			err = service.areaRepository.Update(area)
+			if err != nil {
+				println("error updating area: " + err.Error())
+				return
+			}
+		}
 		fmt.Println("No music is currently playing.")
 	}
 
