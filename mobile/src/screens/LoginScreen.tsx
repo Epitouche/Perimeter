@@ -205,10 +205,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.errorText}>{errors.password}</Text>
       ) : null}
 
-      <TouchableOpacity accessibilityHint="Tap to reset your password">
-        <Text style={styles.forgotPassword}>Forgot password?</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity
         style={styles.loginButton}
         onPress={handleLogin}
