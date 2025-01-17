@@ -481,7 +481,11 @@ func (service *googleService) GoogleActionReceiveMail(
 		}
 		if variable.Time.After(emailTime) {
 			println("no new emails")
-			time.Sleep(time.Minute)
+			if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
+				time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
+			} else {
+				time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
+			}
 			return
 		}
 		response := fmt.Sprintf("New email received from %s: object: %s",

@@ -62,25 +62,31 @@ onMounted(() => {
 
 <template>
   <div
-    class="capitalize self-start flex flex-row items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-fit py-2 px-4"
+    class="capitalize self-start flex flex-row justify-between items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-full py-2 px-4"
   >
-    <img
-      :src="type.service.icon"
-      :alt="type.service.name"
-      class="w-16 h-16 p-0"
-    >
-    <h2 class="text-5xl">
-      <b>{{ formatName(type.service.name) }}</b
-      >:
-    </h2>
-    <p class="text-4xl">{{ formatName(type.name) }}</p>
+    <div class="flex flex-row items-center gap-5 w-full">
+      <img
+        :src="type.service.icon"
+        :alt="type.service.name"
+        style="min-width: 15%"
+      />
+      <h4>
+        <b>{{ formatName(type.service.name) }}</b
+        >:
+      </h4>
+      <h5>{{ formatName(type.name) }}</h5>
+    </div>
     <UButton
       color="white"
       :ui="{ rounded: 'rounded-full' }"
-      class="w-11 h-11 shadow-2xl active:shadow-sm transition-shadow"
+      class="w-[3.1vw] h-[5.5vh] max-lg:w-[3.4vw] max-lg:h-[5.2vh] max-md:w-[3.8vw] max-md:h-[4.9vh] max-sm:w-[4vw] max-sm:h-[2vh] shadow-2xl active:shadow-sm transition-shadow"
       @click="toggleSlideover"
     >
-      <UIcon name="i-bytesize-edit" class="w-7 h-7" :style="{ color: color }" />
+      <UIcon
+        name="i-bytesize-edit"
+        class="w-[90%] h-[90%]"
+        :style="{ color: color }"
+      />
     </UButton>
   </div>
   <USlideover v-model="isOpen">

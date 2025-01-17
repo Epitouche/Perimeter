@@ -145,8 +145,8 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 		Subject:  "Meeting",
 		Body:     "Weekly meeting",
 		Location: "Bordeaux",
-		Start:    "2025-01-12T:16:06:00",
-		End:      "YYYY-MM-DDT:HH:MM:SS",
+		Start:    "2025-01-12T16:06:00",
+		End:      "YYYY-MM-DDTHH:MM:SS",
 	}
 	optionCreateEvent, err := json.Marshal(defaultValueCreateEvent)
 	if err != nil {

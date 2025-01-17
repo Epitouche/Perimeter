@@ -10,6 +10,7 @@ const errorMessage = ref<string | null>(null);
 const tokenCookie = useCookie("token");
 const username = ref<string>("");
 const email = ref<string>("");
+const userId = ref<number>(0);
 const infosConnection = ref<ServiceResponse | null>(null);
 
 onMounted(() => {
@@ -22,28 +23,71 @@ async function loadConnectionInfos() {
       infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
       username.value = infosConnection.value.user.username;
       email.value = infosConnection.value.user.email;
+      userId.value = infosConnection.value.user.id;
     }
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading connections infos:", error);
   }
 }
+
+async function deleteAccount() {
+  try {
+    await $fetch("/api/auth/deleteAccount", {
+      method: "POST",
+      body: {
+        authorization: tokenCookie.value,
+      },
+    });
+    clearTokenAndLogout();
+    navigateTo("/login");
+  } catch (error) {
+    throw handleErrorStatus(error);
+  }
+}
+
+const clearTokenAndLogout = () => {
+  const tokenCookie = useCookie("token");
+  tokenCookie.value = null;
+};
 </script>
 
 <template>
-  <div class="flex flex-col justify-center items-center gap-10 w-full">
-    <h1>Settings</h1>
+  <div class="flex flex-col justify-center items-center w-full">
+    <h1 class="py-5">Settings</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div
       v-else
-      class="flex flex-col justify-center items-center gap-10 w-[60%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
+      class="flex flex-col justify-center items-center gap-16 min-w-[60%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-full h-full py-10 rounded-custom_border_radius bg-custom_color-bg_section"
     >
-      <div class="flex flex-col justify-center items-center gap-8 w-full px-5">
+      <div
+        class="flex flex-col justify-center items-center gap-12 min-w-[50%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-[90%] px-5"
+      >
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
       </div>
+      <UButton
+        class="delete-button text-white flex flex-col justify-center items-center gap-2 max-md:gap-0 px-8 py-3 max-lg:py-0"
+        @click="deleteAccount"
+      >
+        <p>Delete</p>
+        <p>Account</p>
+      </UButton>
     </div>
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.delete-button {
+  background-color: #ff0000;
+}
+
+.delete-button:hover {
+  background-color: #dc2626;
+}
+
+[tabindex="0"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+</style>

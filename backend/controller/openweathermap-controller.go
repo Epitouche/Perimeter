@@ -4,13 +4,13 @@ import (
 	"area/service"
 )
 
-type OpenweathermapController interface{}
+type OpenWeatherMapController interface{}
 
 type openweathermapController struct {
-	service service.OpenweathermapService
+	service service.OpenWeatherMapService
 }
 
-func NewOpenweathermapController(service service.OpenweathermapService) OpenweathermapController {
+func NewOpenWeatherMapController(service service.OpenWeatherMapService) OpenWeatherMapController {
 	return &openweathermapController{
 		service: service,
 	}

@@ -215,7 +215,7 @@ definitions:
     type: string
     x-enum-varnames:
     - Spotify
-    - Openweathermap
+    - OpenWeatherMap
     - Timer
     - Google
     - Github
@@ -325,7 +325,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get action info of service id
+      summary: Get Actions Info
       tags:
       - Action
   /action/info/action/:idAction:
@@ -350,7 +350,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get action info of action id
+      summary: Get Action Info By Action ID
       tags:
       - Action
   /area:
@@ -381,7 +381,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: delete user area
+      summary: Delete User Area
       tags:
       - Area
     get:
@@ -407,7 +407,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get user areas
+      summary: Get User Areas
       tags:
       - Area
     post:
@@ -434,7 +434,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: create area
+      summary: Create Area
       tags:
       - Area
     put:
@@ -503,7 +503,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: update user area
+      summary: Update User Area
       tags:
       - Area
   /area-result/:id:
@@ -530,7 +530,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get user areas results list by area id
+      summary: Get User Area Results By Area ID
       tags:
       - AreaResults
   /dropbox/auth:
@@ -549,7 +549,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with dropbox
+      summary: Redirect To Service
       tags:
       - Dropbox
   /dropbox/auth/callback:
@@ -579,7 +579,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with dropbox
+      summary: Handle Service Callback
       tags:
       - Dropbox
   /dropbox/auth/callback/mobile:
@@ -607,7 +607,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give url to authenticate with dropbox
+      summary: Handle Service Callback Mobile
       tags:
       - Dropbox
   /dropbox/file:
@@ -634,7 +634,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of dropbox
+      summary: Get User File
       tags:
       - Dropbox
   /dropbox/folder:
@@ -661,7 +661,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of dropbox
+      summary: Get User Folder
       tags:
       - Dropbox
   /dropbox/info:
@@ -686,7 +686,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of dropbox
+      summary: Get User Info
       tags:
       - Dropbox
   /github/auth:
@@ -705,7 +705,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with github
+      summary: Redirect To Service
       tags:
       - Github
   /github/auth/callback:
@@ -731,7 +731,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with github
+      summary: Handle Service Callback
       tags:
       - Github
   /github/auth/callback/mobile:
@@ -761,7 +761,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give authentication token to mobile
+      summary: Handle Service Callback Mobile
       tags:
       - Github
   /github/info:
@@ -786,7 +786,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of github
+      summary: Get User Info
       tags:
       - Github
   /gmail/auth:
@@ -805,7 +805,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with gmail
+      summary: Redirect To Service
       tags:
       - Gmail
   /gmail/auth/callback:
@@ -835,7 +835,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with gmail
+      summary: Handle Service Callback
       tags:
       - Gmail
   /gmail/auth/callback/mobile:
@@ -865,7 +865,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give authentication token to mobile
+      summary: Handle Service Callback Mobile
       tags:
       - Gmail
   /gmail/info:
@@ -890,7 +890,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of gmail
+      summary: Get User Info
       tags:
       - Gmail
   /microsoft/auth:
@@ -909,7 +909,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with microsoft
+      summary: Redirect To Service
       tags:
       - Microsoft
   /microsoft/auth/callback:
@@ -939,7 +939,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with microsoft
+      summary: Handle Service Callback
       tags:
       - Microsoft
   /microsoft/auth/callback/mobile:
@@ -967,7 +967,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give url to authenticate with microsoft
+      summary: Handle Service Callback Mobile
       tags:
       - Microsoft
   /microsoft/info:
@@ -992,7 +992,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of microsoft
+      summary: Get User Info
       tags:
       - Microsoft
   /ping:
@@ -1040,7 +1040,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get reaction info
+      summary: Get Reactions Info
       tags:
       - Reaction
   /reaction/info/reaction/:idReaction:
@@ -1065,7 +1065,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get reaction info of reaction id
+      summary: Get Reaction Info By Reaction ID
       tags:
       - Reaction
   /service/info:
@@ -1092,7 +1092,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get service info
+      summary: Get Services Info
       tags:
       - Service
   /service/info/:id:
@@ -1123,7 +1123,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: get service info
+      summary: Get Service Info By Id
       tags:
       - Service
   /spotify/auth:
@@ -1142,7 +1142,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give url to authenticate with spotify
+      summary: Redirect To Service
       tags:
       - Spotify
   /spotify/auth/callback:
@@ -1172,7 +1172,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give authentication token to web client
+      summary: Handle Service Callback
       tags:
       - Spotify
   /spotify/auth/callback/mobile:
@@ -1202,7 +1202,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: give authentication token to mobile
+      summary: Handle Service Callback Mobile
       tags:
       - Spotify
   /spotify/info:
@@ -1227,7 +1227,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of spotify
+      summary: Get User Info
       tags:
       - Spotify
   /token:
@@ -1258,7 +1258,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: delete user token
+      summary: Delete User Token
       tags:
       - Token
   /user/info:
@@ -1283,7 +1283,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of user
+      summary: Get User Info
       tags:
       - User
   /user/info/:
@@ -1308,7 +1308,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of user
+      summary: Delete User Info
       tags:
       - User
     put:
@@ -1332,7 +1332,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of user
+      summary: Update User Info
       tags:
       - User
   /user/info/all:
@@ -1357,7 +1357,7 @@ paths:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
       - bearerAuth: []
-      summary: give user info of user
+      summary: Get User All Info
       tags:
       - User
   /user/login:
@@ -1385,7 +1385,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: Provides a JSON Web Token
+      summary: Login
       tags:
       - User
   /user/register:
@@ -1426,7 +1426,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: Provides a JSON Web Token
+      summary: Register
       tags:
       - User
 securityDefinitions:

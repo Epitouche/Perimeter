@@ -46,7 +46,7 @@ func NewActionApi(
 
 // GetActionsInfo godoc
 //
-//	@Summary		get action info of service id
+//	@Summary		Get Actions Info
 //	@Description	get action info of service id
 //	@Tags			Action
 //	@Accept			json
@@ -84,7 +84,7 @@ func (api *ActionApi) GetActionsInfo(apiRoutes *gin.RouterGroup) {
 
 // GetActionInfoByActionID godoc
 //
-//	@Summary		get action info of action id
+//	@Summary		Get Action Info By Action ID
 //	@Description	get action info of action id
 //	@Tags			Action
 //	@Accept			json

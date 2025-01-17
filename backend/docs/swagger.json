@@ -21,7 +21,7 @@
                 "tags": [
                     "Action"
                 ],
-                "summary": "get action info of service id",
+                "summary": "Get Actions Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -64,7 +64,7 @@
                 "tags": [
                     "Action"
                 ],
-                "summary": "get action info of action id",
+                "summary": "Get Action Info By Action ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -104,7 +104,7 @@
                 "tags": [
                     "Area"
                 ],
-                "summary": "get user areas",
+                "summary": "Get User Areas",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -145,7 +145,7 @@
                 "tags": [
                     "Area"
                 ],
-                "summary": "update user area",
+                "summary": "Update User Area",
                 "parameters": [
                     {
                         "type": "array",
@@ -252,7 +252,7 @@
                 "tags": [
                     "Area"
                 ],
-                "summary": "create area",
+                "summary": "Create Area",
                 "parameters": [
                     {
                         "description": "Area Payload",
@@ -295,7 +295,7 @@
                 "tags": [
                     "Area"
                 ],
-                "summary": "delete user area",
+                "summary": "Delete User Area",
                 "parameters": [
                     {
                         "type": "integer",
@@ -344,7 +344,7 @@
                 "tags": [
                     "AreaResults"
                 ],
-                "summary": "get user areas results list by area id",
+                "summary": "Get User Area Results By Area ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -382,7 +382,7 @@
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give url to authenticate with dropbox",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -411,7 +411,7 @@
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give url to authenticate with dropbox",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -462,7 +462,7 @@
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give url to authenticate with dropbox",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -507,7 +507,7 @@
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give user info of dropbox",
+                "summary": "Get User File",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -550,7 +550,7 @@
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give user info of dropbox",
+                "summary": "Get User Folder",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -593,7 +593,7 @@
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give user info of dropbox",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -628,7 +628,7 @@
                 "tags": [
                     "Github"
                 ],
-                "summary": "give url to authenticate with github",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -657,7 +657,7 @@
                 "tags": [
                     "Github"
                 ],
-                "summary": "give url to authenticate with github",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -697,7 +697,7 @@
                 "tags": [
                     "Github"
                 ],
-                "summary": "give authentication token to mobile",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -748,7 +748,7 @@
                 "tags": [
                     "Github"
                 ],
-                "summary": "give user info of github",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -783,7 +783,7 @@
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give url to authenticate with gmail",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -812,7 +812,7 @@
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give url to authenticate with gmail",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -858,7 +858,7 @@
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give authentication token to mobile",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -909,7 +909,7 @@
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give user info of gmail",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -944,7 +944,7 @@
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give url to authenticate with microsoft",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -973,7 +973,7 @@
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give url to authenticate with microsoft",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1024,7 +1024,7 @@
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give url to authenticate with microsoft",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1069,7 +1069,7 @@
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give user info of microsoft",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1132,7 +1132,7 @@
                 "tags": [
                     "Reaction"
                 ],
-                "summary": "get reaction info",
+                "summary": "Get Reactions Info",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1184,7 +1184,7 @@
                 "tags": [
                     "Reaction"
                 ],
-                "summary": "get reaction info of reaction id",
+                "summary": "Get Reaction Info By Reaction ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1224,7 +1224,7 @@
                 "tags": [
                     "Service"
                 ],
-                "summary": "get service info",
+                "summary": "Get Services Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1267,7 +1267,7 @@
                 "tags": [
                     "Service"
                 ],
-                "summary": "get service info",
+                "summary": "Get Service Info By Id",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1311,7 +1311,7 @@
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give url to authenticate with spotify",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1340,7 +1340,7 @@
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give authentication token to web client",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1386,7 +1386,7 @@
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give authentication token to mobile",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1437,7 +1437,7 @@
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give user info of spotify",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1477,7 +1477,7 @@
                 "tags": [
                     "Token"
                 ],
-                "summary": "delete user token",
+                "summary": "Delete User Token",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1526,7 +1526,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1566,7 +1566,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Update User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1604,7 +1604,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Delete User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1644,7 +1644,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Get User All Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1676,7 +1676,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "Provides a JSON Web Token",
+                "summary": "Login",
                 "parameters": [
                     {
                         "type": "string",
@@ -1718,7 +1718,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "Provides a JSON Web Token",
+                "summary": "Register",
                 "parameters": [
                     {
                         "type": "string",
@@ -2084,7 +2084,7 @@
             ],
             "x-enum-varnames": [
                 "Spotify",
-                "Openweathermap",
+                "OpenWeatherMap",
                 "Timer",
                 "Google",
                 "Github",

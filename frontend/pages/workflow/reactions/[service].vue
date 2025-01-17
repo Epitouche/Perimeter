@@ -87,10 +87,10 @@ onMounted(() => {
     <UContainer
       v-else-if="serviceInfo"
       :ui="{ constrained: 'max-w-none' }"
-      class="py-20"
+      class="py-10"
       :style="{ backgroundColor: serviceInfo.color }"
     >
-      <div class="px-20">
+      <div class="px-10">
         <BackButton link="/workflow/reactions" :is-white="true" />
       </div>
       <div class="flex flex-col justify-center items-center gap-2">
@@ -98,9 +98,9 @@ onMounted(() => {
         <img
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"
-          class="w-[8em] h-[8em]"
-        >
-        <h2 class="capitalize text-white text-7xl font-bold pt-8">
+          class="w-[10vw] h-[10vh]"
+        />
+        <h2 class="capitalize text-white pt-8">
           {{ serviceInfo.name }}
         </h2>
       </div>

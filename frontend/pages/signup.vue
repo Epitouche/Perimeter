@@ -70,69 +70,82 @@ const handleSignUp = async () => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center h-screen w-screen">
+  <div class="flex justify-center items-center w-full h-screen">
     <UContainer
       :ui="{
-        padding: 'pt-8 pb-16 px-0',
-        constrained: 'min-w-[30%] max-w-[60%]',
+        padding: '!px-0',
+        constrained: 'min-w-[40%] max-w-[90%]',
       }"
-      class="scale-[0.75] bg-custom_color-bg_section flex flex-col justify-between items-center gap-14 rounded-custom_border_radius"
+      class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-5 p-10 rounded-custom_border_radius"
     >
-      <h1 class="pb-5">Sign up</h1>
-      <div class="flex flex-col gap-12 min-w-[80%] max-w-[80%] px-5">
-        <div class="flex flex-col">
-          <h2 class="text-xl px-5">Email</h2>
+      <h1 class="pb-2">Sign up</h1>
+      <div
+        class="flex flex-col items-center gap-10 overflow-y-scroll max-h-[60vh]"
+      >
+        <div class="flex flex-col min-w-[70%] max-w-[85%]">
+          <h6 class="px-5">Email</h6>
           <UInput
             v-model="email"
             :ui="{
-              placeholder: '!px-5 !py-3 font-light',
-              size: { sm: 'text-5xl' },
+              placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
+              size: {
+                sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+              },
             }"
           />
         </div>
-        <div class="flex flex-col">
-          <h2 class="text-xl px-5">Username</h2>
+        <div class="flex flex-col min-w-[70%] max-w-[85%]">
+          <h6 class="px-5">Username</h6>
           <UInput
             v-model="username"
             :ui="{
-              placeholder: '!px-5 !py-3 font-light',
-              size: { sm: 'text-5xl' },
+              placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
+              size: {
+                sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+              },
             }"
           />
         </div>
-        <div class="flex flex-col">
-          <h2 class="text-xl px-5">Password</h2>
+        <div class="flex flex-col min-w-[70%] max-w-[85%]">
+          <h6 class="px-5">Password</h6>
           <UInput
             v-model="password"
             type="password"
             :ui="{
-              placeholder: '!px-5 !py-3 font-light',
-              size: { sm: 'text-5xl' },
+              placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
+              size: {
+                sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+              },
             }"
           />
         </div>
-        <div class="flex flex-col">
-          <h2 class="text-xl px-5">Confirm Password</h2>
+        <div class="flex flex-col min-w-[70%] max-w-[85%]">
+          <h6 class="px-5">Confirm Password</h6>
           <UInput
             v-model="confirmPassword"
             type="password"
             :ui="{
-              placeholder: '!px-5 !py-3 font-light',
-              size: { sm: 'text-5xl' },
+              placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
+              size: {
+                sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+              },
             }"
           />
         </div>
-        <div class="flex flex-col justify-center items-center min-w-full pt-4">
+        <div
+          class="flex flex-col justify-center gap-1 items-center min-w-full pt-4"
+        >
           <div v-if="signUpError" class="text-red-500 text-xl pb-1">
             {{ signUpError }}
           </div>
           <UButton
-            class="text-center text-[2.5rem] px-12"
+            class="text-center px-10 py-7 max-lg:py-5 max-sm:py-3"
             tabindex="0"
             @click="handleSignUp"
-            >Sign up
+          >
+            <h5>Sign up</h5>
           </UButton>
-          <p class="text-xl">
+          <p>
             Already signed up?
             <ULink
               to="/login"
@@ -143,15 +156,17 @@ const handleSignUp = async () => {
             </ULink>
           </p>
         </div>
+        <div
+          class="flex flex-col justify-center items-center gap-2 min-w-[85%] max-w-[85%] pt-2"
+        >
+          <UDivider
+            size="xs"
+            label="or sign up with"
+            :ui="{ label: 'text-custom_color-text_other text-xl' }"
+          />
+          <ConnectWithAppContainer />
+        </div>
       </div>
-      <div class="min-w-[80%] max-w-[80%] pt-2">
-        <UDivider
-          size="xs"
-          label="or sign up with"
-          :ui="{ label: 'text-custom_color-text_other text-xl' }"
-        />
-      </div>
-      <ConnectWithAppContainer />
     </UContainer>
   </div>
 </template>

@@ -65,7 +65,7 @@ func NewServiceService(
 	githubService GithubService,
 	dropboxService DropboxService,
 	microsoftService MicrosoftService,
-	openweathermapService OpenweathermapService,
+	openWeatherMapService OpenWeatherMapService,
 ) ServiceService {
 	newService := serviceService{
 		repository: repository,
@@ -76,7 +76,7 @@ func NewServiceService(
 			githubService,
 			dropboxService,
 			microsoftService,
-			openweathermapService,
+			openWeatherMapService,
 		},
 	}
 	newService.InitialSaveService()

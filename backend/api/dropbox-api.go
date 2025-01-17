@@ -48,7 +48,7 @@ func NewDropboxAPI(
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with dropbox
+//	@Summary		Redirect To Service
 //	@Description	give url to authenticate with dropbox
 //	@Tags			Dropbox
 //	@Accept			json
@@ -69,7 +69,7 @@ func (api *DropboxAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with dropbox
+//	@Summary		Handle Service Callback
 //	@Description	give url to authenticate with dropbox
 //	@Tags			Dropbox
 //	@Accept			json
@@ -92,7 +92,7 @@ func (api *DropboxAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give url to authenticate with dropbox
+//	@Summary		Handle Service Callback Mobile
 //	@Description	give url to authenticate with dropbox
 //	@Tags			Dropbox
 //	@Accept			json
@@ -117,7 +117,7 @@ func (api *DropboxAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of dropbox
+//	@Summary		Get User Info
 //	@Description	give user info of dropbox
 //	@Tags			Dropbox
 //	@Accept			json
@@ -140,7 +140,7 @@ func (api *DropboxAPI) GetUserInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of dropbox
+//	@Summary		Get User File
 //	@Description	give user info of dropbox
 //	@Tags			Dropbox
 //	@Accept			json
@@ -163,7 +163,7 @@ func (api *DropboxAPI) GetUserFile(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of dropbox
+//	@Summary		Get User Folder
 //	@Description	give user info of dropbox
 //	@Tags			Dropbox
 //	@Accept			json
