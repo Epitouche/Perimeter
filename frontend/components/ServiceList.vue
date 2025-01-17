@@ -246,7 +246,7 @@ function formatName(name: string): string {
         }"
       >
         <h4>
-          Are you sure you want to <br />
+          Are you sure you want to <br >
           disconnect from this service?
         </h4>
         <h6>This action cannot be undone!</h6>
