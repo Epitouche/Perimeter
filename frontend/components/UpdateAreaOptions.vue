@@ -69,7 +69,7 @@ onMounted(() => {
         :src="type.service.icon"
         :alt="type.service.name"
         style="min-width: 15%"
-      >
+      />
       <h4>
         <b>{{ formatName(type.service.name) }}</b
         >:
