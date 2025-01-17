@@ -91,7 +91,16 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
             <Text style={styles.button}>Save</Text>
           </TouchableOpacity>
         </View>
-        <View style={[styles.buttonContainer, {backgroundColor: 'E60000'}]}>
+        <TouchableOpacity
+          onPress={() => {
+            setToken('');
+            navigation.navigate('Login');
+          }}
+          accessibilityLabel="Disconnect"
+          accessibilityHint="Disconnect and navigate to the login screen">
+          <Text style={styles.disconnectButton}>Disconnect</Text>
+        </TouchableOpacity>
+        <View>
           <TouchableOpacity
             onPress={() => {
               const deleteUser = async () => {
@@ -123,18 +132,9 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
             }}
             accessibilityLabel="Delete account"
             accessibilityHint="Delete your account and every data associated with it">
-            <Text style={styles.button}>Delete account</Text>
+            <Text style={styles.disconnectButton}>Delete account</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            setToken('');
-            navigation.navigate('Login');
-          }}
-          accessibilityLabel="Disconnect"
-          accessibilityHint="Disconnect and navigate to the login screen">
-          <Text style={styles.disconnectButton}>Disconnect</Text>
-        </TouchableOpacity>
       </View>
       <BottomNavBar navigation={navigation} />
     </View>
