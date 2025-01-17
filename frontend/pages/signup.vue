@@ -71,7 +71,8 @@ const handleSignUp = async () => {
 
 <template>
   <div class="flex justify-center items-center w-full h-screen">
-    <UContainer :ui="{
+    <UContainer
+:ui="{
       padding: '!px-0',
       constrained: 'min-w-[40%] max-w-[90%]',
     }"
@@ -80,28 +81,32 @@ const handleSignUp = async () => {
       <div class="flex flex-col items-center gap-10 overflow-y-scroll max-h-[60vh]">
         <div class="flex flex-col min-w-[70%] max-w-[85%]">
           <h6 class="px-5">Email</h6>
-          <UInput v-model="email" :ui="{
+          <UInput
+v-model="email" :ui="{
             placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
             size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
           }" />
         </div>
         <div class="flex flex-col min-w-[70%] max-w-[85%]">
           <h6 class="px-5">Username</h6>
-          <UInput v-model="username" :ui="{
+          <UInput
+v-model="username" :ui="{
             placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
             size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
           }" />
         </div>
         <div class="flex flex-col min-w-[70%] max-w-[85%]">
           <h6 class="px-5">Password</h6>
-          <UInput v-model="password" type="password" :ui="{
+          <UInput
+v-model="password" type="password" :ui="{
             placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
             size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
           }" />
         </div>
         <div class="flex flex-col min-w-[70%] max-w-[85%]">
           <h6 class="px-5">Confirm Password</h6>
-          <UInput v-model="confirmPassword" type="password" :ui="{
+          <UInput
+v-model="confirmPassword" type="password" :ui="{
             placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
             size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
           }" />

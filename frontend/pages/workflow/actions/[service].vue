@@ -75,7 +75,8 @@ onMounted(() => {
       <div>Error: {{ errorMessage }}</div>
     </div>
     <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
-    <UContainer v-else-if="serviceInfo" :ui="{ constrained: 'max-w-none' }" class="py-10"
+    <UContainer
+v-else-if="serviceInfo" :ui="{ constrained: 'max-w-none' }" class="py-10"
       :style="{ backgroundColor: serviceInfo.color }">
       <div class="px-10">
         <BackButton link="/workflow/actions" :is-white="true" />
