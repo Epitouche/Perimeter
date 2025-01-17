@@ -44,7 +44,7 @@ const filteredApps = computed(() => {
       class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
       tabindex="0"
     >
-      <div class="self-start min-w-[25%] max-w-[95%]  px-5 pt-1">
+      <div class="self-start min-w-[25%] max-w-[95%] px-5 pt-1">
         <SearchBar v-model:search-query="searchQuery" tabindex="0" />
       </div>
       <div class="w-[95%] overflow-y-scroll max-h-[90%]">

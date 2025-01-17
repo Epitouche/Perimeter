@@ -61,7 +61,7 @@ const items = [
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         style="width: 18%; height: 18%"
-      >
+      />
       <h5>Perimeter</h5>
     </div>
 
@@ -94,8 +94,15 @@ const items = [
         </template>
 
         <template #settings>
-          <NuxtLink to="/settings" class="w-full flex flex-row justify-end items-center gap-2" tabindex="0">
-            <UIcon name="i-bytesize-settings" class="text-black w-[10%] h-[10%]" />
+          <NuxtLink
+            to="/settings"
+            class="w-full flex flex-row justify-end items-center gap-2"
+            tabindex="0"
+          >
+            <UIcon
+              name="i-bytesize-settings"
+              class="text-black w-[10%] h-[10%]"
+            />
             <p class="text-black">Settings</p>
           </NuxtLink>
         </template>

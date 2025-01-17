@@ -54,14 +54,18 @@ onMounted(() => {
     <div class="flex flex-col justify-between items-center gap-10 w-full">
       <h1>Add an action</h1>
       <UContainer
-:ui="{ base: 'mx-auto' }"
-        class="flex flex-col justify-center items-center gap-16 w-[80%] h-full !p-0">
+        :ui="{ base: 'mx-auto' }"
+        class="flex flex-col justify-center items-center gap-16 w-[80%] h-full !p-0"
+      >
         <div class="min-w-1/3 max-w-[95%]">
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />
         </div>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
-        <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full">
+        <div
+          v-else-if="filteredServices.length"
+          class="flex flex-row justify-evenly items-center w-full"
+        >
           <ServiceCardContainer type="actions" :services="filteredServices" />
         </div>
       </UContainer>

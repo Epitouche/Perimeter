@@ -72,8 +72,9 @@ watch(
     <img
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
-      class="p-0" style="width: 15%"
-    >
+      class="p-0"
+      style="width: 15%"
+    />
     <h3
       :class="[
         'text-white',

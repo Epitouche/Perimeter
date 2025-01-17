@@ -246,16 +246,16 @@ onMounted(() => {
           <div
             class="flex flex-col justify-center items-center gap-10 bg-white px-14 py-10 max-lg:px-12 max-md:px-8 max-sm:px-2 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit max-w-[90%]"
           >
-            <h3 class="text-center">
-              You're about to<br>create a new area!
-            </h3>
+            <h3 class="text-center">You're about to<br />create a new area!</h3>
             <div class="flex flex-col gap-1 min-w-[90%] max-w-[95%]">
               <h6 class="px-5">Title</h6>
               <UInput
                 v-model="title"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
+                  size: {
+                    sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+                  },
                 }"
                 placeholder="Title"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
@@ -267,7 +267,9 @@ onMounted(() => {
                 v-model="description"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
+                  size: {
+                    sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+                  },
                 }"
                 placeholder="Description"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
@@ -279,7 +281,9 @@ onMounted(() => {
                 v-model="refreshRate"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl' },
+                  size: {
+                    sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+                  },
                 }"
                 placeholder="Ex: 0"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
