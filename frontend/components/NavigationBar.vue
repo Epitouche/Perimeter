@@ -65,7 +65,7 @@ const items = [
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         class="nav_icon"
-      >
+      />
       <h5>Perimeter</h5>
     </div>
 
@@ -133,7 +133,7 @@ const items = [
 }
 
 .logout-button {
-  background-color: #ef4444;
+  background-color: #ff0000;
 }
 
 .logout-button:hover {
