@@ -98,7 +98,10 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 		token, err := api.controller.Register(ctx)
 		if err != nil {
 			switch err {
-			case schemas.ErrEmailTooShort, schemas.ErrUsernameTooShort, schemas.ErrPasswordTooShort, schemas.ErrInvalidEmail:
+			case schemas.ErrEmailTooShort,
+				schemas.ErrUsernameTooShort,
+				schemas.ErrPasswordTooShort,
+				schemas.ErrInvalidEmail:
 				ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
 					Error: err.Error(),
 				})
