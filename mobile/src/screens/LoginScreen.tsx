@@ -208,9 +208,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         onChangeText={text => setPassword(text)}
         accessibilityHint="Enter your password"
       />
-      {errors != "" ? (
-              <Text style={styles.errorText}>{errors}</Text>
-      ) : null}
+      {errors != '' ? <Text style={styles.errorText}>{errors}</Text> : null}
 
       <TouchableOpacity
         style={styles.loginButton}
