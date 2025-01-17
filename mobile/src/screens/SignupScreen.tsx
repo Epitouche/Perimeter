@@ -73,7 +73,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
       update_at: '',
     },
   ]);
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState('');
   const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
   /**
@@ -118,26 +118,26 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
    */
   const handleSignup = async () => {
     let hasError = false;
-    let newErrors = "";
+    let newErrors = '';
 
     if (!username) {
-      console.log("Username is required");
-      newErrors += " Username";
+      console.log('Username is required');
+      newErrors += ' Username';
       hasError = true;
     }
     if (!password) {
-      console.log("Password is required");
-      newErrors += " Password";
+      console.log('Password is required');
+      newErrors += ' Password';
       hasError = true;
     }
 
     if (!email) {
-      newErrors += " Email";
+      newErrors += ' Email';
       hasError = true;
     }
 
     if (!email || !username || !password) {
-      newErrors += " is required"
+      newErrors += ' is required';
     }
 
     setErrors(newErrors);
@@ -161,8 +161,8 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           navigation.navigate('Login');
           Alert.alert('Successfully registered, please login now');
         } else if (response.status == 400 || response.status == 409) {
-          console.log("error")
-          setErrors(data.error)
+          console.log('error');
+          setErrors(data.error);
         } else {
           console.error('Error:', response.status, ' | ', response.statusText);
           Alert.alert(
@@ -247,9 +247,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         onChangeText={text => setPassword(text)}
         accessibilityHint="Enter your password"
       />
-      {errors != "" ? (
-        <Text style={styles.errorText}>{errors}</Text>
-      ) : null}
+      {errors != '' ? <Text style={styles.errorText}>{errors}</Text> : null}
 
       <TouchableOpacity
         style={styles.registerButton}
