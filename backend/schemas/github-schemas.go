@@ -5,51 +5,76 @@ import (
 	"time"
 )
 
-type GithubAction string
+type GithubAction string // GithubAction represents the action to be performed on a Github repository.
 
+// UpdateCommitInRepo is an action to update a commit in a repository.
 const (
-	UpdateCommitInRepo      GithubAction = "UpdateCommitInRepo"
-	UpdatePullRequestInRepo GithubAction = "UpdatePullRequestInRepo"
-	UpdateWorkflowRunInRepo GithubAction = "UpdateWorkflowRunInRepo"
+	UpdateCommitInRepo      GithubAction = "UpdateCommitInRepo"      // UpdateCommitInRepo is an action to update a commit in a repository.
+	UpdatePullRequestInRepo GithubAction = "UpdatePullRequestInRepo" // UpdatePullRequestInRepo is an action to update a pull request in a repository.
+	UpdateWorkflowRunInRepo GithubAction = "UpdateWorkflowRunInRepo" // UpdateWorkflowRunInRepo is an action to update a workflow run in a repository.
 )
 
-type GithubReaction string
+type GithubReaction string // GithubReaction represents the reaction to a Github action.
 
+// GetLatestCommitInRepo is a GithubReaction that retrieves the latest commit in a specified repository.
 const (
-	GetLatestCommitInRepo      GithubReaction = "GetLatestCommitInRepo"
-	GetLatestWorkflowRunInRepo GithubReaction = "GetLatestWorkflowRunInRepo"
+	GetLatestCommitInRepo      GithubReaction = "GetLatestCommitInRepo"      // GetLatestCommitInRepo is a reaction to get the latest commit in a repository.
+	GetLatestWorkflowRunInRepo GithubReaction = "GetLatestWorkflowRunInRepo" // GetLatestWorkflowRunInRepo is a reaction to get the latest workflow run in a repository.
 )
 
-// GitHubTokenResponse represents the response from Github when a token is requested.
+// GitHubTokenResponse represents the response received from GitHub when
+// exchanging a code for an access token. It contains the access token,
+// the scope of the token, and the type of the token.
 type GitHubTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	Scope       string `json:"scope"`
-	TokenType   string `json:"token_type"`
+	AccessToken string `json:"access_token"` // The access token
+	Scope       string `json:"scope"`        // The scope of the token
+	TokenType   string `json:"token_type"`   // The type of the token
 }
 
+// GithubUserInfo represents the information of a GitHub user.
+//
+// Fields:
+// - Login: The username of the user.
+// - Id: The unique identifier of the user. This field is also the primary key in the database.
+// - AvatarURL: The URL to the user's avatar.
+// - Type: The type of the user.
+// - HtmlURL: The URL to the user's profile.
+// - Name: The name of the user.
+// - Email: The email of the user.
 type GithubUserInfo struct {
-	Login     string `json:"login"`
-	Id        uint64 `json:"id"         gorm:"primaryKey"`
-	AvatarURL string `json:"avatar_url"`
-	Type      string `json:"type"`
-	HtmlURL   string `json:"html_url"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
+	Login     string `json:"login"`                        // The username of the user
+	Id        uint64 `json:"id"         gorm:"primaryKey"` // The unique identifier of the user
+	AvatarURL string `json:"avatar_url"`                   // The URL to the user's avatar
+	Type      string `json:"type"`                         // The type of the user
+	HtmlURL   string `json:"html_url"`                     // The URL to the user's profile
+	Name      string `json:"name"`                         // The name of the user
+	Email     string `json:"email"`                        // The email of the user
 }
 
+// GithubUserEmail represents the email information of a GitHub user.
+// It includes the email address, verification status, primary status,
+// and visibility of the email.
 type GithubUserEmail struct {
-	Email      string `json:"email"`
-	Verified   bool   `json:"verified"`
-	Primary    bool   `json:"primary"`
-	Visibility string `json:"visibility"`
+	Email      string `json:"email"`      // The email of the user
+	Verified   bool   `json:"verified"`   // Whether the email is verified
+	Primary    bool   `json:"primary"`    // Whether the email is the primary email
+	Visibility string `json:"visibility"` // The visibility of the email
 }
 
 // Errors Messages.
 var (
-	ErrGithubSecretNotSet             = errors.New("GITHUB_SECRET is not set")
-	ErrGithubClientIdNotSet           = errors.New("GITHUB_CLIENT_ID is not set")
-	ErrGithubProductionSecretNotSet   = errors.New("GITHUB_PRODUCTION_SECRET is not set")
-	ErrGithubProductionClientIdNotSet = errors.New("GITHUB_PRODUCTION_CLIENT_ID is not set")
+	ErrGithubSecretNotSet = errors.New(
+		"GITHUB_SECRET is not set",
+	) // ErrGithubSecretNotSet is returned when the GITHUB_SECRET environment variable is not set.
+	ErrGithubClientIdNotSet = errors.New(
+		"GITHUB_CLIENT_ID is not set",
+	) // ErrGithubClientIdNotSet is returned when the GITHUB_CLIENT_ID environment variable is not set.
+	ErrGithubProductionSecretNotSet = errors.New(
+		"GITHUB_PRODUCTION_SECRET is not set",
+	) // ErrGithubProductionSecretNotSet is returned when the GITHUB_PRODUCTION_SECRET environment variable is not set.
+	ErrGithubProductionClientIdNotSet = errors.New(
+		"GITHUB_PRODUCTION_CLIENT_ID is not set",
+	) // ErrGithubProductionClientIdNotSet is returned when the GITHUB_PRODUCTION_CLIENT_ID environment variable is not set.
 )
 
 type GithubActionOption struct {

@@ -35,13 +35,24 @@ type SpotifyService interface {
 }
 
 type spotifyService struct {
-	repository        repository.SpotifyRepository
-	serviceRepository repository.ServiceRepository
-	areaRepository    repository.AreaRepository
-	tokenRepository   repository.TokenRepository
-	serviceInfo       schemas.Service
+	repository        repository.SpotifyRepository // This is a repository for the Spotify service
+	serviceRepository repository.ServiceRepository // This is a repository for the service
+	areaRepository    repository.AreaRepository    // This is a repository for the area
+	tokenRepository   repository.TokenRepository   // This is a repository for the token
+	serviceInfo       schemas.Service              // This is the service information
 }
 
+// NewSpotifyService creates a new instance of SpotifyService with the provided repositories.
+// It initializes the service with Spotify-specific information such as name, description, OAuth support, color, and icon.
+//
+// Parameters:
+//   - githubTokenRepository: repository.SpotifyRepository - Repository for handling Spotify tokens.
+//   - serviceRepository: repository.ServiceRepository - Repository for handling service-related operations.
+//   - areaRepository: repository.AreaRepository - Repository for handling area-related operations.
+//   - tokenRepository: repository.TokenRepository - Repository for handling general token operations.
+//
+// Returns:
+//   - SpotifyService: A new instance of SpotifyService.
 func NewSpotifyService(
 	githubTokenRepository repository.SpotifyRepository,
 	serviceRepository repository.ServiceRepository,
@@ -65,10 +76,26 @@ func NewSpotifyService(
 
 // Service interface functions
 
+// GetServiceInfo returns the service information for the Spotify service.
+// It retrieves the service information from the service's internal state.
+//
+// Returns:
+//
+//	schemas.Service: The service information for the Spotify service.
 func (service *spotifyService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
+// FindActionByName returns a function that matches the given action name.
+// The returned function takes a channel, a JSON raw message, and an area schema as parameters.
+// If the action name matches a predefined action, the corresponding function is returned.
+// If the action name does not match any predefined actions, nil is returned.
+//
+// Parameters:
+// - name: The name of the action to find.
+//
+// Returns:
+// - A function that matches the given action name, or nil if no match is found.
 func (service *spotifyService) FindActionByName(
 	name string,
 ) func(c chan string, option json.RawMessage, area schemas.Area) {
@@ -118,6 +145,12 @@ func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 	}
 }
 
+// GetServiceReactionInfo retrieves the reaction information for the Spotify service.
+// It marshals a default option value to JSON and updates the service information
+// by finding the service by name. If any errors occur during these operations,
+// they are printed to the console. The function returns a slice of Reaction
+// structs containing the name, description, service information, and option for
+// each reaction.
 func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
@@ -148,6 +181,17 @@ func (service *spotifyService) GetServiceReactionInfo() []schemas.Reaction {
 
 // Service specific functions
 
+// AuthGetServiceAccessToken exchanges an authorization code for a Spotify access token.
+// It retrieves the client ID and secret from environment variables, constructs the
+// necessary request to the Spotify API, and returns the access token along with any
+// error encountered during the process.
+//
+// Parameters:
+//   - code: The authorization code received from Spotify's authorization endpoint.
+//
+// Returns:
+//   - token: The access token and related information.
+//   - err: An error if the token exchange fails or any other issue occurs.
 func (service *spotifyService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
@@ -228,6 +272,21 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 	return token, nil
 }
 
+// GetUserInfo retrieves the Spotify user information using the provided access token.
+// It sends a GET request to the Spotify API endpoint "https://api.spotify.com/v1/me".
+// The access token is included in the Authorization header of the request.
+//
+// Parameters:
+//   - accessToken: A string containing the Spotify access token.
+//
+// Returns:
+//   - user: A schemas.User struct containing the user's information (username and email).
+//   - err: An error if the request fails or the response cannot be decoded.
+//
+// Possible errors:
+//   - If the HTTP request cannot be created or executed.
+//   - If the response status code is not 200 OK.
+//   - If the response body cannot be decoded into the expected struct.
 func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.User, err error) {
 	ctx := context.Background()
 	// Create a new HTTP request

@@ -4,32 +4,36 @@ import (
 	"errors"
 )
 
-type SpotifyAction string
+type SpotifyAction string // SpotifyAction is a string type to represent the action to be performed.
 
 const (
-	MusicPlayed SpotifyAction = "MusicPlayed"
+	MusicPlayed SpotifyAction = "MusicPlayed" // MusicPlayed is the action for playing music.
 )
 
-type SpotifyReaction string
+type SpotifyReaction string // SpotifyReaction is a string type to represent the reaction to be performed.
 
 const (
-	SkipNextMusic     SpotifyReaction = "SkipNextMusic"
-	SkipPreviousMusic SpotifyReaction = "SkipPreviousMusic"
+	SkipNextMusic     SpotifyReaction = "SkipNextMusic"     // SkipNextMusic is the reaction to skip to the next music.
+	SkipPreviousMusic SpotifyReaction = "SkipPreviousMusic" // SkipPreviousMusic is the reaction to skip to the previous music.
 )
 
+// SpotifyTokenResponse represents the response from Spotify's token endpoint.
+// It contains the access token, scope, token type, expiration time, and refresh token.
 type SpotifyTokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	Scope        string `json:"scope"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int    `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"access_token"`  // The access token
+	Scope        string `json:"scope"`         // The scope of the token
+	TokenType    string `json:"token_type"`    // The type of the token
+	ExpiresIn    int    `json:"expires_in"`    // The expiration time of the token in seconds
+	RefreshToken string `json:"refresh_token"` // The refresh token
 }
 
+// SpotifyErrorResponse represents the structure of an error response from the Spotify API.
+// It contains an embedded Error struct which holds the status code and error message.
 type SpotifyErrorResponse struct {
 	Error struct {
-		Status  int    `json:"status"`
-		Message string `json:"message"`
-	} `json:"error"`
+		Status  int    `json:"status"`  // The status code of the error
+		Message string `json:"message"` // The error message
+	} `json:"error"` // The error object
 }
 
 type SpotifyUserInfo struct {

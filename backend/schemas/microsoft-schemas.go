@@ -5,44 +5,44 @@ import (
 	"time"
 )
 
-type MicrosoftAction string
+type MicrosoftAction string // MicrosoftAction is a string type to represent the action to be performed.
 
 const (
-	EventStarting        MicrosoftAction = "EventStarting"
-	ReceiveMicrosoftMail MicrosoftAction = "ReceiveMicrosoftMail"
+	EventStarting        MicrosoftAction = "EventStarting"        // EventStarting is the action to start an event.
+	ReceiveMicrosoftMail MicrosoftAction = "ReceiveMicrosoftMail" // ReceiveMicrosoftMail is the action to receive emails from Microsoft.
 )
 
-type MicrosoftReaction string
+type MicrosoftReaction string // MicrosoftReaction is a string type to represent the reaction to be performed.
 
 const (
-	SendMicrosoftMail MicrosoftReaction = "SendMicrosoftMail"
-	CreateEvent       MicrosoftReaction = "createEvent"
+	SendMicrosoftMail MicrosoftReaction = "SendMicrosoftMail" // SendMicrosoftMail is the reaction to send an email using Microsoft.
+	CreateEvent       MicrosoftReaction = "createEvent"       // CreateEvent is the reaction to create an event using Microsoft.
 )
 
 type MicrosoftEventIncomingOptions struct {
-	Name string `json:"name"`
+	Name string `json:"name"` // The name of the event
 }
 
 type MicrosoftReactionSendMailOptions struct {
-	Subject   string `json:"subject"`
-	Body      string `json:"body"`
-	Recipient string `json:"recipient"`
+	Subject   string `json:"subject"`   // The subject of the email
+	Body      string `json:"body"`      // The body of the email
+	Recipient string `json:"recipient"` // The recipient of the email
 }
 
 type MicrosoftCreateEventOptions struct {
-	Subject  string `json:"subject"`
-	Body     string `json:"body"`
-	Location string `json:"location"`
-	Start    string `json:"start"`
-	End      string `json:"end"`
+	Subject  string `json:"subject"`  // The subject of the event
+	Body     string `json:"body"`     // The body of the event
+	Location string `json:"location"` // The location of the event
+	Start    string `json:"start"`    // The start time of the event
+	End      string `json:"end"`      // The end time of the event
 }
 
 type MicrosoftTokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	ExpiresIn    uint64 `json:"expires_in"`
-	Scope        string `json:"scope"`
-	TokenType    string `json:"token_type"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"access_token"`  // The access token
+	ExpiresIn    uint64 `json:"expires_in"`    // The expiration time of the token in seconds
+	Scope        string `json:"scope"`         // The scope of the token
+	TokenType    string `json:"token_type"`    // The type of the token
+	RefreshToken string `json:"refresh_token"` // The refresh token
 }
 
 type MicrosoftVariableTime struct {

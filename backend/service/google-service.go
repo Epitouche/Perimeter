@@ -34,6 +34,15 @@ type GoogleService interface {
 	GoogleReactionSendMail(option json.RawMessage, area schemas.Area) string
 }
 
+// googleService is a struct that encapsulates various repositories and service information
+// required for interacting with Google services.
+//
+// Fields:
+// - repository: An instance of GoogleRepository for handling Google-specific data operations.
+// - serviceRepository: An instance of ServiceRepository for managing service-related data.
+// - areaRepository: An instance of AreaRepository for managing area-related data.
+// - tokenRepository: An instance of TokenRepository for handling token-related data.
+// - serviceInfo: A Service schema containing information about the service.
 type googleService struct {
 	repository        repository.GoogleRepository
 	serviceRepository repository.ServiceRepository
@@ -42,6 +51,19 @@ type googleService struct {
 	serviceInfo       schemas.Service
 }
 
+// NewGoogleService creates a new instance of GoogleService with the provided repositories.
+// It initializes the googleService struct with the given repositories and sets the serviceInfo
+// with predefined values for the Google service.
+//
+// Parameters:
+//   - repository: an instance of GoogleRepository for accessing Google-related data.
+//   - serviceRepository: an instance of ServiceRepository for accessing general service data.
+//   - areaRepository: an instance of AreaRepository for accessing area-related data.
+//   - tokenRepository: an instance of TokenRepository for accessing token-related data.
+//
+// Returns:
+//
+//	A new instance of GoogleService.
 func NewGoogleService(
 	repository repository.GoogleRepository,
 	serviceRepository repository.ServiceRepository,
@@ -65,10 +87,23 @@ func NewGoogleService(
 
 // Service interface functions
 
+// GetServiceInfo retrieves the service information for the Google service.
+// It returns a schemas.Service object containing the service details.
 func (service *googleService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
+// FindActionByName returns a function that matches the given action name.
+// The returned function takes a channel, a JSON raw message, and an area schema as parameters.
+// If the action name matches a predefined action, the corresponding function is returned.
+// If the action name does not match any predefined actions, nil is returned.
+//
+// Parameters:
+// - name: The name of the action to find.
+//
+// Returns:
+//   - A function that takes a channel, a JSON raw message, and an area schema as parameters,
+//     or nil if the action name does not match any predefined actions.
 func (service *googleService) FindActionByName(
 	name string,
 ) func(c chan string, option json.RawMessage, area schemas.Area) {
@@ -80,6 +115,17 @@ func (service *googleService) FindActionByName(
 	}
 }
 
+// FindReactionByName returns a function that corresponds to the given reaction name.
+// The returned function takes a JSON raw message and an area schema as parameters and returns a string.
+// If the reaction name matches a predefined case, the corresponding function is returned.
+// If the reaction name does not match any predefined cases, nil is returned.
+//
+// Parameters:
+//   - name: The name of the reaction to find.
+//
+// Returns:
+//   - A function that takes a JSON raw message and an area schema, and returns a string.
+//     If the reaction name does not match any predefined cases, nil is returned.
 func (service *googleService) FindReactionByName(
 	name string,
 ) func(option json.RawMessage, area schemas.Area) string {
@@ -91,6 +137,10 @@ func (service *googleService) FindReactionByName(
 	}
 }
 
+// GetServiceActionInfo retrieves information about the Google service actions.
+// It marshals a default value to JSON and fetches the service information from the repository.
+// If any errors occur during these operations, they are printed to the console.
+// The function returns a slice of Action schemas containing details about the Google service action.
 func (service *googleService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
@@ -114,6 +164,15 @@ func (service *googleService) GetServiceActionInfo() []schemas.Action {
 	}
 }
 
+// GetServiceReactionInfo retrieves the reaction information for the Google service.
+// It creates a default Gmail reaction option, marshals it to JSON, and fetches the
+// service information from the repository. If any errors occur during marshaling or
+// fetching the service information, they are printed to the console. The function
+// returns a slice of Reaction containing the reaction details.
+//
+// Returns:
+//
+//	[]schemas.Reaction: A slice containing the reaction information for the Google service.
 func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.GmailReactionSendMailOption{
 		To:      "test@example.com",
@@ -142,6 +201,19 @@ func (service *googleService) GetServiceReactionInfo() []schemas.Reaction {
 
 // Service specific functions
 
+// AuthGetServiceAccessToken exchanges an authorization code for an access token
+// from Google's OAuth 2.0 server.
+//
+// It requires the following environment variables to be set:
+// - GOOGLE_CLIENT_ID: The client ID obtained from the Google Developer Console.
+// - GOOGLE_SECRET: The client secret obtained from the Google Developer Console.
+//
+// Parameters:
+// - code: The authorization code received from the Google authorization server.
+//
+// Returns:
+// - token: A schemas.Token containing the access token, refresh token, and expiration time.
+// - err: An error if the token exchange fails or required environment variables are not set.
 func (service *googleService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
@@ -208,6 +280,15 @@ func (service *googleService) AuthGetServiceAccessToken(
 	return token, nil
 }
 
+// GetUserGmailProfile retrieves the Gmail profile of the authenticated user using the provided access token.
+// It sends a GET request to the Gmail API and decodes the response into a GmailProfile schema.
+//
+// Parameters:
+//   - accessToken: A string containing the OAuth 2.0 access token for the authenticated user.
+//
+// Returns:
+//   - result: A GmailProfile struct containing the user's Gmail profile information.
+//   - err: An error if the request or decoding fails, otherwise nil.
 func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err error) {
 	ctx := context.Background()
 
@@ -240,6 +321,15 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 	return result, nil
 }
 
+// GetUserGoogleProfile retrieves the Google profile of a user using the provided access token.
+// It sends a GET request to the Google People API to fetch the user's profile information.
+//
+// Parameters:
+//   - accessToken: A string containing the OAuth 2.0 access token for the user.
+//
+// Returns:
+//   - result: A schemas.GoogleProfile struct containing the user's profile information.
+//   - err: An error if the request or decoding fails, otherwise nil.
 func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err error) {
 	ctx := context.Background()
 	// Create a new HTTP request
@@ -270,6 +360,16 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 	return result, nil
 }
 
+// GetUserInfo retrieves user information from Google services using the provided access token.
+// It fetches the user's Gmail profile and Google profile, and combines the relevant information
+// into a schemas.User object.
+//
+// Parameters:
+//   - accessToken: A string representing the OAuth 2.0 access token for accessing Google services.
+//
+// Returns:
+//   - user: A schemas.User object containing the user's email and username.
+//   - err: An error object if there was an issue retrieving the user information.
 func (service *googleService) GetUserInfo(
 	accessToken string,
 ) (user schemas.User, err error) {
@@ -291,6 +391,18 @@ func (service *googleService) GetUserInfo(
 	return user, nil
 }
 
+// initializedGoogleStorageVariable initializes the Google storage variable for a given area.
+// It attempts to unmarshal the storage variable from the area's StorageVariable field.
+// If unmarshalling fails, it initializes a new GoogleVariableReceiveMail with the current time
+// and updates the area's StorageVariable field. The updated area is then saved using the area repository.
+//
+// Parameters:
+//   - area: The area containing the storage variable to be initialized.
+//   - service: The googleService instance used to update the area repository.
+//
+// Returns:
+//   - schemas.GoogleVariableReceiveMail: The initialized GoogleVariableReceiveMail.
+//   - error: An error if any operation fails during the initialization process.
 func initializedGoogleStorageVariable(
 	area schemas.Area,
 	service googleService,
@@ -339,6 +451,17 @@ func initializedGoogleStorageVariable(
 	return variable, nil
 }
 
+// getLastEmailId retrieves the most recent email ID from the user's Gmail inbox after a specified time.
+// It takes a token for authorization and a GoogleVariableReceiveMail struct containing the time query.
+// It returns a GmailEmailResponse struct and an error if any occurred during the process.
+//
+// Parameters:
+//   - token: schemas.Token containing the authorization token.
+//   - variable: schemas.GoogleVariableReceiveMail containing the time query.
+//
+// Returns:
+//   - schemas.GmailEmailResponse: Struct containing the email response.
+//   - error: Error if any occurred during the process.
 func getLastEmailId(
 	token schemas.Token,
 	variable schemas.GoogleVariableReceiveMail,
@@ -380,6 +503,16 @@ func getLastEmailId(
 	return emailResponse, nil
 }
 
+// getLastEmailDetails retrieves the details of the last email for a given message ID.
+// It makes a request to the Gmail API to fetch the email headers and extracts the Date, From, and Subject fields.
+//
+// Parameters:
+//   - id: The ID of the email message to retrieve.
+//   - token: The authentication token required to access the Gmail API.
+//
+// Returns:
+//   - schemas.EmailDetails: A struct containing the Date, From, and Subject of the email.
+//   - error: An error if the request fails or if the email details cannot be found.
 func getLastEmailDetails(id string, token schemas.Token) (schemas.EmailDetails, error) {
 	var emailDetails schemas.EmailDetails
 	ctx := context.Background()
@@ -437,6 +570,24 @@ func getLastEmailDetails(id string, token schemas.Token) (schemas.EmailDetails, 
 
 // Actions functions
 
+// GoogleActionReceiveMail handles the process of receiving emails from a Google account.
+// It initializes the Google storage variable, retrieves the token, gets the last email ID,
+// fetches the email details, and checks if there are any new emails. If a new email is found,
+// it updates the storage variable and sends a response through the provided channel.
+//
+// Parameters:
+//   - channel: A channel to send the response string when a new email is received.
+//   - option: A JSON raw message containing additional options (currently unused).
+//   - area: A schemas.Area object containing user and action details.
+//
+// The function performs the following steps:
+//  1. Initializes the Google storage variable.
+//  2. Retrieves the token for the user and service.
+//  3. Gets the last email ID.
+//  4. Fetches the email details.
+//  5. Parses the email time and checks if it is a new email.
+//  6. Updates the storage variable and sends a response if a new email is found.
+//  7. Sleeps for the specified refresh rate before returning.
 func (service *googleService) GoogleActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
@@ -522,6 +673,17 @@ func (service *googleService) GoogleActionReceiveMail(
 
 // Reactions functions
 
+// GoogleReactionSendMail sends an email using the Gmail API based on the provided options and area information.
+// It unmarshals the provided JSON options into a GmailReactionSendMailOption struct, retrieves the user's token,
+// constructs the email message, and sends it via the Gmail API.
+//
+// Parameters:
+//   - option: A JSON raw message containing the email options (To, Subject, Body).
+//   - area: An Area struct containing user and reaction information.
+//
+// Returns:
+//
+//	A string indicating the result of the operation, either an error message or a success message.
 func (service *googleService) GoogleReactionSendMail(
 	option json.RawMessage,
 	area schemas.Area,
@@ -547,10 +709,6 @@ func (service *googleService) GoogleReactionSendMail(
 		fmt.Println("Error: Token not found")
 		return "Error: Token not found"
 	}
-
-	// TODO check if the email is valid or not
-	// TODO check if the subject is valid or not
-	// TODO check if the body is valid or not
 
 	apiURL := "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
 
