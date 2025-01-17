@@ -20,6 +20,5 @@ export async function handleCallback(
     body: JSON.stringify(authResult),
   });
   const data = await result.json();
-  console.log('data: ', data);
   return data;
 }

@@ -47,6 +47,7 @@ func (repo *areaRepository) SaveArea(action schemas.Area) (areaID uint64, err er
 }
 
 func (repo *areaRepository) Save(action schemas.Area) error {
+	fmt.Printf("refreshtime: %v\n", action.ActionRefreshRate)
 	err := repo.db.Connection.Create(&action)
 	if err.Error != nil {
 		return fmt.Errorf("failed to save area: %w", err.Error)

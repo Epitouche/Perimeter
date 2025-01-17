@@ -30,11 +30,34 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
 const ReactionsSections = ({ route }: Props) => {
   const { area } = route.params;
   const { ipAddress, token } = useContext(AppContext);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [refreshRate, setRefreshRate] = useState<number>();
   const [isReactionModalVisible, setIsReactionModalVisible] = useState(false);
   const [selectedReactionOptions, setSelectedReactionOptions] = useState<{
     [key: string]: any;
   }>({});
   console.log('Area refreshrate:', area.action_refresh_rate);
+
+  React.useEffect(() => {
+    /**
+     * Initializes the action options for the area by converting the entries of the `area.reaction_option` object
+     * into a new object where each key-value pair is preserved.
+     *
+     * @param {Object} area - The area object containing action options.
+     * @param {Object} area.reaction_option - The action options of the area.
+     * @returns {Object} The initialized action options object.
+     */
+    const initialReactionOptions = Object.entries(area.reaction_option).reduce(
+      (acc, [name, value]) => {
+        acc[name] = value;
+        return acc;
+      },
+      {} as { [key: string]: any },
+    );
+
+    setSelectedReactionOptions(initialReactionOptions);
+  }, [area.reaction_option]);
 
   /**
    * Handles the change of reaction options.
@@ -74,6 +97,10 @@ const ReactionsSections = ({ route }: Props) => {
       });
       console.log(response);
       if (response.ok) {
+        const body = await response.json();
+        setDescription(body.description);
+        setTitle(body.title);
+        setRefreshRate(body.refresh_rate);
         console.log('Area updated successfully');
       }
     } catch (error) {
@@ -81,12 +108,6 @@ const ReactionsSections = ({ route }: Props) => {
     }
     setIsReactionModalVisible(false);
   };
-
-  for (const option of Object.entries(area.reaction_option).map(
-    ([name, value]) => ({ name, value }),
-  )) {
-    selectedReactionOptions[option.name] = option.value;
-  }
 
   return (
     <View>
@@ -187,7 +208,11 @@ const ReactionsSections = ({ route }: Props) => {
                         typeof selectedReactionOptions[key],
                       )
                     }
-                    keyboardType="default" // Adjust as needed
+                    keyboardType={`${
+                      typeof selectedReactionOptions[key] === 'number'
+                        ? 'numeric'
+                        : 'default'
+                    }`}
                     accessibilityLabel={`${key} Input`}
                     accessibilityHint={`Input field for the ${key} option`}
                   />
