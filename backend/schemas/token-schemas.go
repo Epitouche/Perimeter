@@ -21,8 +21,8 @@ type Token struct {
 
 // Errors Messages.
 var (
-	ErrTokenAlreadyExists            = errors.New("token already exists")
-	ErrAccessTokenNotFoundInResponse = errors.New("access token not found in response")
-	ErrUnableToSaveToken             = errors.New("unable to save token")
-	ErrTokenBelongToUser             = errors.New("token belongs to user")
+	ErrTokenAlreadyExists            = errors.New("token already exists")               // Error message for token already exists
+	ErrAccessTokenNotFoundInResponse = errors.New("access token not found in response") // Error message for access token not found in response
+	ErrUnableToSaveToken             = errors.New("unable to save token")               // Error message for unable to save token
+	ErrTokenBelongToUser             = errors.New("token belongs to user")              // Error message for token belongs to user
 )
