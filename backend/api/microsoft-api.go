@@ -47,7 +47,7 @@ func NewMicrosoftAPI(
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with microsoft
+//	@Summary		Redirect To Service
 //	@Description	give url to authenticate with microsoft
 //	@Tags			Microsoft
 //	@Accept			json
@@ -68,7 +68,7 @@ func (api *MicrosoftAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with microsoft
+//	@Summary		Handle Service Callback
 //	@Description	give url to authenticate with microsoft
 //	@Tags			Microsoft
 //	@Accept			json
@@ -91,7 +91,7 @@ func (api *MicrosoftAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give url to authenticate with microsoft
+//	@Summary		Handle Service Callback Mobile
 //	@Description	give url to authenticate with microsoft
 //	@Tags			Microsoft
 //	@Accept			json
@@ -119,7 +119,7 @@ func (api *MicrosoftAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup)
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of microsoft
+//	@Summary		Get User Info
 //	@Description	give user info of microsoft
 //	@Tags			Microsoft
 //	@Accept			json

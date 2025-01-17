@@ -47,7 +47,7 @@ func NewSpotifyAPI(
 
 // RedirectToService godoc
 //
-//	@Summary		give url to authenticate with spotify
+//	@Summary		Redirect To Service
 //	@Description	give url to authenticate with spotify
 //	@Tags			Spotify
 //	@Accept			json
@@ -70,7 +70,7 @@ func (api *SpotifyAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give authentication token to web client
+//	@Summary		Handle Service Callback
 //	@Description	give authentication token to web client
 //	@Tags			Spotify
 //	@Accept			json
@@ -95,7 +95,7 @@ func (api *SpotifyAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give authentication token to mobile
+//	@Summary		Handle Service Callback Mobile
 //	@Description	give authentication token to mobile
 //	@Tags			Spotify
 //	@Accept			json
@@ -120,7 +120,7 @@ func (api *SpotifyAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of spotify
+//	@Summary		Get User Info
 //	@Description	give user info of spotify
 //	@Tags			Spotify
 //	@Accept			json
