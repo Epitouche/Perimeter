@@ -34,6 +34,7 @@ var (
 	ErrUserNotFound               = errors.New("user not found")
 	ErrInvalidCredentials         = errors.New("invalid credentials")
 	ErrEmailAlreadyExist          = errors.New("email already exist")
+	ErrInvalidEmail               = errors.New("invalid email")
 	ErrHashingPassword            = errors.New("error hashing the password")
 	ErrMissingCode                = errors.New("missing code")
 	ErrMissingCodeVerifier        = errors.New("missing code verifier")

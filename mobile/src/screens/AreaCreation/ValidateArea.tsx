@@ -117,7 +117,6 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
    */
   const saveButtonPressed = async () => {
     try {
-      console.log(parseInt(refreshTimer));
       let data = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
         method: 'POST',
         headers: {
@@ -127,7 +126,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         body: JSON.stringify({
           action_id: actionId,
           action_option: actionOptions,
-          action_refresh_rate: parseInt(refreshTimer),
+          action_refresh_rate: Number(refreshTimer),
           description,
           reaction_id: reactionId,
           reaction_option: reactionOptions,

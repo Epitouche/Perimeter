@@ -131,7 +131,7 @@ const items = [
 
 <style scoped>
 .logout-button {
-  background-color: #ef4444;
+  background-color: #ff0000;
 }
 
 .logout-button:hover {

@@ -54,7 +54,7 @@ func NewUserApi(
 
 // Login godoc
 //
-//	@Summary		Provides a JSON Web Token
+//	@Summary		Login
 //	@Description	Authenticates a user and provides a JWT to Authorize API calls
 //	@Tags			User
 //	@Consume		application/x-www-form-urlencoded
@@ -82,7 +82,7 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 
 // Register godoc
 //
-//	@Summary		Provides a JSON Web Token
+//	@Summary		Register
 //	@Description	Authenticates a user and provides a JWT to Authorize API calls
 //	@Tags			User
 //	@Consume		application/x-www-form-urlencoded
@@ -92,15 +92,32 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 //	@Param			password	formData	string	true	"Password"
 //	@Success		201			{object}	schemas.JWT
 //	@Failure		400			{object}	schemas.ErrorResponse
+//	@Failure		409			{object}	schemas.ErrorResponse
+//	@Failure		500			{object}	schemas.ErrorResponse
 //	@Router			/user/register [post].
 func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/register", func(ctx *gin.Context) {
 		token, err := api.controller.Register(ctx)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
-				Error: err.Error(),
-			})
-			return
+			switch err {
+			case schemas.ErrEmailTooShort,
+				schemas.ErrUsernameTooShort,
+				schemas.ErrPasswordTooShort,
+				schemas.ErrInvalidEmail:
+				ctx.JSON(http.StatusBadRequest, &schemas.ErrorResponse{
+					Error: err.Error(),
+				})
+				return
+			case schemas.ErrEmailAlreadyExist:
+				ctx.JSON(http.StatusConflict, &schemas.ErrorResponse{
+					Error: err.Error(),
+				})
+			default:
+				ctx.JSON(http.StatusInternalServerError, &schemas.ErrorResponse{
+					Error: err.Error(),
+				})
+				return
+			}
 		}
 
 		ctx.JSON(http.StatusCreated, &schemas.JWT{
@@ -111,7 +128,7 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Get User Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
@@ -136,7 +153,7 @@ func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserAllInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Get User All Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
@@ -161,7 +178,7 @@ func (api *UserApi) GetUserAllInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserAllInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Update User Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
@@ -186,7 +203,7 @@ func (api *UserApi) UpdateUserInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserAllInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Delete User Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
