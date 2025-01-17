@@ -54,7 +54,7 @@ func NewUserApi(
 
 // Login godoc
 //
-//	@Summary		Provides a JSON Web Token
+//	@Summary		Login
 //	@Description	Authenticates a user and provides a JWT to Authorize API calls
 //	@Tags			User
 //	@Consume		application/x-www-form-urlencoded
@@ -82,7 +82,7 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 
 // Register godoc
 //
-//	@Summary		Provides a JSON Web Token
+//	@Summary		Register
 //	@Description	Authenticates a user and provides a JWT to Authorize API calls
 //	@Tags			User
 //	@Consume		application/x-www-form-urlencoded
@@ -128,7 +128,7 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Get User Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
@@ -153,7 +153,7 @@ func (api *UserApi) GetUserInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserAllInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Get User All Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
@@ -178,7 +178,7 @@ func (api *UserApi) GetUserAllInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserAllInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Update User Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
@@ -203,7 +203,7 @@ func (api *UserApi) UpdateUserInfo(apiRoutes *gin.RouterGroup) {
 
 // GetUserAllInfo godoc
 //
-//	@Summary		give user info of user
+//	@Summary		Delete User Info
 //	@Description	give user info of user
 //	@Tags			User
 //	@Accept			json
