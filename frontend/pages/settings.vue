@@ -53,22 +53,25 @@ const clearTokenAndLogout = () => {
 </script>
 
 <template>
-  <div class="flex flex-col justify-center items-center gap-10 w-full">
-    <h1>Settings</h1>
+  <div class="flex flex-col justify-center items-center w-full">
+    <h1 class="py-5">Settings</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div
       v-else
-      class="flex flex-col justify-center items-center gap-10 w-[60%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
+      class="flex flex-col justify-center items-center gap-16 min-w-[60%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-full h-full py-10 rounded-custom_border_radius bg-custom_color-bg_section"
     >
-      <div class="flex flex-col justify-center items-center gap-8 w-full px-5">
+      <div
+        class="flex flex-col justify-center items-center gap-12 min-w-[50%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-[90%] px-5"
+      >
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
       </div>
       <UButton
-        class="delete-button flew justify-center items-center rounded-2x1 px-10 py-5 w-[20%] font-bold text-white"
+        class="delete-button text-white flex flex-col justify-center items-center gap-2 max-md:gap-0 px-8 py-3 max-lg:py-0"
         @click="deleteAccount"
       >
-        <h6>Delete Account</h6>
+        <p>Delete</p>
+        <p>Account</p>
       </UButton>
     </div>
   </div>
