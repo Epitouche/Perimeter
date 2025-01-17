@@ -60,7 +60,9 @@ const clearTokenAndLogout = () => {
       v-else
       class="flex flex-col justify-center items-center gap-16 min-w-[60%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-full h-full py-10 rounded-custom_border_radius bg-custom_color-bg_section"
     >
-      <div class="flex flex-col justify-center items-center gap-12 min-w-[50%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-[90%] px-5">
+      <div
+        class="flex flex-col justify-center items-center gap-12 min-w-[50%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-[90%] px-5"
+      >
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
       </div>

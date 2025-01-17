@@ -42,9 +42,7 @@ export default {
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full"
-  >
+  <div class="flex flex-col w-full">
     <h5 class="px-5">{{ name }}</h5>
     <div class="flex items-center gap-4 justify-center">
       <UInput
