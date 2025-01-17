@@ -41,7 +41,7 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 const componentKey = ref(0);
 const focusDiv = ref<HTMLElement | null>(null);
 const selectedAreaResult = ref<string>("");
-const selectedAreaDates = ref<string[]>([]);
+const selectedAreaData = ref<{ date: string; result: string }[] | null>(null);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.areas.map((area) => [area.id, false])),
@@ -181,15 +181,14 @@ const fetchAreaResult = async (areaId: number) => {
         },
       });
       if (response && response.length > 0) {
-        selectedAreaResult.value = response
-          .map((item) => item.result)
-          .join(", ");
-        selectedAreaDates.value = response.map((item) =>
-          formatDate(item.created_at),
-        );
-        console.log("Result : ", selectedAreaResult.value);
-        console.log("Dates : ", selectedAreaDates.value);
+        const combinedData = response.map((item) => ({
+          date: formatDate(item.created_at),
+          result: item.result,
+        }));
+
+        selectedAreaData.value = combinedData;
       } else {
+        selectedAreaData.value = null;
         console.error("Response doesn't have a valid result.");
       }
     } catch (error) {
@@ -437,10 +436,16 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
             class="scrollable-element w-full bg-custom_color-bg_section overflow-y-scroll min-h-[10vh] rounded-lg text-black"
           >
-            <h5 v-if="!selectedAreaResult" class="px-1">No Result</h5>
-            <h6 v-else class="px-1">
-              {{ selectedAreaDates }} - {{ selectedAreaResult }}
-            </h6>
+          <div>
+            <h5 v-if="!selectedAreaData || selectedAreaData.length === 0" class="px-1">
+              No Result
+            </h5>
+            <ul v-else>
+              <li v-for="(item, index) in selectedAreaData" :key="index">
+                <span>{{ item.date }}</span> - <span>{{ item.result }}</span>
+              </li>
+            </ul>
+          </div>
           </UContainer>
 
           <div class="flex flex-row justify-end items-center gap-2">
