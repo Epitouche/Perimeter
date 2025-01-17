@@ -91,7 +91,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
             <Text style={styles.button}>Save</Text>
           </TouchableOpacity>
         </View>
-        <View style={[styles.buttonContainer, {backgroundColor: 'red'}]}>
+        <View style={[styles.buttonContainer, {backgroundColor: 'E60000'}]}>
           <TouchableOpacity
             onPress={() => {
               const deleteUser = async () => {
