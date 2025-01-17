@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   telemetry: { enabled: false },
   colorMode: {
-    preference: 'light'
+    preference: "light",
   },
 
   postcss: {
@@ -30,7 +30,9 @@ export default defineNuxtConfig({
     head: {
       titleTemplate: "Perimeter",
       link: [{ rel: "icon", type: "image/x-icon", href: "/PerimeterIcon.png" }],
-      script: [{children: `document.documentElement.classList.remove('dark');`}],
+      script: [
+        { children: `document.documentElement.classList.remove('dark');` },
+      ],
     },
   },
 

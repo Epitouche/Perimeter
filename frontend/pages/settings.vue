@@ -37,10 +37,10 @@ async function deleteAccount() {
       method: "POST",
       body: {
         authorization: tokenCookie.value,
-      }
+      },
     });
     clearTokenAndLogout();
-    navigateTo('/login');
+    navigateTo("/login");
   } catch (error) {
     throw handleErrorStatus(error);
   }
@@ -50,7 +50,6 @@ const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
 };
-
 </script>
 
 <template>
@@ -65,9 +64,10 @@ const clearTokenAndLogout = () => {
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
       </div>
-      <UButton 
+      <UButton
         class="delete-button flew justify-center items-center rounded-2x1 px-10 py-5 w-[20%] font-bold text-white"
-        @click=deleteAccount>
+        @click="deleteAccount"
+      >
         <h6>Delete Account</h6>
       </UButton>
     </div>
