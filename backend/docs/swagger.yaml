@@ -1418,6 +1418,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: Provides a JSON Web Token
       tags:
       - User

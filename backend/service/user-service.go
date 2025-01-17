@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"area/database"
@@ -32,6 +33,11 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 		repository:         userRepository,
 		serviceJWT:         serviceJWT,
 	}
+}
+
+func isValidEmail(email string) bool {
+	re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$`)
+	return re.MatchString(email)
 }
 
 func (service *userService) Login(
@@ -83,6 +89,10 @@ func (service *userService) Register(
 	if len(userWiththisEmail) != 0 {
 		// return service.Login(newUser)
 		return "", 0, schemas.ErrEmailAlreadyExist
+	}
+
+	if !isValidEmail(newUser.Email) {
+		return "", 0, schemas.ErrInvalidEmail
 	}
 
 	if newUser.Password != "" {
