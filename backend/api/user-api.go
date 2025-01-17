@@ -92,6 +92,8 @@ func (api *UserApi) Login(apiRoutes *gin.RouterGroup) {
 //	@Param			password	formData	string	true	"Password"
 //	@Success		201			{object}	schemas.JWT
 //	@Failure		400			{object}	schemas.ErrorResponse
+//	@Failure		409			{object}	schemas.ErrorResponse
+//	@Failure		500			{object}	schemas.ErrorResponse
 //	@Router			/user/register [post].
 func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 	apiRoutes.POST("/register", func(ctx *gin.Context) {
