@@ -86,13 +86,13 @@ function formatName(name: string): string {
             :src="service.icon"
             :alt="service.name"
             style="width: 45%"
-          />
+          >
           <img
             v-else-if="hover[service.id] && !isLongText(service.name)"
             :src="service.icon"
             :alt="service.name"
             style="width: 45%"
-          />
+          >
           <h5
             class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
           >
@@ -111,13 +111,13 @@ function formatName(name: string): string {
           :src="service.icon"
           :alt="service.name"
           style="width: 45%"
-        />
+        >
         <img
           v-else-if="hover[service.id] && !isLongText(service.name)"
           :src="service.icon"
           :alt="service.name"
           style="width: 45%"
-        />
+        >
         <h5
           class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
         >
