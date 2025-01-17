@@ -6,10 +6,15 @@ export const handleErrorStatus = (error: unknown): string => {
     const message =
       (error as { message?: string }).message || "An error occurred";
 
-    if (statusCode === 401) {
+
+    if (statusCode === 400) {
+      return "Invalid Credentials"
+    } else if (statusCode === 401) {
       token.value = null;
       navigateTo("/login");
-      return "401: Unauthorized access.";
+      return "Unauthorized access.";
+    } else if (statusCode === 409) {
+      return "Email already exist."
     } else {
       return `Error: ${message}`;
     }
