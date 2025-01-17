@@ -344,18 +344,19 @@ if (areaIdNumber !== null && valueNumber !== null) {
           {{ formatName(area.title) }}
         </h6>
 
-        <div class="flex flex-col justify-center items-center gap-0 w-full px-2">
+        <div
+          class="flex flex-col justify-center items-center gap-0 w-full px-2"
+        >
           <img
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-[35%] h-[35%] ml-[38%]"
-          >
-
+          />
         </div>
       </UContainer>
       <UModal
@@ -396,7 +397,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 @click="toggleAreaModal(area.id)"
                 @keydown.enter="toggleAreaModal(area.id)"
               >
-                <UIcon name="i-bytesize-close" class="w-[3.5vw] h-[3.5vh] text-white" />
+                <UIcon
+                  name="i-bytesize-close"
+                  class="w-[3.5vw] h-[3.5vh] text-white"
+                />
               </UButton>
             </div>
 
@@ -448,7 +452,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 @click="toggleEditArea(area.id)"
                 @keydown.enter="toggleEditArea(area.id)"
               >
-                <UIcon name="i-bytesize-edit" class="w-[3.5vw] h-[3.5vh] p-0 text-white" />
+                <UIcon
+                  name="i-bytesize-edit"
+                  class="w-[3.5vw] h-[3.5vh] p-0 text-white"
+                />
               </UButton>
             </UTooltip>
 
@@ -500,7 +507,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 tabindex="0"
                 @click="onDelete(area.id)"
               >
-                <UIcon name="i-bytesize-trash" class="w-[4vw] h-[4vh] p-0 text-white" />
+                <UIcon
+                  name="i-bytesize-trash"
+                  class="w-[4vw] h-[4vh] p-0 text-white"
+                />
               </UButton>
             </UTooltip>
           </div>

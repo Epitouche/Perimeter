@@ -92,13 +92,10 @@ onMounted(() => {
           :popper="{ placement: 'bottom' }"
           tabindex="0"
         >
-          <UIcon
-            name="i-bytesize-filter"
-            class="text-black w-[4vw] h-[4vh]"
-          />
+          <UIcon name="i-bytesize-filter" class="text-black w-[4vw] h-[4vh]" />
           <template #date="{ item }">
             <div class="flex flex-row justify-evenly items-center w-full h-fit">
-              <p style="font-size: 100%;">Latest</p>
+              <p style="font-size: 100%">Latest</p>
               <UTooltip
                 :text="`Sort by ${item.label}`"
                 :popper="{ placement: 'top' }"
@@ -106,7 +103,7 @@ onMounted(() => {
               >
                 <UToggle v-model="dateSort" />
               </UTooltip>
-              <p style="font-size: 100%;">Oldest</p>
+              <p style="font-size: 100%">Oldest</p>
             </div>
           </template>
         </UDropdown>
