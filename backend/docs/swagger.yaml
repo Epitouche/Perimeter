@@ -215,7 +215,7 @@ definitions:
     type: string
     x-enum-varnames:
     - Spotify
-    - Openweathermap
+    - OpenWeatherMap
     - Timer
     - Google
     - Github

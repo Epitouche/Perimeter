@@ -6,13 +6,13 @@ import (
 	"area/schemas"
 )
 
-type OpenweathermapRepository interface{}
+type OpenWeatherMapRepository interface{}
 
 type openweathermapRepository struct {
 	db *schemas.Database
 }
 
-func NewOpenweathermapRepository(conn *gorm.DB) OpenweathermapRepository {
+func NewOpenWeatherMapRepository(conn *gorm.DB) OpenWeatherMapRepository {
 	return &openweathermapRepository{
 		db: &schemas.Database{
 			Connection: conn,

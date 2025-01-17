@@ -2095,7 +2095,7 @@ const docTemplate = `{
             ],
             "x-enum-varnames": [
                 "Spotify",
-                "Openweathermap",
+                "OpenWeatherMap",
                 "Timer",
                 "Google",
                 "Github",
