@@ -198,9 +198,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         onChangeText={text => setUsername(text)}
         accessibilityHint="Enter your username"
       />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
 
       <TextInput
         style={styles.input}
@@ -211,8 +208,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         onChangeText={text => setPassword(text)}
         accessibilityHint="Enter your password"
       />
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
+      {errors != "" ? (
+              <Text style={styles.errorText}>{errors}</Text>
       ) : null}
 
       <TouchableOpacity
