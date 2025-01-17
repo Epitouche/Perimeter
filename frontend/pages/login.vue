@@ -37,20 +37,8 @@ const handleLogin = async () => {
     }
     //console.log("Login successful:", response);
     navigateTo("/myareas");
-  } catch (error) {
-    if (error && typeof error === "object" && "data" in error) {
-      const typedError = error as {
-        status?: number;
-        data?: { message?: string };
-      };
-      if (typedError.status === 401) {
-        loginError.value = "Login failed. Please try again.";
-      }
-      console.error("Login error:", typedError);
-    } else {
-      loginError.value = "An unknown error occurred.";
-      console.error("Unexpected error:", error);
-    }
+  } catch (error: unknown) {
+    loginError.value = handleErrorStatus(error);
   }
 };
 </script>
