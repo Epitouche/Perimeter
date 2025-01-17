@@ -155,7 +155,6 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           },
         );
         const data = await response.json();
-        console.log('Data:', data);
 
         if (response.ok) {
           navigation.navigate('Login');

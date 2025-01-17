@@ -180,7 +180,6 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
   const renderService = ({ item }: { item: any }) => {
     const isConnected = connectedServices.includes(item.name);
 
-    console.log(item);
     return (
       <TouchableOpacity
         accessibilityLabel={`${!isConnected ? 'Connect' : 'Disconnect'} from ${

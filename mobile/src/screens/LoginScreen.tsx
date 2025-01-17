@@ -180,7 +180,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
       const serviceData = await serviceResponse.json();
       setServices(serviceData);
-      console.log(serviceData.filter(service => service.oauth));
     };
 
     fetchServices();

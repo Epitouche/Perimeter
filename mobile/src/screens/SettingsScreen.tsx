@@ -49,7 +49,6 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
           },
         );
         const data = await response.json();
-        console.log(data);
         setUsername(data.username);
         setEmail(data.email);
         if (response.status === 401) {
