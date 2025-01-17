@@ -86,8 +86,41 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
+            accessibilityLabel='Save'
             accessibilityHint="Save your changes and go back">
             <Text style={styles.button}>Save</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.buttonContainer, {backgroundColor: 'red'}]}>
+          <TouchableOpacity
+            onPress={() => {
+              const deleteUser = async () => {
+                try {
+                  const response = await fetch(`http://${ipAddress}:8080/api/v1/user/info`, {
+                    method: 'DELETE',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                  });
+
+                  if (response.status === 200) {
+                    setToken('');
+                    navigation.navigate('Login');
+                  } else {
+                    console.error('Failed to delete user');
+                  }
+                } catch (error) {
+                  console.error('Error deleting user:', error);
+                }
+              };
+
+              deleteUser();
+              navigation.navigate('Login');
+            }}
+            accessibilityLabel='Delete account'
+            accessibilityHint="Delete your account and every data associated with it">
+            <Text style={styles.button}>Delete account</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -95,6 +128,7 @@ const SettingsScreen = ({ navigation }: { navigation: any }) => {
             setToken('');
             navigation.navigate('Login');
           }}
+          accessibilityLabel='Disconnect'
           accessibilityHint="Disconnect and navigate to the login screen">
           <Text style={styles.disconnectButton}>Disconnect</Text>
         </TouchableOpacity>
