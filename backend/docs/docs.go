@@ -32,7 +32,7 @@ const docTemplate = `{
                 "tags": [
                     "Action"
                 ],
-                "summary": "get action info of service id",
+                "summary": "Get Actions Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -75,7 +75,7 @@ const docTemplate = `{
                 "tags": [
                     "Action"
                 ],
-                "summary": "get action info of action id",
+                "summary": "Get Action Info By Action ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -115,7 +115,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "get user areas",
+                "summary": "Get User Areas",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -156,7 +156,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "update user area",
+                "summary": "Update User Area",
                 "parameters": [
                     {
                         "type": "array",
@@ -263,7 +263,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "create area",
+                "summary": "Create Area",
                 "parameters": [
                     {
                         "description": "Area Payload",
@@ -306,7 +306,7 @@ const docTemplate = `{
                 "tags": [
                     "Area"
                 ],
-                "summary": "delete user area",
+                "summary": "Delete User Area",
                 "parameters": [
                     {
                         "type": "integer",
@@ -355,7 +355,7 @@ const docTemplate = `{
                 "tags": [
                     "AreaResults"
                 ],
-                "summary": "get user areas results list by area id",
+                "summary": "Get User Area Results By Area ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -393,7 +393,7 @@ const docTemplate = `{
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give url to authenticate with dropbox",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -422,7 +422,7 @@ const docTemplate = `{
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give url to authenticate with dropbox",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -473,7 +473,7 @@ const docTemplate = `{
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give url to authenticate with dropbox",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -518,7 +518,7 @@ const docTemplate = `{
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give user info of dropbox",
+                "summary": "Get User File",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -561,7 +561,7 @@ const docTemplate = `{
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give user info of dropbox",
+                "summary": "Get User Folder",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -604,7 +604,7 @@ const docTemplate = `{
                 "tags": [
                     "Dropbox"
                 ],
-                "summary": "give user info of dropbox",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -639,7 +639,7 @@ const docTemplate = `{
                 "tags": [
                     "Github"
                 ],
-                "summary": "give url to authenticate with github",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -668,7 +668,7 @@ const docTemplate = `{
                 "tags": [
                     "Github"
                 ],
-                "summary": "give url to authenticate with github",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -708,7 +708,7 @@ const docTemplate = `{
                 "tags": [
                     "Github"
                 ],
-                "summary": "give authentication token to mobile",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -759,7 +759,7 @@ const docTemplate = `{
                 "tags": [
                     "Github"
                 ],
-                "summary": "give user info of github",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -794,7 +794,7 @@ const docTemplate = `{
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give url to authenticate with gmail",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -823,7 +823,7 @@ const docTemplate = `{
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give url to authenticate with gmail",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -869,7 +869,7 @@ const docTemplate = `{
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give authentication token to mobile",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -920,7 +920,7 @@ const docTemplate = `{
                 "tags": [
                     "Gmail"
                 ],
-                "summary": "give user info of gmail",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -955,7 +955,7 @@ const docTemplate = `{
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give url to authenticate with microsoft",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -984,7 +984,7 @@ const docTemplate = `{
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give url to authenticate with microsoft",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1035,7 +1035,7 @@ const docTemplate = `{
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give url to authenticate with microsoft",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1080,7 +1080,7 @@ const docTemplate = `{
                 "tags": [
                     "Microsoft"
                 ],
-                "summary": "give user info of microsoft",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1143,7 +1143,7 @@ const docTemplate = `{
                 "tags": [
                     "Reaction"
                 ],
-                "summary": "get reaction info",
+                "summary": "Get Reactions Info",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1195,7 +1195,7 @@ const docTemplate = `{
                 "tags": [
                     "Reaction"
                 ],
-                "summary": "get reaction info of reaction id",
+                "summary": "Get Reaction Info By Reaction ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1235,7 +1235,7 @@ const docTemplate = `{
                 "tags": [
                     "Service"
                 ],
-                "summary": "get service info",
+                "summary": "Get Services Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1278,7 +1278,7 @@ const docTemplate = `{
                 "tags": [
                     "Service"
                 ],
-                "summary": "get service info",
+                "summary": "Get Service Info By Id",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1322,7 +1322,7 @@ const docTemplate = `{
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give url to authenticate with spotify",
+                "summary": "Redirect To Service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1351,7 +1351,7 @@ const docTemplate = `{
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give authentication token to web client",
+                "summary": "Handle Service Callback",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1397,7 +1397,7 @@ const docTemplate = `{
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give authentication token to mobile",
+                "summary": "Handle Service Callback Mobile",
                 "parameters": [
                     {
                         "description": "Callback Payload",
@@ -1448,7 +1448,7 @@ const docTemplate = `{
                 "tags": [
                     "Spotify"
                 ],
-                "summary": "give user info of spotify",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1488,7 +1488,7 @@ const docTemplate = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "delete user token",
+                "summary": "Delete User Token",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1537,7 +1537,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Get User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1577,7 +1577,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Update User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1615,7 +1615,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Delete User Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1655,7 +1655,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "give user info of user",
+                "summary": "Get User All Info",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1687,7 +1687,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Provides a JSON Web Token",
+                "summary": "Login",
                 "parameters": [
                     {
                         "type": "string",
@@ -1729,7 +1729,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Provides a JSON Web Token",
+                "summary": "Register",
                 "parameters": [
                     {
                         "type": "string",
