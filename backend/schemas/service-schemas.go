@@ -37,7 +37,9 @@ type Service struct {
 
 // Errors Messages.
 var (
-	ErrNotOauthService = errors.New("service is not an oauth service") // Error message for non-OAuth services
+	ErrNotOauthService = errors.New(
+		"service is not an oauth service",
+	) // Error message for non-OAuth services
 )
 
 type MobileTokenRequest struct {
