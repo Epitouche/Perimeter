@@ -59,10 +59,11 @@ watch(
 </script>
 
 <template>
-  <div
+  <UContainer
     v-if="isSelected"
+    :ui="{ padding: '!px-0 !py-0', constrained: '!min-w-none !min-h-none' }"
     :class="[
-      'flex flex-row justify-start items-center px-10 py-7 gap-10 rounded-3xl w-full',
+      'flex flex-row justify-evenly items-center rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[70vw] max-lg:h-[12vh] max-md:h-[10vh] max-sm:h-[9vh]',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
     :style="{ backgroundColor: serviceInfo ? serviceInfo.color : 'black' }"
@@ -71,23 +72,23 @@ watch(
     <img
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
-      class="w-fit h-[8vh] p-0"
-    />
-    <h2
+      class="p-0" style="width: 15%"
+    >
+    <h3
       :class="[
         'text-white',
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
       ]"
     >
       {{ formatName(typeName) }}
-    </h2>
-  </div>
+    </h3>
+  </UContainer>
 
   <UContainer
     v-else
     :ui="{ padding: '!px-0 !py-0', constrained: '!min-w-none !min-h-none' }"
     :class="[
-      'flex flex-row justify-evenly items-center bg-black rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[70vw] max-lg:h-[12vh] max-md:h-[10vh] max-sm:h-[8vh]',
+      'flex flex-row justify-evenly items-center bg-black rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[70vw] max-lg:h-[12vh] max-md:h-[10vh] max-sm:h-[9vh]',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
   >

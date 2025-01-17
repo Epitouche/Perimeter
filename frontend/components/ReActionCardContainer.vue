@@ -130,15 +130,15 @@ onMounted(() => {
       <UModal
         v-model="configIsOpen[type.id]"
         :ui="{
-          base: 'relative text-left rtl:text-right flex flex-col p-10 max-lg:p-9 max-md:p-8 max-sm:p-6 border-custom_border_width',
-          width: 'w-fit',
+          base: 'relative text-left rtl:text-right flex flex-col justify-center items-center p-10 max-lg:p-9 max-md:p-8 max-sm:p-6 border-custom_border_width',
+          width: 'w-fit max-w-[95%]',
         }"
         :style="{ borderColor: props.serviceInfo?.color || 'black' }"
       >
         <template #default>
           <UForm
             :state="state[type.id]"
-            class="flex flex-col gap-12 p-5 max-lg:p-4 max-md:p-3 max-sm:p-2 bg-custom_color-bg_section"
+            class="flex flex-col gap-12 p-5 max-lg:p-4 max-md:p-3 max-sm:p-2 w-full bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)"
           >
             <h2 class="text-center">
@@ -155,7 +155,7 @@ onMounted(() => {
               :name="key"
               :ui="{
                 label: {
-                  base: 'capitalize text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg pl-5 font-semibold',
+                  base: 'capitalize text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg px-5 font-semibold',
                 },
               }"
               class="self-center min-w-[85%] max-lg:min-w-[90%] max-md:min-w-[95%] max-sm:min-w-full"
@@ -166,7 +166,7 @@ onMounted(() => {
                   fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
                 "
                 :ui="{
-                  placeholder: '!px-5 !py-3 font-light',
+                  placeholder: '!px-5 !py-3 max-lg:!py-2 font-light',
                   size: {
                     sm: 'text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg',
                   },
@@ -188,18 +188,18 @@ onMounted(() => {
 
             <div class="flex flex-row justify-evenly gap-4 pt-4">
               <UButton
-                class="text-3xl font-semibold px-5 py-3 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
+                class="font-semibold px-6 py-5 max-lg:py-3 max-md:py-2 max-sm:py-1 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
                 tabindex="0"
                 @click="openConfig(type.id)"
               >
-                Cancel
+                <h6>Cancel</h6>
               </UButton>
               <UButton
                 type="submit"
-                class="text-3xl font-semibold px-5 py-3"
+                class="font-semibold px-6 py-5 max-lg:py-3 max-md:py-2 max-sm:py-1"
                 tabindex="0"
               >
-                Submit
+                <h6>Submit</h6>
               </UButton>
             </div>
           </UForm>

@@ -57,7 +57,7 @@ onMounted(() => {
         :ui="{ base: 'mx-auto' }"
         class="flex flex-col justify-center items-center gap-16 w-[80%] h-full !p-0"
       >
-        <div class="w-1/3">
+        <div class="min-w-1/3 max-w-[95%]">
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />
         </div>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>

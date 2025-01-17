@@ -53,15 +53,15 @@ const items = [
 
 <template>
   <UContainer
-    :ui="{ padding: '!px-4 !py-2', constrained: 'min-w-screen' }"
+    :ui="{ padding: '!px-4 !py-4', constrained: 'min-w-screen' }"
     class="flex flex-row justify-between items-center bg-custom_color-bg_section"
   >
     <div class="flex flex-row items-center gap-5">
       <img
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
-        style="height: 6.5vh"
-      />
+        style="width: 18%; height: 18%"
+      >
       <h5>Perimeter</h5>
     </div>
 
@@ -84,7 +84,7 @@ const items = [
         <UAvatar
           icon="i-bytesize-user"
           :ui="{
-            size: { sm: '!h-fit !w-fit !py-[20%] !px-0' },
+            size: { sm: '!h-fit !w-fit !py-[20%] !px-0 max-lg:!px-5' },
             icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh]' } },
           }"
         />

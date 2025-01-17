@@ -59,7 +59,7 @@ p {
 /* Mobile Portrait (small screens) */
 @media (max-width: 480px) {
   .custom_card {
-    width: 20vw;
+    width: 21vw;
     height: fit-content;
     display: flex;
     flex-direction: column;

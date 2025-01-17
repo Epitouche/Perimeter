@@ -10,11 +10,11 @@ defineProps<{
     variant="ghost"
     :to="link"
     :class="[
-      'border-custom_border_width flex flex-row justify-between items-center max-w-[7vw] pr-4 py-3',
+      'border-custom_border_width flex flex-row justify-between items-center gap-2 w-fit p-4',
       isWhite ? '!border-white text-white' : '!border-black text-black',
     ]"
   >
-    <UIcon name="i-bytesize-chevron-left" class="w-[2.5vw] h-[2.5vh]" />
+    <UIcon name="i-bytesize-chevron-left" class="w-[2vh] h-[2vh]" />
     <h6>Back</h6>
   </UButton>
 </template>
