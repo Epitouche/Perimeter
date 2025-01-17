@@ -515,7 +515,7 @@ func (service *spotifyService) SpotifyReactionSkipNextMusic(
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)
-	return "Response Status:" + resp.Status
+	return "Spotify skip next music"
 }
 
 func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
@@ -562,5 +562,5 @@ func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
 	defer resp.Body.Close()
 
 	fmt.Println("Response Status:", resp.Status)
-	return "Response Status:" + resp.Status
+	return "SpotifyR skip to previous music"
 }
