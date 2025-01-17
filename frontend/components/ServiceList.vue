@@ -184,7 +184,7 @@ function formatName(name: string): string {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        />
+        >
         <UButton
           v-if="!isLoading"
           :class="[
@@ -217,7 +217,7 @@ function formatName(name: string): string {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        />
+        >
         <UButton
           v-if="hover[app.name]"
           variant="ghost"

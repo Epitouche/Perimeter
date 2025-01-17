@@ -333,27 +333,29 @@ if (areaIdNumber !== null && valueNumber !== null) {
   >
     <div v-for="area in areas" :key="area.id">
       <UContainer
-        :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+        :ui="{ padding: '!px-0 !py-4', constrained: 'max-w-none' }"
         class="custom_card text-white"
         :style="{ backgroundColor: area.action.service.color }"
         tabindex="0"
         @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)"
       >
-        <h5 class="clamp-2-lines capitalize text-center break-words w-full">
+        <h6 class="clamp-1-line overflow-hidden w-full text-center px-2">
           {{ formatName(area.title) }}
-        </h5>
-        <div class="grid place-items-center h-32 relative w-full">
+        </h6>
+
+        <div class="flex flex-col justify-center items-center gap-0 w-full px-2">
           <img
             :src="area.action.service.icon"
             :alt="area.action.service.name"
-            class="w-20 h-20 p-0 absolute top-1 left-12"
-          />
+            class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
+          >
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
-            class="w-20 h-20 p-0 absolute bottom-0 right-12"
-          />
+            class="w-[35%] h-[35%] ml-[38%]"
+          >
+
         </div>
       </UContainer>
       <UModal
@@ -361,11 +363,11 @@ if (areaIdNumber !== null && valueNumber !== null) {
         v-model="areaIsOpen[area.id]"
         tabindex="0"
         :ui="{
-          width: 'w-1/2',
+          width: 'min-w-[50%] max-w-[90%]',
         }"
       >
         <div
-          class="flex flex-col gap-12 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 w-full max-h-[90vh]"
+          class="flex flex-col gap-12 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 max-lg:pl-10 max-lg:pr-10 max-lg:py-5 w-full max-h-[90vh]"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
@@ -374,8 +376,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
             >
               <div class="flex flex-row items-center gap-3">
                 <UToggle
-                  size="2xl"
                   :model-value="areaIsEnabled(area.id)"
+                  size="xl"
                   tabindex="0"
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
                   @keydown.enter="toggleAreaEnableSwitch(area.id)"
@@ -394,7 +396,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 @click="toggleAreaModal(area.id)"
                 @keydown.enter="toggleAreaModal(area.id)"
               >
-                <UIcon name="i-bytesize-close" class="w-12 h-12 text-white" />
+                <UIcon name="i-bytesize-close" class="w-[3.5vw] h-[3.5vh] text-white" />
               </UButton>
             </div>
 
@@ -422,9 +424,9 @@ if (areaIdNumber !== null && valueNumber !== null) {
             />
           </div>
 
-          <div class="scrollbar-hidden w-full overflow-x-scroll min-h-[10vh]">
-            <h4 class="self-start b-2 whitespace-nowrap">Description:</h4>
-            <h5 class="pl-10 whitespace-nowrap">{{ area.description }}</h5>
+          <div class="scrollbar-hidden w-full overflow-x-scroll max-h-[10vh]">
+            <h5 class="self-start whitespace-nowrap">Description:</h5>
+            <h6 class="pl-10 whitespace-nowrap">{{ area.description }}</h6>
           </div>
 
           <UContainer
@@ -437,7 +439,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
             </h6>
           </UContainer>
 
-          <div class="flex flex-row justify-end items-center gap-5">
+          <div class="flex flex-row justify-end items-center gap-2">
             <UTooltip text="Edit" class="self-end w-fit">
               <UButton
                 variant="ghost"
@@ -446,7 +448,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 @click="toggleEditArea(area.id)"
                 @keydown.enter="toggleEditArea(area.id)"
               >
-                <UIcon name="i-bytesize-edit" class="w-11 h-11 text-white" />
+                <UIcon name="i-bytesize-edit" class="w-[3.5vw] h-[3.5vh] p-0 text-white" />
               </UButton>
             </UTooltip>
 
@@ -498,7 +500,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
                 tabindex="0"
                 @click="onDelete(area.id)"
               >
-                <UIcon name="i-bytesize-trash" class="w-12 h-12 text-white" />
+                <UIcon name="i-bytesize-trash" class="w-[4vw] h-[4vh] p-0 text-white" />
               </UButton>
             </UTooltip>
           </div>
@@ -538,6 +540,24 @@ if (areaIdNumber !== null && valueNumber !== null) {
 </template>
 
 <style scoped>
+.clamp-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  transition: all 1s ease-in-out;
+}
+
+/* .hover-expand-text:hover {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+  white-space: normal;
+} */
+
 .hover_underline_animation {
   display: inline-block;
   position: relative;

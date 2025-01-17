@@ -59,10 +59,10 @@ const handleLogin = async () => {
   <div class="flex justify-center items-center w-full h-screen">
     <UContainer
       :ui="{
-        padding: '!px-0',
+        padding: '!px-0 !pt-6 !pb-12',
         constrained: 'min-w-[40%] max-w-[90%]',
       }"
-      class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-12 p-10 rounded-custom_border_radius"
+      class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-12 rounded-custom_border_radius"
     >
       <h1 class="pb-2">Log in</h1>
       <div

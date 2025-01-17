@@ -185,7 +185,7 @@ onMounted(() => {
   <div>
     <div
       v-if="createdMessage"
-      class="flex justify-center items-center h-full w-full"
+      class="flex justify-center items-center h-screen w-screen"
     >
       <h1>{{ createdMessage }}</h1>
     </div>
