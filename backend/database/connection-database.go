@@ -7,6 +7,16 @@ import (
 	"gorm.io/gorm"
 )
 
+// Connection establishes a connection to the PostgreSQL database using environment variables for configuration.
+// It retrieves the following environment variables:
+// - DB_HOST: the database host
+// - DB_PORT: the database port
+// - POSTGRES_USER: the database user
+// - POSTGRES_PASSWORD: the database password
+// - POSTGRES_DB: the database name
+// If any of these environment variables are not set, the function will panic with an appropriate error message.
+// The function returns a pointer to a gorm.DB instance representing the database connection.
+// If the connection fails, the function will panic with a "failed to connect database" message.
 func Connection() *gorm.DB {
 	host := os.Getenv("DB_HOST")
 	if host == "" {

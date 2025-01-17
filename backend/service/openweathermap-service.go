@@ -79,6 +79,15 @@ func (service *openWeatherMapService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
+// FindActionByName returns a function that performs a specific action based on the provided name.
+// The returned function takes a channel, an option in the form of json.RawMessage, and an area of type schemas.Area.
+//
+// Parameters:
+//   - name: A string representing the name of the action.
+//
+// Returns:
+//   - A function that takes a channel, an option, and an area, and performs the corresponding action.
+//   - If the name does not match any known actions, it returns nil.
 func (service *openWeatherMapService) FindActionByName(
 	name string,
 ) func(channel chan string, option json.RawMessage, area schemas.Area) {
