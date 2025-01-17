@@ -40,7 +40,6 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 
 const componentKey = ref(0);
 const focusDiv = ref<HTMLElement | null>(null);
-const selectedAreaResult = ref<string>("");
 const selectedAreaData = ref<{ date: string; result: string }[] | null>(null);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
@@ -172,7 +171,6 @@ const fetchAreaResult = async (areaId: number) => {
   if (token.value) {
     try {
       errorMessage.value = null;
-      selectedAreaResult.value = "";
       const response = await $fetch<AreaResult[]>("/api/area/result", {
         method: "POST",
         body: {
