@@ -70,18 +70,22 @@ onMounted(() => {
       </h4>
       <h5>{{ formatName(type.name) }}</h5>
     </div>
-    <UButton color="white" :ui="{ rounded: 'rounded-full' }"
+    <UButton
+color="white" :ui="{ rounded: 'rounded-full' }"
       class="w-[3.1vw] h-[5.5vh] max-lg:w-[3.4vw] max-lg:h-[5.2vh] max-md:w-[3.8vw] max-md:h-[4.9vh] max-sm:w-[4vw] max-sm:h-[2vh] shadow-2xl active:shadow-sm transition-shadow" @click="toggleSlideover">
       <UIcon name="i-bytesize-edit" class="w-[90%] h-[90%]" :style="{ color: color }" />
     </UButton>
   </div>
   <USlideover v-model="isOpen">
-    <UForm :state="state[type.id]"
+    <UForm
+:state="state[type.id]"
       class="flex flex-col justify-center items-center gap-5 py-10 bg-custom_color-bg_section">
-      <UFormGroup v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key"
+      <UFormGroup
+v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key"
         :ui="{ label: { base: 'capitalize text-xl pl-3' } }">
         <div class="flex flex-row justify-center items-center gap-3">
-          <UInput v-model="state[type.id][key] as string | number | undefined" :ui="{
+          <UInput
+v-model="state[type.id][key] as string | number | undefined" :ui="{
             placeholder: '!px-5 !py-2 font-light',
             size: { sm: 'text-lg' },
           }" :placeholder="key + '...'" />
