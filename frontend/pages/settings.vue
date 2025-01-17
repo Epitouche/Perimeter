@@ -56,18 +56,15 @@ const clearTokenAndLogout = () => {
   <div class="flex flex-col justify-center items-center gap-10 w-full">
     <h1>Settings</h1>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div
-      v-else
-      class="flex flex-col justify-center items-center gap-10 w-[60%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
-    >
+    <div v-else
+      class="flex flex-col justify-center items-center gap-10 w-[60%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section">
       <div class="flex flex-col justify-center items-center gap-8 w-full px-5">
         <EditableInput v-model="username" name="Username" />
         <EditableInput v-model="email" name="Email" />
       </div>
       <UButton
         class="delete-button flew justify-center items-center rounded-2x1 px-10 py-5 w-[20%] font-bold text-white"
-        @click="deleteAccount"
-      >
+        @click="deleteAccount">
         <h6>Delete Account</h6>
       </UButton>
     </div>
