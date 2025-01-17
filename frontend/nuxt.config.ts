@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   telemetry: { enabled: false },
+  colorMode: {
+    preference: 'light'
+  },
 
   postcss: {
     plugins: {
@@ -27,6 +30,7 @@ export default defineNuxtConfig({
     head: {
       titleTemplate: "Perimeter",
       link: [{ rel: "icon", type: "image/x-icon", href: "/PerimeterIcon.png" }],
+      script: [{children: `document.documentElement.classList.remove('dark');`}],
     },
   },
 
