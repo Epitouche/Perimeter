@@ -348,12 +348,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-[35%] h-[35%] ml-[38%]"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -434,16 +434,19 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
             class="scrollable-element w-full bg-custom_color-bg_section overflow-y-scroll min-h-[10vh] rounded-lg text-black"
           >
-          <div>
-            <h5 v-if="!selectedAreaData || selectedAreaData.length === 0" class="px-1">
-              No Result
-            </h5>
-            <ul v-else>
-              <li v-for="(item, index) in selectedAreaData" :key="index">
-                <span>{{ item.date }}</span> - <span>{{ item.result }}</span>
-              </li>
-            </ul>
-          </div>
+            <div>
+              <h5
+                v-if="!selectedAreaData || selectedAreaData.length === 0"
+                class="px-1"
+              >
+                No Result
+              </h5>
+              <ul v-else>
+                <li v-for="(item, index) in selectedAreaData" :key="index">
+                  <span>{{ item.date }}</span> - <span>{{ item.result }}</span>
+                </li>
+              </ul>
+            </div>
           </UContainer>
 
           <div class="flex flex-row justify-end items-center gap-2">
