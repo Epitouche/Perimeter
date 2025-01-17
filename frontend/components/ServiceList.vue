@@ -5,7 +5,8 @@ import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
 import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js";
 
-defineProps<{
+const props = defineProps<{
+  styling: string;
   apps: {
     name: string;
   }[];
@@ -75,10 +76,12 @@ const getServiceStateText = (appName: string) => {
   );
 
   if (matchingService) {
-    return "Automatically connected";
+    // return "Automatically connected";
+    return "Disconnect";
   }
+
   const isConnected = serviceConnected.value.includes(appName);
-  const message = isConnected ? `Disconnect` : `Connect`;
+  const message = isConnected ? "Disconnect" : "Connect";
   return message;
 };
 
@@ -141,73 +144,127 @@ const cancelAction = () => {
   isPopupVisible.value = false;
   selectedService.value = null;
 };
+
+const hover = reactive<{ [key: string]: boolean }>(
+  Object.fromEntries(props.apps.map((app) => [app.name, false])),
+);
+
+function formatName(name: string): string {
+  return name
+    .replace(/^action_/, "")
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2");
+}
 </script>
 
 <template>
   <UContainer
     :ui="{ padding: '!px-0', constrained: 'max-w-full max-h-full' }"
-    class="flex flex-row justify-center items-center gap-10 flex-wrap py-5 w-full h-full"
+    class="flex flex-row justify-around items-center gap-10 flex-wrap py-5 w-full h-full rounded-custom_border_radius"
   >
     <div v-for="(app, index) in apps" :key="index">
       <UContainer
+        v-if="styling === 'card'"
         :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
-        class="custom_card button_shadow !justify-between !gap-0 rounded-custom_border_radius overflow-hidden"
+        class="custom_card button_shadow !justify-between !gap-0 overflow-hidden"
         tabindex="0"
         :style="{
           backgroundColor: getServiceDetails(app.name)?.color || '#ccc',
         }"
         @click="onClick(app.name)"
       >
-        <h3
-          class="clamp-1-line break-words text-center pt-4 text-white w-full hover-expand-text"
+        <h5
+          class="clamp-1-line break-words text-center pt-4 -m-1 text-white w-full hover-expand-text"
         >
-          {{ app.name }}
-        </h3>
+          {{ formatName(app.name) }}
+        </h5>
         <img
           v-if="getServiceDetails(app.name)?.icon"
           :src="getServiceDetails(app.name)?.icon"
           alt=""
-          class="w-20 h-20"
-        />
+          class="pb-2"
+          style="width: 40%; min-width: 1vw; max-width: 8vw"
+        >
         <UButton
+          v-if="!isLoading"
           :class="[
             isServiceConnectedOrInvalid(app.name)
               ? 'bg-black text-white'
               : 'bg-white text-black',
-            'w-full min-h-[5vh] max-h-[5vh] !rounded-t-none',
+            'py-[8%] !rounded-t-none !rounded-b-[25%]',
           ]"
+          style="min-width: 100%; height: fit-content"
           @click="onClick(app.name)"
         >
-          <h4 class="w-full">{{ getServiceStateText(app.name) }}</h4>
+          <h6 class="w-full">{{ getServiceStateText(app.name) }}</h6>
+        </UButton>
+      </UContainer>
+
+      <UContainer
+        v-if="styling === 'button'"
+        :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+        class="custom_card_circle"
+        tabindex="0"
+        :style="{
+          backgroundColor: getServiceDetails(app.name)?.color || '#ccc',
+        }"
+        @mouseenter="hover[app.name] = true"
+        @mouseleave="hover[app.name] = false"
+        @click="onClick(app.name)"
+      >
+        <img
+          v-if="getServiceDetails(app.name)?.icon && !hover[app.name]"
+          :src="getServiceDetails(app.name)?.icon"
+          alt=""
+          class="icon_circle"
+        >
+        <UButton
+          v-if="hover[app.name]"
+          variant="ghost"
+          @click="onClick(app.name)"
+        >
+          <p
+            class="clamp-1-line break-words text-center text-white py-2 w-full hover-expand-text"
+          >
+            {{ app.name }}
+          </p>
         </UButton>
       </UContainer>
     </div>
 
     <div
-      v-if="isPopupVisible"
+      v-if="isPopupVisible && styling == 'card'"
       ref="focusDiv"
       class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
     >
       <div
-        class="bg-white p-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+        class="flex flex-col justify-between items-center gap-10 bg-custom_color-bg_section p-10 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit h-fit"
+        :style="{
+          borderColor: selectedService
+            ? getServiceDetails(selectedService)?.color || '#ccc'
+            : '#ccc',
+        }"
       >
-        <h2 class="text-4xl font-semibold mb-2">
-          Are you sure you want to disconnect from this service?
-        </h2>
-        <p class="text-2xl mb-5">This action cannot be undone!</p>
-        <div class="flex flex-row justify-end items-center gap-5 pt-5">
+        <h4>
+          Are you sure you want to <br >
+          disconnect from this service?
+        </h4>
+        <h6>This action cannot be undone!</h6>
+        <div class="flex flex-row justify-center items-center gap-5 w-full">
           <UButton
-            class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+            class="text-black !border-custom_border_width border-black bg-opacity-0 font-semibold px-[4%] py-[1.5%]"
             tabindex="0"
             @click="cancelAction"
-            >No</UButton
           >
+            <h6>No</h6>
+          </UButton>
           <UButton
-            class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+            class="text-red-600 !border-custom_border_width border-red-600 bg-opacity-0 font-semibold px-[4%] py-[1.5%]"
             tabindex="0"
             @click="confirmAction"
-            >Yes</UButton
           >
+            <h6>Yes</h6>
+          </UButton>
         </div>
       </div>
     </div>

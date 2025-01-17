@@ -42,15 +42,19 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col w-[50%]">
-    <h2 class="text-xl px-5">{{ name }}</h2>
-    <div class="flex items-center gap-3 justify-center">
+  <div
+    class="flex flex-col w-[60%] max-lg:w-[80%] max-md:w-[90%] max-sm:w-full"
+  >
+    <h4 class="px-5">{{ name }}</h4>
+    <div class="flex items-center gap-5 justify-center">
       <UInput
         v-model="inputValue"
         :disabled="!isEditable"
         :ui="{
           placeholder: '!px-5 !py-3 font-light',
-          size: { sm: 'text-3xl' },
+          size: {
+            sm: 'text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-md',
+          },
         }"
         :class="{
           'bg-gray-100 text-gray-500 cursor-not-allowed rounded-full':

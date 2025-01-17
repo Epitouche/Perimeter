@@ -185,27 +185,27 @@ onMounted(() => {
   <div>
     <div
       v-if="createdMessage"
-      class="flex justify-center items-center text-7xl font-bold h-screen w-screen"
+      class="flex justify-center items-center h-screen w-screen"
     >
-      {{ createdMessage }}
+      <h1>{{ createdMessage }}</h1>
     </div>
     <div v-if="showPageContent">
       <div v-if="websiteStore.showNavBar" class="pb-10">
         <NavigationBar />
       </div>
-      <div v-if="websiteStore.showCancelButton" class="pt-24 pl-28">
+      <div v-if="websiteStore.showCancelButton" class="pt-10 pl-10">
         <UButton
-          class="bg-white text-custom_color-text text-4xl font-bold px-7 py-3 !border-custom_border_width border-custom_color-border"
+          class="bg-white text-custom_color-text p-4 max-lg:py-2 max-sm:py-1 !border-custom_border_width border-custom_color-border"
           tabindex="0"
           @click="onCancel()"
-          >Cancel</UButton
+          ><h6>Cancel</h6></UButton
         >
       </div>
 
       <div class="flex flex-col justify-center items-center gap-10">
         <h1 class="pb-5">Workflow</h1>
-        <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
-        <div class="flex flex-col justify-center items-center">
+        <div v-if="isLoading"><h4>Loading...</h4></div>
+        <div class="flex flex-col justify-center items-center w-full">
           <ReActionButton
             title="Action"
             link="/workflow/actions"
@@ -233,10 +233,10 @@ onMounted(() => {
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
           <UButton
-            class="text-5xl font-bold px-8 py-4"
+            class="px-8 py-7 max-lg:py-4 max-sm:py-2"
             tabindex="0"
             @click="validateCreation"
-            >Create</UButton
+            ><h5>Create</h5></UButton
           >
         </div>
         <div
@@ -244,42 +244,46 @@ onMounted(() => {
           class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
           <div
-            class="flex flex-col justify-center items-center gap-8 bg-white px-14 py-10 border-custom_border_width rounded-custom_border_radius shadow-lg max-w-md w-full"
+            class="flex flex-col justify-center items-center gap-10 bg-white px-14 py-10 max-lg:px-12 max-md:px-8 max-sm:px-2 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit max-w-[90%]"
           >
-            <h2 class="text-4xl font-semibold text-center mb-2">
-              You're about to create a new area!
-            </h2>
-            <div class="flex flex-col gap-1 w-full">
-              <h3 class="text-2xl pl-6">Title</h3>
+            <h3 class="text-center">You're about to<br >create a new area!</h3>
+            <div class="flex flex-col gap-1 min-w-[90%] max-w-[95%]">
+              <h6 class="px-5">Title</h6>
               <UInput
                 v-model="title"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-3xl' },
+                  size: {
+                    sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+                  },
                 }"
                 placeholder="Title"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
               />
             </div>
-            <div class="flex flex-col gap-1 w-full">
-              <h3 class="text-2xl pl-6">Description</h3>
+            <div class="flex flex-col gap-1 min-w-[90%] max-w-[95%]">
+              <h6 class="px-5">Description</h6>
               <UInput
                 v-model="description"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-3xl' },
+                  size: {
+                    sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+                  },
                 }"
                 placeholder="Description"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
               />
             </div>
-            <div class="flex flex-col gap-1 w-full">
-              <h3 class="text-2xl pl-6">Refresh Rate</h3>
+            <div class="flex flex-col gap-1 min-w-[90%] max-w-[95%]">
+              <h6 class="px-5">Refresh Rate</h6>
               <UInput
                 v-model="refreshRate"
                 :ui="{
                   placeholder: '!px-5 !py-3 font-light',
-                  size: { sm: 'text-3xl' },
+                  size: {
+                    sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
+                  },
                 }"
                 placeholder="Ex: 0"
                 class="flex-1 bg-white text-black rounded-full transition-colors duration-300"
@@ -287,16 +291,16 @@ onMounted(() => {
             </div>
             <div class="flex flex-row justify-end items-center gap-5 pt-5">
               <UButton
-                class="text-red-600 border-2 border-red-600 bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                class="text-red-600 border-custom_border_width !border-red-600 bg-opacity-0 py-5 px-6 max-lg:py-4 max-md:py-3 max-sm:py-2"
                 tabindex="0"
                 @click="validateCreation"
-                >Cancel</UButton
+                ><h6>Cancel</h6></UButton
               >
               <UButton
-                class="text-black border-2 border-black bg-opacity-0 text-2xl font-semibold py-3 px-5"
+                class="text-black border-custom_border_width !border-black bg-opacity-0 py-5 px-6 max-lg:py-4 max-md:py-3 max-sm:py-2"
                 tabindex="0"
                 @click="onCreate"
-                >Submit</UButton
+                ><h6>Submit</h6></UButton
               >
             </div>
           </div>

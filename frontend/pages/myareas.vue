@@ -83,32 +83,27 @@ onMounted(() => {
       class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"
       tabindex="0"
     >
-      <div class="flex flex-row justify-between items-center w-full px-5 pt-1">
-        <SearchBar
-          v-model:search-query="searchQuery"
-          class="!w-1/4"
-          tabindex="0"
-        />
+      <div class="flex flex-row justify-between items-center w-full">
+        <div class="min-w-[25%] max-w-[90%] px-5">
+          <SearchBar v-model:search-query="searchQuery" tabindex="0" />
+        </div>
         <UDropdown
           :items="items"
           :popper="{ placement: 'bottom' }"
           tabindex="0"
         >
-          <UIcon
-            name="i-bytesize-filter"
-            class="text-black w-10 h-10 p-0 pb-1"
-          />
+          <UIcon name="i-bytesize-filter" class="text-black w-[4vw] h-[4vh]" />
           <template #date="{ item }">
-            <div class="flex flex-row justify-evenly items-center w-full">
-              <h3>Latest</h3>
+            <div class="flex flex-row justify-evenly items-center w-full h-fit">
+              <p style="font-size: 100%">Latest</p>
               <UTooltip
                 :text="`Sort by ${item.label}`"
                 :popper="{ placement: 'top' }"
-                class="w-fit"
+                class=""
               >
                 <UToggle v-model="dateSort" />
               </UTooltip>
-              <h3>Oldest</h3>
+              <p style="font-size: 100%">Oldest</p>
             </div>
           </template>
         </UDropdown>
