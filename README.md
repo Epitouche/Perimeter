@@ -75,6 +75,7 @@ docker compose up --build
 - [Test Documentation](./docs/test.md)
 - [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
 - [Mobile developer documentation](./docs/developerDocMobile.md)
+- [Mobile user documentation](./docs/userDocMobile.md)
 
 ### Proof of Concept (POC)
 

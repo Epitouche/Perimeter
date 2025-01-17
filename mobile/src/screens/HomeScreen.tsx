@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../Navigation/navigate';
+import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -78,6 +78,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         accessibilityHint="Input field for IP address"
       />
       <Button
+        color={'#001DDA'}
         title="Connect"
         onPress={() => {
           setIpAddress(ipAddress);
