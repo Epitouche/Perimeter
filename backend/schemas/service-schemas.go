@@ -9,7 +9,7 @@ type ServiceName string
 
 const (
 	Spotify        ServiceName = "Spotify"
-	Openweathermap ServiceName = "OpenWeatherMap"
+	OpenWeatherMap ServiceName = "OpenWeatherMap"
 	Timer          ServiceName = "Timer"
 	Google         ServiceName = "Google"
 	Github         ServiceName = "Github"

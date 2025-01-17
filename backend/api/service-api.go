@@ -52,7 +52,7 @@ func (api *ServiceApi) AboutJSON(ctx *gin.Context) {
 
 // GetServicesInfo godoc
 //
-//	@Summary		get service info
+//	@Summary		Get Services Info
 //	@Description	get service info of service id
 //	@Tags			Service
 //	@Accept			json
@@ -78,7 +78,7 @@ func (api *ServiceApi) GetServicesInfo(apiRoutes *gin.RouterGroup) {
 
 // GetServiceInfoById godoc
 //
-//	@Summary		get service info
+//	@Summary		Get Service Info By Id
 //	@Description	get service info of service id
 //	@Tags			Service
 //	@Accept			json

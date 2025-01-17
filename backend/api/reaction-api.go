@@ -40,13 +40,13 @@ func NewReactionApi(
 	}
 	apiRoutes = apiRoutes.Group("/info")
 	api.GetReactionsInfo(apiRoutes)
-	api.GetRereactionInfoByReactionID(apiRoutes)
+	api.GetReactionInfoByReactionID(apiRoutes)
 	return &api
 }
 
 // GetReactionsInfo godoc
 //
-//	@Summary		get reaction info
+//	@Summary		Get Reactions Info
 //	@Description	get reaction info of service id
 //	@Tags			Reaction
 //	@Accept			json
@@ -82,7 +82,7 @@ func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 
 // GetReactionInfoByReactionID godoc
 //
-//	@Summary		get reaction info of reaction id
+//	@Summary		Get Reaction Info By Reaction ID
 //	@Description	get reaction info of reaction id
 //	@Tags			Reaction
 //	@Accept			json
@@ -92,7 +92,7 @@ func (api *ReactionApi) GetReactionsInfo(apiRoutes *gin.RouterGroup) {
 //	@Failure		401	{object}	schemas.ErrorResponse
 //	@Failure		500	{object}	schemas.ErrorResponse
 //	@Router			/reaction/info/reaction/:idReaction [get]
-func (api *ReactionApi) GetRereactionInfoByReactionID(apiRoutes *gin.RouterGroup) {
+func (api *ReactionApi) GetReactionInfoByReactionID(apiRoutes *gin.RouterGroup) {
 	apiRoutes.GET("/reaction/:idReaction", func(ctx *gin.Context) {
 		idReaction := ctx.Param("idReaction")
 
