@@ -12,6 +12,8 @@
     - [Login screen](#login-screen)
     - [Area Views](#area-views)
     - [Create an Area](#create-an-area)
+    - [Area Details](#area-details)
+    - [Other tabs](#other-tabs)
 
 ---
 
@@ -80,6 +82,8 @@ After saving your reaction, you can add a title and description and add a refres
 
 <img src="image/mobile/areaCreation9.jpg" alt="image15" style="width:200px;"/>
 
+### Area Details
+
 Now you can switch to the area view (tab 1) and check the area details created.
 
 <img src="image/mobile/areaView.jpg" alt="image16" style="width:200px;"/>
@@ -90,6 +94,8 @@ Click in the area to check the details of the area, enable/disable the area, mod
 <img src="image/mobile/areaDetails2.jpg" alt="image18" style="width:200px;"/>
 <img src="image/mobile/areaDetails3.jpg" alt="image19" style="width:200px;"/>
 <img src="image/mobile/areaDetails4.jpg" alt="image20" style="width:200px;"/>
+
+### Other tabs
 
 The last 2 tabs are the services tab to connect/deconnect to all services and the settings tab
 
