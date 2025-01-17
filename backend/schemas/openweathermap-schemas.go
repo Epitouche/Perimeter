@@ -7,6 +7,8 @@ type OpenWeatherMapAction string
 const (
 	SpecificWeather     OpenWeatherMapAction = "SpecificWeather"
 	SpecificTemperature OpenWeatherMapAction = "SpecificTemperature"
+	AboveTemperature    OpenWeatherMapAction = "AboveTemperature"
+	BelowTemperature    OpenWeatherMapAction = "BelowTemperature"
 )
 
 type OpenWeatherMapReaction string
