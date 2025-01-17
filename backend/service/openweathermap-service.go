@@ -416,11 +416,14 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificTemperature(
 		fmt.Println(err)
 	}
 	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
-
 	if err != nil {
 		println("error get actual temperature info" + err.Error())
-		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) == optionJSON.Temperature && variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
-			response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf("%f", weatherOfSpecifiedCity.Main.Temp) + "°C"
+		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) == optionJSON.Temperature &&
+			variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
+			response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
+				"%f",
+				weatherOfSpecifiedCity.Main.Temp,
+			) + "°C"
 			println(response)
 			channel <- response
 			variableDatabaseStorage = schemas.OpenWeatherMapStorageVariableTrue
@@ -448,7 +451,6 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificTemperature(
 					return
 				}
 			}
-
 		}
 	}
 
