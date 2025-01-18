@@ -60,8 +60,18 @@ onMounted(() => {
         <div class="min-w-1/3 max-w-[95%]">
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />
         </div>
-        <div v-if="isLoading" class="flex justify-center items-center w-full h-full"><h3>Loading...</h3></div>
-        <div v-else-if="errorMessage" class="flex justify-center items-center w-full h-full"><h3>Error: {{ errorMessage }}</h3></div>
+        <div
+          v-if="isLoading"
+          class="flex justify-center items-center w-full h-full"
+        >
+          <h3>Loading...</h3>
+        </div>
+        <div
+          v-else-if="errorMessage"
+          class="flex justify-center items-center w-full h-full"
+        >
+          <h3>Error: {{ errorMessage }}</h3>
+        </div>
         <div
           v-else-if="filteredServices.length"
           class="flex flex-row justify-evenly items-center w-full"

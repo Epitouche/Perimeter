@@ -82,11 +82,14 @@ watch(
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="p-0"
       :style="{ width: isLongText(typeName) ? '20%' : '15%' }"
-    >
+    />
     <h3
       :class="[
         'text-white text-center break-words whitespace-normal leading-[100%]',
-        isDisabled ? 'text-opacity-50' : 'text-opacity-100', isLongText(typeName) && countWords(formatName(typeName)) === 2 ? 'w-min' : ''
+        isDisabled ? 'text-opacity-50' : 'text-opacity-100',
+        isLongText(typeName) && countWords(formatName(typeName)) === 2
+          ? 'w-min'
+          : '',
       ]"
     >
       {{ formatName(typeName) }}
