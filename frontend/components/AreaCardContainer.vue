@@ -337,7 +337,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)"
       >
-        <h6 class="clamp-1-line overflow-hidden w-full text-center px-2">
+        <h6 class="clamp-1-line overflow-hidden w-full text-center px-4">
           {{ formatName(area.title) }}
         </h6>
 
@@ -361,7 +361,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         v-model="areaIsOpen[area.id]"
         tabindex="0"
         :ui="{
-          width: 'min-w-[50%] max-w-[90%]',
+          width: 'min-w-[50%] max-w-[70%] max-lg:max-w-[75%] max-md:max-w-[85%] max-sm:max-w-[95%]',
         }"
       >
         <div

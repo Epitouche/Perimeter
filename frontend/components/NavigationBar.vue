@@ -96,12 +96,12 @@ const items = [
         <template #settings>
           <NuxtLink
             to="/settings"
-            class="w-full flex flex-row justify-end items-center gap-2"
+            class="w-full flex flex-row justify-start items-center gap-2 max-lg:justify-center"
             tabindex="0"
           >
             <UIcon
               name="i-bytesize-settings"
-              class="text-black w-[10%] h-[10%]"
+              class="text-black w-[2vw] h-[2vh]"
             />
             <p class="text-black">Settings</p>
           </NuxtLink>

@@ -157,6 +157,10 @@ function formatName(name: string): string {
     .replace(/_/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2");
 }
+
+function isTouchDevice() {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
 </script>
 
 <template>
@@ -242,6 +246,7 @@ function formatName(name: string): string {
           </p>
         </UButton>
       </UContainer>
+      <p v-if="isTouchDevice()" class="text-center">{{ formatName(app.name) }}</p>
     </div>
 
     <div

@@ -61,20 +61,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="capitalize self-start flex flex-row justify-between items-center gap-5 border-custom_border_width border-white rounded-custom_border_radius w-full py-2 px-4"
+  <UContainer 
+  :ui="{ padding: '!px-4 !py-4', constrained: 'max-w-full' }"
+    class="capitalize self-start flex flex-row justify-between items-center gap-5 border-custom_border_width !border-white rounded-custom_border_radius w-full"
   >
-    <div class="flex flex-row items-center gap-5 w-full">
+    <div class="flex flex-row justify-start items-center gap-8 w-full">
       <img
         :src="type.service.icon"
         :alt="type.service.name"
-        style="min-width: 15%"
+        style="width: 10%"
       >
-      <h4>
+      <h4 class="text-center leading-[100%]">
         <b>{{ formatName(type.service.name) }}</b
         >:
       </h4>
-      <h5>{{ formatName(type.name) }}</h5>
+      <h5 class="text-center leading-[100%]">{{ formatName(type.name) }}</h5>
     </div>
     <UButton
       color="white"
@@ -84,11 +85,11 @@ onMounted(() => {
     >
       <UIcon
         name="i-bytesize-edit"
-        class="w-[90%] h-[90%]"
+        class="w-[95%] h-[95%]"
         :style="{ color: color }"
       />
     </UButton>
-  </div>
+  </UContainer>
   <USlideover v-model="isOpen">
     <UForm
       :state="state[type.id]"
