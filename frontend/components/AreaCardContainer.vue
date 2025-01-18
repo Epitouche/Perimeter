@@ -71,6 +71,7 @@ const toggleAreaModal = (areaId: number) => {
 };
 
 const toggleEditArea = (areaId: number) => {
+  console.log("Main Area Edit Toggle: ", editAreaIsOpen[areaId]); /////////////////:
   editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
   if (
     editAreaIsOpen[areaId] &&
@@ -187,7 +188,6 @@ const fetchAreaResult = async (areaId: number) => {
         selectedAreaData.value = combinedData;
       } else {
         selectedAreaData.value = null;
-        console.error("Response doesn't have a valid result.");
       }
     } catch (error) {
       errorMessage.value = handleErrorStatus(error);
@@ -275,7 +275,7 @@ const updateAreaValue = async (
   }
 
   router.push("myareas");
-  toggleEditArea(areaId);
+  // toggleEditArea(areaId);
 };
 
 const state = reactive<

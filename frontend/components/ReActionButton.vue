@@ -37,10 +37,18 @@ const getServiceInfo = async () => {
 };
 
 function formatName(name: string): string {
+  console.log("typeName: ", props.typeName); ///////////////
+  console.log("typeName.length: ", props.typeName.length); ///////////
   return name
     .replace(/^action_/, "")
     .replace(/_/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
+const isLongText = (text: string): boolean => text.length > 12;
+
+function countWords(text: string) {
+  return text.trim().split(/\s+/).length;
 }
 
 onMounted(() => {
@@ -61,9 +69,9 @@ watch(
 <template>
   <UContainer
     v-if="isSelected"
-    :ui="{ padding: '!px-0 !py-0', constrained: '!min-w-none !min-h-none' }"
+    :ui="{ padding: '!px-4 !py-4', constrained: '!min-w-none !min-h-none' }"
     :class="[
-      'flex flex-row justify-evenly items-center rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[70vw] max-lg:h-[12vh] max-md:h-[10vh] max-sm:h-[9vh]',
+      'flex flex-row justify-evenly items-center gap-2 rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[70vw] max-lg:h-[12vh] max-md:h-[10vh] max-sm:h-[9vh]',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
     :style="{ backgroundColor: serviceInfo ? serviceInfo.color : 'black' }"
@@ -73,12 +81,12 @@ watch(
       :src="serviceInfo ? `${serviceInfo.icon}` : ''"
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="p-0"
-      style="width: 15%"
+      :style="{ width: isLongText(typeName) ? '20%' : '15%' }"
     >
     <h3
       :class="[
-        'text-white',
-        isDisabled ? 'text-opacity-50' : 'text-opacity-100',
+        'text-white text-center break-words whitespace-normal leading-[100%]',
+        isDisabled ? 'text-opacity-50' : 'text-opacity-100', isLongText(typeName) && countWords(formatName(typeName)) === 2 ? 'w-min' : ''
       ]"
     >
       {{ formatName(typeName) }}
@@ -106,7 +114,7 @@ watch(
       :to="link"
       :ui="{ rounded: 'rounded-2xl max-lg:rounded-xl' }"
       :class="[
-        'text-black bg-white w-[6vw] h-[4.6vh] max-lg:w-[8vw] max-lg:h-[4vh] max-md:w-[10vw] max-md:h-[3.5vh] max-sm:w-[10vw] max-sm:h-[3vh]',
+        'text-black bg-white w-[6vw] h-[4.8vh] max-lg:w-[8vw] max-lg:h-[4vh] max-md:w-[10vw] max-md:h-[3.5vh] max-sm:w-[10vw] max-sm:h-[3vh]',
         isDisabled ? '!text-opacity-60' : 'text-opacity-100',
       ]"
     >

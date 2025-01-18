@@ -17,7 +17,7 @@ const hover = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.services.map((service) => [service.id, false])),
 );
 
-const isLongText = (text: string): boolean => text.length > 8;
+const isLongText = (text: string): boolean => text.length > 10;
 
 onMounted(() => {
   loadConnectionInfos();
@@ -104,7 +104,8 @@ function formatName(name: string): string {
         v-else
         :ui="{ padding: '!px-0 !py-5', constrained: 'max-w-none' }"
         class="custom_card flex flex-col !gap-0 text-white overflow-hidden opacity-40 cursor-not-allowed"
-        :style="{ backgroundColor: service.color }"
+        :style="{ backgroundColor: service.color }" @mouseenter="hover[service.id] = true"
+          @mouseleave="hover[service.id] = false"
       >
         <img
           v-if="!hover[service.id]"

@@ -56,7 +56,7 @@ function formatName(name: string): string {
 }
 
 onMounted(() => {
-  console.log("type: ", props.type);
+  // console.log("type: ", props.type);
 });
 </script>
 
