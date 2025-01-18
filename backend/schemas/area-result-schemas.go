@@ -4,7 +4,17 @@ import (
 	"time"
 )
 
-// GithubToken represents the GithubToken entity in the database.
+// AreaResult represents the result of an area with associated metadata.
+// It includes the unique identifier, foreign key to the Area, the result string,
+// and timestamps for creation and last update.
+//
+// Fields:
+// - Id: Unique identifier for the area result.
+// - AreaId: Foreign key for the associated Area.
+// - Area: The Area that the result belongs to, with a required binding and cascade delete constraint.
+// - Result: The result of the area, with a required binding.
+// - CreatedAt: Timestamp for when the area result was created, with a default value of the current timestamp.
+// - UpdateAt: Timestamp for when the area result was last updated, with a default value of the current timestamp.
 type AreaResult struct {
 	Id        uint64    `gorm:"primaryKey;autoIncrement"                                     json:"id,omitempty"`                      // Unique identifier for the area result
 	AreaId    uint64    `                                                                    json:"-"`                                 // Foreign key for Area

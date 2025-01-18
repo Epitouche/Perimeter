@@ -155,7 +155,7 @@ func (service *dropboxService) GetServiceActionInfo() []schemas.Action {
 	return []schemas.Action{
 		{
 			Name:               string(schemas.UpdateInFolder),
-			Description:        "This reaction save content from a URL to a file in Dropbox",
+			Description:        "This action triggers when there is an update in a folder",
 			Service:            service.serviceInfo,
 			Option:             actionUpdateInFolder,
 			MinimumRefreshRate: 10,

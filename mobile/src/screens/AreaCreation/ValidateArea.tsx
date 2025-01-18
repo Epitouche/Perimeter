@@ -9,6 +9,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/navigate';
 import { AppContext } from '../../context/AppContext';
+import { jsxs } from 'react/jsx-runtime';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ValidateAreaScreen'>;
 
@@ -95,7 +96,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         setActionService(actionData.service);
         setReactionService(reactionData.service);
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error fetching service:', error);
@@ -117,7 +118,6 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
    */
   const saveButtonPressed = async () => {
     try {
-      console.log(parseInt(refreshTimer));
       let data = await fetch(`http://${ipAddress}:8080/api/v1/area`, {
         method: 'POST',
         headers: {
@@ -127,7 +127,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         body: JSON.stringify({
           action_id: actionId,
           action_option: actionOptions,
-          action_refresh_rate: parseInt(refreshTimer),
+          action_refresh_rate: Number(refreshTimer),
           description,
           reaction_id: reactionId,
           reaction_option: reactionOptions,
@@ -137,7 +137,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
       let res = await data.json();
       navigation.navigate('AreaView');
     } catch (error) {
-      if (error.code === 401) {
+      if ((error as any).code === 401) {
         navigation.navigate('Login');
       }
       console.error('Error saving area:', error);

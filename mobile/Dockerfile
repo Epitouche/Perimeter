@@ -1,12 +1,12 @@
 FROM reactnativecommunity/react-native-android AS node-install
 
-WORKDIR /app/mobile/
+WORKDIR /app
+
+COPY ./package.json ./package-lock.json /app/
 
 RUN apt-get update
 
 RUN apt-get install -y nodejs npm
-
-COPY ./mobile/package.json ./mobile/package-lock.json /app/mobile/
 
 RUN npm install --legacy-peer-deps
 
@@ -22,27 +22,52 @@ FROM java-install AS build
 
 WORKDIR /app
 
-COPY ./mobile/ /app/mobile/
-COPY ./.env /app/.env
+COPY ./ /app
 
-WORKDIR /app/mobile/android
+WORKDIR /app/android
 
-RUN ./gradlew clean :app:assembleRelease --stacktrace
+RUN ./gradlew clean :app:assembleRelease
 
 
 FROM alpine:latest AS build-apk
 
 WORKDIR /app/public/apk
 
-COPY --from=build /app/mobile/android/app/build/outputs/apk/release/app-release.apk /app/public/apk/client.apk
+COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/public/apk/client.apk
 
 CMD ["echo", "Mobile build complete"]
 
 
 FROM java-install AS run
 
-WORKDIR /app/mobile
+WORKDIR /app
 
-COPY ./mobile /app/mobile
+COPY ./ /app
 
 CMD ["npm", "start"]
+
+
+## MOBILE DOCUMENTATION
+FROM node:22-alpine AS typedoc-dependencies
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm install --legacy-peer-deps
+
+RUN npx typedoc --out docs src --entryPointStrategy expand
+
+FROM alpine:3.21 AS documentation
+
+WORKDIR /app
+
+# Install http-server in the final stage
+RUN apk add --no-cache nodejs npm \
+    && npm install -g http-server@latest
+
+COPY --from=typedoc-dependencies /app/docs .
+
+EXPOSE 6062
+
+CMD ["http-server", "-p", "6062"]

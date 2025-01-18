@@ -49,7 +49,7 @@ func NewAreaAPI(
 
 // CreateArea godoc
 //
-//	@Summary		create area
+//	@Summary		Create Area
 //	@Description	create area
 //	@Tags			Area
 //	@Accept			json
@@ -78,7 +78,7 @@ func (api *AreaApi) CreateArea(apiRoutes *gin.RouterGroup) {
 
 // GetUserAreas godoc
 //
-//	@Summary		get user areas
+//	@Summary		Get User Areas
 //	@Description	get user areas list
 //	@Tags			Area
 //	@Accept			json
@@ -104,7 +104,7 @@ func (api *AreaApi) GetUserAreas(apiRoutes *gin.RouterGroup) {
 
 // UpdateUserArea godoc
 //
-//	@Summary		update user area
+//	@Summary		Update User Area
 //	@Description	update user area list
 //	@Tags			Area
 //	@Accept			json
@@ -131,7 +131,7 @@ func (api *AreaApi) UpdateUserArea(apiRoutes *gin.RouterGroup) {
 
 // DeleteUserArea godoc
 //
-//	@Summary		delete user area
+//	@Summary		Delete User Area
 //	@Description	delete user area list
 //	@Tags			Area
 //	@Accept			json

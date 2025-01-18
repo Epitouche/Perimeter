@@ -40,7 +40,7 @@ func NewTokenApi(
 
 // DeleteUserToken godoc
 //
-//	@Summary		delete user token
+//	@Summary		Delete User Token
 //	@Description	delete user token list
 //	@Tags			Token
 //	@Accept			json

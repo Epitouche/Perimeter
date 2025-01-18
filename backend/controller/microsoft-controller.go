@@ -9,6 +9,15 @@ import (
 	"area/service"
 )
 
+// MicrosoftController defines the interface for handling Microsoft OAuth service interactions.
+// It includes methods for redirecting to the OAuth service, handling the callback from the service,
+// and retrieving user information.
+//
+// Methods:
+// - RedirectToService(ctx *gin.Context) (oauthURL string, err error): Redirects the user to the Microsoft OAuth service.
+// - HandleServiceCallback(ctx *gin.Context) (string, error): Handles the callback from the Microsoft OAuth service.
+// - HandleServiceCallbackMobile(ctx *gin.Context) (string, error): Handles the callback from the Microsoft OAuth service for mobile clients.
+// - GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error): Retrieves user information from the Microsoft OAuth service.
 type MicrosoftController interface {
 	RedirectToService(ctx *gin.Context) (oauthURL string, err error)
 	HandleServiceCallback(ctx *gin.Context) (string, error)
@@ -16,6 +25,14 @@ type MicrosoftController interface {
 	GetUserInfo(ctx *gin.Context) (userInfo schemas.UserCredentials, err error)
 }
 
+// microsoftController is a struct that holds various service interfaces
+// required for handling Microsoft-related operations.
+//
+// Fields:
+// - service: An interface for Microsoft service operations.
+// - serviceUser: An interface for user service operations.
+// - serviceToken: An interface for token service operations.
+// - serviceService: An interface for general service operations.
 type microsoftController struct {
 	service        service.MicrosoftService
 	serviceUser    service.UserService
@@ -23,6 +40,15 @@ type microsoftController struct {
 	serviceService service.ServiceService
 }
 
+// NewMicrosoftController creates a new instance of MicrosoftController with the provided services.
+// Parameters:
+//   - service: an instance of MicrosoftService to handle Microsoft-specific operations.
+//   - serviceUser: an instance of UserService to manage user-related operations.
+//   - serviceToken: an instance of TokenService to handle token-related operations.
+//   - serviceService: an instance of ServiceService to manage general service operations.
+//
+// Returns:
+//   - MicrosoftController: a new instance of MicrosoftController initialized with the provided services.
 func NewMicrosoftController(
 	service service.MicrosoftService,
 	serviceUser service.UserService,
@@ -37,6 +63,15 @@ func NewMicrosoftController(
 	}
 }
 
+// RedirectToService generates an OAuth URL for redirecting to the Microsoft service authorization page.
+// It uses the serviceService to create the URL with the necessary scopes for accessing Microsoft services.
+//
+// Parameters:
+//   - ctx: The Gin context for the current request.
+//
+// Returns:
+//   - oauthURL: The generated OAuth URL for the Microsoft service.
+//   - err: An error if the URL generation fails.
 func (controller *microsoftController) RedirectToService(
 	ctx *gin.Context,
 ) (oauthURL string, err error) {
@@ -51,6 +86,21 @@ func (controller *microsoftController) RedirectToService(
 	return oauthURL, nil
 }
 
+// HandleServiceCallback handles the callback from the Microsoft service.
+// It binds the incoming request to the CodeCredentials schema and retrieves the authorization code.
+// If the code is missing, it returns an error indicating the missing authentication code.
+// It then retrieves the Authorization header from the request context.
+// The function calls the HandleServiceCallback method of the serviceService with the necessary parameters
+// to handle the service callback and obtain a bearer token.
+// If successful, it returns the bearer token; otherwise, it returns an error.
+//
+// Parameters:
+//
+//	ctx - The Gin context containing the request data.
+//
+// Returns:
+//
+//	A string representing the bearer token if successful, or an error if the callback handling fails.
 func (controller *microsoftController) HandleServiceCallback(
 	ctx *gin.Context,
 ) (string, error) {
@@ -63,16 +113,6 @@ func (controller *microsoftController) HandleServiceCallback(
 	if code == "" {
 		return "", schemas.ErrMissingAuthenticationCode
 	}
-
-	// state := credentials.State
-	// latestCSRFToken, err := ctx.Cookie("latestCSRFToken")
-	// if err != nil {
-	// 	return "", fmt.Errorf("missing CSRF token")
-	// }
-
-	// if state != latestCSRFToken {
-	// 	return "", fmt.Errorf("invalid CSRF token")
-	// }
 
 	authHeader := ctx.GetHeader("Authorization")
 
@@ -91,6 +131,17 @@ func (controller *microsoftController) HandleServiceCallback(
 	return bearer, nil
 }
 
+// HandleServiceCallbackMobile handles the callback from a mobile service.
+// It binds the incoming request to a MobileTokenRequest schema and retrieves the
+// Authorization header. It then calls the HandleServiceCallbackMobile method of the
+// serviceService to process the callback.
+//
+// Parameters:
+// - ctx: The Gin context for the request.
+//
+// Returns:
+// - A string representing the bearer token.
+// - An error if the binding or service callback handling fails.
 func (controller *microsoftController) HandleServiceCallbackMobile(
 	ctx *gin.Context,
 ) (string, error) {
@@ -113,6 +164,19 @@ func (controller *microsoftController) HandleServiceCallbackMobile(
 	return bearer, err
 }
 
+// GetUserInfo retrieves user information based on the provided context.
+// It extracts the authorization token from the request header, fetches user information
+// using the token, retrieves the corresponding token from the token service, and then
+// fetches the Microsoft user information using the retrieved token.
+//
+// Parameters:
+//
+//	ctx - The context of the request, which contains the authorization header.
+//
+// Returns:
+//
+//	userInfo - The user credentials containing the email and username.
+//	err - An error if any step in the process fails, with a descriptive message.
 func (controller *microsoftController) GetUserInfo(
 	ctx *gin.Context,
 ) (userInfo schemas.UserCredentials, err error) {

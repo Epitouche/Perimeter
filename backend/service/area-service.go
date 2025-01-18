@@ -121,7 +121,6 @@ func compareMaps(map1, map2 map[string]interface{}) bool {
 func (service *areaService) CreateArea(result schemas.AreaMessage, token string) (string, error) {
 	var actionOption, reactionOption json.RawMessage
 
-	println("action option: ", string(result.ActionOption))
 	if err := json.Unmarshal(result.ActionOption, &actionOption); err != nil {
 		return "", fmt.Errorf("can't unmarshal action option: %w", err)
 	}
@@ -174,15 +173,16 @@ func (service *areaService) CreateArea(result schemas.AreaMessage, token string)
 	}
 
 	newArea := schemas.Area{
-		User:            user,
-		ActionOption:    result.ActionOption,
-		ReactionOption:  result.ReactionOption,
-		Title:           result.Title,
-		Description:     result.Description,
-		Enable:          true,
-		Action:          areaAction,
-		Reaction:        areaReaction,
-		StorageVariable: defaultStorageVariable,
+		User:              user,
+		ActionOption:      result.ActionOption,
+		ReactionOption:    result.ReactionOption,
+		Title:             result.Title,
+		Description:       result.Description,
+		Enable:            true,
+		Action:            areaAction,
+		Reaction:          areaReaction,
+		ActionRefreshRate: uint64(result.ActionRefreshRate),
+		StorageVariable:   defaultStorageVariable,
 	}
 
 	id, error := service.repository.SaveArea(newArea)
