@@ -61,7 +61,7 @@ const items = [
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         style="width: 18%; height: 18%"
-      />
+      >
       <h5>Perimeter</h5>
     </div>
 

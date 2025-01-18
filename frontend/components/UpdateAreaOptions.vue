@@ -70,7 +70,7 @@ onMounted(() => {
         :src="type.service.icon"
         :alt="type.service.name"
         style="width: 10%"
-      />
+      >
       <h4 class="text-center leading-[100%]">
         <b>{{ formatName(type.service.name) }}</b
         >:
