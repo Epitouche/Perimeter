@@ -84,7 +84,9 @@ const AddReactionScreen: React.FC<Props> = ({ navigation, route }) => {
         );
 
         const userData = await userResponse.json();
-        const connected = userData.tokens.map((token: { service: { name: string } }) => token.service.name);
+        const connected = userData.tokens.map(
+          (token: { service: { name: string } }) => token.service.name,
+        );
         setConnectedServices(connected);
         console.log('Services:', response);
         const data = await response.json();

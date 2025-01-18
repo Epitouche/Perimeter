@@ -1,5 +1,11 @@
 import React, { useContext } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
@@ -83,8 +89,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         }}
         accessibilityLabel="Connect"
         accessibilityHint="Navigates to the login screen"
-        style={{ backgroundColor: 'blue', padding: 10 }}
-      >
+        style={{ backgroundColor: 'blue', padding: 10 }}>
         <Text style={{ color: 'white' }}>Connect</Text>
       </TouchableOpacity>
     </View>
