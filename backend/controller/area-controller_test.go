@@ -39,7 +39,10 @@ func (m *MockAreaService) UpdateUserArea(token string, area schemas.Area) (schem
 	return args.Get(0).(schemas.Area), args.Error(1)
 }
 
-func (m *MockAreaService) DeleteUserArea(token string, area struct{ Id uint64 }) (schemas.Area, error) {
+func (m *MockAreaService) DeleteUserArea(
+	token string,
+	area struct{ Id uint64 },
+) (schemas.Area, error) {
 	args := m.Called(token, area)
 	return args.Get(0).(schemas.Area), args.Error(1)
 }
