@@ -61,11 +61,13 @@ const items = [
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         style="width: 18%; height: 18%"
-      >
+      />
       <h5>Perimeter</h5>
     </div>
 
-    <div class="flex flex-row justify-around max-md:justify-between text-center max-md:pl-2 items-center gap-8 max-md:gap-0 max-md:w-full">
+    <div
+      class="flex flex-row justify-around max-md:justify-between text-center max-md:pl-2 items-center gap-8 max-md:gap-0 max-md:w-full"
+    >
       <NuxtLink to="/myareas" class="hover:underline">
         <h6>My Areas</h6>
       </NuxtLink>
@@ -84,8 +86,14 @@ const items = [
         <UAvatar
           icon="i-bytesize-user"
           :ui="{
-            size: { sm: '!h-fit !w-fit !py-[20%] !px-0 max-lg:!px-5 max-sm:!py-[3%] max-sm:!px-3' },
-            icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh] max-sm:!w-[7vw] max-sm:!h-[7vh]' } },
+            size: {
+              sm: '!h-fit !w-fit !py-[20%] !px-0 max-lg:!px-5 max-sm:!py-[3%] max-sm:!px-3',
+            },
+            icon: {
+              size: {
+                sm: '!w-[3.3vw] !h-[3.3vh] max-sm:!w-[7vw] max-sm:!h-[7vh]',
+              },
+            },
           }"
         />
 

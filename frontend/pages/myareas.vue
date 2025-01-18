@@ -116,7 +116,10 @@ onMounted(() => {
       <div v-else-if="filteredAreas.length === 0" class="w-full">
         <p>No areas found, create some!</p>
       </div>
-      <div v-else class="w-[95%] overflow-y-scroll max-h-[64vh] max-lg:max-h-[55vh]">
+      <div
+        v-else
+        class="w-[95%] overflow-y-scroll max-h-[64vh] max-lg:max-h-[55vh]"
+      >
         <AreaCardContainer :areas="filteredAreas" @refresh-areas="fetchAreas" />
       </div>
     </div>

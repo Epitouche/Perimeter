@@ -58,7 +58,6 @@ const fetchReactions = async () => {
         service: serviceId,
       },
     });
-
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
@@ -97,7 +96,7 @@ onMounted(() => {
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"
           class="w-[12vw] h-[12vh] max-sm:w-[25vw] max-sm:h-[25vh] max-sm:-my-10"
-        >
+        />
         <h2 class="capitalize text-white">
           {{ serviceInfo.name }}
         </h2>

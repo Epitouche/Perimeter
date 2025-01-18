@@ -185,7 +185,10 @@ onMounted(() => {
       <div v-if="websiteStore.showNavBar" class="pb-10">
         <NavigationBar />
       </div>
-      <div v-if="websiteStore.showCancelButton" class="pt-10 pl-10 max-sm:pt-3 max-sm:pl-2">
+      <div
+        v-if="websiteStore.showCancelButton"
+        class="pt-10 pl-10 max-sm:pt-3 max-sm:pl-2"
+      >
         <UButton
           class="bg-white text-custom_color-text p-4 max-lg:py-2 !border-custom_border_width border-custom_color-border"
           tabindex="0"
@@ -238,7 +241,7 @@ onMounted(() => {
           <div
             class="flex flex-col justify-center items-center gap-10 bg-white px-14 py-10 max-lg:px-12 max-md:px-8 max-sm:px-2 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit max-w-[90%]"
           >
-            <h3 class="text-center">You're about to<br >create a new area!</h3>
+            <h3 class="text-center">You're about to<br />create a new area!</h3>
             <div class="flex flex-col gap-1 min-w-[90%] max-w-[95%]">
               <h6 class="px-5">Title</h6>
               <UInput

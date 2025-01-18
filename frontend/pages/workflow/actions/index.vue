@@ -50,7 +50,9 @@ onMounted(() => {
     <div class="px-10 max-sm:px-2 max-sm:pb-5">
       <BackButton link="/workflow" :is-white="false" />
     </div>
-    <div class="flex flex-col justify-between items-center gap-10 max-sm:gap-5 w-full">
+    <div
+      class="flex flex-col justify-between items-center gap-10 max-sm:gap-5 w-full"
+    >
       <h1>Add an action</h1>
       <UContainer
         :ui="{ base: 'mx-auto' }"

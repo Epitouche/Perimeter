@@ -50,16 +50,23 @@ onMounted(() => {
     <div class="px-10 max-sm:px-2 max-sm:pb-5">
       <BackButton link="/workflow" :is-white="false" />
     </div>
-    <div class="flex flex-col justify-between items-center gap-10 max-sm:gap-5 w-full">
+    <div
+      class="flex flex-col justify-between items-center gap-10 max-sm:gap-5 w-full"
+    >
       <h1>Add a reaction</h1>
-      <UContainer :ui="{ base: 'mx-auto' }"
-        class="flex flex-col justify-center items-center gap-16 max-sm:gap-10 w-[80%] max-lg:w-[85%] max-md:w-[90%] max-sm:w-[95%] h-full !p-0">
+      <UContainer
+        :ui="{ base: 'mx-auto' }"
+        class="flex flex-col justify-center items-center gap-16 max-sm:gap-10 w-[80%] max-lg:w-[85%] max-md:w-[90%] max-sm:w-[95%] h-full !p-0"
+      >
         <div class="min-w-1/3 max-w-[95%]">
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />
         </div>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
-        <div v-else-if="filteredServices.length" class="flex flex-row justify-evenly items-center w-full">
+        <div
+          v-else-if="filteredServices.length"
+          class="flex flex-row justify-evenly items-center w-full"
+        >
           <ServiceCardContainer type="reactions" :services="filteredServices" />
         </div>
       </UContainer>

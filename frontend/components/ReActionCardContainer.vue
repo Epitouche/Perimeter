@@ -102,7 +102,7 @@ function formatString(str: string): string {
 }
 
 const hasLongWord = (text: string): boolean => {
-  const words = formatString(text).split(' ');
+  const words = formatString(text).split(" ");
   for (const word of words) {
     if (word.length > 8) {
       return true;
@@ -124,16 +124,26 @@ function countWords(text: string) {
     <div v-for="type in props.types" :key="type.id">
       <UContainer
         :ui="{ padding: '!px-0 !py-6', constrained: 'max-w-none' }"
-        :class="['custom_card flex flex-col justify-evenly items-center gap-4 text-white']"
+        :class="[
+          'custom_card flex flex-col justify-evenly items-center gap-4 text-white',
+        ]"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
         tabindex="0"
         @click="toggleConfig(type.id)"
         @keydown.space="toggleConfig(type.id)"
       >
-      <!-- , countWords(formatString(type.name)) > 3 ? '!w-[14vw]' : '' -->
-        <h4  
-        :class="['p-2 capitalize text-center break-words w-full',
-        hasLongWord(type.name) && countWords(formatString(type.name)) > 1 ? 'leading-[120%]' : '', !hasLongWord(type.name) && countWords(formatString(type.name)) > 2 ? 'leading-[120%]' : '']">
+        <!-- , countWords(formatString(type.name)) > 3 ? '!w-[14vw]' : '' -->
+        <h4
+          :class="[
+            'p-2 capitalize text-center break-words w-full',
+            hasLongWord(type.name) && countWords(formatString(type.name)) > 1
+              ? 'leading-[120%]'
+              : '',
+            !hasLongWord(type.name) && countWords(formatString(type.name)) > 2
+              ? 'leading-[120%]'
+              : '',
+          ]"
+        >
           {{ formatString(type.name) }}
         </h4>
       </UContainer>
