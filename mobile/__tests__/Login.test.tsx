@@ -32,7 +32,7 @@ jest.mock('../src/context/AppContext', () => {
   return {
     ...originalModule,
     AppProvider: ({ children }: { children: React.ReactNode }) => (
-      <originalModule.AppContext.Provider value={{ ipAddress: 'localhost'}}>
+      <originalModule.AppContext.Provider value={{ ipAddress: 'localhost' }}>
         {children}
       </originalModule.AppContext.Provider>
     ),
@@ -46,7 +46,7 @@ describe('LoginScreen', () => {
     const { getByPlaceholderText } = render(
       <AppProvider>
         <LoginScreen navigation={MockNavigation} route={MockRoute} />
-      </AppProvider>
+      </AppProvider>,
     );
     expect(getByPlaceholderText('Enter username')).toBeTruthy();
     expect(getByPlaceholderText('Enter password')).toBeTruthy();
@@ -56,7 +56,7 @@ describe('LoginScreen', () => {
     const { getByText, getByPlaceholderText, getByTestId } = render(
       <AppProvider>
         <LoginScreen navigation={MockNavigation} route={MockRoute} />
-      </AppProvider>
+      </AppProvider>,
     );
     fireEvent.changeText(getByPlaceholderText('Enter username'), '');
     fireEvent.changeText(getByPlaceholderText('Enter password'), 'password');
@@ -68,7 +68,7 @@ describe('LoginScreen', () => {
     const { getByText, getByPlaceholderText, getByTestId } = render(
       <AppProvider>
         <LoginScreen navigation={MockNavigation} route={MockRoute} />
-      </AppProvider>
+      </AppProvider>,
     );
     fireEvent.changeText(getByPlaceholderText('Enter username'), 'username');
     fireEvent.changeText(getByPlaceholderText('Enter password'), '');
