@@ -49,7 +49,6 @@ func TestDeleteUserToken(t *testing.T) {
 	api.NewTokenApi(mockController, apiRoutes, mockUserService)
 
 	t.Run("Unauthorized", func(t *testing.T) {
-
 		w := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(w)
 
