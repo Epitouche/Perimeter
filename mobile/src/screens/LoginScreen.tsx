@@ -212,6 +212,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity
         style={styles.loginButton}
         onPress={handleLogin}
+        testID="login-button"
         accessibilityHint="Tap to log in">
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
