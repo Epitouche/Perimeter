@@ -107,10 +107,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <UContainer :ui="{ padding: '!px-0', constrained: 'max-w-full' }"
+  <UContainer
+:ui="{ padding: '!px-0', constrained: 'max-w-full' }"
     class="flex flex-row justify-evenly items-center gap-10 flex-wrap w-full">
     <div v-for="type in props.types" :key="type.id">
-      <UContainer :ui="{ padding: '!px-0 !py-6', constrained: 'max-w-none' }"
+      <UContainer
+:ui="{ padding: '!px-0 !py-6', constrained: 'max-w-none' }"
         class="custom_card flex flex-col justify-evenly items-center gap-4 text-white"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }" tabindex="0" @click="toggleConfig(type.id)"
         @keydown.space="toggleConfig(type.id)">
@@ -119,12 +121,14 @@ onMounted(() => {
         </h4>
       </UContainer>
 
-      <UModal v-model="configIsOpen[type.id]" :ui="{
+      <UModal
+v-model="configIsOpen[type.id]" :ui="{
         base: 'relative text-left rtl:text-right flex flex-col justify-center items-center p-10 max-lg:p-9 max-md:p-8 max-sm:p-6 border-custom_border_width',
         width: 'w-fit max-w-[95%]',
       }" :style="{ borderColor: props.serviceInfo?.color || 'black' }">
         <template #default>
-          <UForm :state="state[type.id]"
+          <UForm
+:state="state[type.id]"
             class="flex flex-col gap-12 p-5 max-lg:p-4 max-md:p-3 max-sm:p-2 w-full bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)">
             <h2 class="text-center">
@@ -134,12 +138,14 @@ onMounted(() => {
               {{ type.description }}
             </h6>
 
-            <UFormGroup v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key" :ui="{
+            <UFormGroup
+v-for="(value, key) in state[type.id]" :key="key" :label="key" :name="key" :ui="{
               label: {
                 base: 'capitalize text-3xl max-lg:text-2xl max-md:text-xl max-sm:text-lg px-5 font-semibold',
               },
             }" class="self-center min-w-[80%] max-lg:min-w-[85%] max-md:min-w-[90%] max-sm:min-w-[95%]">
-              <UInput v-model="state[type.id][key]" :type="fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
+              <UInput
+v-model="state[type.id][key]" :type="fieldTypes[type.id][key] === 'number' ? 'number' : 'text'
                 " :ui="{
                   placeholder: '!px-5 !py-3 max-lg:!py-2 font-light',
                   size: {
