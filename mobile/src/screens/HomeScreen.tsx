@@ -89,8 +89,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         }}
         accessibilityLabel="Connect"
         accessibilityHint="Navigates to the login screen"
-        style={{ backgroundColor: 'blue', padding: 10, borderRadius: 5}}
-      >
+        style={{ backgroundColor: 'blue', padding: 10, borderRadius: 5 }}>
         <Text style={{ color: 'white' }}>Connect</Text>
       </TouchableOpacity>
     </View>
