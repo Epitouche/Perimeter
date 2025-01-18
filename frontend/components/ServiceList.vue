@@ -149,11 +149,17 @@ const hover = reactive<{ [key: string]: boolean }>(
   Object.fromEntries(props.apps.map((app) => [app.name, false])),
 );
 
+const isLongText = (text: string): boolean => text.length > 10;
+
 function formatName(name: string): string {
   return name
     .replace(/^action_/, "")
     .replace(/_/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
+function isTouchDevice() {
+  return window.matchMedia("(pointer: coarse)").matches;
 }
 </script>
 
@@ -172,6 +178,8 @@ function formatName(name: string): string {
           backgroundColor: getServiceDetails(app.name)?.color || '#ccc',
         }"
         @click="onClick(app.name)"
+        @mouseenter="hover[app.name] = true"
+        @mouseleave="hover[app.name] = false"
       >
         <h5
           class="clamp-1-line break-words text-center pt-4 -m-1 text-white w-full hover-expand-text"
@@ -179,12 +187,24 @@ function formatName(name: string): string {
           {{ formatName(app.name) }}
         </h5>
         <img
-          v-if="getServiceDetails(app.name)?.icon"
+          v-if="getServiceDetails(app.name)?.icon && !hover[app.name]"
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
         >
+        <img
+          v-else-if="
+            getServiceDetails(app.name)?.icon &&
+            hover[app.name] &&
+            !isLongText(app.name)
+          "
+          :src="getServiceDetails(app.name)?.icon"
+          alt=""
+          class="pb-2"
+          style="width: 40%; min-width: 1vw; max-width: 8vw"
+        >
+
         <UButton
           v-if="!isLoading"
           :class="[
@@ -230,6 +250,9 @@ function formatName(name: string): string {
           </p>
         </UButton>
       </UContainer>
+      <p v-if="isTouchDevice() && styling === 'button'" class="text-center">
+        {{ formatName(app.name) }}
+      </p>
     </div>
 
     <div

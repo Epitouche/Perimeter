@@ -19,7 +19,6 @@ const loadServices = async () => {
   try {
     errorMessage.value = null;
     services.value = await fetchServices();
-    console.log("Services loaded:", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading services:", error);
@@ -27,8 +26,6 @@ const loadServices = async () => {
 };
 
 const filteredApps = computed(() => {
-  console.log("Search Query:", searchQuery.value);
-  console.log("Services:", services.value);
   return services.value.filter((app) =>
     app.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   );
