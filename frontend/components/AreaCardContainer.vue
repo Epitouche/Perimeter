@@ -348,12 +348,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-[35%] h-[35%] ml-[38%]"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -361,7 +361,8 @@ if (areaIdNumber !== null && valueNumber !== null) {
         v-model="areaIsOpen[area.id]"
         tabindex="0"
         :ui="{
-          width: 'min-w-[50%] max-w-[70%] max-lg:max-w-[75%] max-md:max-w-[85%] max-sm:max-w-[95%]',
+          width:
+            'min-w-[50%] max-w-[70%] max-lg:max-w-[75%] max-md:max-w-[85%] max-sm:max-w-[95%]',
         }"
       >
         <div

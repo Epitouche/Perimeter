@@ -48,7 +48,8 @@ const handleLogin = async () => {
     <UContainer
       :ui="{
         padding: '!px-0 !pt-8 !pb-12 max-md:!pb-8 max-md:!px-2',
-        constrained: 'min-w-[40%] max-w-[95%] max-lg:min-w-[50%] max-md:min-w-[60%] max-sm:min-w-[80%]',
+        constrained:
+          'min-w-[40%] max-w-[95%] max-lg:min-w-[50%] max-md:min-w-[60%] max-sm:min-w-[80%]',
       }"
       class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-12 max-lg:gap-10 max-md:gap-8 max-sm:gap-6 rounded-custom_border_radius"
     >

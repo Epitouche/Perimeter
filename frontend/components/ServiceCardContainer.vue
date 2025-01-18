@@ -86,13 +86,13 @@ function formatName(name: string): string {
             :src="service.icon"
             :alt="service.name"
             style="width: 45%"
-          >
+          />
           <img
             v-else-if="hover[service.id] && !isLongText(service.name)"
             :src="service.icon"
             :alt="service.name"
             style="width: 45%"
-          >
+          />
           <h5
             class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
           >
@@ -104,21 +104,22 @@ function formatName(name: string): string {
         v-else
         :ui="{ padding: '!px-0 !py-5', constrained: 'max-w-none' }"
         class="custom_card flex flex-col !gap-0 text-white overflow-hidden opacity-40 cursor-not-allowed"
-        :style="{ backgroundColor: service.color }" @mouseenter="hover[service.id] = true"
-          @mouseleave="hover[service.id] = false"
+        :style="{ backgroundColor: service.color }"
+        @mouseenter="hover[service.id] = true"
+        @mouseleave="hover[service.id] = false"
       >
         <img
           v-if="!hover[service.id]"
           :src="service.icon"
           :alt="service.name"
           style="width: 45%"
-        >
+        />
         <img
           v-else-if="hover[service.id] && !isLongText(service.name)"
           :src="service.icon"
           :alt="service.name"
           style="width: 45%"
-        >
+        />
         <h5
           class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
         >

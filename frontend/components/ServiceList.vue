@@ -179,7 +179,7 @@ function isTouchDevice() {
         }"
         @click="onClick(app.name)"
         @mouseenter="hover[app.name] = true"
-          @mouseleave="hover[app.name] = false"
+        @mouseleave="hover[app.name] = false"
       >
         <h5
           class="clamp-1-line break-words text-center pt-4 -m-1 text-white w-full hover-expand-text"
@@ -192,14 +192,18 @@ function isTouchDevice() {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        >
+        />
         <img
-          v-else-if="getServiceDetails(app.name)?.icon && hover[app.name] && !isLongText(app.name)"
+          v-else-if="
+            getServiceDetails(app.name)?.icon &&
+            hover[app.name] &&
+            !isLongText(app.name)
+          "
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        >
+        />
 
         <UButton
           v-if="!isLoading"
@@ -233,7 +237,7 @@ function isTouchDevice() {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        >
+        />
         <UButton
           v-if="hover[app.name]"
           variant="ghost"
@@ -246,7 +250,9 @@ function isTouchDevice() {
           </p>
         </UButton>
       </UContainer>
-      <p v-if="isTouchDevice()" class="text-center">{{ formatName(app.name) }}</p>
+      <p v-if="isTouchDevice()" class="text-center">
+        {{ formatName(app.name) }}
+      </p>
     </div>
 
     <div
@@ -263,7 +269,7 @@ function isTouchDevice() {
         }"
       >
         <h4>
-          Are you sure you want to <br >
+          Are you sure you want to <br />
           disconnect from this service?
         </h4>
         <h6>This action cannot be undone!</h6>
