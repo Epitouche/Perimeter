@@ -21,6 +21,12 @@ services:
       file: ./docker-compose.template.yaml
       service: database
 
+  mobile-documentation:
+    image: ghcr.io/epitouche/area-mobile-documentation:main
+    extends:
+      file: ./docker-compose.template.yaml
+      service: mobile-documentation
+
   reverse-proxy:
     volumes:
       - letsencrypt:/letsencrypt
@@ -50,12 +56,6 @@ services:
     extends:
       file: ./docker-compose.template.yaml
       service: server-documentation
-
-  mobile-documentation:
-    image: ghcr.io/epitouche/area-mobile-documentation:main
-    extends:
-      file: ./docker-compose.template.yaml
-      service: mobile-documentation
 
 networks:
   app-networks:
