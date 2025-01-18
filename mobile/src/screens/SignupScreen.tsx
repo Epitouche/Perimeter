@@ -73,11 +73,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
       update_at: '',
     },
   ]);
-  const [errors, setErrors] = useState({
-    username: '',
-    password: '',
-    email: '',
-  });
+  const [errors, setErrors] = useState('');
   const { ipAddress, token, setToken, setService } = useContext(AppContext);
 
   /**
@@ -122,20 +118,26 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
    */
   const handleSignup = async () => {
     let hasError = false;
-    const newErrors = { username: '', password: '', email: '' };
+    let newErrors = '';
 
     if (!username) {
-      newErrors.username = 'Username is required';
+      console.log('Username is required');
+      newErrors += ' Username';
       hasError = true;
     }
     if (!password) {
-      newErrors.password = 'Password is required';
+      console.log('Password is required');
+      newErrors += ' Password';
       hasError = true;
     }
 
     if (!email) {
-      newErrors.email = 'Email is required';
+      newErrors += ' Email';
       hasError = true;
+    }
+
+    if (!email || !username || !password) {
+      newErrors += ' is required';
     }
 
     setErrors(newErrors);
@@ -152,12 +154,14 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
             body: JSON.stringify({ email, username, password }),
           },
         );
+        const data = await response.json();
 
         if (response.ok) {
-          const data = await response.json();
-          console.log('Data:', data);
           navigation.navigate('Login');
           Alert.alert('Successfully registered, please login now');
+        } else if (response.status == 400 || response.status == 409) {
+          console.log('error');
+          setErrors(data.error);
         } else {
           console.error('Error:', response.status, ' | ', response.statusText);
           Alert.alert(
@@ -222,9 +226,6 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         onChangeText={text => setUsername(text)}
         accessibilityHint="Enter your username"
       />
-      {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
-      ) : null}
 
       <TextInput
         style={styles.input}
@@ -235,9 +236,6 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         onChangeText={text => setEmail(text)}
         accessibilityHint="Enter your email address"
       />
-      {errors.email ? (
-        <Text style={styles.errorText}>{errors.email}</Text>
-      ) : null}
 
       <TextInput
         style={styles.input}
@@ -248,9 +246,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         onChangeText={text => setPassword(text)}
         accessibilityHint="Enter your password"
       />
-      {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
-      ) : null}
+      {errors != '' ? <Text style={styles.errorText}>{errors}</Text> : null}
 
       <TouchableOpacity
         style={styles.registerButton}

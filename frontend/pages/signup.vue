@@ -47,24 +47,8 @@ const handleSignUp = async () => {
       token.value = response.token;
     }
     navigateTo("/myareas");
-  } catch (error) {
-    if (error && typeof error === "object" && "data" in error) {
-      const typedError = error as {
-        status?: number;
-        data?: { message?: string };
-      };
-
-      if (typedError.status === 409) {
-        signUpError.value = "Password must be at least 8 characters long";
-      }
-      console.error("Sign up failed:", typedError.data);
-    } else if (error instanceof Error) {
-      signUpError.value = error.message || "An unknown error occurred.";
-      console.error("Sign up failed:", error.message);
-    } else {
-      signUpError.value = "An unknown error occurred.";
-      console.error("Unexpected error:", error);
-    }
+  } catch (error: unknown) {
+    signUpError.value = handleErrorStatus(error);
   }
 };
 </script>

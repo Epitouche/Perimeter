@@ -32,7 +32,6 @@ async function HandleGoogleLogin(
 
   try {
     const result = await authorize(config);
-    console.log('result', result);
     let data = await handleCallback(
       `http://${ipAddress}:8080/api/v1/google/auth/callback/mobile`,
       result,

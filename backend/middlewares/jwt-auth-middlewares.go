@@ -12,7 +12,16 @@ import (
 	"area/service"
 )
 
-// AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid.
+// AuthorizeJWT is a middleware function for authorizing JWT tokens in HTTP requests.
+// It extracts the token from the "Authorization" header, validates it, and checks the claims.
+// If the token is valid and the claims match the user information, the request is allowed to proceed.
+// Otherwise, it responds with an unauthorized error and aborts the request.
+//
+// Parameters:
+// - serviceUser: an instance of UserService to retrieve user information from the database.
+//
+// Returns:
+// - gin.HandlerFunc: a function that handles the HTTP request and performs JWT authorization.
 func AuthorizeJWT(serviceUser service.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
