@@ -36,6 +36,7 @@ WORKDIR /app/android
 RUN ./gradlew dependencies
 
 COPY ./ /app
+COPY --from=root_repo /.env /.env
 
 WORKDIR /app/android
 
@@ -65,9 +66,11 @@ FROM node:22-alpine AS typedoc-dependencies
 
 WORKDIR /app
 
-COPY . .
+COPY ./package.json ./package-lock.json /app/
 
 RUN npm install --legacy-peer-deps
+
+COPY . .
 
 RUN npx typedoc --out docs src --entryPointStrategy expand
 
