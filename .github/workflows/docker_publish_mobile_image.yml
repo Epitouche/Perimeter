@@ -76,7 +76,6 @@ jobs:
         with:
           context: ./mobile
           target: build-apk
-          file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
