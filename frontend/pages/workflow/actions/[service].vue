@@ -90,7 +90,7 @@ onMounted(() => {
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"
           class="w-[10vw] h-[10vh]"
-        >
+        />
         <h2 class="capitalize text-white">
           {{ serviceInfo.name }}
         </h2>
