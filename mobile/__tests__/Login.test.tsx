@@ -29,31 +29,30 @@ const MockRoute = { key: 'login', name: 'Login' as const, params: undefined };
 
 describe('LoginScreen', () => {
   it('should render correctly', () => {
-    const { getByPlaceholderText, getByText } = render(
+    const { getByPlaceholderText } = render(
       <LoginScreen navigation={MockNavigation} route={MockRoute} />,
     );
-    expect(getByPlaceholderText('Email')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
-    expect(getByText('Login')).toBeTruthy();
+    expect(getByPlaceholderText('Enter username')).toBeTruthy();
+    expect(getByPlaceholderText('Enter password')).toBeTruthy();
   });
 
   it('should show error message when email is empty', () => {
     const { getByText, getByPlaceholderText } = render(
       <LoginScreen navigation={MockNavigation} route={MockRoute} />,
     );
-    fireEvent.changeText(getByPlaceholderText('Email'), '');
-    fireEvent.changeText(getByPlaceholderText('Password'), 'password');
-    fireEvent.press(getByText('Login'));
-    expect(getByText('Email is required')).toBeTruthy();
+    fireEvent.changeText(getByPlaceholderText('Enter username'), '');
+    fireEvent.changeText(getByPlaceholderText('Enter password'), 'password');
+    fireEvent.press(getByText('Log in'));
+    expect(getByText('Username is required')).toBeTruthy();
   });
 
   it('should show error message when password is empty', () => {
     const { getByText, getByPlaceholderText } = render(
       <LoginScreen navigation={MockNavigation} route={MockRoute} />,
     );
-    fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText('Password'), '');
-    fireEvent.press(getByText('Login'));
+    fireEvent.changeText(getByPlaceholderText('Enter username'), 'username');
+    fireEvent.changeText(getByPlaceholderText('Enter password'), '');
+    fireEvent.press(getByText('Log in'));
     expect(getByText('Password is required')).toBeTruthy();
   });
 
@@ -62,9 +61,9 @@ describe('LoginScreen', () => {
     const { getByText, getByPlaceholderText } = render(
       <LoginScreen navigation={MockNavigation} route={MockRoute} />,
     );
-    fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText('Password'), 'password');
-    fireEvent.press(getByText('Login'));
+    fireEvent.changeText(getByPlaceholderText('Enter username'), 'username');
+    fireEvent.changeText(getByPlaceholderText('Enter password'), 'password');
+    fireEvent.press(getByText('Log in'));
     expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password');
   });
 });

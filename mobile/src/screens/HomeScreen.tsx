@@ -79,11 +79,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       />
       <TouchableOpacity
         onPress={() => {
-          // Your onPress logic
+          navigation.navigate('Login');
         }}
         accessibilityLabel="Connect"
         accessibilityHint="Navigates to the login screen"
-        style={{ backgroundColor: 'blue', padding: 10 }}
+        style={{ backgroundColor: 'blue', padding: 10, borderRadius: 5}}
       >
         <Text style={{ color: 'white' }}>Connect</Text>
       </TouchableOpacity>

@@ -260,7 +260,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={switchToLogin}
           accessibilityHint="Tap to switch to login screen">
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>Log In</Text>
         </TouchableOpacity>
       </View>
 
