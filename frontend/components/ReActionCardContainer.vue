@@ -101,9 +101,19 @@ function formatString(str: string): string {
   return str.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
-onMounted(() => {
-  console.log("types", props.types);
-});
+const hasLongWord = (text: string): boolean => {
+  const words = formatString(text).split(' ');
+  for (const word of words) {
+    if (word.length > 8) {
+      return true;
+    }
+  }
+  return false;
+};
+
+function countWords(text: string) {
+  return text.trim().split(/\s+/).length;
+}
 </script>
 
 <template>
@@ -114,13 +124,16 @@ onMounted(() => {
     <div v-for="type in props.types" :key="type.id">
       <UContainer
         :ui="{ padding: '!px-0 !py-6', constrained: 'max-w-none' }"
-        class="custom_card flex flex-col justify-evenly items-center gap-4 text-white"
+        :class="['custom_card flex flex-col justify-evenly items-center gap-4 text-white']"
         :style="{ backgroundColor: props.serviceInfo?.color || 'black' }"
         tabindex="0"
         @click="toggleConfig(type.id)"
         @keydown.space="toggleConfig(type.id)"
       >
-        <h4 class="clamp-1-line p-2 capitalize text-center break-words w-full">
+      <!-- , countWords(formatString(type.name)) > 3 ? '!w-[14vw]' : '' -->
+        <h4  
+        :class="['p-2 capitalize text-center break-words w-full',
+        hasLongWord(type.name) && countWords(formatString(type.name)) > 1 ? 'leading-[120%]' : '', !hasLongWord(type.name) && countWords(formatString(type.name)) > 2 ? 'leading-[120%]' : '']">
           {{ formatString(type.name) }}
         </h4>
       </UContainer>
@@ -136,7 +149,7 @@ onMounted(() => {
         <template #default>
           <UForm
             :state="state[type.id]"
-            class="flex flex-col gap-12 p-5 max-lg:p-4 max-md:p-3 max-sm:p-2 w-full bg-custom_color-bg_section"
+            class="flex flex-col gap-12 max-sm:gap-8 p-5 max-lg:p-4 max-md:p-3 max-sm:p-2 w-full bg-custom_color-bg_section"
             @submit.prevent="onSubmit(type.id, type.name)"
           >
             <h2 class="text-center">
@@ -188,7 +201,7 @@ onMounted(() => {
 
             <div class="flex flex-row justify-evenly gap-4 pt-4">
               <UButton
-                class="font-semibold px-6 py-5 max-lg:py-3 max-md:py-2 max-sm:py-1 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
+                class="px-6 py-5 max-lg:py-3 max-md:py-2 text-custom_color-text bg-opacity-0 border-custom_border_width !border-custom_color-border"
                 tabindex="0"
                 @click="toggleConfig(type.id)"
               >
@@ -196,7 +209,7 @@ onMounted(() => {
               </UButton>
               <UButton
                 type="submit"
-                class="font-semibold px-6 py-5 max-lg:py-3 max-md:py-2 max-sm:py-1"
+                class="px-6 py-5 max-lg:py-3 max-md:py-2"
                 tabindex="0"
               >
                 <h6>Submit</h6>

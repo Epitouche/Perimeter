@@ -63,13 +63,14 @@ onMounted(() => {
 <template>
   <UContainer
     :ui="{ padding: '!px-4 !py-4', constrained: 'max-w-full' }"
-    class="capitalize self-start flex flex-row justify-between items-center gap-5 border-custom_border_width !border-white rounded-custom_border_radius w-full"
+    class="capitalize self-start flex flex-row justify-between items-center gap-5 max-sm:gap-2 border-custom_border_width !border-white rounded-custom_border_radius w-full"
   >
-    <div class="flex flex-row justify-start items-center gap-8 w-full">
+    <div class="flex flex-row justify-start max-sm:justify-between items-center gap-8 max-sm:gap-2 w-full">
       <img
         :src="type.service.icon"
         :alt="type.service.name"
         style="width: 10%"
+        class="max-sm:hidden"
       />
       <h4 class="text-center leading-[100%]">
         <b>{{ formatName(type.service.name) }}</b

@@ -36,7 +36,6 @@ export const useWebsiteStore = defineStore("websiteStore", {
           this.clearWorkflowState();
         }
       }
-      //console.log("State loaded", this.$state);
     },
 
     saveWorkflowState() {
@@ -58,7 +57,6 @@ export const useWebsiteStore = defineStore("websiteStore", {
       };
 
       localStorage.setItem("workflowState", JSON.stringify(stateToSave));
-      //console.log("State saved", stateToSave);
     },
 
     isValidJsonObject(value: unknown): value is Record<string, unknown> {

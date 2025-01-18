@@ -71,7 +71,6 @@ const toggleAreaModal = (areaId: number) => {
 };
 
 const toggleEditArea = (areaId: number) => {
-  console.log("Main Area Edit Toggle: ", editAreaIsOpen[areaId]); /////////////////:
   editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
   if (
     editAreaIsOpen[areaId] &&
@@ -101,8 +100,6 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
     JSON.stringify(props.areas[areaIndex]),
   ) as Area;
   updatedArea.enable = !updatedArea.enable;
-
-  console.log("updatedArea after toggling enable:", updatedArea);
 
   try {
     errorMessage.value = null;
@@ -214,17 +211,6 @@ const updateAreaValue = async (
   keyString: string,
   value: string | number,
 ) => {
-  console.log(
-    "areaId:",
-    areaId,
-    "typeName:",
-    typeName,
-    "keyString:",
-    keyString,
-    "value:",
-    value,
-  );
-
   const areaIndex = props.areas.findIndex((area) => area.id === areaId);
   if (areaIndex === -1) {
     console.error("Area not found");
@@ -256,8 +242,6 @@ const updateAreaValue = async (
         : value;
   }
 
-  console.log("Final updatedArea:", updatedArea);
-
   try {
     errorMessage.value = null;
 
@@ -275,7 +259,11 @@ const updateAreaValue = async (
   }
 
   router.push("myareas");
-  // toggleEditArea(areaId);
+
+  if (editAreaIsOpen[areaId]) 
+  {
+    toggleEditArea(areaId);
+  }
 };
 
 const state = reactive<
@@ -306,8 +294,6 @@ const isValidKey = (
 };
 
 onMounted(() => {
-  console.log("areas in AreaCardContainer", props.areas);
-
   props.areas.forEach((area) => {
     state[area.id] = {
       title: area.title,
@@ -366,7 +352,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         }"
       >
         <div
-          class="flex flex-col gap-12 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 max-lg:pl-10 max-lg:pr-10 max-lg:py-5 w-full max-h-[90vh]"
+          class="flex flex-col gap-12 max-sm:gap-5 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 max-lg:pl-10 max-lg:pr-10 max-lg:py-5 max-sm:py-3 max-sm:px-2 w-full max-h-[90vh]"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
@@ -381,10 +367,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
                   @keydown.enter="toggleAreaEnableSwitch(area.id)"
                 />
-                <div v-if="areaIsEnabled(area.id)" class="text-2xl">
+                <div v-if="areaIsEnabled(area.id)">
                   <p>Enabled</p>
                 </div>
-                <div v-else class="text-2xl">
+                <div v-else>
                   <p>Disabled</p>
                 </div>
               </div>
@@ -402,12 +388,12 @@ if (areaIdNumber !== null && valueNumber !== null) {
               </UButton>
             </div>
 
-            <h2 class="capitalize text-center w-full">
+            <h2 class="capitalize text-center w-full max-md:leading-[120%]">
               {{ area.title }}
             </h2>
           </div>
 
-          <div class="flex flex-col gap-10">
+          <div class="flex flex-col gap-10 max-sm:gap-3">
             <UpdateAreaOptions
               :area-id="area.id"
               type-name="action"
@@ -526,13 +512,13 @@ if (areaIdNumber !== null && valueNumber !== null) {
       <UModal
         v-model="confirmDeletionIsOpen[area.id]"
         :ui="{
-          base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
+          base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width w-fit',
         }"
         :style="{ borderColor: area.action.service.color }"
       >
-        <h2>Are you sure you want to delete this area?</h2>
-        <p class="text-2xl">This action cannot be undone!</p>
-        <div class="flex flex-row justify-end items-center gap-5 pt-5">
+        <h4 class="text-center">Are you sure you want to delete this area?</h4>
+        <p class="text-center">This action cannot be undone!</p>
+        <div class="flex flex-row justify-center items-center gap-5 pt-5">
           <UButton
             class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
             :style="{

@@ -192,7 +192,7 @@ function isTouchDevice() {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        />
+        >
         <img
           v-else-if="
             getServiceDetails(app.name)?.icon &&
@@ -203,7 +203,7 @@ function isTouchDevice() {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        />
+        >
 
         <UButton
           v-if="!isLoading"
@@ -237,7 +237,7 @@ function isTouchDevice() {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        />
+        >
         <UButton
           v-if="hover[app.name]"
           variant="ghost"
@@ -250,7 +250,7 @@ function isTouchDevice() {
           </p>
         </UButton>
       </UContainer>
-      <p v-if="isTouchDevice()" class="text-center">
+      <p v-if="isTouchDevice() && styling === 'button'" class="text-center">
         {{ formatName(app.name) }}
       </p>
     </div>

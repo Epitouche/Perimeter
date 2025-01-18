@@ -35,7 +35,6 @@ const handleLogin = async () => {
     if (response.token) {
       token.value = response.token;
     }
-    //console.log("Login successful:", response);
     navigateTo("/myareas");
   } catch (error: unknown) {
     loginError.value = handleErrorStatus(error);
