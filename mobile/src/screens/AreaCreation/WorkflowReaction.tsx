@@ -91,11 +91,18 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
         accessibilityHint="Displays the title of the screen">
         Add Area
       </Text>
-      <View style={[styles.actionBox, { backgroundColor: service?.color }]}>
+      <View style={[{ flexDirection: 'row',
+                      backgroundColor: service ? service.color : 'black',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: 15,
+                      borderRadius: 8,
+                      width: '80%',
+                      marginBottom: 10, }]}>
         <Text
           style={styles.boxText}
-          accessibilityLabel={`Service Name: ${name}`}
-          accessibilityHint="Displays the name of the service">
+          accessibilityLabel={`action Name: ${name}`}
+          accessibilityHint="Displays the name of the action">
           {name}
         </Text>
       </View>
