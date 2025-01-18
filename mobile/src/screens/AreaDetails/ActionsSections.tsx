@@ -27,7 +27,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
  * @property {Object} route.params - The parameters passed to the route.
  * @property {Object} route.params.area - The area object containing action options and service details.
  */
-const ActionsSections = ({ route }: Props) => {
+const ActionsSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
   const [isActionModalVisible, setIsActionModalVisible] = useState(false);
   const [selectedActionOptions, setSelectedActionOptions] = useState<{
@@ -106,9 +106,11 @@ const ActionsSections = ({ route }: Props) => {
         setDescription(body.description);
         setTitle(body.title);
         setRefreshRate(body.refresh_rate);
-        console.log('Area updated successfully');
       }
     } catch (error) {
+      if ((error as any).response.status === 401) {
+        navigation.navigate('Login');
+      }
       console.error('Error update area:', error);
     }
     setIsActionModalVisible(false);

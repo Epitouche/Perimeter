@@ -33,8 +33,6 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
  */
 const AreaSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
-  console.log('Area:', area);
-  console.log('refresh rate', area.action_refresh_rate);
   const { ipAddress, token } = useContext(AppContext);
   const [title, setTitle] = useState<string>(area.title);
   const [description, setDescription] = useState<string>(area.description);
@@ -56,8 +54,7 @@ const AreaSections = ({ navigation, route }: Props) => {
    * @throws Will log an error message if the request fails.
    */
   const handleSaveArea = async () => {
-    console.log(title, description, refreshRate);
-    const newArea = {
+      const newArea = {
       ...area,
       title: title,
       description: description,
@@ -72,12 +69,10 @@ const AreaSections = ({ navigation, route }: Props) => {
         },
         body: JSON.stringify(newArea),
       });
-      console.log('bodyyyyy:', JSON.stringify(newArea));
-      console.log(response);
-      if (response.ok) {
-        console.log('Area updated successfully');
-      }
     } catch (error) {
+      if ((error as any).response.status === 401) {
+        navigation.navigate('Login');
+      }
       console.error('Error update area:', error);
     }
     setIsAreaModalVisible(false);
