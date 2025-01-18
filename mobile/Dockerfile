@@ -45,3 +45,29 @@ WORKDIR /app
 COPY ./ /app
 
 CMD ["npm", "start"]
+
+
+## MOBILE DOCUMENTATION
+FROM node:22-alpine AS typedoc-dependencies
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm install --legacy-peer-deps
+
+RUN npx typedoc --out docs src --entryPointStrategy expand
+
+FROM alpine:3.21 AS documentation
+
+WORKDIR /app
+
+# Install http-server in the final stage
+RUN apk add --no-cache nodejs npm \
+    && npm install -g http-server@latest
+
+COPY --from=typedoc-dependencies /app/docs .
+
+EXPOSE 6062
+
+CMD ["http-server", "-p", "6062"]

@@ -207,7 +207,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
 
       const serviceData = await serviceResponse.json();
       setServices(serviceData);
-      console.log(serviceData.filter((service: { oauth: boolean }) => service.oauth));
+      console.log(
+        serviceData.filter((service: { oauth: boolean }) => service.oauth),
+      );
     };
 
     fetchServices();

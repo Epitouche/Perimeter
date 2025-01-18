@@ -130,7 +130,9 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
         const userData = await userResponse.json();
 
         setServices(serviceData);
-        const connected = userData.tokens.map((token: { service: { name: string } }) => token.service.name);
+        const connected = userData.tokens.map(
+          (token: { service: { name: string } }) => token.service.name,
+        );
         setConnectedServices(connected);
       } catch (error) {
         if ((error as any).code === 401) {
