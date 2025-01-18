@@ -59,6 +59,9 @@ var (
 	ErrEmailAlreadyExist = errors.New(
 		"email already exist",
 	) // Error message for existing email
+	ErrUsernameAlreadyExist = errors.New(
+		"username already exist",
+	) // Error message for existing username
 	ErrInvalidEmail = errors.New(
 		"invalid email",
 	) // Error message for invalid email
