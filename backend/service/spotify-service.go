@@ -107,6 +107,17 @@ func (service *spotifyService) FindActionByName(
 	}
 }
 
+// FindReactionByName returns a function that performs a specific Spotify reaction
+// based on the provided name. The returned function takes a JSON raw message and
+// an area schema as parameters and returns a string.
+//
+// Parameters:
+//   - name: The name of the reaction to find.
+//
+// Returns:
+//   - A function that takes a JSON raw message and an area schema as parameters
+//     and returns a string. If the name does not match any known reactions, it
+//     returns nil.
 func (service *spotifyService) FindReactionByName(
 	name string,
 ) func(option json.RawMessage, area schemas.Area) string {
@@ -120,6 +131,15 @@ func (service *spotifyService) FindReactionByName(
 	}
 }
 
+// GetServiceActionInfo retrieves information about the Spotify service action.
+// It marshals a default SpotifyActionMusicPlayedOption to JSON and updates the serviceInfo
+// by finding the service by name using the service repository. If any errors occur during
+// these operations, they are printed to the console. The function returns a slice of
+// schemas.Action containing details about the "MusicPlayed" action.
+//
+// Returns:
+//
+//	[]schemas.Action: A slice containing the action information for the Spotify service.
 func (service *spotifyService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.SpotifyActionMusicPlayedOption{
 		Name: "Believer",
@@ -346,6 +366,24 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 	return user, nil
 }
 
+// getSpotifyPlaybackResponse retrieves the current playback state from the Spotify API.
+// It takes a schemas.Token as an argument, which contains the access token required for authentication.
+// The function returns a schemas.SpotifyPlaybackResponse containing the playback state and an error if any occurred during the request.
+//
+// The function performs the following steps:
+// 1. Creates a new HTTP GET request to the Spotify API endpoint for the current playback state.
+// 2. Sets the Authorization header with the provided access token.
+// 3. Sends the request using an HTTP client.
+// 4. Checks the response status code to ensure it is 200 OK.
+// 5. Decodes the JSON response body into a schemas.SpotifyPlaybackResponse struct.
+// 6. Returns the decoded playback response and any error encountered during the process.
+//
+// Parameters:
+// - token: schemas.Token containing the access token for Spotify API authentication.
+//
+// Returns:
+// - schemas.SpotifyPlaybackResponse: The current playback state from the Spotify API.
+// - error: An error if any occurred during the request or response processing.
 func getSpotifyPlaybackResponse(token schemas.Token) (schemas.SpotifyPlaybackResponse, error) {
 	apiURL := "https://api.spotify.com/v1/me/player"
 
@@ -382,6 +420,16 @@ func getSpotifyPlaybackResponse(token schemas.Token) (schemas.SpotifyPlaybackRes
 	return playbackResponse, nil
 }
 
+// InitializedSpotifyStorageVariable initializes the Spotify storage variable for a given area.
+// It attempts to unmarshal the storage variable from the area. If unmarshaling fails, it initializes
+// the storage variable to a default false value and updates the area in the repository.
+//
+// Parameters:
+//   - area: The area containing the storage variable to be initialized.
+//
+// Returns:
+//   - variable: The initialized Spotify storage variable.
+//   - err: An error if any occurred during the process.
 func (service *spotifyService) InitializedSpotifyStorageVariable(
 	area schemas.Area,
 ) (variable schemas.SpotifyStorageVariable, err error) {
@@ -427,6 +475,24 @@ func (service *spotifyService) InitializedSpotifyStorageVariable(
 
 // Actions functions
 
+// SpotifyActionMusicPlayed handles the action when music is played on Spotify.
+// It checks the current playback status and updates the area storage variable accordingly.
+// If the currently playing track matches the expected track, it sends a message to the provided channel.
+//
+// Parameters:
+//   - c: A channel to send messages.
+//   - option: A JSON raw message containing the options for the action.
+//   - area: The area schema containing user and action details.
+//
+// The function performs the following steps:
+//  1. Unmarshals the option JSON into a SpotifyActionMusicPlayedOption struct.
+//  2. Initializes the Spotify storage variable for the given area.
+//  3. Retrieves the token for the user and service.
+//  4. Gets the current playback response from Spotify.
+//  5. Checks if music is currently playing and if the track matches the expected track.
+//  6. Updates the area storage variable and sends a message if the track matches.
+//  7. Updates the area storage variable if the track does not match or no music is playing.
+//  8. Sleeps for the minimum refresh rate or the action refresh rate, whichever is greater.
 func (service *spotifyService) SpotifyActionMusicPlayed(
 	c chan string,
 	option json.RawMessage,
@@ -530,6 +596,19 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 }
 
 // Reactions functions
+
+// SpotifyReactionSkipNextMusic skips to the next track in the user's Spotify player.
+// It takes a JSON raw message option and an Area schema as parameters.
+// The function retrieves the user's Spotify token from the token repository using the user ID and service ID.
+// If the token is found, it sends a POST request to the Spotify API to skip to the next track.
+// The function returns a string indicating the result of the operation.
+//
+// Parameters:
+//   - option: json.RawMessage - The raw JSON message containing options for the reaction.
+//   - area: schemas.Area - The area schema containing user and reaction information.
+//
+// Returns:
+//   - string: A message indicating the result of the operation.
 func (service *spotifyService) SpotifyReactionSkipNextMusic(
 	option json.RawMessage,
 	area schemas.Area,
@@ -577,6 +656,19 @@ func (service *spotifyService) SpotifyReactionSkipNextMusic(
 	return "Spotify skip next music"
 }
 
+// SpotifyReactionSkipPreviousMusic skips to the previous track in the user's Spotify player.
+// It takes a JSON raw message option and an Area schema as parameters, and returns a string message.
+//
+// Parameters:
+//   - option: json.RawMessage containing additional options for the reaction.
+//   - area: schemas.Area containing user and reaction information.
+//
+// Returns:
+//   - A string message indicating the result of the operation.
+//
+// The function retrieves the user's Spotify token from the token repository using the user ID and service ID.
+// If the token is found and valid, it sends a POST request to the Spotify API to skip to the previous track.
+// The function handles errors related to token retrieval, request creation, and request execution, and logs appropriate messages.
 func (service *spotifyService) SpotifyReactionSkipPreviousMusic(
 	option json.RawMessage,
 	area schemas.Area,
