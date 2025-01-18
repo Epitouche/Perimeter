@@ -5,25 +5,28 @@ import (
 	"time"
 )
 
-type DropboxAction string
+type DropboxAction string // The action type for Dropbox.
 
+// UpdateInFolder represents an action to update an item within a folder in Dropbox.
 const (
 	UpdateInFolder DropboxAction = "UpdateInFolder"
 )
 
-type DropboxReaction string
+type DropboxReaction string // The reaction type for Dropbox.
 
+// SaveUrl represents the action of saving a URL to Dropbox.
 const (
-	SaveUrl DropboxReaction = "SaveUrl"
+	SaveUrl DropboxReaction = "SaveUrl" // Save URL to Dropbox
 )
 
-// DropboxTokenResponse represents the response from Dropbox when a token is requested.
+// DropboxTokenResponse represents the response structure for Dropbox token.
+// It contains the access token, expiration time, scope, token type, and refresh token.
 type DropboxTokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	ExpiresIn    uint64 `json:"expires_in"`
-	Scope        string `json:"scope"`
-	TokenType    string `json:"token_type"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"access_token"`  // The access token
+	ExpiresIn    uint64 `json:"expires_in"`    // The expiration time of the token in seconds
+	Scope        string `json:"scope"`         // The scope of the token
+	TokenType    string `json:"token_type"`    // The type of the token
+	RefreshToken string `json:"refresh_token"` // The refresh token
 }
 
 type DropboxUserInfo struct {

@@ -41,6 +41,9 @@ jobs:
       - name: Setup env
         run: echo '${{ secrets.ENV }}' > .env
 
+      - name: Setup env
+        run: echo '${{ secrets.ENV }}' > mobile/.env
+
       - name: Stop any running containers & remove volumes
         run: docker compose down --volumes
 
