@@ -54,7 +54,7 @@ const AreaSections = ({ navigation, route }: Props) => {
    * @throws Will log an error message if the request fails.
    */
   const handleSaveArea = async () => {
-      const newArea = {
+    const newArea = {
       ...area,
       title: title,
       description: description,
