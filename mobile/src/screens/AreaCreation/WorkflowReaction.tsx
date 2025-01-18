@@ -73,7 +73,7 @@ const WorkflowReactionScreen = ({ navigation, route }: Props) => {
         setName(data.name);
         setService(data.service);
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error fetching service:', error);

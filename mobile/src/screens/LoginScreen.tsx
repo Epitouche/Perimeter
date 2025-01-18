@@ -142,7 +142,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           setErrors(data.error);
         }
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error:', error);

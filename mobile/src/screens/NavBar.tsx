@@ -21,7 +21,6 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         accessibilityHint="Navigates to the home screen"
         style={styles.navButton}>
         <Svg
-          xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24">
@@ -37,7 +36,6 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         onPress={() => navigation.navigate('WorkflowScreen')}
         style={styles.navButton}>
         <Svg
-          xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24">
@@ -53,7 +51,6 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         onPress={() => navigation.navigate('ServicesScreen')}
         style={styles.navButton}>
         <Svg
-          xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24">
@@ -69,7 +66,6 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         onPress={() => navigation.navigate('SettingsScreen')}
         style={styles.navButton}>
         <Svg
-          xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24">
