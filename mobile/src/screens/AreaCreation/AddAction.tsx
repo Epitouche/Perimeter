@@ -82,7 +82,6 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
         );
 
         const userData = await userResponse.json();
-        console.log('Services:', response);
         const data = await response.json();
         const connected = userData.tokens.map(
           (token: { service: { name: string } }) => token.service.name,
@@ -98,7 +97,7 @@ const AddActionScreen: React.FC<Props> = ({ navigation }) => {
         }
         setLoading(false);
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error fetching services:', error);

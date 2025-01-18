@@ -142,7 +142,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           setErrors(data.error);
         }
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error:', error);
@@ -212,6 +212,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity
         style={styles.loginButton}
         onPress={handleLogin}
+        testID="login-button"
         accessibilityHint="Tap to log in">
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>

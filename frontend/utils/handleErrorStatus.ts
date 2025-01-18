@@ -13,7 +13,7 @@ export const handleErrorStatus = (error: unknown): string => {
       navigateTo("/login");
       return "Unauthorized access.";
     } else if (statusCode === 409) {
-      return "Email already exist.";
+      return "Email or Username already exist.";
     } else {
       return `Error: ${message}`;
     }

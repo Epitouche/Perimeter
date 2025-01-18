@@ -66,6 +66,7 @@ docker compose up --build
 
 ## Documentation
 
+- [User Guide](./docs/UserGuide/UserGuide.md)
 - [Developer Documentation](./docs/developerDocumentation.md)
 - [Service Documentation](./docs/services.md)
 - [Database Documentation](./docs/database.md)
