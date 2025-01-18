@@ -49,14 +49,34 @@ type MicrosoftService interface {
 	) string
 }
 
+// microsoftService is a struct that encapsulates various repositories and service information
+// required for Microsoft-related operations.
+//
+// Fields:
+// - repository: MicrosoftRepository interface for interacting with Microsoft data.
+// - serviceRepository: ServiceRepository interface for interacting with service data.
+// - areaRepository: AreaRepository interface for interacting with area data.
+// - tokenRepository: TokenRepository interface for managing tokens.
+// - serviceInfo: Service schema containing information about the service.
 type microsoftService struct {
-	repository        repository.MicrosoftRepository
-	serviceRepository repository.ServiceRepository
-	areaRepository    repository.AreaRepository
-	tokenRepository   repository.TokenRepository
-	serviceInfo       schemas.Service
+	repository        repository.MicrosoftRepository // Microsoft repository
+	serviceRepository repository.ServiceRepository   // Service repository
+	areaRepository    repository.AreaRepository      // Area repository
+	tokenRepository   repository.TokenRepository     // Token repository
+	serviceInfo       schemas.Service                // Service information
 }
 
+// NewMicrosoftService creates a new instance of MicrosoftService with the provided repositories.
+// It initializes the service with predefined information such as name, description, OAuth support, color, and icon.
+//
+// Parameters:
+//   - githubTokenRepository: repository.MicrosoftRepository - Repository for handling Microsoft tokens.
+//   - serviceRepository: repository.ServiceRepository - Repository for handling service-related operations.
+//   - areaRepository: repository.AreaRepository - Repository for handling area-related operations.
+//   - tokenRepository: repository.TokenRepository - Repository for handling token-related operations.
+//
+// Returns:
+//   - MicrosoftService: A new instance of MicrosoftService.
 func NewMicrosoftService(
 	githubTokenRepository repository.MicrosoftRepository,
 	serviceRepository repository.ServiceRepository,
@@ -80,10 +100,17 @@ func NewMicrosoftService(
 
 // Service interface functions
 
+// GetServiceInfo retrieves the service information for the Microsoft service.
+// It returns a schemas.Service object containing the service details.
 func (service *microsoftService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
+// GetServiceActionInfo retrieves information about available actions for the Microsoft service.
+// It returns a slice of schemas.Action, each representing a specific action that can be performed
+// using Microsoft services. The function initializes default options and event incoming options,
+// marshals them into JSON format, and assigns them to the respective actions. If any errors occur
+// during the marshalling or service lookup process, they are logged to the console.
 func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
@@ -124,6 +151,19 @@ func (service *microsoftService) GetServiceActionInfo() []schemas.Action {
 	}
 }
 
+// GetServiceReactionInfo retrieves the reaction information for Microsoft services.
+// It returns a slice of schemas.Reaction which includes details for sending an email
+// and creating an event using Microsoft services.
+//
+// The function initializes default options for sending an email and creating an event,
+// marshals these options into JSON format, and retrieves the service information from
+// the service repository. If any errors occur during marshalling or retrieving the service
+// information, they are printed to the console.
+//
+// Returns:
+//
+//	[]schemas.Reaction: A slice containing reaction information for sending an email
+//	and creating an event using Microsoft services.
 func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := schemas.MicrosoftReactionSendMailOptions{
 		Subject:   "newsletter",
@@ -168,6 +208,14 @@ func (service *microsoftService) GetServiceReactionInfo() []schemas.Reaction {
 	}
 }
 
+// FindActionByName returns a function that matches the provided action name.
+// The returned function takes a channel, a JSON raw message, and an area schema as parameters.
+//
+// Parameters:
+//   - name: The name of the action to find.
+//
+// Returns:
+//   - A function that matches the provided action name, or nil if no match is found.
 func (service *microsoftService) FindActionByName(
 	name string,
 ) func(c chan string, option json.RawMessage, area schemas.Area) {
@@ -181,6 +229,16 @@ func (service *microsoftService) FindActionByName(
 	}
 }
 
+// FindReactionByName returns a function that performs a specific Microsoft service reaction
+// based on the provided name. The returned function takes a JSON raw message and an area schema
+// as parameters and returns a string.
+//
+// Parameters:
+//   - name: The name of the reaction to find.
+//
+// Returns:
+//   - A function that takes a JSON raw message and an area schema, and returns a string.
+//     If the name does not match any known reactions, it returns nil.
 func (service *microsoftService) FindReactionByName(
 	name string,
 ) func(option json.RawMessage, area schemas.Area) string {
@@ -194,6 +252,22 @@ func (service *microsoftService) FindReactionByName(
 	}
 }
 
+// AuthGetServiceAccessToken exchanges an authorization code for an access token from Microsoft's OAuth2 service.
+// It takes an authorization code as input and returns a Token schema or an error if the process fails.
+//
+// The function performs the following steps:
+// 1. Retrieves the Microsoft client ID from environment variables.
+// 2. Gets the redirect URI based on the service name.
+// 3. Constructs the request to the Microsoft OAuth2 token endpoint.
+// 4. Sends the request and reads the response.
+// 5. Parses the response and extracts the access token, refresh token, and expiration time.
+//
+// Parameters:
+// - code: The authorization code received from Microsoft's OAuth2 authorization endpoint.
+//
+// Returns:
+// - token: A Token schema containing the access token, refresh token, and expiration time.
+// - err: An error if the process fails at any step.
 func (service *microsoftService) AuthGetServiceAccessToken(
 	code string,
 ) (token schemas.Token, err error) {
@@ -251,6 +325,22 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 	return token, nil
 }
 
+// GetUserInfo retrieves the user information from Microsoft Graph API using the provided access token.
+// It sends a GET request to the "https://graph.microsoft.com/v1.0/me" endpoint and decodes the response
+// into a schemas.User object.
+//
+// Parameters:
+//   - accessToken: A string representing the OAuth 2.0 access token for authenticating the request.
+//
+// Returns:
+//   - user: A schemas.User object containing the user's email and username.
+//   - err: An error object if there was an issue creating the request, making the request, or decoding the response.
+//
+// The function returns an error if:
+//   - The request could not be created.
+//   - The request could not be made.
+//   - The response status code is not 200 OK.
+//   - The response body could not be decoded.
 func (service *microsoftService) GetUserInfo(
 	accessToken string,
 ) (user schemas.User, err error) {
@@ -293,6 +383,26 @@ func (service *microsoftService) GetUserInfo(
 }
 
 // Actions functions
+
+// MicrosoftActionEventStarting handles the event of a Microsoft action starting.
+// It retrieves the user's Microsoft events, checks if any event matches the specified options,
+// and updates the area storage variable if a matching event is found.
+//
+// Parameters:
+//   - channel: A channel to send messages about the event status.
+//   - option: A JSON raw message containing the options for the Microsoft event.
+//   - area: The area schema containing user and action information.
+//
+// The function performs the following steps:
+//  1. Unmarshals the options from the JSON raw message.
+//  2. Initializes the Microsoft storage variable.
+//  3. Retrieves the user's token for the Microsoft service.
+//  4. Makes an HTTP GET request to the Microsoft Graph API to fetch the user's events.
+//  5. Checks if any event matches the specified options.
+//  6. Updates the area storage variable and sends a message to the channel if a matching event is found.
+//  7. Sleeps for 10 seconds before returning.
+//
+// If any error occurs during these steps, it prints an error message and returns.
 func (service *microsoftService) MicrosoftActionEventStarting(
 	channel chan string,
 	option json.RawMessage,
@@ -387,6 +497,18 @@ func (service *microsoftService) MicrosoftActionEventStarting(
 	time.Sleep(time.Second * 10)
 }
 
+// initializedMicrosoftStorageVariable initializes the Microsoft storage variable for a given area.
+// It attempts to unmarshal the storage variable from the area's StorageVariable field.
+// If unmarshalling fails, it initializes the storage variable with the current UTC time and updates the area in the repository.
+// If the storage variable's time is zero, it also initializes it with the current UTC time and updates the area in the repository.
+//
+// Parameters:
+//   - area: The area containing the storage variable to be initialized.
+//   - service: The microsoftService instance used to update the area in the repository.
+//
+// Returns:
+//   - schemas.MicrosoftVariableTime: The initialized Microsoft storage variable.
+//   - error: An error if any occurred during the process.
 func initializedMicrosoftStorageVariable(
 	area schemas.Area,
 	service microsoftService,
@@ -477,6 +599,21 @@ func getNewEmails(
 
 // Actions functions
 
+// MicrosoftActionReceiveMail handles the action of receiving emails from Microsoft service.
+// It initializes the storage variable, retrieves the token, fetches new emails, and updates the area repository.
+//
+// Parameters:
+//   - channel: A channel to send the response string.
+//   - option: A JSON raw message containing options.
+//   - area: The area schema containing user and action details.
+//
+// The function performs the following steps:
+//  1. Initializes the storage variable using the provided area and service.
+//  2. Retrieves the token associated with the user and service.
+//  3. Fetches new emails using the token and storage variable.
+//  4. If new emails are found, it processes the latest email, updates the storage variable, and sends a response through the channel.
+//  5. Updates the area repository with the new storage variable.
+//  6. Sleeps for a duration based on the action's refresh rate.
 func (service *microsoftService) MicrosoftActionReceiveMail(
 	channel chan string,
 	option json.RawMessage,
@@ -540,6 +677,24 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 
 // Reactions functions
 
+// MicrosoftReactionSendMail sends an email using the Microsoft Graph API.
+//
+// Parameters:
+//   - option: A JSON raw message containing the email options.
+//   - area: A schemas.Area object containing user and service information.
+//
+// Returns:
+//
+//	A string indicating the result of the email sending operation.
+//
+// The function performs the following steps:
+//  1. Unmarshals the email options from the provided JSON raw message.
+//  2. Retrieves the user's token for the Microsoft service from the token repository.
+//  3. Constructs the email payload and marshals it into JSON.
+//  4. Creates an HTTP POST request to the Microsoft Graph API to send the email.
+//  5. Sets the necessary headers, including the authorization token.
+//  6. Sends the HTTP request and checks the response status code.
+//  7. Returns a success message if the email is sent successfully, or an error message if any step fails.
 func (service *microsoftService) MicrosoftReactionSendMail(
 	option json.RawMessage,
 	area schemas.Area,
@@ -615,6 +770,24 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 	return "Email sent successfully!"
 }
 
+// MicrosoftReactionCreateEvent creates a new event in the Microsoft calendar for the specified user.
+// It takes a JSON raw message containing event options and an Area schema as input parameters.
+// The function returns a string indicating the result of the operation.
+//
+// Parameters:
+//   - option: A JSON raw message containing the event options.
+//   - area: An Area schema containing user and service information.
+//
+// Returns:
+//   - A string indicating the result of the event creation operation.
+//
+// The function performs the following steps:
+//  1. Unmarshals the JSON raw message into MicrosoftCreateEventOptions.
+//  2. Retrieves the user's token for the Microsoft service from the token repository.
+//  3. Validates the retrieved token.
+//  4. Constructs the event payload with the provided options.
+//  5. Sends an HTTP POST request to the Microsoft Graph API to create the event.
+//  6. Handles the response and returns the appropriate result message.
 func (service *microsoftService) MicrosoftReactionCreateEvent(
 	option json.RawMessage,
 	area schemas.Area,
