@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "generate-docs": "jsdoc -c jsdoc.json"
+    "generate-docs": "typedoc --out docs src --entryPointStrategy expand"
   },
   "dependencies": {
     "@react-native-google-signin/google-signin": "^13.1.0",
