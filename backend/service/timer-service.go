@@ -26,6 +26,15 @@ type TimerService interface {
 	TimerReactionGiveTime(option json.RawMessage, area schemas.Area) string
 }
 
+// timerService is a struct that provides services related to timers.
+// It contains repositories for accessing timer, service, and area data,
+// as well as information about the service itself.
+//
+// Fields:
+// - repository: Interface for accessing timer data.
+// - serviceRepository: Interface for accessing service data.
+// - areaRepository: Interface for accessing area data.
+// - serviceInfo: Information about the service.
 type timerService struct {
 	repository        repository.TimerRepository
 	serviceRepository repository.ServiceRepository
@@ -33,6 +42,16 @@ type timerService struct {
 	serviceInfo       schemas.Service
 }
 
+// NewTimerService creates a new instance of TimerService with the provided repositories.
+// It initializes the serviceInfo field with predefined values for the Timer service.
+//
+// Parameters:
+//   - repository: an instance of TimerRepository for accessing timer data.
+//   - serviceRepository: an instance of ServiceRepository for accessing service data.
+//   - areaRepository: an instance of AreaRepository for accessing area data.
+//
+// Returns:
+//   - TimerService: a new instance of TimerService.
 func NewTimerService(
 	repository repository.TimerRepository,
 	serviceRepository repository.ServiceRepository,
@@ -54,10 +73,26 @@ func NewTimerService(
 
 // Service interface functions
 
+// GetServiceInfo returns the service information.
+// It retrieves the service information stored in the timerService instance.
+//
+// Returns:
+//
+//	schemas.Service: The service information.
 func (service *timerService) GetServiceInfo() schemas.Service {
 	return service.serviceInfo
 }
 
+// FindActionByName returns a function that matches the given action name.
+// The returned function takes a channel, a JSON raw message, and an area schema as parameters.
+// If the action name matches a specific time, it returns the TimerActionSpecificHour function.
+// If no match is found, it returns nil.
+//
+// Parameters:
+//   - name: The name of the action to find.
+//
+// Returns:
+//   - A function that matches the given action name, or nil if no match is found.
 func (service *timerService) FindActionByName(
 	name string,
 ) func(c chan string, option json.RawMessage, area schemas.Area) {
@@ -69,6 +104,17 @@ func (service *timerService) FindActionByName(
 	}
 }
 
+// FindReactionByName returns a function that matches the given reaction name.
+// The returned function takes a json.RawMessage option and a schemas.Area as parameters,
+// and returns a string. If the reaction name does not match any known reactions,
+// it returns nil.
+//
+// Parameters:
+//   - name: The name of the reaction to find.
+//
+// Returns:
+//   - A function that takes a json.RawMessage option and a schemas.Area, and returns a string.
+//     If the reaction name does not match any known reactions, it returns nil.
 func (service *timerService) FindReactionByName(
 	name string,
 ) func(option json.RawMessage, area schemas.Area) string {
@@ -80,6 +126,17 @@ func (service *timerService) FindReactionByName(
 	}
 }
 
+// GetServiceActionInfo retrieves the service action information for the timer service.
+// It initializes a default TimerActionSpecificHour value, marshals it into JSON, and
+// updates the service information by finding the service by name. If any errors occur
+// during marshaling or finding the service, they are printed to the console.
+// The function returns a slice of Action containing the specific time action with the
+// updated service information and default option.
+//
+// Returns:
+//
+//	[]schemas.Action: A slice containing the specific time action with the updated
+//	service information and default option.
 func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	defaultValue := schemas.TimerActionSpecificHour{
 		Hour:   13,
@@ -106,6 +163,15 @@ func (service *timerService) GetServiceActionInfo() []schemas.Action {
 	}
 }
 
+// GetServiceReactionInfo retrieves the reaction information for the timer service.
+// It marshals a default value to JSON and updates the service information by finding
+// the service by name. If any errors occur during these operations, they are printed
+// to the console. The function returns a slice of Reaction structs containing the
+// reaction details.
+//
+// Returns:
+//
+//	[]schemas.Reaction: A slice of Reaction structs with the reaction details.
 func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 	defaultValue := struct{}{}
 	option, err := json.Marshal(defaultValue)
@@ -130,6 +196,18 @@ func (service *timerService) GetServiceReactionInfo() []schemas.Reaction {
 
 // Service specific functions
 
+// getActualTime fetches the current time for the Europe/Paris timezone from the timeapi.io API.
+// It returns a schemas.TimeApiResponse containing the time data or an error if the request fails.
+//
+// Returns:
+//   - schemas.TimeApiResponse: The response containing the current time data.
+//   - error: An error if the request creation, execution, or response decoding fails.
+//
+// Possible errors:
+//   - schemas.ErrCreateRequest: If there is an error creating the HTTP request.
+//   - schemas.ErrDoRequest: If there is an error executing the HTTP request.
+//   - schemas.ErrDecode: If there is an error decoding the response body.
+//   - fmt.Errorf: If the response status code is not 200 OK.
 func getActualTime() (schemas.TimeApiResponse, error) {
 	apiURL := "https://www.timeapi.io/api/time/current/zone?timeZone=Europe/Paris"
 
@@ -161,6 +239,20 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 
 // Actions functions
 
+// TimerActionSpecificHour executes a timer action at a specific hour.
+// It unmarshals the provided JSON option into a TimerActionSpecificHour struct,
+// retrieves the current time from an external API, and updates the storage variable
+// in the area repository if necessary. If the current time matches the specified hour
+// and minute in the option, it sends a response message to the provided channel.
+//
+// Parameters:
+//   - c: A channel to send the response message.
+//   - option: A JSON raw message containing the timer action options.
+//   - area: The area schema containing the storage variable.
+//
+// The function handles errors by printing error messages and sleeping for a second
+// before returning. It also ensures that the storage variable is initialized and updated
+// in the area repository if it is not already set.
 func (service *timerService) TimerActionSpecificHour(
 	c chan string,
 	option json.RawMessage,
@@ -265,6 +357,17 @@ func (service *timerService) TimerActionSpecificHour(
 
 // Reactions functions
 
+// TimerReactionGiveTime retrieves the current time from an external API and returns it as a string.
+// If there is an error while fetching the time, it logs the error and returns an error message.
+//
+// Parameters:
+//
+//	option - a JSON raw message containing additional options (currently unused).
+//	area - a schemas.Area object representing the area (currently unused).
+//
+// Returns:
+//
+//	A string containing the current time or an error message if the time could not be retrieved.
 func (service *timerService) TimerReactionGiveTime(
 	option json.RawMessage,
 	area schemas.Area,
