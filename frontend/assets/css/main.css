@@ -6,41 +6,6 @@ body {
   font-display: swap;
 }
 
-h1 {
-  font-size: 5vw;
-  font-weight: 900;
-}
-
-h2 {
-  font-size: 4vw;
-  font-weight: 800;
-}
-
-h3 {
-  font-size: 3vw;
-  font-weight: 800;
-}
-
-h4 {
-  font-size: 2.5vw;
-  font-weight: 800;
-}
-
-h5 {
-  font-size: 2vw;
-  font-weight: 800;
-}
-
-h6 {
-  font-size: 1.5vw;
-  font-weight: 800;
-}
-
-p {
-  font-size: 1vw;
-  font-weight: 700;
-}
-
 .icon_circle {
   width: 75%;
   height: 75%;
@@ -59,21 +24,57 @@ p {
 /* Mobile Portrait (small screens) */
 @media (max-width: 480px) {
   .custom_card {
-    width: 21vw;
+    width: 36vw;
     height: fit-content;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1vh;
+    gap: 0.5vh;
     border-radius: 25%;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 13vw;
+    font-weight: 900;
+  }
+
+  h2 {
+    font-size: 10vw;
+    font-weight: 800;
+  }
+
+  h3 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 5vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 4vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 4vw;
+    font-weight: 700;
   }
 }
 
 /* Mobile Landscape / Tablet Portrait */
 @media (min-width: 481px) and (max-width: 767px) {
   .custom_card {
-    width: 18vw;
+    width: 28vw;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -81,11 +82,197 @@ p {
     align-items: center;
     gap: 1vh;
     border-radius: 25%;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 13vw;
+    font-weight: 900;
+  }
+
+  h2 {
+    font-size: 10vw;
+    font-weight: 800;
+  }
+
+  h3 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 5vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 4vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 4vw;
+    font-weight: 700;
   }
 }
 
 /* Tablet Landscape / Small Laptop */
 @media (min-width: 768px) and (max-width: 1023px) {
+  .custom_card {
+    width: 25vw;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1vh;
+    border-radius: 25%;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 10vw;
+    font-weight: 900;
+  }
+
+  h2 {
+    font-size: 7.5vw;
+    font-weight: 800;
+  }
+
+  h3 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 5.5vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 3vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 3vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 2.5vw;
+    font-weight: 700;
+  }
+}
+
+/* Laptop / Small Desktop */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .custom_card {
+    width: 22vw;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1vh;
+    border-radius: 25%;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 8vw;
+    font-weight: 900;
+  }
+
+  h2 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h3 {
+    font-size: 6vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 5vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 4vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 3vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 2vw;
+    font-weight: 700;
+  }
+}
+
+/* Medium Desktop */
+@media (min-width: 1280px) and (max-width: 1440px) {
+  .custom_card {
+    width: 22vw;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1vh;
+    border-radius: 25%;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 8vw;
+    font-weight: 900;
+  }
+
+  h2 {
+    font-size: 7vw;
+    font-weight: 800;
+  }
+
+  h3 {
+    font-size: 6vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 5vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 4vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 3vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 2vw;
+    font-weight: 700;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
   .custom_card {
     width: 16vw;
     height: fit-content;
@@ -95,48 +282,42 @@ p {
     align-items: center;
     gap: 1vh;
     border-radius: 25%;
+    cursor: pointer;
   }
-}
 
-/* Laptop / Small Desktop */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  .custom_card {
-    width: 15vw;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1vh;
-    border-radius: 25%;
+  h1 {
+    font-size: 6vw;
+    font-weight: 900;
   }
-}
 
-/* Medium Desktop */
-@media (min-width: 1280px) and (max-width: 1440px) {
-  .custom_card {
-    width: 14vw;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1vh;
-    border-radius: 25%;
+  h2 {
+    font-size: 5vw;
+    font-weight: 800;
   }
-}
 
-/* Large Desktop */
-@media (min-width: 1440px) {
-  .custom_card {
-    width: 13vw;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1vh;
-    border-radius: 25%;
+  h3 {
+    font-size: 4vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 3.5vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 3vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 2vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 1.5vw;
+    font-weight: 700;
   }
 }
 
@@ -151,5 +332,40 @@ p {
     align-items: center;
     gap: 1vh;
     border-radius: 25%;
+    cursor: pointer;
+  }
+  h1 {
+    font-size: 5vw;
+    font-weight: 900;
+  }
+
+  h2 {
+    font-size: 4vw;
+    font-weight: 800;
+  }
+
+  h3 {
+    font-size: 3vw;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-size: 2.5vw;
+    font-weight: 800;
+  }
+
+  h5 {
+    font-size: 2vw;
+    font-weight: 800;
+  }
+
+  h6 {
+    font-size: 1.5vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 1vw;
+    font-weight: 700;
   }
 }

@@ -9,7 +9,6 @@ export default defineEventHandler(async (event) => {
         message: "Missing parameters",
       });
     }
-    console.log("params.area: ", params.area);
     const response = await $fetch(`http://server:8080/api/v1/area/`, {
       method: "PUT",
       headers: {

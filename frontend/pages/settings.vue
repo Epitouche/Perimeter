@@ -67,7 +67,7 @@ const clearTokenAndLogout = () => {
         <EditableInput v-model="email" name="Email" />
       </div>
       <UButton
-        class="delete-button text-white flex flex-col justify-center items-center gap-2 max-md:gap-0 px-8 py-3 max-lg:py-0"
+        class="delete-button text-white flex flex-col justify-center items-center gap-2 max-md:gap-0 px-8 py-3 max-lg:py-1"
         @click="deleteAccount"
       >
         <p>Delete</p>
