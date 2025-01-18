@@ -146,21 +146,33 @@ func (service *userService) Login(
 func (service *userService) Register(
 	newUser schemas.User,
 ) (jwtToken string, userID uint64, err error) {
-	userWiththisEmail, err := service.repository.FindByEmail(newUser.Email)
-	if err != nil {
-		return "", 0, err
-	}
-	fmt.Printf("%+v\n", userWiththisEmail)
-
-	if len(userWiththisEmail) != 0 {
-		// return service.Login(newUser)
-		return "", 0, schemas.ErrEmailAlreadyExist
-	}
-
+	// email validation
 	if !isValidEmail(newUser.Email) {
 		return "", 0, schemas.ErrInvalidEmail
 	}
 
+	userWiththisEmail, err := service.repository.FindByEmail(newUser.Email)
+	if err != nil {
+		return "", 0, err
+	}
+
+	if len(userWiththisEmail) != 0 {
+		return "", 0, schemas.ErrEmailAlreadyExist
+	}
+
+	println(newUser.Username)
+
+	// username validation
+	userWiththisUserName, err := service.repository.FindByUserName(newUser.Username)
+	if err != nil {
+		return "", 0, err
+	}
+
+	if len(userWiththisUserName) != 0 {
+		return "", 0, schemas.ErrUsernameAlreadyExist
+	}
+
+	// store user
 	if newUser.Password != "" {
 		hashedPassword, err := database.HashPassword(newUser.Password)
 		if err != nil {
