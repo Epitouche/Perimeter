@@ -86,7 +86,7 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 
 	token, _, err := controller.userService.Register(newUser)
 	if err != nil {
-		return "", fmt.Errorf("can't register user: %w", err)
+		return "", err
 	}
 	return token, nil
 }

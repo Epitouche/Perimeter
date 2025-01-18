@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { styles } from './StylesAreaDetails';
@@ -27,7 +27,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
  * @property {Object} route.params - The parameters passed to the route.
  * @property {Object} route.params.area - The area object containing action options and service details.
  */
-const ActionsSections = ({ route }: Props) => {
+const ActionsSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
   const [isActionModalVisible, setIsActionModalVisible] = useState(false);
   const [selectedActionOptions, setSelectedActionOptions] = useState<{
@@ -106,9 +106,11 @@ const ActionsSections = ({ route }: Props) => {
         setDescription(body.description);
         setTitle(body.title);
         setRefreshRate(body.refresh_rate);
-        console.log('Area updated successfully');
       }
     } catch (error) {
+      if ((error as any).response.status === 401) {
+        navigation.navigate('Login');
+      }
       console.error('Error update area:', error);
     }
     setIsActionModalVisible(false);
@@ -125,7 +127,7 @@ const ActionsSections = ({ route }: Props) => {
           <Text style={styles.label}>Action</Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View>
+          <View style={{ maxWidth: '60%' }}>
             <View style={styles.detailContainer}>
               <Text style={styles.label}>Service:</Text>
               <Text style={styles.value}>{area.action.service.name}</Text>
@@ -141,6 +143,7 @@ const ActionsSections = ({ route }: Props) => {
           </View>
           <TouchableOpacity
             onPress={() => setIsActionModalVisible(true)}
+            accessibilityLabel="Modify Action"
             accessibilityHint="Opens a modal to modify the action options">
             <SvgFromUri
               uri={'https://api.iconify.design/mdi:pencil-circle-outline.svg'}
@@ -177,8 +180,13 @@ const ActionsSections = ({ route }: Props) => {
                         typeof selectedActionOptions[key],
                       )
                     }
-                    keyboardType="default" // Adjust as needed
-                    accessibilityHint={`Input for ${key}`}
+                    keyboardType={`${
+                      typeof selectedActionOptions[key] === 'number'
+                        ? 'numeric'
+                        : 'default'
+                    }`}
+                    accessibilityLabel="Action Option Input"
+                    accessibilityHint={`Input for the ${key} option`}
                   />
                 </View>
               ))}
@@ -190,6 +198,7 @@ const ActionsSections = ({ route }: Props) => {
               }}>
               <TouchableOpacity
                 onPress={handleSaveAction}
+                accessibilityLabel="Save Action"
                 accessibilityHint="Saves the modified action options">
                 <View style={styles.saveButton}>
                   <Text style={[{ color: 'white' }, { fontSize: 16 }]}>
@@ -199,6 +208,7 @@ const ActionsSections = ({ route }: Props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setIsActionModalVisible(false)}
+                accessibilityLabel="Cancel Action"
                 accessibilityHint="Closes the modal without saving changes">
                 <View style={styles.cancelButton}>
                   <Text style={[{ color: 'red' }, { fontSize: 16 }]}>

@@ -67,7 +67,7 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
       });
       setConnectedServices(connectedServices.filter(s => s !== name));
     } catch (error) {
-      if (error.code === 401) {
+      if ((error as any).code === 401) {
         navigation.navigate('Login');
       }
       console.error('Error disconnecting:', error);
@@ -130,10 +130,12 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
         const userData = await userResponse.json();
 
         setServices(serviceData);
-        const connected = userData.tokens.map(token => token.service.name);
+        const connected = userData.tokens.map(
+          (token: { service: { name: string } }) => token.service.name,
+        );
         setConnectedServices(connected);
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error fetching services:', error);
@@ -180,7 +182,6 @@ const ServicesScreen = ({ navigation }: { navigation: any }) => {
   const renderService = ({ item }: { item: any }) => {
     const isConnected = connectedServices.includes(item.name);
 
-    console.log(item);
     return (
       <TouchableOpacity
         accessibilityLabel={`${!isConnected ? 'Connect' : 'Disconnect'} from ${

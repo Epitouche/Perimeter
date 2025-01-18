@@ -1,7 +1,13 @@
 import React, { useContext } from 'react';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../Navigation/navigate';
+import { RootStackParamList } from '../Navigation/navigate';
 import { AppContext } from '../context/AppContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -77,14 +83,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         keyboardType="numeric"
         accessibilityHint="Input field for IP address"
       />
-      <Button
-        title="Connect"
+      <TouchableOpacity
         onPress={() => {
-          setIpAddress(ipAddress);
           navigation.navigate('Login');
         }}
-        accessibilityHint="Button to connect and navigate to the login screen"
-      />
+        accessibilityLabel="Connect"
+        accessibilityHint="Navigates to the login screen"
+        style={{ backgroundColor: 'blue', padding: 10, borderRadius: 5 }}>
+        <Text style={{ color: 'white' }}>Connect</Text>
+      </TouchableOpacity>
     </View>
   );
 };

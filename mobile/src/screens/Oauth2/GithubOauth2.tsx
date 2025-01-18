@@ -1,7 +1,7 @@
 import { AuthConfiguration, authorize } from 'react-native-app-auth';
-import { GITHUB_MOBILE_SECRET, GITHUB_MOBILE_CLIENT_ID } from '@env';
 import { Alert } from 'react-native';
 import { handleCallback } from './Callback';
+import { GITHUB_MOBILE_SECRET, GITHUB_MOBILE_CLIENT_ID } from '@env';
 
 /**
  * Handles the GitHub login process using OAuth2.

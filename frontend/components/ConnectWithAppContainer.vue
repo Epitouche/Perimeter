@@ -33,7 +33,7 @@ const filteredServices = computed(() =>
     :ui="{ padding: 'px-0' }"
     class="bg-custom_color-bg_section min-w-full flex flex-wrap justify-evenly"
   >
-    <ServiceList :apps="filteredServices" />
+    <ServiceList styling="button" :apps="filteredServices" />
   </UContainer>
 </template>
 

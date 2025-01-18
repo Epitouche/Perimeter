@@ -3,7 +3,6 @@ import type { ServiceResponse } from "~/interfaces/serviceResponse";
 
 const tokenCookie = useCookie("token");
 const errorMessage = ref<string | null>(null);
-const menuOpen = ref(false);
 const username = ref<string>("");
 const infosConnection = ref<ServiceResponse | null>(null);
 
@@ -15,7 +14,13 @@ async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
       infosConnection.value = await servicesConnectionInfos(tokenCookie.value);
-      username.value = infosConnection.value.user.username;
+      if (
+        infosConnection.value &&
+        infosConnection.value.user &&
+        infosConnection.value.user.username
+      ) {
+        username.value = infosConnection.value.user.username;
+      }
     }
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
@@ -23,95 +28,110 @@ async function loadConnectionInfos() {
   }
 }
 
-function toggleMenu() {
-  menuOpen.value = !menuOpen.value;
-}
-
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
 };
+
+const items = [
+  [
+    {
+      label: "Name",
+      slot: "name",
+    },
+    {
+      label: "Settings",
+      slot: "settings",
+    },
+    {
+      label: "Logout",
+      slot: "logout",
+    },
+  ],
+];
 </script>
 
 <template>
-  <div class="flex items-center p-[1.5em] bg-custom_color-bg_section">
-    <div class="flex items-center gap-[1em] grow-[0.95]">
+  <UContainer
+    :ui="{ padding: '!px-4 !py-4', constrained: 'min-w-screen' }"
+    class="flex flex-row justify-between items-center bg-custom_color-bg_section"
+  >
+    <div class="flex flex-row items-center gap-5">
       <img
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
-        class="h-[4em] w-[4em]"
-      >
-      <span class="font-black text-[2.5em]">Perimeter</span>
+        style="width: 18%; height: 18%"
+      />
+      <h5>Perimeter</h5>
     </div>
 
-    <div class="nav-links">
-      <nav>
-        <ul class="flex gap-[2.5em]">
-          <li>
-            <NuxtLink to="/workflow" class="nav-link">Workflow</NuxtLink>
-          </li>
-          <li>
-            <NuxtLink to="/myareas" class="nav-link">My Areas</NuxtLink>
-          </li>
-          <li>
-            <NuxtLink to="/myservices" class="nav-link">My Services</NuxtLink>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <div class="flex flex-row justify-evenly items-center gap-5">
+      <NuxtLink to="/myareas" class="hover:underline">
+        <h6>My Areas</h6>
+      </NuxtLink>
+      <NuxtLink to="/workflow" class="hover:underline">
+        <h6>Workflow</h6>
+      </NuxtLink>
+      <NuxtLink to="/myservices" class="hover:underline">
+        <h6>My Services</h6>
+      </NuxtLink>
 
-    <div class="ml-auto relative">
-      <UButton
-        class="flex items-center justify-center bg-white h-14 w-14 shadow-lg rounded-full cursor-pointer"
-        tabindex="0"
-        @click="toggleMenu"
+      <UDropdown
+        :items="items"
+        :popper="{ placement: 'bottom', arrow: true }"
+        :ui="{ item: { padding: '!p-4' } }"
       >
-        <Icon name="bytesize:user" class="text-black h-14 w-14" />
-      </UButton>
-      <div
-        v-if="menuOpen"
-        class="absolute top-full mt-4 right-0 p-4 rounded shadow-md flex flex-col gap-4 min-w-[200px] z-[1000] bg-custom_color-bg_section"
-      >
-        <div class="menu-header flex items-center justify-between gap-[1em]">
-          <span class="font-[400] text-[1em]"> {{ username }}</span>
-        </div>
+        <UAvatar
+          icon="i-bytesize-user"
+          :ui="{
+            size: { sm: '!h-fit !w-fit !py-[20%] !px-0 max-lg:!px-5' },
+            icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh]' } },
+          }"
+        />
 
-        <NuxtLink to="/settings" class="nav-link" tabindex="0"
-          >Settings</NuxtLink
-        >
+        <template #name>
+          <p class="w-full text-black">{{ username }}</p>
+        </template>
 
-        <UButton
-          class="flex items-center gap-2 py-2 px-4 text-base font-bold rounded-custom_border_radius cursor-pointer bg-custom_color-bg_section logout-button"
-          tabindex="-1"
-          @click="clearTokenAndLogout"
-        >
-          <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
+        <template #settings>
+          <NuxtLink
+            to="/settings"
+            class="w-full flex flex-row justify-end items-center gap-2"
+            tabindex="0"
+          >
+            <UIcon
+              name="i-bytesize-settings"
+              class="text-black w-[10%] h-[10%]"
+            />
+            <p class="text-black">Settings</p>
+          </NuxtLink>
+        </template>
+
+        <template #logout>
           <NuxtLink
             to="/login"
+            class="w-full self-center"
             tabindex="0"
             @keydown.enter="clearTokenAndLogout"
-            >Logout</NuxtLink
           >
-        </UButton>
-      </div>
+            <UButton
+              class="flex items-center gap-2 py-2 px-4 w-full text-base font-bold rounded-custom_border_radius cursor-pointer self-center bg-custom_color-bg_section logout-button"
+              tabindex="-1"
+              @click="clearTokenAndLogout"
+            >
+              <Icon name="bytesize:sign-out" class="text-white h-5 w-5" />
+              Logout
+            </UButton>
+          </NuxtLink>
+        </template>
+      </UDropdown>
     </div>
-  </div>
+  </UContainer>
 </template>
 
-<style>
-.nav-link {
-  color: black;
-  text-decoration: none;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.nav-link:hover {
-  text-decoration: underline;
-}
-
+<style scoped>
 .logout-button {
-  background-color: #ef4444;
+  background-color: #ff0000;
 }
 
 .logout-button:hover {

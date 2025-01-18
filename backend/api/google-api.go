@@ -49,7 +49,7 @@ func NewGoogleAPI(
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with gmail
+//	@Summary		Redirect To Service
 //	@Description	give url to authenticate with gmail
 //	@Tags			Gmail
 //	@Accept			json
@@ -70,7 +70,7 @@ func (api *GoogleAPI) RedirectToService(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallback godoc
 //
-//	@Summary		give url to authenticate with gmail
+//	@Summary		Handle Service Callback
 //	@Description	give url to authenticate with gmail
 //	@Tags			Gmail
 //	@Accept			json
@@ -95,7 +95,7 @@ func (api *GoogleAPI) HandleServiceCallback(apiRoutes *gin.RouterGroup) {
 
 // HandleServiceCallbackMobile godoc
 //
-//	@Summary		give authentication token to mobile
+//	@Summary		Handle Service Callback Mobile
 //	@Description	give authentication token to mobile
 //	@Tags			Gmail
 //	@Accept			json
@@ -120,7 +120,7 @@ func (api *GoogleAPI) HandleServiceCallbackMobile(apiRoutes *gin.RouterGroup) {
 
 // GetUserInfo godoc
 //
-//	@Summary		give user info of gmail
+//	@Summary		Get User Info
 //	@Description	give user info of gmail
 //	@Tags			Gmail
 //	@Accept			json

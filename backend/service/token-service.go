@@ -10,13 +10,35 @@ import (
 	"area/schemas"
 )
 
+// TokenService defines the interface for managing tokens.
+// It provides methods to save, update, delete, and retrieve tokens.
 type TokenService interface {
+	// SaveToken saves a new token and returns its ID.
+	// Returns an error if the operation fails.
 	SaveToken(token schemas.Token) (tokenID uint64, err error)
+
+	// Update modifies an existing token.
+	// Returns an error if the operation fails.
 	Update(token schemas.Token) error
+
+	// Delete removes a token.
+	// Returns an error if the operation fails.
 	Delete(token schemas.Token) error
+
+	// FindAll retrieves all tokens.
+	// Returns a slice of tokens.
 	FindAll() (allServices []schemas.Token)
+
+	// GetTokenById retrieves a token by its ID.
+	// Returns the token and an error if the operation fails.
 	GetTokenById(id uint64) (schemas.Token, error)
+
+	// GetTokenByUserId retrieves tokens by the user ID.
+	// Returns a slice of tokens and an error if the operation fails.
 	GetTokenByUserId(userID uint64) ([]schemas.Token, error)
+
+	// DeleteUserToken deletes a user token by its string representation and ID.
+	// Returns the deleted token and an error if the operation fails.
 	DeleteUserToken(
 		token string,
 		tokenToDelete struct{ Id uint64 },
@@ -28,6 +50,18 @@ type tokenService struct {
 	serviceUser UserService
 }
 
+// NewTokenService creates a new instance of TokenService with the provided
+// TokenRepository and UserService. It initializes the tokenService struct
+// with the given repository and serviceUser, and returns a pointer to the
+// newly created tokenService.
+//
+// Parameters:
+//   - repository: an instance of TokenRepository used for token-related
+//     database operations.
+//   - serviceUser: an instance of UserService used for user-related operations.
+//
+// Returns:
+//   - TokenService: a pointer to the newly created tokenService instance.
 func NewTokenService(repository repository.TokenRepository, serviceUser UserService) TokenService {
 	newService := tokenService{
 		repository:  repository,
@@ -36,6 +70,20 @@ func NewTokenService(repository repository.TokenRepository, serviceUser UserServ
 	return &newService
 }
 
+// SaveToken saves a token to the repository if it does not already exist.
+// It first checks if the token already exists in the repository. If it does,
+// it returns the existing token ID and an error indicating that the token
+// already exists. If the token does not exist, it saves the token to the
+// repository and then retrieves the token ID.
+//
+// Parameters:
+//
+//	token - the token to be saved.
+//
+// Returns:
+//
+//	tokenID - the ID of the saved token.
+//	err - an error if the token could not be saved or if it already exists.
 func (service *tokenService) SaveToken(
 	token schemas.Token,
 ) (tokenID uint64, err error) {
@@ -66,6 +114,15 @@ func (service *tokenService) SaveToken(
 	return 0, schemas.ErrUnableToSaveToken
 }
 
+// GetUserInfo retrieves user information from the GitHub API using the provided access token.
+// It sends an HTTP GET request to the GitHub user endpoint and decodes the response into a GmailUserInfo schema.
+//
+// Parameters:
+//   - accessToken: A string containing the access token for authorization.
+//
+// Returns:
+//   - schemas.GmailUserInfo: A struct containing the user's information.
+//   - error: An error if the request or decoding fails.
 func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserInfo, error) {
 	ctx := context.Background()
 
@@ -103,6 +160,15 @@ func (service *tokenService) GetTokenById(id uint64) (schemas.Token, error) {
 	return token, nil
 }
 
+// GetTokenByUserId retrieves a list of tokens associated with the given user ID.
+// It returns a slice of Token schemas and an error if any occurred during the retrieval process.
+//
+// Parameters:
+//   - userID: The ID of the user whose tokens are to be retrieved.
+//
+// Returns:
+//   - []schemas.Token: A slice of Token schemas associated with the user.
+//   - error: An error if any occurred during the retrieval process, otherwise nil.
 func (service *tokenService) GetTokenByUserId(userID uint64) ([]schemas.Token, error) {
 	tokens, err := service.repository.FindByUserId(userID)
 	if err != nil {
@@ -111,6 +177,16 @@ func (service *tokenService) GetTokenByUserId(userID uint64) ([]schemas.Token, e
 	return tokens, nil
 }
 
+// Update updates the given token in the repository.
+// It takes a Token schema as input and returns an error if the update operation fails.
+//
+// Parameters:
+//
+//	token (schemas.Token): The token to be updated.
+//
+// Returns:
+//
+//	error: An error object if the update operation fails, otherwise nil.
 func (service *tokenService) Update(token schemas.Token) error {
 	return service.repository.Update(token)
 }
@@ -127,7 +203,15 @@ func (service *tokenService) FindAll() []schemas.Token {
 	return tokens
 }
 
-// containsArea checks if a slice of areas contains a specific area
+// containsToken checks if a given token is present in a slice of tokens.
+// It returns true if the token is found, otherwise it returns false.
+//
+// Parameters:
+// - tokens: A slice of schemas.Token where the search is performed.
+// - token: The schemas.Token to search for in the tokens slice.
+//
+// Returns:
+// - bool: true if the token is found in the slice, false otherwise.
 func containsToken(tokens []schemas.Token, token schemas.Token) bool {
 	for _, a := range tokens {
 		if a.Id == token.Id {
@@ -137,6 +221,24 @@ func containsToken(tokens []schemas.Token, token schemas.Token) bool {
 	return false
 }
 
+// DeleteUserToken deletes a specific token associated with a user.
+// It takes a token string for authentication and a struct containing the ID of the token to delete.
+// It returns the deleted token and an error if any occurred during the process.
+//
+// Parameters:
+//   - token: A string representing the user's authentication token.
+//   - tokenToDelete: A struct containing the ID of the token to be deleted.
+//
+// Returns:
+//   - deletedToken: The token that was deleted.
+//   - err: An error if any occurred during the deletion process.
+//
+// Errors:
+//   - Returns an error if the user information cannot be retrieved.
+//   - Returns an error if the tokens associated with the user cannot be found.
+//   - Returns an error if the token to delete cannot be found.
+//   - Returns an error if the token to delete belongs to the user and cannot be deleted.
+//   - Returns an error if the token to delete is not found in the user's token list.
 func (service *tokenService) DeleteUserToken(
 	token string,
 	tokenToDelete struct{ Id uint64 },

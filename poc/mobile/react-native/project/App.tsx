@@ -14,7 +14,6 @@ export default function App() {
 
       const response = await fetch(`http://${ipAddress}:8080/ping`);
       const data = await response.json();
-      console.log('Response:', data);
       setResponseData(JSON.stringify(data, null, 2));
     } catch (error) {
       console.error('Error making GET request:', error);
