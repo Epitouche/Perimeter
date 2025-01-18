@@ -21,10 +21,10 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         accessibilityHint="Navigates to the home screen"
         style={styles.navButton}>
         <SvgFromUri
-          uri={"https://api.iconify.design/mdi:view-grid-outline.svg"}
+          uri={'https://api.iconify.design/mdi:view-grid-outline.svg'}
           width={24}
           height={24}
-          color={"#000000"}
+          color={'#000000'}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -33,10 +33,10 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         onPress={() => navigation.navigate('WorkflowScreen')}
         style={styles.navButton}>
         <SvgFromUri
-          uri={"https://api.iconify.design/mdi:plus-box-outline.svg"}
+          uri={'https://api.iconify.design/mdi:plus-box-outline.svg'}
           width={24}
           height={24}
-          color={"#000000"}
+          color={'#000000'}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -45,10 +45,10 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         onPress={() => navigation.navigate('ServicesScreen')}
         style={styles.navButton}>
         <SvgFromUri
-          uri={"https://api.iconify.design/mdi:login.svg"}
+          uri={'https://api.iconify.design/mdi:login.svg'}
           width={24}
           height={24}
-          color={"#000000"}
+          color={'#000000'}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -57,10 +57,10 @@ const BottomNavBar = ({ navigation }: { navigation: NavigationProp<any> }) => {
         onPress={() => navigation.navigate('SettingsScreen')}
         style={styles.navButton}>
         <SvgFromUri
-          uri={"https://api.iconify.design/mdi:account.svg"}
+          uri={'https://api.iconify.design/mdi:account.svg'}
           width={24}
           height={24}
-          color={"#000000"}
+          color={'#000000'}
         />
       </TouchableOpacity>
     </View>
