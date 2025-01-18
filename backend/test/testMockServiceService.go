@@ -1,9 +1,10 @@
 package test
 
 import (
+	"encoding/json"
+
 	"area/schemas"
 	"area/service"
-	"encoding/json"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -20,7 +21,14 @@ func (m *MockServiceService) HandleServiceCallback(code string,
 	getUserInfo func(token string) (userInfo schemas.User, err error),
 	tokenService service.TokenService,
 ) (string, error) {
-	args := m.Called(authorization, serviceName, authGetServiceAccessToken, serviceUser, getUserInfo, tokenService)
+	args := m.Called(
+		authorization,
+		serviceName,
+		authGetServiceAccessToken,
+		serviceUser,
+		getUserInfo,
+		tokenService,
+	)
 	return args.String(0), args.Error(1)
 }
 
@@ -45,7 +53,9 @@ func (m *MockServiceService) GetServices() []interface{} {
 	return args.Get(0).([]interface{})
 }
 
-func (m *MockServiceService) FindActionByName(name string) func(chan string, json.RawMessage, schemas.Area) {
+func (m *MockServiceService) FindActionByName(
+	name string,
+) func(chan string, json.RawMessage, schemas.Area) {
 	args := m.Called(name)
 	return args.Get(0).(func(chan string, json.RawMessage, schemas.Area))
 }
@@ -60,7 +70,9 @@ func (m *MockServiceService) FindAll() []schemas.Service {
 	return args.Get(0).([]schemas.Service)
 }
 
-func (m *MockServiceService) FindReactionByName(name string) func(json.RawMessage, schemas.Area) string {
+func (m *MockServiceService) FindReactionByName(
+	name string,
+) func(json.RawMessage, schemas.Area) string {
 	args := m.Called(name)
 	return args.Get(0).(func(json.RawMessage, schemas.Area) string)
 }
@@ -80,7 +92,11 @@ func (m *MockServiceService) GetServicesInfo() ([]schemas.Service, error) {
 	return args.Get(0).([]schemas.Service), args.Error(1)
 }
 
-func (m *MockServiceService) RedirectToServiceOauthPage(serviceName schemas.ServiceName, state string, redirectUri string) (string, error) {
+func (m *MockServiceService) RedirectToServiceOauthPage(
+	serviceName schemas.ServiceName,
+	state string,
+	redirectUri string,
+) (string, error) {
 	args := m.Called(serviceName, state, redirectUri)
 	return args.String(0), args.Error(1)
 }

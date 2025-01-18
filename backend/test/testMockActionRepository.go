@@ -35,7 +35,10 @@ func (m *MockActionRepository) Save(action schemas.Action) error {
 	return args.Error(0)
 }
 
-func (m *MockActionRepository) FindByServiceByName(serviceId uint64, serviceName string) ([]schemas.Action, error) {
+func (m *MockActionRepository) FindByServiceByName(
+	serviceId uint64,
+	serviceName string,
+) ([]schemas.Action, error) {
 	args := m.Called(serviceId, serviceName)
 	return args.Get(0).([]schemas.Action), args.Error(1)
 }

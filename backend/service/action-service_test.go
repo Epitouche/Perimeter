@@ -72,7 +72,9 @@ func TestGetAllServicesByServiceId(t *testing.T) {
 	service := service.NewActionService(mockRepo, mockServiceService)
 	actions := service.GetAllServicesByServiceId(1)
 
-	expectedActionJSON := []schemas.ActionJSON{{Name: "Test Action", Description: "Test Description"}}
+	expectedActionJSON := []schemas.ActionJSON{
+		{Name: "Test Action", Description: "Test Description"},
+	}
 	assert.Equal(t, expectedActionJSON, actions)
 }
 
