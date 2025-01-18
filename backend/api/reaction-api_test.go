@@ -24,7 +24,9 @@ func (m *MockReactionController) GetReactionsInfo(serviceID uint64) ([]schemas.R
 	return args.Get(0).([]schemas.Reaction), args.Error(1)
 }
 
-func (m *MockReactionController) GetReactionByReactionID(reactionID uint64) (schemas.Reaction, error) {
+func (m *MockReactionController) GetReactionByReactionID(
+	reactionID uint64,
+) (schemas.Reaction, error) {
 	args := m.Called(reactionID)
 	return args.Get(0).(schemas.Reaction), args.Error(1)
 }
