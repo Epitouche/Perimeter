@@ -80,7 +80,7 @@ watch(
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="p-0"
       :style="{ width: isLongText(typeName) ? '20%' : '15%' }"
-    />
+    >
     <h3
       :class="[
         'text-white text-center break-words whitespace-normal leading-[100%]',
