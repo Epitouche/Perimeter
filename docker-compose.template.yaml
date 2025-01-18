@@ -119,6 +119,17 @@ services:
       - "traefik.enable=true"
     pull_policy: always
 
+  mobile-documentation:
+    container_name: mobile-documentation
+    ports:
+      - '0.0.0.0:6062:6062'
+    networks:
+      - app-networks
+    restart: always
+    labels:
+      - "traefik.enable=true"
+    pull_policy: always
+
 networks:
   app-networks:
 

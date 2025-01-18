@@ -50,6 +50,15 @@ services:
       file: ./docker-compose.template.yaml
       service: server-documentation
 
+  mobile-documentation:
+    build:
+      context: ./mobile
+      target: documentation
+      dockerfile: Dockerfile
+    extends:
+      file: ./docker-compose.template.yaml
+      service: mobile-documentation
+
 networks:
   app-networks:
 

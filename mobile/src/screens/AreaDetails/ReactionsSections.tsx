@@ -27,7 +27,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AreaDetails'>;
  * @example
  * <ReactionsSections route={route} />
  */
-const ReactionsSections = ({ route }: Props) => {
+const ReactionsSections = ({ navigation, route }: Props) => {
   const { area } = route.params;
   const { ipAddress, token } = useContext(AppContext);
   const [title, setTitle] = useState<string>('');
@@ -101,9 +101,11 @@ const ReactionsSections = ({ route }: Props) => {
         setDescription(body.description);
         setTitle(body.title);
         setRefreshRate(body.refresh_rate);
-        console.log('Area updated successfully');
       }
     } catch (error) {
+      if ((error as any).response.status === 401) {
+        navigation.navigate('Login');
+      }
       console.error('Error update area:', error);
     }
     setIsReactionModalVisible(false);

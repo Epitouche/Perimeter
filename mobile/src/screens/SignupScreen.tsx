@@ -169,7 +169,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
           );
         }
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error', error);
@@ -207,7 +207,9 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
 
       const serviceData = await serviceResponse.json();
       setServices(serviceData);
-      console.log(serviceData.filter(service => service.oauth));
+      console.log(
+        serviceData.filter((service: { oauth: boolean }) => service.oauth),
+      );
     };
 
     fetchServices();
@@ -260,7 +262,7 @@ const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={switchToLogin}
           accessibilityHint="Tap to switch to login screen">
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>Log In</Text>
         </TouchableOpacity>
       </View>
 

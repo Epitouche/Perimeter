@@ -96,7 +96,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
         setActionService(actionData.service);
         setReactionService(reactionData.service);
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error fetching service:', error);
@@ -137,7 +137,7 @@ const ValidateAreaScreen: React.FC<Props> = ({ navigation, route }) => {
       let res = await data.json();
       navigation.navigate('AreaView');
     } catch (error) {
-      if (error.code === 401) {
+      if ((error as any).code === 401) {
         navigation.navigate('Login');
       }
       console.error('Error saving area:', error);
