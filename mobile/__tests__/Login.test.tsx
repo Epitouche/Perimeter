@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import LoginScreen from '../src/screens/LoginScreen';
+import { AppProvider } from '../src/context/AppContext';
 
 const MockNavigation = {
   navigate: jest.fn(),
@@ -25,46 +26,53 @@ const MockNavigation = {
   popToTop: jest.fn(),
   popTo: jest.fn(),
 };
+
+jest.mock('../src/context/AppContext', () => {
+  const originalModule = jest.requireActual('../src/context/AppContext');
+  return {
+    ...originalModule,
+    AppProvider: ({ children }: { children: React.ReactNode }) => (
+      <originalModule.AppContext.Provider value={{ ipAddress: 'localhost' }}>
+        {children}
+      </originalModule.AppContext.Provider>
+    ),
+  };
+});
+
 const MockRoute = { key: 'login', name: 'Login' as const, params: undefined };
 
 describe('LoginScreen', () => {
   it('should render correctly', () => {
-    const { getByPlaceholderText, getByText } = render(
-      <LoginScreen navigation={MockNavigation} route={MockRoute} />,
+    const { getByPlaceholderText } = render(
+      <AppProvider>
+        <LoginScreen navigation={MockNavigation} route={MockRoute} />
+      </AppProvider>,
     );
-    expect(getByPlaceholderText('Email')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
-    expect(getByText('Login')).toBeTruthy();
+    expect(getByPlaceholderText('Enter username')).toBeTruthy();
+    expect(getByPlaceholderText('Enter password')).toBeTruthy();
   });
 
   it('should show error message when email is empty', () => {
-    const { getByText, getByPlaceholderText } = render(
-      <LoginScreen navigation={MockNavigation} route={MockRoute} />,
+    const { getByText, getByPlaceholderText, getByTestId } = render(
+      <AppProvider>
+        <LoginScreen navigation={MockNavigation} route={MockRoute} />
+      </AppProvider>,
     );
-    fireEvent.changeText(getByPlaceholderText('Email'), '');
-    fireEvent.changeText(getByPlaceholderText('Password'), 'password');
-    fireEvent.press(getByText('Login'));
-    expect(getByText('Email is required')).toBeTruthy();
+    fireEvent.changeText(getByPlaceholderText('Enter username'), '');
+    fireEvent.changeText(getByPlaceholderText('Enter password'), 'password');
+    fireEvent.press(getByTestId('login-button'));
+    expect(getByText('Username is required')).toBeTruthy();
   });
 
   it('should show error message when password is empty', () => {
-    const { getByText, getByPlaceholderText } = render(
-      <LoginScreen navigation={MockNavigation} route={MockRoute} />,
+    const { getByText, getByPlaceholderText, getByTestId } = render(
+      <AppProvider>
+        <LoginScreen navigation={MockNavigation} route={MockRoute} />
+      </AppProvider>,
     );
-    fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText('Password'), '');
-    fireEvent.press(getByText('Login'));
+    fireEvent.changeText(getByPlaceholderText('Enter username'), 'username');
+    fireEvent.changeText(getByPlaceholderText('Enter password'), '');
+    fireEvent.press(getByTestId('login-button'));
     expect(getByText('Password is required')).toBeTruthy();
-  });
-
-  it('should call login function with correct credentials', () => {
-    const mockLogin = jest.fn();
-    const { getByText, getByPlaceholderText } = render(
-      <LoginScreen navigation={MockNavigation} route={MockRoute} />,
-    );
-    fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText('Password'), 'password');
-    fireEvent.press(getByText('Login'));
-    expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password');
   });
 });

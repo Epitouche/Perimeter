@@ -70,9 +70,11 @@ const AreaDetailsScreen = ({ navigation, route }: Props) => {
         if (response.ok) {
           const body = await response.json();
           setAreaResults(body);
-          console.log('Area results:', body);
         }
       } catch (error) {
+        if ((error as any).response.status === 401) {
+          navigation.navigate('Login');
+        }
         console.error('Error fetching area results:', error);
       }
     };

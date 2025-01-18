@@ -108,7 +108,7 @@ func (api *UserApi) Register(apiRoutes *gin.RouterGroup) {
 					Error: err.Error(),
 				})
 				return
-			case schemas.ErrEmailAlreadyExist:
+			case schemas.ErrEmailAlreadyExist, schemas.ErrUsernameAlreadyExist:
 				ctx.JSON(http.StatusConflict, &schemas.ErrorResponse{
 					Error: err.Error(),
 				})

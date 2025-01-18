@@ -55,7 +55,7 @@ const AreasScreen = ({ navigation }: Props) => {
         const data = await response.json();
         setAreas(data);
       } catch (error) {
-        if (error.code === 401) {
+        if ((error as any).code === 401) {
           navigation.navigate('Login');
         }
         console.error('Error fetching areas:', error);
