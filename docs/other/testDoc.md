@@ -9,9 +9,12 @@
     - [Setup](#setup)
     - [Run Test](#run-test)
     - [View Result](#view-result)
+  - [Frontend](#frontend)
+    - [install frontend dependencies](#install-frontend-dependencies)
+    - [run frontend test](#run-frontend-test)
   - [Mobile](#mobile)
-    - [install dependencies](#install-dependencies)
-    - [run test](#run-test-1)
+    - [install mobile dependencies](#install-mobile-dependencies)
+    - [run mobile test](#run-mobile-test)
 
 ## Main Document
 
@@ -41,6 +44,26 @@ In the backend directory, after [Run Test](#run-test):
 go tool cover -html=coverage.out
 ```
 
+## Frontend
+
+Fill up the `.env` file.
+
+```bash
+cd mobile
+```
+
+### install frontend dependencies
+
+```bash
+npm install
+```
+
+### run frontend test
+
+```bash
+npx vitest run
+```
+
 ## Mobile
 
 Fill up the `.env` file.
@@ -49,13 +72,13 @@ Fill up the `.env` file.
 cd mobile
 ```
 
-### install dependencies
+### install mobile dependencies
 
 ```bash
 npm install --legacy-peer-deps
 ```
 
-### run test
+### run mobile test
 
 ```bash
 npm run test

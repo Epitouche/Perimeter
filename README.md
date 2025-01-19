@@ -1,4 +1,4 @@
-# ACTION-REACTION
+# Area Project
 
 ## Authors
 
@@ -12,16 +12,16 @@
 
 ## Table of Contents
 
-- [ACTION-REACTION](#action-reaction)
+- [Area Project](#area-project)
   - [Authors](#authors)
   - [Table of Contents](#table-of-contents)
   - [General Info](#general-info)
   - [Features](#features)
   - [Usage](#usage)
   - [Documentation](#documentation)
-    - [Frontend documentaion](#frontend-documentaion)
+    - [Frontend documentation](#frontend-documentation)
     - [Mobile documentation](#mobile-documentation)
-    - [Backend Documention](#backend-documention)
+    - [Backend Documentation](#backend-documentation)
     - [Application Documentation](#application-documentation)
     - [Other Documentation](#other-documentation)
     - [Proof of Concept (POC)](#proof-of-concept-poc)
@@ -37,7 +37,6 @@
     - [Tools Tech](#tools-tech)
   - [Accessibility](#accessibility)
     - [Visual](#visual)
-    - [Auditory](#auditory)
     - [Other](#other)
   - [Roles](#roles)
     - [Frontend](#frontend)
@@ -71,21 +70,20 @@ docker compose up --build
 
 ## Documentation
 
-### Frontend documentaion
+### Frontend documentation
 
 - [User Documentation](./docs/frontend/userDocFrontend.md)
-- Developper Documentation: launch project ==> localhost:6061
 - [Graphic Chart](./docs/frontend/graphicChart.md)
 
 ### Mobile documentation
 
 - [User Documentation](./docs/mobile/userDocMobile.md)
-- Developper Documentation: launch project ==> localhost:6062
-- [Developper Documentation](./docs/mobile/developerDocMobile.md)
+- Developer Documentation: launch project ==> localhost:6062
+- [Developer Documentation](./docs/mobile/developerDocMobile.md)
 
-### Backend Documention
+### Backend Documentation
 
-- Developper Documentation: launch project ==> localhost:6060
+- Developer Documentation: launch project ==> localhost:6060
 - [Database Documentation](./docs/backend/databaseDoc.md)
 - [Server API Documentation](./docs/backend/serverApiDoc.md)
 
@@ -97,7 +95,7 @@ docker compose up --build
 ### Other Documentation
 
 - [Dev Container Documentation](./docs/other/devContainerDoc.md)
-- [Developper Repository Documentation](./docs/other/developerDocRepo.md)
+- [Developer Repository Documentation](./docs/other/developerDocRepo.md)
 - [Test Documentation](./docs/other/testDoc.md)
 
 ### Proof of Concept (POC)
@@ -172,11 +170,6 @@ A comparative study of different backend technologies is available:
 ### Visual
 
 - Daltonism: High contrast color palette
-- Zoom
-
-### Auditory
-
-- Closed captioning for audio media
 
 ### Other
 
