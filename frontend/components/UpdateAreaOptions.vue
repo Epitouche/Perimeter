@@ -94,7 +94,7 @@ function formatName(name: string): string {
         :alt="type.service.name"
         style="width: 10%"
         class="max-sm:hidden"
-      >
+      />
       <h4 class="text-center leading-[100%]">
         <b>{{ formatName(type.service.name) }}</b
         >:
