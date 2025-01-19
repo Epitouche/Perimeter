@@ -30,7 +30,7 @@ const filteredServices = computed(() =>
     .filter((service) => service.oauth)
     .map((service) => ({
       name: service.name,
-    })),
+    }))
 );
 
 /**

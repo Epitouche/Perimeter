@@ -20,7 +20,7 @@ const token = useCookie("token");
  * The serviceInfo object contains information about the service.
  */
 const serviceInfo = ref<{ name: string; color: string; icon: string } | null>(
-  null,
+  null
 );
 
 const error = ref<string | null>(null);
@@ -85,7 +85,7 @@ watch(
       getServiceInfo();
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 

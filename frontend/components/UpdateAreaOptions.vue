@@ -25,7 +25,7 @@ const emit = defineEmits<{
     areaId: number,
     typeName: string,
     key: string,
-    value: string | number,
+    value: string | number
   ): void;
 }>();
 
@@ -35,7 +35,7 @@ const emit = defineEmits<{
 const state = reactive<{ [key: number]: Record<string, string | number> }>(
   typeof props.typeOptions === "string"
     ? { [props.type.id]: JSON.parse(props.typeOptions) }
-    : { [props.type.id]: props.typeOptions || {} },
+    : { [props.type.id]: props.typeOptions || {} }
 );
 
 /**
@@ -94,7 +94,7 @@ function formatName(name: string): string {
         :alt="type.service.name"
         style="width: 10%"
         class="max-sm:hidden"
-      >
+      />
       <h4 class="text-center leading-[100%]">
         <b>{{ formatName(type.service.name) }}</b
         >:

@@ -27,7 +27,7 @@ const loadServices = async () => {
 
 const filteredApps = computed(() => {
   return services.value.filter((app) =>
-    app.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+    app.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 </script>

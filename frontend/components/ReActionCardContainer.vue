@@ -21,7 +21,7 @@ const router = useRouter();
  * State for the options configuration modal of each action/reaction.
  */
 const configIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.types.map((type) => [type.id, false])),
+  Object.fromEntries(props.types.map((type) => [type.id, false]))
 );
 
 /**
@@ -35,15 +35,12 @@ const state = reactive<{
       type.id,
       typeof type.option === "string"
         ? JSON.parse(type.option)
-        : Object.keys(type.option || {}).reduce(
-            (acc, key) => {
-              acc[key] = undefined;
-              return acc;
-            },
-            {} as Record<string, undefined>,
-          ),
-    ]),
-  ),
+        : Object.keys(type.option || {}).reduce((acc, key) => {
+            acc[key] = undefined;
+            return acc;
+          }, {} as Record<string, undefined>),
+    ])
+  )
 );
 
 /**
@@ -72,7 +69,7 @@ const onSubmit = (typeId: number, typeTitle: string) => {
     ([key, value]) => {
       const expectedType = fieldTypes[typeId][key];
       return typeof value !== expectedType;
-    },
+    }
   );
 
   if (hasInvalidTypes) {
@@ -105,10 +102,10 @@ const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
             key,
             value === undefined || value === null ? "string" : typeof value,
           ];
-        }),
+        })
       ),
-    ]),
-  ),
+    ])
+  )
 );
 
 /**

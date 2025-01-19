@@ -47,7 +47,7 @@ watch(searchQuery, (newQuery) => {
       area.action.service.name.toLowerCase().includes(lowerQuery) ||
       area.reaction.service.name.toLowerCase().includes(lowerQuery) ||
       area.action.name.toLowerCase().includes(lowerQuery) ||
-      area.reaction.name.toLowerCase().includes(lowerQuery),
+      area.reaction.name.toLowerCase().includes(lowerQuery)
   );
 });
 
