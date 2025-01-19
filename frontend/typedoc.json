@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["interfaces", "middleware", "server/api", "stores", "utils"],
+  "out": "docs/ts",
+  "tsconfig": "tsconfig.json",
+  "includeVersion": true,
+  "excludeExternals": false // Optional: Exclude external modules from docs
+}

@@ -34,7 +34,7 @@ async function connectToService() {
         },
       }),
       new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout")), 5000),
+        setTimeout(() => reject(new Error("Timeout")), 5000)
       ),
     ]);
 

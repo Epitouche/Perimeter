@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         headers: {
           Authorization: params.authorization ? `${params.authorization}` : "",
         },
-      },
+      }
     );
     return response;
   } catch (error: unknown) {
