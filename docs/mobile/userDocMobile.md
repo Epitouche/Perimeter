@@ -31,13 +31,13 @@ This app is a tool to automate tasks in your digital life. Think of it as a pers
 
 ### First step
 
-Add the ip address of your server to cummunicate between the app and the server.
+Add the ip address of your server to communicate between the app and the server.
 
 <img src="images/user/connect.jpg" alt="image1" style="width:200px;"/>
 
 ### Signup screen
 
-You can signup with an email, user and password or use Oauth2 with the services available. This email/usename need to be unique!
+You can signup with an email, user and password or use Oauth2 with the services available. This email/username need to be unique!
 
 <img src="images/user/signup.jpg" alt="image2" style="width:200px;"/>
 <img src="images/user/signupFailed.jpg" alt="image3" style="width:200px;"/>
@@ -97,7 +97,7 @@ Click in the area to check the details of the area, enable/disable the area, mod
 
 ### Other tabs
 
-The last 2 tabs are the services tab to connect/deconnect to all services and the settings tab
+The last 2 tabs are the services tab to connect/disconnect to all services and the settings tab
 
 <img src="images/user/services.jpg" alt="image21" style="width:200px;"/>
 <img src="images/user/settings.jpg" alt="image22" style="width:200px;"/>
