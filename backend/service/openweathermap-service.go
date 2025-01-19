@@ -578,6 +578,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificTemperature(
 	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
 	if err != nil {
 		println("error get actual temperature info" + err.Error())
+	} else {
 		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) == optionJSON.Temperature {
 			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
 				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
@@ -656,6 +657,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionAboveTemperature(
 	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
 	if err != nil {
 		println("error get actual temperature info" + err.Error())
+	} else {
 		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) > optionJSON.Temperature {
 			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
 				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
@@ -745,6 +747,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionBelowTemperature(
 	weatherOfSpecifiedCity, err := getWeatherOfCoordinate(coordinates)
 	if err != nil {
 		println("error get actual temperature info" + err.Error())
+	} else {
 		if int64(math.Round(weatherOfSpecifiedCity.Main.Temp)) < optionJSON.Temperature {
 			if variableDatabaseStorage == schemas.OpenWeatherMapStorageVariableFalse {
 				response := "current temperature in " + optionJSON.City + " is " + fmt.Sprintf(
