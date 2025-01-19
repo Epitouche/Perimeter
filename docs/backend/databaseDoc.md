@@ -9,7 +9,7 @@
 
 ## Main Document
 
-[main documentation](../README.md)
+[main documentation](../../README.md)
 
 ## View
 
