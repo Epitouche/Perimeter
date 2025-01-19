@@ -1,5 +1,10 @@
 import type { ErrorResponse } from "~/interfaces/error";
 
+/**
+ * This function creates an error object that can be thrown
+ * 
+ * @param error - The error to handle
+ */
 export function handleError(error: unknown): never {
   let statusCode = 500;
   let message = "An unknown error occurred";

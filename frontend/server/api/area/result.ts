@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Makes a request to the backend to get the results of an area
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);

@@ -1,3 +1,6 @@
+/**
+ * Redirects the user to the OAuth provider's authentication page.
+ */
 export default defineEventHandler(async (event) => {
   interface OAuthLink {
     authentication_url: string;

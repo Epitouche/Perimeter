@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Sends an area with updated values to the backend
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);
