@@ -1,9 +1,7 @@
 {
-  "entryPoints": ["interfaces"],
+  "entryPoints": ["interfaces", "middleware", "server", "stores", "utils"],
   "out": "docs/ts",
   "tsconfig": "tsconfig.json",
   "includeVersion": true,
   "excludeExternals": false // Optional: Exclude external modules from docs
 }
-
-// , "middleware", "server", "stores", "utils"

@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Sends a POST request to the service's auth/callback endpoint to connect the user
+ */
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   if (!params.code || !params.service) {

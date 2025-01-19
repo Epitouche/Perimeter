@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Sends a DELETE request to the service's token endpoint to disconnect the user
+ */
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   if (!params.authorization || !params.tokenId) {

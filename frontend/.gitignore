@@ -23,4 +23,6 @@ logs
 .env.*
 !.env.example
 
-docs
+docs/
+
+notes.txt

@@ -1,3 +1,6 @@
+/**
+ * Fetches a service by its ID from the backend.
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);
