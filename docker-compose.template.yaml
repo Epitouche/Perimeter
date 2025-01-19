@@ -9,6 +9,17 @@ services:
     restart: no
     pull_policy: always
 
+  client_mobile-documentation:
+    container_name: client_mobile-documentation
+    ports:
+      - '0.0.0.0:6062:6062'
+    networks:
+      - app-networks
+    restart: always
+    labels:
+      - "traefik.enable=true"
+    pull_policy: always
+
   client_web:
     container_name: client_web
     depends_on:
@@ -22,6 +33,17 @@ services:
       - PORT=${FRONTEND_PORT:-8081}
     ports:
       - '0.0.0.0:${FRONTEND_PORT:-8081}:${FRONTEND_PORT:-8081}'
+    networks:
+      - app-networks
+    restart: always
+    labels:
+      - "traefik.enable=true"
+    pull_policy: always
+
+  client_web-documentation:
+    container_name: client_web-documentation
+    ports:
+      - '0.0.0.0:6061:6061'
     networks:
       - app-networks
     restart: always
@@ -52,17 +74,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    pull_policy: always
-
-  mobile-documentation:
-    container_name: mobile-documentation
-    ports:
-      - '0.0.0.0:6062:6062'
-    networks:
-      - app-networks
-    restart: always
-    labels:
-      - "traefik.enable=true"
     pull_policy: always
 
   reverse-proxy:
