@@ -10,11 +10,20 @@ const password = ref("");
 const token = useCookie("token");
 const loginError = ref<string | null>(null);
 
+/**
+ * @description RegisterResponse interface.
+ * @interface RegisterResponse
+ * @property {string} token - The token.
+ * @property {string} [message] - The message.
+ */
 interface RegisterResponse {
   token: string;
   message?: string;
 }
 
+/**
+ * @description Sends a login request to the server with the provided username and password.
+ */
 const handleLogin = async () => {
   try {
     loginError.value = null;

@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 
+/**
+ * @description The reaction interface
+ * @interface Reaction
+ * @property {number} id - The id of the reaction
+ * @property {string} name - The name of the reaction
+ * @property {string} description - The description of the reaction
+ */
 interface Reaction {
   id: number;
   name: string;
@@ -22,6 +29,9 @@ const errorMessage = ref<string | null>(null);
 
 const serviceInfo = ref<ServiceInfo | null>(null);
 
+/**
+ * @description Fetches the service information
+ */
 const getServiceInfo = async () => {
   if (serviceId) {
     isLoading.value = true;
@@ -47,6 +57,9 @@ const getServiceInfo = async () => {
   }
 };
 
+/**
+ * @description Fetches all the reactions
+ */
 const fetchReactions = async () => {
   isLoading.value = true;
   try {
@@ -69,6 +82,9 @@ const fetchReactions = async () => {
   }
 };
 
+/**
+ * @description Fetches the service information and reactions when the component is mounted
+ */
 onMounted(() => {
   getServiceInfo();
   fetchReactions();

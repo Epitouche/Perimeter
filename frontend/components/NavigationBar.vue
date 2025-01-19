@@ -7,7 +7,7 @@ const username = ref<string>("");
 const infosConnection = ref<ServiceResponse | null>(null);
 
 /**
- * Load service connection information
+ * @description Load service connection information
  */
 async function loadConnectionInfos() {
   try {
@@ -28,7 +28,7 @@ async function loadConnectionInfos() {
 }
 
 /**
- * Clear token and logout
+ * @description Clear token and logout
  */
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
@@ -36,7 +36,7 @@ const clearTokenAndLogout = () => {
 };
 
 /**
- * Items for the dropdown
+ * @description Items for the dropdown
  */
 const items = [
   [

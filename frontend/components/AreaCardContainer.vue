@@ -4,10 +4,12 @@ import type { Area } from "@/interfaces/areas";
 import type { AreaResult } from "@/interfaces/areaResult";
 
 /**
- * The users areas
+ * @description The users areas
+ *
+ * @prop areas - An array of the users areas
  */
 const props = defineProps<{
-  areas: Area[]; // An array of the users areas
+  areas: Area[];
 }>();
 
 const token = useCookie("token");
@@ -16,7 +18,7 @@ const router = useRouter();
 const route = useRoute();
 
 /**
- * Emits an event that reloads the areas
+ * @emit Emits an event that reloads the areas
  */
 const emit = defineEmits(["refreshAreas"]);
 
@@ -24,7 +26,7 @@ const componentKey = ref(0);
 const focusDiv = ref<HTMLElement | null>(null);
 
 /**
- * Retrieves the first value of a query parameter, converting it to a string if necessary.
+ * @description Retrieves the first value of a query parameter, converting it to a string if necessary.
  *
  * @param param - The query parameter, which can be a single value, an array of values, or undefined.
  * @returns The first query parameter as a string, or `null` if the parameter is undefined or an empty array.
@@ -39,7 +41,7 @@ const getQueryParam = (
 };
 
 /**
- * areaId, typeName, keyString, and valueNumber query parameters
+ * @description areaId, typeName, keyString, and valueNumber query parameters
  */
 const areaId = getQueryParam(route.query.areaId);
 const typeName = getQueryParam(route.query.typeName);
@@ -69,7 +71,7 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 );
 
 /**
- * Checks if a key is a valid key for the general area values
+ * @description Checks if a key is a valid key for the general area values
  *
  * @param key - The key to check.
  * @returns `true` if the key is valid, otherwise `false`.
@@ -83,7 +85,7 @@ const isValidKey = (
 };
 
 /**
- * Checks if an area is enabled.
+ * @description Checks if an area is enabled.
  *
  * @param areaId - The ID of the area to check the enable status for.
  */
@@ -97,7 +99,7 @@ const areaIsEnabled = (areaId: number) => {
 };
 
 /**
- * Toggles the visibility of the area modal and fetches the area results if opening.
+ * @description Toggles the visibility of the area modal and fetches the area results if opening.
  *
  * @param areaId - The ID of the area to toggle the modal for.
  */
@@ -109,7 +111,7 @@ const toggleAreaModal = (areaId: number) => {
 };
 
 /**
- * Toggles the visibility of the edit area slideover
+ * @description Toggles the visibility of the edit area slideover
  *
  * @param areaId - The ID of the area to toggle the slideover for.
  */
@@ -133,7 +135,7 @@ const toggleEditArea = (areaId: number) => {
 };
 
 /**
- * Toggles the 'enable' status of a specific area and updates the backend with the new status.
+ * @description Toggles the 'enable' status of a specific area and updates the backend with the new status.
  *
  * @param areaId - The ID of the area whose 'enable' status is to be toggled.
  */
@@ -170,7 +172,7 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
 };
 
 /**
- * Toggles the visibility of the confirm deletion modal for a specific area.
+ * @description Toggles the visibility of the confirm deletion modal for a specific area.
  *
  * @param areaId - The ID of the area to toggle the confirm deletion modal for.
  */
@@ -179,7 +181,7 @@ const toggleConfirmDeletionModal = (areaId: number) => {
 };
 
 /**
- * Deletes an area and updates the backend with the new status.
+ * @description Deletes an area and updates the backend with the new status.
  *
  * @param areaId - The ID of the area to delete.
  */
@@ -212,7 +214,7 @@ const onDelete = async (areaId: number) => {
 };
 
 /**
- * Cancels the deletion of an area and closes the confirm deletion modal.
+ * @description Cancels the deletion of an area and closes the confirm deletion modal.
  *
  * @param areaId - The ID of the area to cancel the deletion for.
  */
@@ -222,7 +224,7 @@ const cancelDeletion = (areaId: number) => {
 };
 
 /**
- * Formats the name of an area to be more readable.
+ * @description Formats the name of an area to be more readable.
  *
  * @param name - The name of the area to format.
  * @returns The formatted name.
@@ -235,7 +237,7 @@ function formatName(name: string): string {
 }
 
 /**
- * Fetches the results of an area and updates the selectedAreaData ref.
+ * @description Fetches the results of an area and updates the selectedAreaData ref.
  *
  * @param areaId - The ID of the area to fetch the results for.
  */
@@ -268,7 +270,7 @@ const fetchAreaResult = async (areaId: number) => {
 };
 
 /**
- * Formats a date string to a more readable format.
+ * @description Formats a date string to a more readable format.
  *
  * @param isoDate - The date string to format.
  * @returns The formatted date string.
@@ -286,7 +288,7 @@ function formatDate(isoDate: string): string {
 }
 
 /**
- * Sends new value to backend when an area value is updated.
+ * @description Sends new value to backend when an area value is updated.
  *
  * @param areaId - The ID of the area to update.
  * @param typeName - The type of option to update if applicable.

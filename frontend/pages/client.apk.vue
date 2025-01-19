@@ -6,6 +6,9 @@
 </template>
 
 <script>
+/**
+ * @description This page is used to download the client APK file.
+ */
 export default {
   data() {
     return {
