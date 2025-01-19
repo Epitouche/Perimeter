@@ -136,7 +136,7 @@ watch(
     v-else
     :ui="{ padding: '!px-0 !py-0', constrained: '!min-w-none !min-h-none' }"
     :class="[
-      'flex flex-row justify-evenly items-center bg-black rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[75vw] max-lg:h-[12vh] max-md:h-[12vh]',
+      'flex flex-row justify-evenly items-center bg-black rounded-3xl w-[35vw] min-h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[75vw] max-lg:min-h-[12vh] max-md:min-h-[12vh]',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
   >
