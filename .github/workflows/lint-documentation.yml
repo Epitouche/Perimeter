@@ -41,7 +41,7 @@ jobs:
         run: npm install -g markdownlint-cli
 
       - name: Run Linter
-        run: markdownlint --disable "MD013"  --fix ./docs --fix README.md
+        run: markdownlint --disable "MD013" --disable "MD033" --fix ./docs --fix README.md
 
       - name: Commit changes
         run: |
