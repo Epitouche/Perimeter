@@ -4,10 +4,10 @@ import { ref, watch } from "vue";
 export default {
   name: "EditableInput",
   /**
-   * The name of the input field
+   * @description The name of the input field
    * @type {String}
    * @required
-   * The value of the input field
+   * @description The value of the input field
    * @type {String}
    * @default ""
    */
@@ -22,7 +22,7 @@ export default {
     },
   },
   /**
-   * emits the updated value of the input field
+   * @emit emits the updated value of the input field
    */
   emits: ["update:modelValue"],
   setup(props, { emit }) {

@@ -2,7 +2,7 @@
 import type { Area } from "@/interfaces/areas";
 
 /**
- * Which area's option to update
+ * @description Which area's option to update
  */
 const props = defineProps<{
   areaId: number; // Area to update (by id)
@@ -17,7 +17,7 @@ const router = useRouter();
 const isOpen = ref(false);
 
 /**
- * Emit event to update area option value
+ * @emit Emit event to update area option value
  */
 const emit = defineEmits<{
   (
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 }>();
 
 /**
- * State to hold the updated values
+ * @description State to hold the updated values
  */
 const state = reactive<{ [key: number]: Record<string, string | number> }>(
   typeof props.typeOptions === "string"
@@ -39,7 +39,7 @@ const state = reactive<{ [key: number]: Record<string, string | number> }>(
 );
 
 /**
- * Send update information to page with function to send updated area option value to backend
+ * @description Send update information to page with function to send updated area option value to backend
  */
 const editValue = async (typeName: string, typeId: number, key: string) => {
   const updatedValues = { ...state[typeId] };
@@ -60,21 +60,21 @@ const editValue = async (typeName: string, typeId: number, key: string) => {
 };
 
 /**
- * Toggle the edit options slideover
+ * @description Toggle the edit options slideover
  */
 const toggleSlideover = () => {
   isOpen.value = !isOpen.value;
 };
 
 /**
- * The countWords function counts the number of words in the text.
+ * @description The countWords function counts the number of words in the text.
  */
 function countWords(text: string) {
   return text.trim().split(/\s+/).length;
 }
 
 /**
- * Format the name of the area option
+ * @description Format the name of the area option
  */
 function formatName(name: string): string {
   return name.replace(/([a-z])([A-Z])/g, "$1 $2");

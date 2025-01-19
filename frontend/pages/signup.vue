@@ -10,11 +10,19 @@ const confirmPassword = ref("");
 const signUpError = ref<string | null>(null);
 const token = useCookie("token");
 
+/**
+ * @interface RegisterResponse
+ * @property {string} token - The token.
+ * @property {string} [message] - The message.
+ */
 interface RegisterResponse {
   token: string;
   message?: string;
 }
 
+/**
+ * @description Sends a sign up request to the server with the provided email, username, and password.
+ */
 const handleSignUp = async () => {
   try {
     signUpError.value = null;

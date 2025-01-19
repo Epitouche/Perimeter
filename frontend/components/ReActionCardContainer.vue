@@ -7,7 +7,7 @@ import type { Type } from "@/interfaces/type";
  */
 
 /**
- * Which type of action/reaction is being displayed, and its corresponding information and service information.
+ * @description Which type of action/reaction is being displayed, and its corresponding information and service information.
  */
 const props = defineProps<{
   typeName: string; // "action" or "reaction"
@@ -18,14 +18,14 @@ const props = defineProps<{
 const router = useRouter();
 
 /**
- * State for the options configuration modal of each action/reaction.
+ * @description State for the options configuration modal of each action/reaction.
  */
 const configIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.types.map((type) => [type.id, false]))
 );
 
 /**
- * State for the options configuration of each action/reaction.
+ * @description State for the options configuration of each action/reaction.
  */
 const state = reactive<{
   [key: number]: Record<string, string | number | undefined>;
@@ -44,7 +44,7 @@ const state = reactive<{
 );
 
 /**
- * Toggles the options configuration modal of an action/reaction.
+ * @description Toggles the options configuration modal of an action/reaction.
  * @param typeId - The ID of the action/reaction being toggled.
  */
 const toggleConfig = (typeId: number) => {
@@ -58,7 +58,7 @@ const toggleConfig = (typeId: number) => {
 };
 
 /**
- * Submits the options configuration of an action/reaction by redirecting them to the workflow page.
+ * @description Submits the options configuration of an action/reaction by redirecting them to the workflow page.
  * @param typeId - The ID of the action/reaction being submitted.
  * @param typeTitle - The title of the action/reaction being submitted.
  */
@@ -89,7 +89,7 @@ const onSubmit = (typeId: number, typeTitle: string) => {
 };
 
 /**
- * The types of each field in the options configuration of each action/reaction.
+ * @description The types of each field in the options configuration of each action/reaction.
  */
 const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
   Object.fromEntries(
@@ -109,7 +109,7 @@ const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
 );
 
 /**
- * Formats a string by adding spaces between camel case words.
+ * @description Formats a string by adding spaces between camel case words.
  * @param str - The string to be formatted.
  * @returns The formatted string.
  */
@@ -118,7 +118,7 @@ function formatString(str: string): string {
 }
 
 /**
- * Checks if a string has a word with more than 8 characters.
+ * @description Checks if a string has a word with more than 8 characters.
  * @param text - The text to be checked.
  * @returns Whether the text has a word with more than 8 characters.
  */
@@ -133,7 +133,7 @@ const hasLongWord = (text: string): boolean => {
 };
 
 /**
- * Counts the number of words in a text.
+ * @description Counts the number of words in a text.
  * @param text - The text to be counted.
  * @returns The number of words in the text.
  */
@@ -158,7 +158,6 @@ function countWords(text: string) {
         @click="toggleConfig(type.id)"
         @keydown.space="toggleConfig(type.id)"
       >
-        <!-- , countWords(formatString(type.name)) > 3 ? '!w-[14vw]' : '' -->
         <h4
           :class="[
             'p-2 capitalize text-center break-words w-full',

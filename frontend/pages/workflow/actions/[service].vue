@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 
+/**
+ * @description This page is used to add an action to a service.
+ */
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
 });
 
+/**
+ * @description This type is used to define the structure of an action.
+ * @property {number} id
+ * @property {string} name
+ * @property {string} description
+ * @property {string} [option]
+ */
 interface ActionType {
   id: number;
   name: string;
@@ -22,6 +33,9 @@ const actions = ref<ActionType[] | null>(null);
 const errorMessage = ref<string | null>(null);
 const serviceInfo = ref<ServiceInfo | null>(null);
 
+/**
+ * @description This function fetches the service information.
+ */
 const getServiceInfo = async () => {
   if (!serviceId) return;
 
@@ -63,6 +77,11 @@ const fetchActions = async () => {
   }
 };
 
+/**
+ * @description This function handles the error status.
+ * @param {unknown} error
+ * @returns {string}
+ */
 onMounted(() => {
   getServiceInfo();
   fetchActions();

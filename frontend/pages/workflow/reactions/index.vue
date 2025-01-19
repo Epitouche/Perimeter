@@ -14,6 +14,9 @@ const isLoading = ref(true);
 
 const searchQuery = ref<string>("");
 
+/**
+ * @description Fetches all the services from the backend
+ */
 const fetchServices = async () => {
   try {
     errorMessage.value = null;
@@ -34,12 +37,19 @@ const fetchServices = async () => {
   }
 };
 
+/**
+ * @description Watches the search query and filters the services based on the query
+ * @param searchQuery - The search query
+ */
 watch(searchQuery, (newQuery) => {
   filteredServices.value = services.value.filter((service) =>
     service.name.toLowerCase().includes(newQuery.toLowerCase())
   );
 });
 
+/**
+ * @description Fetches all the services when the component is mounted
+ */
 onMounted(() => {
   fetchServices();
 });
