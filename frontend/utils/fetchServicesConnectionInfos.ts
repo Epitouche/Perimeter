@@ -4,7 +4,7 @@ import type { ServiceResponse } from "~/interfaces/serviceResponse";
 
 /**
  * Fetches the service connection information.
- * 
+ *
  * @param token - User token
  * @returns - Service connection information
  */

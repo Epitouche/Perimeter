@@ -3,7 +3,7 @@ import { handleErrorStatus } from "./handleErrorStatus";
 
 /**
  * Fetches a list of services from the backend
- * 
+ *
  * @returns - A list of services
  */
 export const fetchServices = async (): Promise<ServiceInfo[]> => {
