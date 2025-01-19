@@ -13,7 +13,7 @@ This API provides authentication and user information retrieval features for mul
   - [Online Documentation](#online-documentation)
   - [Local Documentation](#local-documentation)
     - [Swagger](#swagger)
-    - [Godoc](#godoc)
+  - [Godoc](#godoc)
   - [Endpoints](#endpoints)
     - [General Routes](#general-routes)
       - [`GET /ping`](#get-ping)
@@ -42,7 +42,7 @@ This API provides authentication and user information retrieval features for mul
 
 ## Main Document
 
-[main documentation](../README.md)
+[main documentation](../../README.md)
 
 ## Online Documentation
 

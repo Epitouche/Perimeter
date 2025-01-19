@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Fetches a users information from the server.
+ */
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   try {

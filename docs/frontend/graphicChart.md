@@ -13,7 +13,7 @@
 
 ## Main Document
 
-[main documentation](../README.md)
+[main documentation](../../README.md)
 
 ## Icon
 
@@ -48,14 +48,14 @@ A smooth font has been selected, ensuring each character is highly readable. In 
 Due to our simplistic style, the desire for ease of access, and the limited number of pages required, a horizontal navigation bar with four to five icons was chosen for desktop and mobile.
 ![Navigation Bar][image11]
 
-[image1]: image/perimeter_icon.png
-[image2]: image/style.png
-[image3]: image/black.png
-[image4]: image/white.png
-[image5]: image/white2.png
-[image6]: image/red.png
-[image7]: image/blue.png
-[image8]: image/purple.png
-[image9]: image/green.png
-[image10]: image/brown.png
-[image11]: image/navbar.png
+[image1]: images/graphicChart/perimeter_icon.png
+[image2]: images/graphicChart/style.png
+[image3]: images/graphicChart/black.png
+[image4]: images/grapuhicChart/white.png
+[image5]: images/graphicChart/white2.png
+[image6]: images/graphicChart/red.png
+[image7]: images/graphicChart/blue.png
+[image8]: images/graphicChart/purple.png
+[image9]: images/graphicChart/green.png
+[image10]: images/graphicChart/brown.png
+[image11]: images/graphicChart/navbar.png

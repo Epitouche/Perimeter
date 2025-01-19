@@ -19,6 +19,11 @@
   - [Features](#features)
   - [Usage](#usage)
   - [Documentation](#documentation)
+    - [Frontend documentaion](#frontend-documentaion)
+    - [Mobile documentation](#mobile-documentation)
+    - [Backend Documention](#backend-documention)
+    - [Application Documentation](#application-documentation)
+    - [Other Documentation](#other-documentation)
     - [Proof of Concept (POC)](#proof-of-concept-poc)
       - [Frontend POCs](#frontend-pocs)
       - [Backend POCs](#backend-pocs)
@@ -66,16 +71,34 @@ docker compose up --build
 
 ## Documentation
 
-- [Developer Documentation](./docs/developerDocumentation.md)
-- [Service Documentation](./docs/services.md)
-- [Database Documentation](./docs/database.md)
-- [Oauth Documentation](./docs/oauth.md)
-- [Server API Documentation](./docs/serverApi.md)
-- [Dev Container](./docs/devContainer.md)
-- [Test Documentation](./docs/test.md)
-- [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
-- [Mobile developer documentation](./docs/developerDocMobile.md)
-- [Mobile user documentation](./docs/userDocMobile.md)
+### Frontend documentaion
+
+- [User Documentation](./docs/frontend/userDocFrontend.md)
+- Developper Documentation: launch project ==> localhost:6061
+- [Graphic Chart](./docs/frontend/graphicChart.md)
+
+### Mobile documentation
+
+- [User Documentation](./docs/mobile/userDocMobile.md)
+- Developper Documentation: launch project ==> localhost:6062
+- [Developper Documentation](./docs/mobile/developerDocMobile.md)
+
+### Backend Documention
+
+- Developper Documentation: launch project ==> localhost:6060
+- [Database Documentation](./docs/backend/databaseDoc.md)
+- [Server API Documentation](./docs/backend/serverApiDoc.md)
+
+### Application Documentation
+
+- [Oauth Documentation](./docs/app/oauthDoc.md)
+- [Services Documentation](./docs/app/servicesDoc.md)
+
+### Other Documentation
+
+- [Dev Container Documentation](./docs/other/devContainerDoc.md)
+- [Developper Repository Documentation](./docs/other/developerDocRepo.md)
+- [Test Documentation](./docs/other/testDoc.md)
 
 ### Proof of Concept (POC)
 
@@ -149,7 +172,6 @@ A comparative study of different backend technologies is available:
 ### Visual
 
 - Daltonism: High contrast color palette
-- Dark mode
 - Zoom
 
 ### Auditory

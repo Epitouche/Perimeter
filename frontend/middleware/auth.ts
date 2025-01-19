@@ -1,3 +1,6 @@
+/**
+ * Auth middleware
+ */
 export default defineNuxtRouteMiddleware(() => {
   const authToken = useCookie("token");
 

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+/**
+ * The page to navigate to when the button is clicked.
+ */
 defineProps<{
-  link: string;
-  isWhite: boolean;
+  link: string; // The link to the page
+  isWhite: boolean; // Whether the button is white
 }>();
 </script>
 
@@ -10,11 +13,10 @@ defineProps<{
     variant="ghost"
     :to="link"
     :class="[
-      'border-custom_border_width flex flex-row justify-between items-center gap-2 w-fit p-4',
+      'border-custom_border_width flex items-center w-fit px-6 py-4 max-lg:py-3 max-md:py-2 max-md:px-4',
       isWhite ? '!border-white text-white' : '!border-black text-black',
     ]"
   >
-    <UIcon name="i-bytesize-chevron-left" class="w-[2vh] h-[2vh]" />
     <h6>Back</h6>
   </UButton>
 </template>

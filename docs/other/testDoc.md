@@ -9,6 +9,9 @@
     - [Setup](#setup)
     - [Run Test](#run-test)
     - [View Result](#view-result)
+  - [Mobile](#mobile)
+    - [install dependencies](#install-dependencies)
+    - [run test](#run-test-1)
 
 ## Main Document
 
@@ -36,4 +39,24 @@ In the backend directory, after [Run Test](#run-test):
 
 ```bash
 go tool cover -html=coverage.out
+```
+
+## Mobile
+
+Fill up the `.env` file.
+
+```bash
+cd mobile
+```
+
+### install dependencies
+
+```bash
+npm install --legacy-peer-deps
+```
+
+### run test
+
+```bash
+npm run test
 ```

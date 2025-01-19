@@ -3,8 +3,11 @@ import type { LocationQueryValue } from "vue-router";
 import type { Area } from "@/interfaces/areas";
 import type { AreaResult } from "@/interfaces/areaResult";
 
+/**
+ * The users areas
+ */
 const props = defineProps<{
-  areas: Area[];
+  areas: Area[]; // An array of the users areas
 }>();
 
 const token = useCookie("token");
@@ -12,8 +15,22 @@ const errorMessage = ref<string | null>(null);
 const router = useRouter();
 const route = useRoute();
 
+/**
+ * Emits an event that reloads the areas
+ */
+const emit = defineEmits(["refreshAreas"]);
+
+const componentKey = ref(0);
+const focusDiv = ref<HTMLElement | null>(null);
+
+/**
+ * Retrieves the first value of a query parameter, converting it to a string if necessary.
+ *
+ * @param param - The query parameter, which can be a single value, an array of values, or undefined.
+ * @returns The first query parameter as a string, or `null` if the parameter is undefined or an empty array.
+ */
 const getQueryParam = (
-  param: LocationQueryValue | LocationQueryValue[] | undefined,
+  param: LocationQueryValue | LocationQueryValue[] | undefined
 ): string | null => {
   if (Array.isArray(param)) {
     return param.length > 0 ? String(param[0]) : null;
@@ -21,12 +38,13 @@ const getQueryParam = (
   return param ? String(param) : null;
 };
 
+/**
+ * areaId, typeName, keyString, and valueNumber query parameters
+ */
 const areaId = getQueryParam(route.query.areaId);
 const typeName = getQueryParam(route.query.typeName);
 const keyString = getQueryParam(route.query.keyString);
 const value = getQueryParam(route.query.value);
-
-const emit = defineEmits(["refreshAreas"]);
 
 const areaIdNumber = Number(areaId);
 const valueNumber = value ? Number(value) : null;
@@ -38,18 +56,37 @@ if (valueNumber !== null && isNaN(valueNumber)) {
   console.error("Invalid value:", value);
 }
 
-const componentKey = ref(0);
-const focusDiv = ref<HTMLElement | null>(null);
 const selectedAreaData = ref<{ date: string; result: string }[] | null>(null);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+  Object.fromEntries(props.areas.map((area) => [area.id, false]))
 );
-
 const editAreaIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+  Object.fromEntries(props.areas.map((area) => [area.id, false]))
+);
+const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
+  Object.fromEntries(props.areas.map((area) => [area.id, false]))
 );
 
+/**
+ * Checks if a key is a valid key for the general area values
+ *
+ * @param key - The key to check.
+ * @returns `true` if the key is valid, otherwise `false`.
+ */
+const isValidKey = (
+  key: string
+): key is "title" | "description" | "action_refresh_rate" => {
+  return (
+    key === "title" || key === "description" || key === "action_refresh_rate"
+  );
+};
+
+/**
+ * Checks if an area is enabled.
+ *
+ * @param areaId - The ID of the area to check the enable status for.
+ */
 const areaIsEnabled = (areaId: number) => {
   const areaIndex = props.areas.findIndex((area) => area.id === areaId);
   if (areaIndex === -1) {
@@ -59,10 +96,11 @@ const areaIsEnabled = (areaId: number) => {
   return props.areas[areaIndex].enable;
 };
 
-const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.areas.map((area) => [area.id, false])),
-);
-
+/**
+ * Toggles the visibility of the area modal and fetches the area results if opening.
+ *
+ * @param areaId - The ID of the area to toggle the modal for.
+ */
 const toggleAreaModal = (areaId: number) => {
   areaIsOpen[areaId] = !areaIsOpen[areaId];
   if (areaIsOpen[areaId]) {
@@ -70,6 +108,11 @@ const toggleAreaModal = (areaId: number) => {
   }
 };
 
+/**
+ * Toggles the visibility of the edit area slideover
+ *
+ * @param areaId - The ID of the area to toggle the slideover for.
+ */
 const toggleEditArea = (areaId: number) => {
   editAreaIsOpen[areaId] = !editAreaIsOpen[areaId];
   if (
@@ -89,6 +132,11 @@ const toggleEditArea = (areaId: number) => {
   }
 };
 
+/**
+ * Toggles the 'enable' status of a specific area and updates the backend with the new status.
+ *
+ * @param areaId - The ID of the area whose 'enable' status is to be toggled.
+ */
 const toggleAreaEnableSwitch = async (areaId: number) => {
   const areaIndex = props.areas.findIndex((area) => area.id === areaId);
   if (areaIndex === -1) {
@@ -97,11 +145,9 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
   }
 
   const updatedArea = JSON.parse(
-    JSON.stringify(props.areas[areaIndex]),
+    JSON.stringify(props.areas[areaIndex])
   ) as Area;
   updatedArea.enable = !updatedArea.enable;
-
-  console.log("updatedArea after toggling enable:", updatedArea);
 
   try {
     errorMessage.value = null;
@@ -123,10 +169,20 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
   }
 };
 
+/**
+ * Toggles the visibility of the confirm deletion modal for a specific area.
+ *
+ * @param areaId - The ID of the area to toggle the confirm deletion modal for.
+ */
 const toggleConfirmDeletionModal = (areaId: number) => {
   confirmDeletionIsOpen[areaId] = !confirmDeletionIsOpen[areaId];
 };
 
+/**
+ * Deletes an area and updates the backend with the new status.
+ *
+ * @param areaId - The ID of the area to delete.
+ */
 const onDelete = async (areaId: number) => {
   if (confirmDeletionIsOpen[areaId]) {
     try {
@@ -155,11 +211,22 @@ const onDelete = async (areaId: number) => {
   return;
 };
 
+/**
+ * Cancels the deletion of an area and closes the confirm deletion modal.
+ *
+ * @param areaId - The ID of the area to cancel the deletion for.
+ */
 const cancelDeletion = (areaId: number) => {
   toggleConfirmDeletionModal(areaId);
   toggleAreaModal(areaId);
 };
 
+/**
+ * Formats the name of an area to be more readable.
+ *
+ * @param name - The name of the area to format.
+ * @returns The formatted name.
+ */
 function formatName(name: string): string {
   return name
     .replace(/^action_/, "")
@@ -167,6 +234,11 @@ function formatName(name: string): string {
     .replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
+/**
+ * Fetches the results of an area and updates the selectedAreaData ref.
+ *
+ * @param areaId - The ID of the area to fetch the results for.
+ */
 const fetchAreaResult = async (areaId: number) => {
   if (token.value) {
     try {
@@ -187,7 +259,6 @@ const fetchAreaResult = async (areaId: number) => {
         selectedAreaData.value = combinedData;
       } else {
         selectedAreaData.value = null;
-        console.error("Response doesn't have a valid result.");
       }
     } catch (error) {
       errorMessage.value = handleErrorStatus(error);
@@ -196,6 +267,12 @@ const fetchAreaResult = async (areaId: number) => {
   }
 };
 
+/**
+ * Formats a date string to a more readable format.
+ *
+ * @param isoDate - The date string to format.
+ * @returns The formatted date string.
+ */
 function formatDate(isoDate: string): string {
   const date = new Date(isoDate);
   const day = String(date.getDate()).padStart(2, "0");
@@ -208,23 +285,20 @@ function formatDate(isoDate: string): string {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 }
 
+/**
+ * Sends new value to backend when an area value is updated.
+ *
+ * @param areaId - The ID of the area to update.
+ * @param typeName - The type of option to update if applicable.
+ * @param keyString - The key/name of the option to update.
+ * @param value - The new value to set.
+ */
 const updateAreaValue = async (
   areaId: number,
   typeName: string | null,
   keyString: string,
-  value: string | number,
+  value: string | number
 ) => {
-  console.log(
-    "areaId:",
-    areaId,
-    "typeName:",
-    typeName,
-    "keyString:",
-    keyString,
-    "value:",
-    value,
-  );
-
   const areaIndex = props.areas.findIndex((area) => area.id === areaId);
   if (areaIndex === -1) {
     console.error("Area not found");
@@ -232,7 +306,7 @@ const updateAreaValue = async (
   }
 
   const updatedArea = JSON.parse(
-    JSON.stringify(props.areas[areaIndex]),
+    JSON.stringify(props.areas[areaIndex])
   ) as Area;
 
   if (typeName) {
@@ -256,8 +330,6 @@ const updateAreaValue = async (
         : value;
   }
 
-  console.log("Final updatedArea:", updatedArea);
-
   try {
     errorMessage.value = null;
 
@@ -275,39 +347,48 @@ const updateAreaValue = async (
   }
 
   router.push("myareas");
-  toggleEditArea(areaId);
+
+  if (editAreaIsOpen[areaId]) {
+    toggleEditArea(areaId);
+  }
 };
 
+/**
+ * Updates the area value if the areaId, typeName, keyString, and valueNumber are not null.
+ */
+if (areaIdNumber !== null && valueNumber !== null) {
+  updateAreaValue(areaIdNumber, typeName!, keyString!, valueNumber);
+}
+
+/**
+ * The state of the general area values
+ */
 const state = reactive<
   Record<number, Pick<Area, "title" | "description" | "action_refresh_rate">>
 >({});
 
+/**
+ * Filters the state object to only include the general area values
+ *
+ * @param areaId - The ID of the area to filter the state for.
+ * @returns The filtered state object.
+ */
 const filteredState = (areaId: number) => {
   const areaState = state[areaId] || {};
   return Object.entries(areaState)
     .filter(([key]) =>
-      ["title", "description", "action_refresh_rate"].includes(key),
+      ["title", "description", "action_refresh_rate"].includes(key)
     )
-    .reduce(
-      (obj, [key, value]) => {
-        obj[key] = value;
-        return obj;
-      },
-      {} as Record<string, string | number>,
-    );
+    .reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {} as Record<string, string | number>);
 };
 
-const isValidKey = (
-  key: string,
-): key is "title" | "description" | "action_refresh_rate" => {
-  return (
-    key === "title" || key === "description" || key === "action_refresh_rate"
-  );
-};
-
+/**
+ * Updates the state object with the general area values
+ */
 onMounted(() => {
-  console.log("areas in AreaCardContainer", props.areas);
-
   props.areas.forEach((area) => {
     state[area.id] = {
       title: area.title,
@@ -316,10 +397,6 @@ onMounted(() => {
     };
   });
 });
-
-if (areaIdNumber !== null && valueNumber !== null) {
-  updateAreaValue(areaIdNumber, typeName!, keyString!, valueNumber);
-}
 </script>
 
 <template>
@@ -337,7 +414,7 @@ if (areaIdNumber !== null && valueNumber !== null) {
         @click="toggleAreaModal(area.id)"
         @keydown.enter="toggleAreaModal(area.id)"
       >
-        <h6 class="clamp-1-line overflow-hidden w-full text-center px-2">
+        <h6 class="clamp-1-line overflow-hidden w-full text-center px-4">
           {{ formatName(area.title) }}
         </h6>
 
@@ -361,17 +438,16 @@ if (areaIdNumber !== null && valueNumber !== null) {
         v-model="areaIsOpen[area.id]"
         tabindex="0"
         :ui="{
-          width: 'min-w-[50%] max-w-[90%]',
+          width:
+            'min-w-[50%] max-w-[70%] max-lg:max-w-[75%] max-md:max-w-[85%] max-sm:max-w-[95%]',
         }"
       >
         <div
-          class="flex flex-col gap-12 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 max-lg:pl-10 max-lg:pr-10 max-lg:py-5 w-full max-h-[90vh]"
+          class="flex flex-col gap-12 max-sm:gap-5 font-semibold text-white rounded-custom_border_radius pl-20 pr-16 py-10 max-lg:pl-10 max-lg:pr-10 max-lg:py-5 max-sm:py-3 max-sm:px-2 w-full max-h-[90vh]"
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
-            <div
-              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1"
-            >
+            <div class="flex flex-row justify-between items-center w-full px-1">
               <div class="flex flex-row items-center gap-3">
                 <UToggle
                   :model-value="areaIsEnabled(area.id)"
@@ -380,10 +456,10 @@ if (areaIdNumber !== null && valueNumber !== null) {
                   @update:model-value="toggleAreaEnableSwitch(area.id)"
                   @keydown.enter="toggleAreaEnableSwitch(area.id)"
                 />
-                <div v-if="areaIsEnabled(area.id)" class="text-2xl">
+                <div v-if="areaIsEnabled(area.id)">
                   <p>Enabled</p>
                 </div>
-                <div v-else class="text-2xl">
+                <div v-else>
                   <p>Disabled</p>
                 </div>
               </div>
@@ -401,53 +477,55 @@ if (areaIdNumber !== null && valueNumber !== null) {
               </UButton>
             </div>
 
-            <h2 class="capitalize text-center w-full">
+            <h2 class="capitalize text-center w-full max-md:leading-[120%]">
               {{ area.title }}
             </h2>
           </div>
-
-          <div class="flex flex-col gap-10">
-            <UpdateAreaOptions
-              :area-id="area.id"
-              type-name="action"
-              :color="area.action.service.color"
-              :type="area.action"
-              :type-options="area.action_option"
-              @update-area-value="updateAreaValue"
-            />
-            <UpdateAreaOptions
-              :area-id="area.id"
-              type-name="reaction"
-              :color="area.action.service.color"
-              :type="area.reaction"
-              :type-options="area.reaction_option"
-              @update-area-value="updateAreaValue"
-            />
-          </div>
-
-          <div class="scrollbar-hidden w-full overflow-x-scroll max-h-[10vh]">
-            <h5 class="self-start whitespace-nowrap">Description:</h5>
-            <h6 class="pl-10 whitespace-nowrap">{{ area.description }}</h6>
-          </div>
-
-          <UContainer
-            :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
-            class="scrollable-element w-full bg-custom_color-bg_section overflow-y-scroll min-h-[10vh] rounded-lg text-black"
-          >
-            <div>
-              <h5
-                v-if="!selectedAreaData || selectedAreaData.length === 0"
-                class="px-1"
-              >
-                No Result
-              </h5>
-              <ul v-else>
-                <li v-for="(item, index) in selectedAreaData" :key="index">
-                  <span>{{ item.date }}</span> - <span>{{ item.result }}</span>
-                </li>
-              </ul>
+          <div class="overflow-y-auto flex flex-col gap-10 w-full">
+            <div class="flex flex-col gap-10 max-sm:gap-3">
+              <UpdateAreaOptions
+                :area-id="area.id"
+                type-name="action"
+                :color="area.action.service.color"
+                :type="area.action"
+                :type-options="area.action_option"
+                @update-area-value="updateAreaValue"
+              />
+              <UpdateAreaOptions
+                :area-id="area.id"
+                type-name="reaction"
+                :color="area.action.service.color"
+                :type="area.reaction"
+                :type-options="area.reaction_option"
+                @update-area-value="updateAreaValue"
+              />
             </div>
-          </UContainer>
+
+            <div class="w-full">
+              <h5 class="self-start whitespace-nowrap">Description:</h5>
+              <h6 class="pl-10 whitespace-nowrap">{{ area.description }}</h6>
+            </div>
+
+            <UContainer
+              :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+              class="scrollable-element w-full bg-custom_color-bg_section overflow-y-scroll min-h-[10vh] rounded-lg text-black"
+            >
+              <div>
+                <h5
+                  v-if="!selectedAreaData || selectedAreaData.length === 0"
+                  class="px-1"
+                >
+                  No Result
+                </h5>
+                <ul v-else>
+                  <li v-for="(item, index) in selectedAreaData" :key="index">
+                    <span>{{ item.date }}</span> -
+                    <span>{{ item.result }}</span>
+                  </li>
+                </ul>
+              </div>
+            </UContainer>
+          </div>
 
           <div class="flex flex-row justify-end items-center gap-2">
             <UTooltip text="Edit" class="self-end w-fit">
@@ -494,9 +572,14 @@ if (areaIdNumber !== null && valueNumber !== null) {
                       tabindex="0"
                       @click="
                         isValidKey(key) &&
-                        state[area.id][key] !==
-                          props.areas.find((a) => a.id === area.id)?.[key] &&
-                        updateAreaValue(area.id, null, key, state[area.id][key])
+                          state[area.id][key] !==
+                            props.areas.find((a) => a.id === area.id)?.[key] &&
+                          updateAreaValue(
+                            area.id,
+                            null,
+                            key,
+                            state[area.id][key]
+                          )
                       "
                     >
                       <UIcon name="i-bytesize-checkmark" />
@@ -525,13 +608,13 @@ if (areaIdNumber !== null && valueNumber !== null) {
       <UModal
         v-model="confirmDeletionIsOpen[area.id]"
         :ui="{
-          base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width',
+          base: 'relative text-left rtl:text-right flex flex-col gap-10 p-10 border-custom_border_width w-fit',
         }"
         :style="{ borderColor: area.action.service.color }"
       >
-        <h2>Are you sure you want to delete this area?</h2>
-        <p class="text-2xl">This action cannot be undone!</p>
-        <div class="flex flex-row justify-end items-center gap-5 pt-5">
+        <h4 class="text-center">Are you sure you want to delete this area?</h4>
+        <p class="text-center">This action cannot be undone!</p>
+        <div class="flex flex-row justify-center items-center gap-5 pt-5">
           <UButton
             class="bg-opacity-0 border-custom_border_width text-2xl font-semibold py-3 px-5"
             :style="{
@@ -567,13 +650,6 @@ if (areaIdNumber !== null && valueNumber !== null) {
   transition: all 1s ease-in-out;
 }
 
-/* .hover-expand-text:hover {
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
-  overflow: visible;
-  white-space: normal;
-} */
-
 .hover_underline_animation {
   display: inline-block;
   position: relative;
@@ -605,9 +681,5 @@ if (areaIdNumber !== null && valueNumber !== null) {
 .scrollable-element {
   scrollbar-width: thick;
   scrollbar-color: black rgba(255, 255, 255, 0.2);
-}
-
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
 }
 </style>

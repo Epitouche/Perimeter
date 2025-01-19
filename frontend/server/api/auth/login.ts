@@ -1,3 +1,6 @@
+/**
+ * Server-side handler for the login endpoint.
+ */
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 

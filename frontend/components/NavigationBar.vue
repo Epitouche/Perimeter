@@ -6,10 +6,9 @@ const errorMessage = ref<string | null>(null);
 const username = ref<string>("");
 const infosConnection = ref<ServiceResponse | null>(null);
 
-onMounted(() => {
-  loadConnectionInfos();
-});
-
+/**
+ * Load service connection information
+ */
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
@@ -28,11 +27,17 @@ async function loadConnectionInfos() {
   }
 }
 
+/**
+ * Clear token and logout
+ */
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
 };
 
+/**
+ * Items for the dropdown
+ */
 const items = [
   [
     {
@@ -49,14 +54,21 @@ const items = [
     },
   ],
 ];
+
+/**
+ * When the component is mounted, load the service connection information
+ */
+onMounted(() => {
+  loadConnectionInfos();
+});
 </script>
 
 <template>
   <UContainer
-    :ui="{ padding: '!px-4 !py-4', constrained: 'min-w-screen' }"
+    :ui="{ padding: '!p-4 max-sm:!p-2', constrained: 'min-w-screen' }"
     class="flex flex-row justify-between items-center bg-custom_color-bg_section"
   >
-    <div class="flex flex-row items-center gap-5">
+    <div class="max-md:hidden flex flex-row items-center gap-5">
       <img
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
@@ -65,7 +77,9 @@ const items = [
       <h5>Perimeter</h5>
     </div>
 
-    <div class="flex flex-row justify-evenly items-center gap-5">
+    <div
+      class="flex flex-row justify-around max-md:justify-between text-center max-md:pl-2 items-center gap-8 max-md:gap-0 max-md:w-full"
+    >
       <NuxtLink to="/myareas" class="hover:underline">
         <h6>My Areas</h6>
       </NuxtLink>
@@ -79,29 +93,35 @@ const items = [
       <UDropdown
         :items="items"
         :popper="{ placement: 'bottom', arrow: true }"
-        :ui="{ item: { padding: '!p-4' } }"
+        :ui="{ item: { padding: '!p-4 max-sm:!p-2' } }"
       >
         <UAvatar
           icon="i-bytesize-user"
           :ui="{
-            size: { sm: '!h-fit !w-fit !py-[20%] !px-0 max-lg:!px-5' },
-            icon: { size: { sm: '!w-[3.3vw] !h-[3.3vh]' } },
+            size: {
+              sm: '!h-fit !w-fit !py-[20%] !px-0 max-lg:!px-5 max-sm:!py-[3%] max-sm:!px-3',
+            },
+            icon: {
+              size: {
+                sm: '!w-[3.3vw] !h-[3.3vh] max-sm:!w-[7vw] max-sm:!h-[7vh]',
+              },
+            },
           }"
         />
 
         <template #name>
-          <p class="w-full text-black">{{ username }}</p>
+          <p class="w-full text-black max-sm:pt-2">{{ username }}</p>
         </template>
 
         <template #settings>
           <NuxtLink
             to="/settings"
-            class="w-full flex flex-row justify-end items-center gap-2"
+            class="w-full flex flex-row justify-start items-center gap-2 max-sm:gap-4"
             tabindex="0"
           >
             <UIcon
               name="i-bytesize-settings"
-              class="text-black w-[10%] h-[10%]"
+              class="text-black w-[2vw] h-[2vh] max-sm:w-[6vw] max-sm:h-[6vh]"
             />
             <p class="text-black">Settings</p>
           </NuxtLink>

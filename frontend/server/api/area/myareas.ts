@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Makes a request to the backend to get the areas of the user
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);

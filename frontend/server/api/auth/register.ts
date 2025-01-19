@@ -1,3 +1,6 @@
+/**
+ * Server-side handler for the `/api/auth/register` route that sends a POST request to the server to register a new user.
+ */
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 

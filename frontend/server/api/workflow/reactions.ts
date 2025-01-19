@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Fetches a services reactions from the server
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);
@@ -16,7 +19,7 @@ export default defineEventHandler(async (event) => {
         headers: {
           Authorization: "Bearer " + params.token,
         },
-      },
+      }
     );
     return response;
   } catch (error: unknown) {

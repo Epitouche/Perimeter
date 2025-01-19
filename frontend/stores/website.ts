@@ -1,3 +1,23 @@
+/**
+ * This is used to store the state of the website, specifically for the workflow page.
+ *
+ * The store contains the following state:
+ * @property {boolean} showNavBar - Whether the navigation bar should be shown.
+ * @property {boolean} showCancelButton - Whether the cancel button should be shown.
+ * @property {boolean} reactionButtonisDisabled - Whether the reaction button should be disabled.
+ * @property {boolean} showCreateButton - Whether the create button should be shown.
+ * @property {boolean} actionIsSelected - Whether an action has been selected.
+ * @property {boolean} reactionIsSelected - Whether a reaction has been selected.
+ * @property {string | null} actionId - The ID of the selected action.
+ * @property {Record<string, unknown>} actionOptions - The options for the selected action.
+ * @property {string | null} reactionId - The ID of the selected reaction.
+ * @property {Record<string, unknown>} reactionOptions - The options for the selected reaction.
+ * @property {string | null} actionServiceId - The ID of the service of the selected action.
+ * @property {string | null} reactionServiceId - The ID of the service of the selected reaction.
+ * @property {string} actionName - The name of the selected action.
+ * @property {string} reactionName - The name of the selected reaction.
+ *
+ */
 export const useWebsiteStore = defineStore("websiteStore", {
   state: () => ({
     showNavBar: true,
@@ -17,7 +37,7 @@ export const useWebsiteStore = defineStore("websiteStore", {
   }),
 
   actions: {
-    loadWorkflowState() {
+    loadWorkflowState(this: typeof useWebsiteStore.prototype) {
       const savedState = localStorage.getItem("workflowState");
 
       if (savedState) {
@@ -36,10 +56,9 @@ export const useWebsiteStore = defineStore("websiteStore", {
           this.clearWorkflowState();
         }
       }
-      //console.log("State loaded", this.$state);
     },
 
-    saveWorkflowState() {
+    saveWorkflowState(this: typeof useWebsiteStore.prototype) {
       const stateToSave = {
         actionId: this.actionId,
         actionOptions: this.actionOptions,
@@ -58,7 +77,6 @@ export const useWebsiteStore = defineStore("websiteStore", {
       };
 
       localStorage.setItem("workflowState", JSON.stringify(stateToSave));
-      //console.log("State saved", stateToSave);
     },
 
     isValidJsonObject(value: unknown): value is Record<string, unknown> {
@@ -67,13 +85,13 @@ export const useWebsiteStore = defineStore("websiteStore", {
       );
     },
 
-    clearWorkflowState() {
+    clearWorkflowState(this: typeof useWebsiteStore.prototype) {
       this.$reset();
       localStorage.removeItem("workflowState");
       this.saveWorkflowState();
     },
 
-    onActionSelected() {
+    onActionSelected(this: typeof useWebsiteStore.prototype) {
       this.showNavBar = false;
       this.showCancelButton = true;
       this.reactionButtonisDisabled = false;
@@ -81,14 +99,14 @@ export const useWebsiteStore = defineStore("websiteStore", {
       this.saveWorkflowState();
     },
 
-    onReactionSelected() {
+    onReactionSelected(this: typeof useWebsiteStore.prototype) {
       this.showCreateButton = true;
       this.reactionIsSelected = true;
       this.reactionButtonisDisabled = false;
       this.saveWorkflowState();
     },
 
-    resetWorkflowPage() {
+    resetWorkflowPage(this: typeof useWebsiteStore.prototype) {
       this.actionId = null;
       this.reactionId = null;
       this.actionOptions = {};
