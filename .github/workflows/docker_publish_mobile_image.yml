@@ -77,7 +77,7 @@ jobs:
           context: ./mobile
           target: build-apk
           build-contexts: |
-            alpine=docker-image://alpine:3.21
+            root_repo=.
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
