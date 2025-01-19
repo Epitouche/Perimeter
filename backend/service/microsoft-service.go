@@ -821,11 +821,15 @@ func (service *microsoftService) MicrosoftReactionCreateEvent(
 		return "Error parsing start time: " + err.Error()
 	}
 
+	startTime = startTime.Add(-time.Hour)
+
 	endTime, err := time.Parse("2006-01-02T15:04:05", options.End)
 	if err != nil {
 		fmt.Println("Error parsing end time:", err)
 		return "Error parsing end time: " + err.Error()
 	}
+
+	endTime = endTime.Add(-time.Hour)
 
 	payload := map[string]interface{}{
 		"subject":  options.Subject,
