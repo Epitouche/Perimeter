@@ -10,7 +10,8 @@ import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js
  */
 const props = defineProps<{
   styling: string; // The type of styling to be used
-  apps: { // The list of services to be displayed
+  apps: {
+    // The list of services to be displayed
     name: string; // The name of the service
   }[];
 }>();
@@ -40,7 +41,7 @@ async function loadConnectionInfos() {
         tokens.value = infosConnection.value.tokens;
 
         serviceConnected.value = tokens.value.map(
-          (token) => token.service.name,
+          (token) => token.service.name
         );
       }
 
@@ -74,7 +75,7 @@ const serviceDetails = computed(() =>
     color: service.color,
     icon: service.icon,
     oauth: service.oauth,
-  })),
+  }))
 );
 
 /**
@@ -82,7 +83,7 @@ const serviceDetails = computed(() =>
  */
 const getServiceStateText = (appName: string) => {
   const matchingService = services.value.find(
-    (service) => service.name === appName && !service.oauth,
+    (service) => service.name === appName && !service.oauth
   );
 
   if (matchingService) {
@@ -99,7 +100,7 @@ const getServiceStateText = (appName: string) => {
  */
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
   const matchingService = services.value.find(
-    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+    (service) => service.name.toLowerCase() === appName.toLowerCase()
   );
 
   if (
@@ -150,7 +151,7 @@ const executeHandleClick = async (label: string) => {
       label,
       services,
       tokens,
-      tokenCookie.value || undefined,
+      tokenCookie.value || undefined
     );
     if (response) {
       loadConnectionInfos();
@@ -173,7 +174,7 @@ const cancelAction = () => {
  * Hover state for the service.
  */
 const hover = reactive<{ [key: string]: boolean }>(
-  Object.fromEntries(props.apps.map((app) => [app.name, false])),
+  Object.fromEntries(props.apps.map((app) => [app.name, false]))
 );
 
 /**
@@ -236,7 +237,7 @@ onMounted(() => {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        >
+        />
         <img
           v-else-if="
             getServiceDetails(app.name)?.icon &&
@@ -247,7 +248,7 @@ onMounted(() => {
           alt=""
           class="pb-2"
           style="width: 40%; min-width: 1vw; max-width: 8vw"
-        >
+        />
 
         <UButton
           v-if="!isLoading"
@@ -281,7 +282,7 @@ onMounted(() => {
           :src="getServiceDetails(app.name)?.icon"
           alt=""
           class="icon_circle"
-        >
+        />
         <UButton
           v-if="hover[app.name]"
           variant="ghost"
@@ -313,7 +314,7 @@ onMounted(() => {
         }"
       >
         <h4>
-          Are you sure you want to <br >
+          Are you sure you want to <br />
           disconnect from this service?
         </h4>
         <h6>This action cannot be undone!</h6>

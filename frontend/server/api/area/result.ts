@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
         headers: {
           Authorization: "Bearer " + params.token,
         },
-      },
+      }
     );
     return response;
   } catch (error: unknown) {

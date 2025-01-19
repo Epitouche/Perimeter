@@ -33,7 +33,7 @@ export default {
       () => props.modelValue,
       (newValue) => {
         inputValue.value = newValue;
-      },
+      }
     );
 
     const toggleEdit = () => {

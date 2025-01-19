@@ -20,7 +20,7 @@ const infosConnection = ref<ServiceResponse | null>(null);
  * The hover state of each service card
  */
 const hover = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.services.map((service) => [service.id, false])),
+  Object.fromEntries(props.services.map((service) => [service.id, false]))
 );
 
 /**
@@ -42,7 +42,7 @@ async function loadConnectionInfos() {
         tokens.value = infosConnection.value.tokens;
 
         serviceConnected.value = tokens.value.map(
-          (token) => token.service.name,
+          (token) => token.service.name
         );
       }
     }
@@ -59,7 +59,7 @@ async function loadConnectionInfos() {
  */
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
   const matchingService = props.services.find(
-    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+    (service) => service.name.toLowerCase() === appName.toLowerCase()
   );
 
   if (
@@ -115,13 +115,13 @@ onMounted(() => {
             :src="service.icon"
             :alt="service.name"
             style="width: 45%"
-          >
+          />
           <img
             v-else-if="hover[service.id] && !isLongText(service.name)"
             :src="service.icon"
             :alt="service.name"
             style="width: 45%"
-          >
+          />
           <h5
             class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
           >
@@ -142,13 +142,13 @@ onMounted(() => {
           :src="service.icon"
           :alt="service.name"
           style="width: 45%"
-        >
+        />
         <img
           v-else-if="hover[service.id] && !isLongText(service.name)"
           :src="service.icon"
           :alt="service.name"
           style="width: 45%"
-        >
+        />
         <h5
           class="clamp-1-line capitalize text-center break-words w-full hover-expand-text"
         >

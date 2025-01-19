@@ -25,12 +25,12 @@ const focusDiv = ref<HTMLElement | null>(null);
 
 /**
  * Retrieves the first value of a query parameter, converting it to a string if necessary.
- * 
+ *
  * @param param - The query parameter, which can be a single value, an array of values, or undefined.
  * @returns The first query parameter as a string, or `null` if the parameter is undefined or an empty array.
  */
- const getQueryParam = (
-  param: LocationQueryValue | LocationQueryValue[] | undefined,
+const getQueryParam = (
+  param: LocationQueryValue | LocationQueryValue[] | undefined
 ): string | null => {
   if (Array.isArray(param)) {
     return param.length > 0 ? String(param[0]) : null;
@@ -59,23 +59,23 @@ if (valueNumber !== null && isNaN(valueNumber)) {
 const selectedAreaData = ref<{ date: string; result: string }[] | null>(null);
 
 const areaIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+  Object.fromEntries(props.areas.map((area) => [area.id, false]))
 );
 const editAreaIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+  Object.fromEntries(props.areas.map((area) => [area.id, false]))
 );
 const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.areas.map((area) => [area.id, false])),
+  Object.fromEntries(props.areas.map((area) => [area.id, false]))
 );
 
 /**
  * Checks if a key is a valid key for the general area values
- * 
+ *
  * @param key - The key to check.
  * @returns `true` if the key is valid, otherwise `false`.
  */
- const isValidKey = (
-  key: string,
+const isValidKey = (
+  key: string
 ): key is "title" | "description" | "action_refresh_rate" => {
   return (
     key === "title" || key === "description" || key === "action_refresh_rate"
@@ -84,7 +84,7 @@ const confirmDeletionIsOpen = reactive<{ [key: number]: boolean }>(
 
 /**
  * Checks if an area is enabled.
- * 
+ *
  * @param areaId - The ID of the area to check the enable status for.
  */
 const areaIsEnabled = (areaId: number) => {
@@ -98,7 +98,7 @@ const areaIsEnabled = (areaId: number) => {
 
 /**
  * Toggles the visibility of the area modal and fetches the area results if opening.
- * 
+ *
  * @param areaId - The ID of the area to toggle the modal for.
  */
 const toggleAreaModal = (areaId: number) => {
@@ -110,7 +110,7 @@ const toggleAreaModal = (areaId: number) => {
 
 /**
  * Toggles the visibility of the edit area slideover
- * 
+ *
  * @param areaId - The ID of the area to toggle the slideover for.
  */
 const toggleEditArea = (areaId: number) => {
@@ -134,7 +134,7 @@ const toggleEditArea = (areaId: number) => {
 
 /**
  * Toggles the 'enable' status of a specific area and updates the backend with the new status.
- * 
+ *
  * @param areaId - The ID of the area whose 'enable' status is to be toggled.
  */
 const toggleAreaEnableSwitch = async (areaId: number) => {
@@ -145,7 +145,7 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
   }
 
   const updatedArea = JSON.parse(
-    JSON.stringify(props.areas[areaIndex]),
+    JSON.stringify(props.areas[areaIndex])
   ) as Area;
   updatedArea.enable = !updatedArea.enable;
 
@@ -171,7 +171,7 @@ const toggleAreaEnableSwitch = async (areaId: number) => {
 
 /**
  * Toggles the visibility of the confirm deletion modal for a specific area.
- * 
+ *
  * @param areaId - The ID of the area to toggle the confirm deletion modal for.
  */
 const toggleConfirmDeletionModal = (areaId: number) => {
@@ -180,7 +180,7 @@ const toggleConfirmDeletionModal = (areaId: number) => {
 
 /**
  * Deletes an area and updates the backend with the new status.
- * 
+ *
  * @param areaId - The ID of the area to delete.
  */
 const onDelete = async (areaId: number) => {
@@ -213,7 +213,7 @@ const onDelete = async (areaId: number) => {
 
 /**
  * Cancels the deletion of an area and closes the confirm deletion modal.
- * 
+ *
  * @param areaId - The ID of the area to cancel the deletion for.
  */
 const cancelDeletion = (areaId: number) => {
@@ -223,7 +223,7 @@ const cancelDeletion = (areaId: number) => {
 
 /**
  * Formats the name of an area to be more readable.
- * 
+ *
  * @param name - The name of the area to format.
  * @returns The formatted name.
  */
@@ -236,7 +236,7 @@ function formatName(name: string): string {
 
 /**
  * Fetches the results of an area and updates the selectedAreaData ref.
- * 
+ *
  * @param areaId - The ID of the area to fetch the results for.
  */
 const fetchAreaResult = async (areaId: number) => {
@@ -269,7 +269,7 @@ const fetchAreaResult = async (areaId: number) => {
 
 /**
  * Formats a date string to a more readable format.
- * 
+ *
  * @param isoDate - The date string to format.
  * @returns The formatted date string.
  */
@@ -287,7 +287,7 @@ function formatDate(isoDate: string): string {
 
 /**
  * Sends new value to backend when an area value is updated.
- * 
+ *
  * @param areaId - The ID of the area to update.
  * @param typeName - The type of option to update if applicable.
  * @param keyString - The key/name of the option to update.
@@ -297,7 +297,7 @@ const updateAreaValue = async (
   areaId: number,
   typeName: string | null,
   keyString: string,
-  value: string | number,
+  value: string | number
 ) => {
   const areaIndex = props.areas.findIndex((area) => area.id === areaId);
   if (areaIndex === -1) {
@@ -306,7 +306,7 @@ const updateAreaValue = async (
   }
 
   const updatedArea = JSON.parse(
-    JSON.stringify(props.areas[areaIndex]),
+    JSON.stringify(props.areas[areaIndex])
   ) as Area;
 
   if (typeName) {
@@ -356,7 +356,7 @@ const updateAreaValue = async (
 /**
  * Updates the area value if the areaId, typeName, keyString, and valueNumber are not null.
  */
- if (areaIdNumber !== null && valueNumber !== null) {
+if (areaIdNumber !== null && valueNumber !== null) {
   updateAreaValue(areaIdNumber, typeName!, keyString!, valueNumber);
 }
 
@@ -369,7 +369,7 @@ const state = reactive<
 
 /**
  * Filters the state object to only include the general area values
- * 
+ *
  * @param areaId - The ID of the area to filter the state for.
  * @returns The filtered state object.
  */
@@ -377,15 +377,12 @@ const filteredState = (areaId: number) => {
   const areaState = state[areaId] || {};
   return Object.entries(areaState)
     .filter(([key]) =>
-      ["title", "description", "action_refresh_rate"].includes(key),
+      ["title", "description", "action_refresh_rate"].includes(key)
     )
-    .reduce(
-      (obj, [key, value]) => {
-        obj[key] = value;
-        return obj;
-      },
-      {} as Record<string, string | number>,
-    );
+    .reduce((obj, [key, value]) => {
+      obj[key] = value;
+      return obj;
+    }, {} as Record<string, string | number>);
 };
 
 /**
@@ -428,12 +425,12 @@ onMounted(() => {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-[35%] h-[35%] ml-[38%]"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -575,9 +572,14 @@ onMounted(() => {
                       tabindex="0"
                       @click="
                         isValidKey(key) &&
-                        state[area.id][key] !==
-                          props.areas.find((a) => a.id === area.id)?.[key] &&
-                        updateAreaValue(area.id, null, key, state[area.id][key])
+                          state[area.id][key] !==
+                            props.areas.find((a) => a.id === area.id)?.[key] &&
+                          updateAreaValue(
+                            area.id,
+                            null,
+                            key,
+                            state[area.id][key]
+                          )
                       "
                     >
                       <UIcon name="i-bytesize-checkmark" />
