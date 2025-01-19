@@ -60,6 +60,8 @@
 
 ## Usage
 
+create `.env`, and population it like the `.env.example`
+
 To build and run the project:
 
 ```bash
@@ -192,3 +194,4 @@ A comparative study of different backend technologies is available:
 ### Mobile
 
 - [@QuentinLeguay](https://www.github.com/QuentinLeguay)
+- [@arthurgauffre](https://github.com/arthurgauffre)
