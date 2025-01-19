@@ -27,13 +27,6 @@ module.exports = {
           input: "#F4F4F4", // Light grey
         },
       },
-      fontSize: {
-        custom_size_title: "5.5rem",
-      },
-      fontWeight: {
-        custom_weight_title: "800",
-        custom_weight_connection_title: "600",
-      },
       borderRadius: {
         custom_border_radius: "3.125rem",
       },

@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Fetches a services actions from the server
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);

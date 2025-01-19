@@ -4,6 +4,12 @@ import type { ServiceInfo } from "~/interfaces/serviceinfo";
 import type { OAuthLink } from "~/interfaces/authLink";
 import type { Token } from "~/interfaces/serviceResponse";
 
+/**
+ * Fetches the data from the API with the link provided.
+ *
+ * @param label - The label of the service.
+ * @returns - Returns the response.
+ */
 export const authApiCall = async (label: string) => {
   try {
     const response = await $fetch<OAuthLink>("/api/auth/service/redirect", {
@@ -19,6 +25,13 @@ export const authApiCall = async (label: string) => {
   }
 };
 
+/**
+ * Disconnects the service from the user.
+ *
+ * @param token - The token of the user.
+ * @param tokenId - The id of the token.
+ * @returns - Returns the response.
+ */
 export const disconnectService = async (token: string, tokenId: number) => {
   try {
     const response = await $fetch("/api/auth/service/disconnection", {
@@ -34,6 +47,15 @@ export const disconnectService = async (token: string, tokenId: number) => {
   }
 };
 
+/**
+ * Handles the click event of the service.
+ *
+ * @param label - The label of the service.
+ * @param services - The services of the user.
+ * @param tokens - The tokens of the user.
+ * @param token - The token of the user.
+ * @returns - Returns true if the service is disconnected, false otherwise.
+ */
 export const handleClick = async (
   label: string,
   services: Ref<ServiceInfo[]>,

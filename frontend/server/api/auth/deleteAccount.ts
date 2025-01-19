@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Sends a DELETE request to the server to delete the users account.
+ */
 export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   if (!params.authorization) {
