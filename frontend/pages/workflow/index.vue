@@ -20,10 +20,16 @@ const title = ref<string>();
 const description = ref<string>();
 const refreshRate = ref<number>();
 
+/**
+ * @description Handles the creation of a new workflow
+ */
 const validateCreation = () => {
   creationPopup.value = !creationPopup.value;
 };
 
+/**
+ * @description Handles the creation of a new workflow
+ */
 const onCreate = async () => {
   if (!title.value || !description.value || !refreshRate.value) {
     alert("Please fill out all fields");
@@ -71,6 +77,9 @@ const onCreate = async () => {
   }
 };
 
+/**
+ * @description Handles the cancelation of the workflow creation
+ */
 const onCancel = () => {
   websiteStore.resetWorkflowPage();
   router.push("/workflow");
@@ -89,6 +98,9 @@ function validateOptions(
   );
 }
 
+/**
+ * @description Handles the loading of the workflow state
+ */
 onMounted(() => {
   isLoading.value = true;
   try {

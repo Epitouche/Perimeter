@@ -17,6 +17,9 @@ const searchQuery = ref<string>("");
 
 const dateSort = ref(false);
 
+/**
+ * @description Fetches the areas from the server.
+ */
 const fetchAreas = async () => {
   try {
     errorMessage.value = null;
@@ -40,6 +43,11 @@ const fetchAreas = async () => {
   }
 };
 
+/**
+ * @description Watches the search query and filters the areas based on the query.
+ *
+ * @param {string} newQuery - The new search query.
+ */
 watch(searchQuery, (newQuery) => {
   const lowerQuery = newQuery.toLowerCase();
   filteredAreas.value = areas.value.filter(
@@ -51,6 +59,11 @@ watch(searchQuery, (newQuery) => {
   );
 });
 
+/**
+ * @description Watches the date sort and sorts the areas based on the date.
+ *
+ * @param {boolean} newSort - The new date sort.
+ */
 watch(dateSort, (newSort) => {
   const sortFn = (a: Area, b: Area) =>
     newSort
@@ -59,6 +72,9 @@ watch(dateSort, (newSort) => {
   filteredAreas.value.sort(sortFn);
 });
 
+/**
+ * @description The items for the dropdown.
+ */
 const items = [
   [
     {
@@ -68,6 +84,9 @@ const items = [
   ],
 ];
 
+/**
+ * @description The items for the dropdown.
+ */
 onMounted(() => {
   fetchAreas();
 });

@@ -10,7 +10,7 @@ const services = ref<ServiceInfo[]>([]);
 const errorMessage = ref<string | null>(null);
 
 /**
- * Load the services that the user can connect with.
+ * @description Load the services that the user can connect with.
  */
 const loadServices = async () => {
   try {
@@ -23,7 +23,7 @@ const loadServices = async () => {
 };
 
 /**
- * Filter the services that have OAuth.
+ * @description Filter the services that have OAuth.
  */
 const filteredServices = computed(() =>
   services.value
@@ -34,7 +34,7 @@ const filteredServices = computed(() =>
 );
 
 /**
- * Load the services when the component is mounted.
+ * @description Load the services when the component is mounted.
  */
 onMounted(() => {
   loadServices();

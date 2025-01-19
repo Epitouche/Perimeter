@@ -11,10 +11,16 @@ const errorMessage = ref<string | null>(null);
 const services = ref<ServiceInfo[]>([]);
 const searchQuery = ref("");
 
+/**
+ * @description Fetches the services from the server.
+ */
 onMounted(() => {
   loadServices();
 });
 
+/**
+ * @description Loads the services from the server.
+ */
 const loadServices = async () => {
   try {
     errorMessage.value = null;
@@ -25,6 +31,9 @@ const loadServices = async () => {
   }
 };
 
+/**
+ * @description Watches the search query and filters the services based on the query.
+ */
 const filteredApps = computed(() => {
   return services.value.filter((app) =>
     app.name.toLowerCase().includes(searchQuery.value.toLowerCase())

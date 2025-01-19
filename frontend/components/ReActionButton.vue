@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * The ReActionButton component is a reusable component that displays which action and reactions were chosen by the user.
+ * @description The ReActionButton component is a reusable component that displays which action and reactions were chosen by the user.
  */
 const props = defineProps<{
   title: string; // The title of the type of button
@@ -17,7 +17,7 @@ const { isSelected } = toRefs(props);
 const token = useCookie("token");
 
 /**
- * The serviceInfo object contains information about the service.
+ * @description The serviceInfo object contains information about the service.
  */
 const serviceInfo = ref<{ name: string; color: string; icon: string } | null>(
   null
@@ -26,7 +26,7 @@ const serviceInfo = ref<{ name: string; color: string; icon: string } | null>(
 const error = ref<string | null>(null);
 
 /**
- * The getServiceInfo function fetches the service information.
+ * @description The getServiceInfo function fetches the service information.
  */
 const getServiceInfo = async () => {
   if (serviceId.value) {
@@ -47,7 +47,7 @@ const getServiceInfo = async () => {
 };
 
 /**
- * The formatName function formats the name of the action or reaction.
+ * @description The formatName function formats the name of the action or reaction.
  */
 function formatName(name: string): string {
   return name
@@ -57,26 +57,26 @@ function formatName(name: string): string {
 }
 
 /**
- * The isLongText function checks if the text is longer than 12 characters.
+ * @description The isLongText function checks if the text is longer than 12 characters.
  */
 const isLongText = (text: string): boolean => text.length > 12;
 
 /**
- * The countWords function counts the number of words in the text.
+ * @description The countWords function counts the number of words in the text.
  */
 function countWords(text: string) {
   return text.trim().split(/\s+/).length;
 }
 
 /**
- * When the component is mounted, the getServiceInfo function is called.
+ * @description When the component is mounted, the getServiceInfo function is called.
  */
 onMounted(() => {
   getServiceInfo();
 });
 
 /**
- * The watch function watches for changes in the isSelected prop.
+ * @description The watch function watches for changes in the isSelected prop.
  */
 watch(
   isSelected,
