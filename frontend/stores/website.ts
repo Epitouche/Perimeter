@@ -1,6 +1,6 @@
 /**
  * This is used to store the state of the website, specifically for the workflow page.
- * 
+ *
  * The store contains the following state:
  * @property {boolean} showNavBar - Whether the navigation bar should be shown.
  * @property {boolean} showCancelButton - Whether the cancel button should be shown.
@@ -16,7 +16,7 @@
  * @property {string | null} reactionServiceId - The ID of the service of the selected reaction.
  * @property {string} actionName - The name of the selected action.
  * @property {string} reactionName - The name of the selected reaction.
- * 
+ *
  */
 export const useWebsiteStore = defineStore("websiteStore", {
   state: () => ({

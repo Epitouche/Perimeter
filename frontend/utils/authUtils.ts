@@ -6,7 +6,7 @@ import type { Token } from "~/interfaces/serviceResponse";
 
 /**
  * Fetches the data from the API with the link provided.
- * 
+ *
  * @param label - The label of the service.
  * @returns - Returns the response.
  */
@@ -27,7 +27,7 @@ export const authApiCall = async (label: string) => {
 
 /**
  * Disconnects the service from the user.
- * 
+ *
  * @param token - The token of the user.
  * @param tokenId - The id of the token.
  * @returns - Returns the response.
@@ -49,7 +49,7 @@ export const disconnectService = async (token: string, tokenId: number) => {
 
 /**
  * Handles the click event of the service.
- * 
+ *
  * @param label - The label of the service.
  * @param services - The services of the user.
  * @param tokens - The tokens of the user.

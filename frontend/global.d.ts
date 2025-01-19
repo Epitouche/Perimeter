@@ -1,5 +1,5 @@
 // global.d.ts
-import { defineNuxtRouteMiddleware, navigateTo, useCookie } from 'nuxt/app';
+import { defineNuxtRouteMiddleware, navigateTo, useCookie } from "nuxt/app";
 
 declare global {
   const defineNuxtRouteMiddleware: (...args: any[]) => any;
