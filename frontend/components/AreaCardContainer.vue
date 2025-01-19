@@ -5,7 +5,7 @@ import type { AreaResult } from "@/interfaces/areaResult";
 
 /**
  * @description The users areas
- * 
+ *
  * @prop areas - An array of the users areas
  */
 const props = defineProps<{
