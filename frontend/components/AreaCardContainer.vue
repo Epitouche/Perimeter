@@ -425,12 +425,12 @@ onMounted(() => {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
-          >
+          />
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-[35%] h-[35%] ml-[38%]"
-          >
+          />
         </div>
       </UContainer>
       <UModal
@@ -447,9 +447,7 @@ onMounted(() => {
           :style="{ backgroundColor: area.action.service.color }"
         >
           <div>
-            <div
-              class="flex flex-row justify-between items-center w-full px-1"
-            >
+            <div class="flex flex-row justify-between items-center w-full px-1">
               <div class="flex flex-row items-center gap-3">
                 <UToggle
                   :model-value="areaIsEnabled(area.id)"
@@ -484,49 +482,50 @@ onMounted(() => {
             </h2>
           </div>
           <div class="overflow-y-auto flex flex-col gap-10 w-full">
-          <div class="flex flex-col gap-10 max-sm:gap-3">
-            <UpdateAreaOptions
-              :area-id="area.id"
-              type-name="action"
-              :color="area.action.service.color"
-              :type="area.action"
-              :type-options="area.action_option"
-              @update-area-value="updateAreaValue"
-            />
-            <UpdateAreaOptions
-              :area-id="area.id"
-              type-name="reaction"
-              :color="area.action.service.color"
-              :type="area.reaction"
-              :type-options="area.reaction_option"
-              @update-area-value="updateAreaValue"
-            />
-          </div>
-
-          <div class="w-full">
-            <h5 class="self-start whitespace-nowrap">Description:</h5>
-            <h6 class="pl-10 whitespace-nowrap">{{ area.description }}</h6>
-          </div>
-
-          <UContainer
-            :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
-            class="scrollable-element w-full bg-custom_color-bg_section overflow-y-scroll min-h-[10vh] rounded-lg text-black"
-          >
-            <div>
-              <h5
-                v-if="!selectedAreaData || selectedAreaData.length === 0"
-                class="px-1"
-              >
-                No Result
-              </h5>
-              <ul v-else>
-                <li v-for="(item, index) in selectedAreaData" :key="index">
-                  <span>{{ item.date }}</span> - <span>{{ item.result }}</span>
-                </li>
-              </ul>
+            <div class="flex flex-col gap-10 max-sm:gap-3">
+              <UpdateAreaOptions
+                :area-id="area.id"
+                type-name="action"
+                :color="area.action.service.color"
+                :type="area.action"
+                :type-options="area.action_option"
+                @update-area-value="updateAreaValue"
+              />
+              <UpdateAreaOptions
+                :area-id="area.id"
+                type-name="reaction"
+                :color="area.action.service.color"
+                :type="area.reaction"
+                :type-options="area.reaction_option"
+                @update-area-value="updateAreaValue"
+              />
             </div>
-          </UContainer>
-        </div>
+
+            <div class="w-full">
+              <h5 class="self-start whitespace-nowrap">Description:</h5>
+              <h6 class="pl-10 whitespace-nowrap">{{ area.description }}</h6>
+            </div>
+
+            <UContainer
+              :ui="{ padding: '!px-0', constrained: 'max-w-none' }"
+              class="scrollable-element w-full bg-custom_color-bg_section overflow-y-scroll min-h-[10vh] rounded-lg text-black"
+            >
+              <div>
+                <h5
+                  v-if="!selectedAreaData || selectedAreaData.length === 0"
+                  class="px-1"
+                >
+                  No Result
+                </h5>
+                <ul v-else>
+                  <li v-for="(item, index) in selectedAreaData" :key="index">
+                    <span>{{ item.date }}</span> -
+                    <span>{{ item.result }}</span>
+                  </li>
+                </ul>
+              </div>
+            </UContainer>
+          </div>
 
           <div class="flex flex-row justify-end items-center gap-2">
             <UTooltip text="Edit" class="self-end w-fit">
@@ -683,5 +682,4 @@ onMounted(() => {
   scrollbar-width: thick;
   scrollbar-color: black rgba(255, 255, 255, 0.2);
 }
-
 </style>

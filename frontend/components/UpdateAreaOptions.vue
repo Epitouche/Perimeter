@@ -69,7 +69,7 @@ const toggleSlideover = () => {
 /**
  * The countWords function counts the number of words in the text.
  */
- function countWords(text: string) {
+function countWords(text: string) {
   return text.trim().split(/\s+/).length;
 }
 
@@ -94,13 +94,20 @@ function formatName(name: string): string {
         :alt="type.service.name"
         style="width: 10%"
         class="max-sm:hidden"
-      >
+      />
       <h4 class="text-center leading-[100%]">
         <b>{{ formatName(type.service.name) }}</b
         >:
       </h4>
-      <h5 v-if="countWords(formatName(type.name)) < 3" class="text-center leading-[100%]">{{ formatName(type.name) }}</h5>
-      <h6 v-else class="text-center leading-[100%]">{{ formatName(type.name) }}</h6>
+      <h5
+        v-if="countWords(formatName(type.name)) < 3"
+        class="text-center leading-[100%]"
+      >
+        {{ formatName(type.name) }}
+      </h5>
+      <h6 v-else class="text-center leading-[100%]">
+        {{ formatName(type.name) }}
+      </h6>
     </div>
     <UButton
       color="white"

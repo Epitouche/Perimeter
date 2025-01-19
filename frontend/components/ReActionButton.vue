@@ -105,9 +105,9 @@ watch(
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="p-0"
       :style="{ width: isLongText(typeName) ? '20%' : '15%' }"
-    >
-    <h3 
-    v-if="countWords(formatName(typeName)) < 4"
+    />
+    <h3
+      v-if="countWords(formatName(typeName)) < 4"
       :class="[
         'text-white text-center break-words whitespace-normal leading-[100%]',
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
@@ -118,8 +118,8 @@ watch(
     >
       {{ formatName(typeName) }}
     </h3>
-    <h4 
-    v-else
+    <h4
+      v-else
       :class="[
         'text-white text-center break-words whitespace-normal leading-[100%]',
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
