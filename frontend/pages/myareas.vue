@@ -45,7 +45,7 @@ const fetchAreas = async () => {
 
 /**
  * @description Watches the search query and filters the areas based on the query.
- * 
+ *
  * @param {string} newQuery - The new search query.
  */
 watch(searchQuery, (newQuery) => {
@@ -61,7 +61,7 @@ watch(searchQuery, (newQuery) => {
 
 /**
  * @description Watches the date sort and sorts the areas based on the date.
- * 
+ *
  * @param {boolean} newSort - The new date sort.
  */
 watch(dateSort, (newSort) => {

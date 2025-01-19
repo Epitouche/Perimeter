@@ -2,7 +2,7 @@
 /**
  * @description This page is used to connect to a service.
  * It is called by the service provider after the user has authorized the connection.
- * 
+ *
  * @param {string} service - The service to connect to.
  */
 interface ApiResponse {
