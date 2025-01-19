@@ -425,12 +425,12 @@ onMounted(() => {
             :src="area.action.service.icon"
             :alt="area.action.service.name"
             class="w-[35%] h-[35%] mr-[38%] -mb-[14%]"
-          />
+          >
           <img
             :src="area.reaction.service.icon"
             :alt="area.reaction.service.name"
             class="w-[35%] h-[35%] ml-[38%]"
-          />
+          >
         </div>
       </UContainer>
       <UModal
