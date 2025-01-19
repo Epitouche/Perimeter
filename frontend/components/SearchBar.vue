@@ -1,8 +1,18 @@
 <script setup lang="ts">
+/**
+ * @definition A simple search bar with specific styling
+ */
+
+/**
+ * @property {string} searchQuery - The search query
+ */
 defineProps<{
-  searchQuery: string;
+  searchQuery: string; // The search query
 }>();
 
+/**
+ * Emits the search query
+ */
 const _emit = defineEmits(["update:searchQuery"]);
 </script>
 

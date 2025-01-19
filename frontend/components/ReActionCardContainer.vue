@@ -2,29 +2,31 @@
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 import type { Type } from "@/interfaces/type";
 
+/**
+ * @description This component is used to display the different types of actions and reactions that can be performed by the user.
+ */
+
+/**
+ * Which type of action/reaction is being displayed, and its corresponding information and service information.
+ */
 const props = defineProps<{
-  typeName: string;
-  types: Type[];
-  serviceInfo: ServiceInfo | null;
+  typeName: string; // "action" or "reaction"
+  types: Type[]; // List of actions/reactions
+  serviceInfo: ServiceInfo | null; // Information about the service
 }>();
 
 const router = useRouter();
 
+/**
+ * State for the options configuration modal of each action/reaction.
+ */
 const configIsOpen = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.types.map((type) => [type.id, false])),
 );
 
-// const state = reactive<{ [key: number]: Record<string, string | number> }>(
-//   Object.fromEntries(
-//     props.types.map((type) => [
-//       type.id,
-//       typeof type.option === "string"
-//         ? JSON.parse(type.option)
-//         : type.option || {},
-//     ]),
-//   ),
-// );
-
+/**
+ * State for the options configuration of each action/reaction.
+ */
 const state = reactive<{
   [key: number]: Record<string, string | number | undefined>;
 }>(
@@ -44,6 +46,10 @@ const state = reactive<{
   ),
 );
 
+/**
+ * Toggles the options configuration modal of an action/reaction.
+ * @param typeId - The ID of the action/reaction being toggled.
+ */
 const toggleConfig = (typeId: number) => {
   if (configIsOpen[typeId]) {
     Object.keys(state[typeId]).forEach((key) => {
@@ -54,6 +60,11 @@ const toggleConfig = (typeId: number) => {
   configIsOpen[typeId] = !configIsOpen[typeId];
 };
 
+/**
+ * Submits the options configuration of an action/reaction by redirecting them to the workflow page.
+ * @param typeId - The ID of the action/reaction being submitted.
+ * @param typeTitle - The title of the action/reaction being submitted.
+ */
 const onSubmit = (typeId: number, typeTitle: string) => {
   const modifiedOptions = { ...state[typeId] };
 
@@ -80,6 +91,9 @@ const onSubmit = (typeId: number, typeTitle: string) => {
   });
 };
 
+/**
+ * The types of each field in the options configuration of each action/reaction.
+ */
 const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
   Object.fromEntries(
     props.types.map((type) => [
@@ -97,10 +111,20 @@ const fieldTypes = reactive<{ [key: number]: Record<string, string> }>(
   ),
 );
 
+/**
+ * Formats a string by adding spaces between camel case words.
+ * @param str - The string to be formatted.
+ * @returns The formatted string.
+ */
 function formatString(str: string): string {
   return str.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
+/**
+ * Checks if a string has a word with more than 8 characters.
+ * @param text - The text to be checked.
+ * @returns Whether the text has a word with more than 8 characters.
+ */
 const hasLongWord = (text: string): boolean => {
   const words = formatString(text).split(" ");
   for (const word of words) {
@@ -111,6 +135,11 @@ const hasLongWord = (text: string): boolean => {
   return false;
 };
 
+/**
+ * Counts the number of words in a text.
+ * @param text - The text to be counted.
+ * @returns The number of words in the text.
+ */
 function countWords(text: string) {
   return text.trim().split(/\s+/).length;
 }

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+/**
+ * The page to navigate to when the button is clicked.
+ */
 defineProps<{
-  link: string;
-  isWhite: boolean;
+  link: string; // The link to the page
+  isWhite: boolean; // Whether the button is white
 }>();
 </script>
 

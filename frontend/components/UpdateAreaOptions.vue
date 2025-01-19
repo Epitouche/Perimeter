@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import type { Area } from "@/interfaces/areas";
 
+/**
+ * Which area's option to update
+ */
 const props = defineProps<{
-  areaId: number;
-  typeName: string;
-  type: Area["action"] | Area["reaction"];
-  typeOptions: string | object | undefined;
-  color: string;
+  areaId: number; // Area to update (by id)
+  typeName: string; // Type of area option name
+  type: Area["action"] | Area["reaction"]; // Type of area option to update
+  typeOptions: string | object | undefined; // Current type options for the area
+  color: string; // Action service color
 }>();
 
 const router = useRouter();
 
 const isOpen = ref(false);
 
+/**
+ * Emit event to update area option value
+ */
 const emit = defineEmits<{
   (
     event: "updateAreaValue",
@@ -23,12 +29,18 @@ const emit = defineEmits<{
   ): void;
 }>();
 
+/**
+ * State to hold the updated values
+ */
 const state = reactive<{ [key: number]: Record<string, string | number> }>(
   typeof props.typeOptions === "string"
     ? { [props.type.id]: JSON.parse(props.typeOptions) }
     : { [props.type.id]: props.typeOptions || {} },
 );
 
+/**
+ * Send update information to page with function to send updated area option value to backend
+ */
 const editValue = async (typeName: string, typeId: number, key: string) => {
   const updatedValues = { ...state[typeId] };
   const updatedValue = updatedValues[key];
@@ -47,17 +59,19 @@ const editValue = async (typeName: string, typeId: number, key: string) => {
   toggleSlideover();
 };
 
+/**
+ * Toggle the edit options slideover
+ */
 const toggleSlideover = () => {
   isOpen.value = !isOpen.value;
 };
 
+/**
+ * Format the name of the area option
+ */
 function formatName(name: string): string {
   return name.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
-
-onMounted(() => {
-  // console.log("type: ", props.type);
-});
 </script>
 
 <template>

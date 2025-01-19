@@ -2,9 +2,12 @@
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 import type { Token, ServiceResponse } from "~/interfaces/serviceResponse";
 
+/**
+ * The list of services to be displayed of a type (action or reaction)
+ */
 const props = defineProps<{
-  type: string;
-  services: ServiceInfo[];
+  type: string; // The type name (action or reaction)
+  services: ServiceInfo[]; // The list of services to display
 }>();
 
 const tokenCookie = useCookie("token");
@@ -13,16 +16,23 @@ const serviceConnected = ref<string[]>([]);
 const tokens = ref<Token[]>([]);
 const infosConnection = ref<ServiceResponse | null>(null);
 
+/**
+ * The hover state of each service card
+ */
 const hover = reactive<{ [key: number]: boolean }>(
   Object.fromEntries(props.services.map((service) => [service.id, false])),
 );
 
+/**
+ * Check if the text is longer than 10 characters
+ * @param text The text to check
+ * @returns True if the text is long, false otherwise
+ */
 const isLongText = (text: string): boolean => text.length > 10;
 
-onMounted(() => {
-  loadConnectionInfos();
-});
-
+/**
+ * Load the service connection information
+ */
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
@@ -42,6 +52,11 @@ async function loadConnectionInfos() {
   }
 }
 
+/**
+ * Check if the service is connected or invalid
+ * @param appName The name of the service
+ * @returns True if the service is connected or invalid, false otherwise
+ */
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
   const matchingService = props.services.find(
     (service) => service.name.toLowerCase() === appName.toLowerCase(),
@@ -56,9 +71,23 @@ const isServiceConnectedOrInvalid = (appName: string): boolean => {
   return false;
 };
 
+/**
+ * Format the name of the service
+ * @param name The name of the service
+ * @returns The formatted name
+ */
 function formatName(name: string): string {
   return name.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
+
+/**
+ * Get the service connection information
+ * @param token The token to use
+ * @returns The service connection information
+ */
+onMounted(() => {
+  loadConnectionInfos();
+});
 </script>
 
 <template>

@@ -5,10 +5,13 @@ import { fetchServices } from "~/utils/fetchServices";
 import { handleClick } from "~/utils/authUtils";
 import { servicesConnectionInfos } from "~/utils/fetchServicesConnectionInfos.js";
 
+/**
+ * The lit of services to be displayed with the type of styling.
+ */
 const props = defineProps<{
-  styling: string;
-  apps: {
-    name: string;
+  styling: string; // The type of styling to be used
+  apps: { // The list of services to be displayed
+    name: string; // The name of the service
   }[];
 }>();
 
@@ -25,11 +28,9 @@ const selectedService = ref<string | null>(null);
 const isVisible = ref(false);
 const focusDiv = ref<HTMLElement | null>(null);
 
-onMounted(() => {
-  loadConnectionInfos();
-  loadServices();
-});
-
+/**
+ * Load the services connection infos for the user.
+ */
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
@@ -51,6 +52,9 @@ async function loadConnectionInfos() {
   }
 }
 
+/**
+ * Load the services from the backend.
+ */
 const loadServices = async () => {
   try {
     errorMessage.value = null;
@@ -61,6 +65,9 @@ const loadServices = async () => {
   }
 };
 
+/**
+ * Get the service details for the services.
+ */
 const serviceDetails = computed(() =>
   services.value.map((service) => ({
     name: service.name,
@@ -70,13 +77,15 @@ const serviceDetails = computed(() =>
   })),
 );
 
+/**
+ * Get the state text for the service.
+ */
 const getServiceStateText = (appName: string) => {
   const matchingService = services.value.find(
     (service) => service.name === appName && !service.oauth,
   );
 
   if (matchingService) {
-    // return "Automatically connected";
     return "Disconnect";
   }
 
@@ -85,6 +94,9 @@ const getServiceStateText = (appName: string) => {
   return message;
 };
 
+/**
+ * Check if the service is connected or invalid.
+ */
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
   const matchingService = services.value.find(
     (service) => service.name.toLowerCase() === appName.toLowerCase(),
@@ -99,6 +111,9 @@ const isServiceConnectedOrInvalid = (appName: string): boolean => {
   return false;
 };
 
+/**
+ * Get the service details for the service.
+ */
 const getServiceDetails = (appName: string) =>
   serviceDetails.value.find((service) => service.name === appName);
 
@@ -116,6 +131,9 @@ const onClick = (label: string) => {
   }
 };
 
+/**
+ * Confirm the action to be executed
+ */
 const confirmAction = async () => {
   if (!selectedService.value) return;
   await executeHandleClick(selectedService.value);
@@ -123,6 +141,9 @@ const confirmAction = async () => {
   selectedService.value = null;
 };
 
+/**
+ * Execute the handle click action.
+ */
 const executeHandleClick = async (label: string) => {
   try {
     const response = await handleClick(
@@ -140,17 +161,29 @@ const executeHandleClick = async (label: string) => {
   }
 };
 
+/**
+ * If the action is canceled, close the popup.
+ */
 const cancelAction = () => {
   isPopupVisible.value = false;
   selectedService.value = null;
 };
 
+/**
+ * Hover state for the service.
+ */
 const hover = reactive<{ [key: string]: boolean }>(
   Object.fromEntries(props.apps.map((app) => [app.name, false])),
 );
 
+/**
+ * Check if the text is longer than 10 characters.
+ */
 const isLongText = (text: string): boolean => text.length > 10;
 
+/**
+ * Format the name of the service.
+ */
 function formatName(name: string): string {
   return name
     .replace(/^action_/, "")
@@ -158,9 +191,20 @@ function formatName(name: string): string {
     .replace(/([a-z])([A-Z])/g, "$1 $2");
 }
 
+/**
+ * Check if the device is a touch device.
+ */
 function isTouchDevice() {
   return window.matchMedia("(pointer: coarse)").matches;
 }
+
+/**
+ * When the component is mounted, load the connection information and services list.
+ */
+onMounted(() => {
+  loadConnectionInfos();
+  loadServices();
+});
 </script>
 
 <template>

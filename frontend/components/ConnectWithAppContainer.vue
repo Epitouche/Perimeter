@@ -2,13 +2,16 @@
 import type { ServiceInfo } from "~/interfaces/serviceinfo";
 import { fetchServices } from "~/utils/fetchServices";
 
+/**
+ * @description This component is used to display the list of services that the user can connect with.
+ */
+
 const services = ref<ServiceInfo[]>([]);
 const errorMessage = ref<string | null>(null);
 
-onMounted(() => {
-  loadServices();
-});
-
+/**
+ * Load the services that the user can connect with.
+ */
 const loadServices = async () => {
   try {
     errorMessage.value = null;
@@ -19,6 +22,9 @@ const loadServices = async () => {
   }
 };
 
+/**
+ * Filter the services that have OAuth.
+ */
 const filteredServices = computed(() =>
   services.value
     .filter((service) => service.oauth)
@@ -26,6 +32,13 @@ const filteredServices = computed(() =>
       name: service.name,
     })),
 );
+
+/**
+ * Load the services when the component is mounted.
+ */
+onMounted(() => {
+  loadServices();
+});
 </script>
 
 <template>
