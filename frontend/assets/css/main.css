@@ -274,7 +274,7 @@ body {
 /* Large Desktop */
 @media (min-width: 1440px) {
   .custom_card {
-    width: 16vw;
+    width: 12vw;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -284,39 +284,38 @@ body {
     border-radius: 25%;
     cursor: pointer;
   }
-
   h1 {
-    font-size: 6vw;
+    font-size: 5vw;
     font-weight: 900;
   }
 
   h2 {
-    font-size: 5vw;
-    font-weight: 800;
-  }
-
-  h3 {
     font-size: 4vw;
     font-weight: 800;
   }
 
-  h4 {
-    font-size: 3.5vw;
-    font-weight: 800;
-  }
-
-  h5 {
+  h3 {
     font-size: 3vw;
     font-weight: 800;
   }
 
-  h6 {
+  h4 {
+    font-size: 2.5vw;
+    font-weight: 800;
+  }
+
+  h5 {
     font-size: 2vw;
     font-weight: 800;
   }
 
-  p {
+  h6 {
     font-size: 1.5vw;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 1vw;
     font-weight: 700;
   }
 }

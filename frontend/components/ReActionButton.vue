@@ -94,7 +94,7 @@ watch(
     v-if="isSelected"
     :ui="{ padding: '!px-4 !py-4', constrained: '!min-w-none !min-h-none' }"
     :class="[
-      'flex flex-row justify-evenly items-center gap-2 rounded-3xl w-[30vw] h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[75vw] max-lg:h-[12vh] max-md:h-[12vh]',
+      'flex flex-row justify-evenly items-center gap-2 rounded-3xl w-[35vw] min-h-[14vh] max-lg:w-[45vw] max-md:w-[60vw] max-sm:w-[75vw] max-lg:min-h-[12vh] max-md:min-h-[12vh]',
       isDisabled ? 'bg-opacity-60' : 'bg-opacity-100',
     ]"
     :style="{ backgroundColor: serviceInfo ? serviceInfo.color : 'black' }"
@@ -106,7 +106,8 @@ watch(
       class="p-0"
       :style="{ width: isLongText(typeName) ? '20%' : '15%' }"
     >
-    <h3
+    <h3 
+    v-if="countWords(formatName(typeName)) < 4"
       :class="[
         'text-white text-center break-words whitespace-normal leading-[100%]',
         isDisabled ? 'text-opacity-50' : 'text-opacity-100',
@@ -117,6 +118,18 @@ watch(
     >
       {{ formatName(typeName) }}
     </h3>
+    <h4 
+    v-else
+      :class="[
+        'text-white text-center break-words whitespace-normal leading-[100%]',
+        isDisabled ? 'text-opacity-50' : 'text-opacity-100',
+        isLongText(typeName) && countWords(formatName(typeName)) === 2
+          ? 'w-min'
+          : '',
+      ]"
+    >
+      {{ formatName(typeName) }}
+    </h4>
   </UContainer>
 
   <UContainer

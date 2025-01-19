@@ -451,7 +451,7 @@ onMounted(() => {
         >
           <div>
             <div
-              class="flex flex-row justify-between items-center w-full overflow-y-auto px-1"
+              class="flex flex-row justify-between items-center w-full px-1"
             >
               <div class="flex flex-row items-center gap-3">
                 <UToggle
@@ -486,7 +486,7 @@ onMounted(() => {
               {{ area.title }}
             </h2>
           </div>
-
+          <div class="overflow-y-auto flex flex-col gap-10 w-full">
           <div class="flex flex-col gap-10 max-sm:gap-3">
             <UpdateAreaOptions
               :area-id="area.id"
@@ -506,7 +506,7 @@ onMounted(() => {
             />
           </div>
 
-          <div class="scrollbar-hidden w-full overflow-x-scroll max-h-[10vh]">
+          <div class="w-full">
             <h5 class="self-start whitespace-nowrap">Description:</h5>
             <h6 class="pl-10 whitespace-nowrap">{{ area.description }}</h6>
           </div>
@@ -529,6 +529,7 @@ onMounted(() => {
               </ul>
             </div>
           </UContainer>
+        </div>
 
           <div class="flex flex-row justify-end items-center gap-2">
             <UTooltip text="Edit" class="self-end w-fit">
@@ -648,13 +649,6 @@ onMounted(() => {
   transition: all 1s ease-in-out;
 }
 
-/* .hover-expand-text:hover {
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
-  overflow: visible;
-  white-space: normal;
-} */
-
 .hover_underline_animation {
   display: inline-block;
   position: relative;
@@ -688,7 +682,4 @@ onMounted(() => {
   scrollbar-color: black rgba(255, 255, 255, 0.2);
 }
 
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
 </style>
