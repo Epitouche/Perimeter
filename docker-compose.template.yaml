@@ -4,8 +4,6 @@ services:
     container_name: client_mobile
     volumes:
       - shared_apk:/app/public/apk
-    env_file:
-      - .env
     networks:
       - app-networks
     restart: no
@@ -54,6 +52,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    pull_policy: always
+
+  mobile-documentation:
+    container_name: mobile-documentation
+    ports:
+      - '0.0.0.0:6062:6062'
+    networks:
+      - app-networks
+    restart: always
+    labels:
+      - "traefik.enable=true"
     pull_policy: always
 
   reverse-proxy:
@@ -112,17 +121,6 @@ services:
     container_name: server-documentation
     ports:
       - '0.0.0.0:6060:6060'
-    networks:
-      - app-networks
-    restart: always
-    labels:
-      - "traefik.enable=true"
-    pull_policy: always
-
-  mobile-documentation:
-    container_name: mobile-documentation
-    ports:
-      - '0.0.0.0:6062:6062'
     networks:
       - app-networks
     restart: always
