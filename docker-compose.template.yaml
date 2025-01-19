@@ -4,8 +4,6 @@ services:
     container_name: client_mobile
     volumes:
       - shared_apk:/app/public/apk
-    env_file:
-      - .env
     networks:
       - app-networks
     restart: no
