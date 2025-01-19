@@ -14,6 +14,9 @@ const isLoading = ref(true);
 
 const searchQuery = ref<string>("");
 
+/**
+ * @description Fetches all the services from the backend
+ */
 const fetchServices = async () => {
   try {
     errorMessage.value = null;
@@ -22,7 +25,6 @@ const fetchServices = async () => {
     });
     services.value = result;
     filteredServices.value = result;
-    //console.log("services", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
@@ -35,27 +37,36 @@ const fetchServices = async () => {
   }
 };
 
+/**
+ * @description Watches the search query and filters the services based on the query
+ * @param searchQuery - The search query
+ */
 watch(searchQuery, (newQuery) => {
   filteredServices.value = services.value.filter((service) =>
-    service.name.toLowerCase().includes(newQuery.toLowerCase()),
+    service.name.toLowerCase().includes(newQuery.toLowerCase())
   );
 });
 
+/**
+ * @description Fetches all the services when the component is mounted
+ */
 onMounted(() => {
   fetchServices();
 });
 </script>
 
 <template>
-  <div class="py-10">
-    <div class="px-10">
+  <div class="py-10 max-sm:py-3">
+    <div class="px-10 max-sm:px-2 max-sm:pb-5">
       <BackButton link="/workflow" :is-white="false" />
     </div>
-    <div class="flex flex-col justify-between items-center gap-10 w-full">
+    <div
+      class="flex flex-col justify-between items-center gap-10 max-sm:gap-5 w-full"
+    >
       <h1>Add a reaction</h1>
       <UContainer
         :ui="{ base: 'mx-auto' }"
-        class="flex flex-col justify-center items-center gap-16 w-[80%] h-full !p-0"
+        class="flex flex-col justify-center items-center gap-16 max-sm:gap-10 w-[80%] max-lg:w-[85%] max-md:w-[90%] max-sm:w-[95%] h-full !p-0"
       >
         <div class="min-w-1/3 max-w-[95%]">
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />

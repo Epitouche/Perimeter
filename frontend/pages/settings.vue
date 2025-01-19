@@ -13,10 +13,16 @@ const email = ref<string>("");
 const userId = ref<number>(0);
 const infosConnection = ref<ServiceResponse | null>(null);
 
+/**
+ * @description Fetches the connection infos from the server.
+ */
 onMounted(() => {
   loadConnectionInfos();
 });
 
+/**
+ * @description Loads the connection infos from the server.
+ */
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
@@ -31,6 +37,9 @@ async function loadConnectionInfos() {
   }
 }
 
+/**
+ * @description Deletes the account.
+ */
 async function deleteAccount() {
   try {
     await $fetch("/api/auth/deleteAccount", {
@@ -46,6 +55,9 @@ async function deleteAccount() {
   }
 }
 
+/**
+ * @description Clears the token and logs out the user.
+ */
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
@@ -67,7 +79,7 @@ const clearTokenAndLogout = () => {
         <EditableInput v-model="email" name="Email" />
       </div>
       <UButton
-        class="delete-button text-white flex flex-col justify-center items-center gap-2 max-md:gap-0 px-8 py-3 max-lg:py-0"
+        class="delete-button text-white flex flex-col justify-center items-center gap-2 max-md:gap-0 px-8 py-3 max-lg:py-1"
         @click="deleteAccount"
       >
         <p>Delete</p>

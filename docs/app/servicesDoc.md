@@ -27,7 +27,7 @@
 
 ## Main Document
 
-Refer to the [main documentation](../README.md).
+Refer to the [main documentation](../../README.md).
 
 ---
 

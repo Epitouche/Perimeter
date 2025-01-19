@@ -9,7 +9,7 @@
 
 ## Main Document
 
-[main documentation](../README.md)
+[main documentation](../../README.md)
 
 ## View
 
@@ -51,9 +51,14 @@ erDiagram
     AREA {
         int id PK
         int user_id FK
+        json action_option
         int action_id FK
+        json reaction_option
         int reaction_id FK
         bool enable
+        string title
+        string description
+        json storage_variable
         datetime created_at
         datetime updated_at
     }

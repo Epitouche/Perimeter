@@ -10,11 +10,20 @@ const password = ref("");
 const token = useCookie("token");
 const loginError = ref<string | null>(null);
 
+/**
+ * @description RegisterResponse interface.
+ * @interface RegisterResponse
+ * @property {string} token - The token.
+ * @property {string} [message] - The message.
+ */
 interface RegisterResponse {
   token: string;
   message?: string;
 }
 
+/**
+ * @description Sends a login request to the server with the provided username and password.
+ */
 const handleLogin = async () => {
   try {
     loginError.value = null;
@@ -35,7 +44,6 @@ const handleLogin = async () => {
     if (response.token) {
       token.value = response.token;
     }
-    //console.log("Login successful:", response);
     navigateTo("/myareas");
   } catch (error: unknown) {
     loginError.value = handleErrorStatus(error);
@@ -47,34 +55,35 @@ const handleLogin = async () => {
   <div class="flex justify-center items-center w-full h-screen">
     <UContainer
       :ui="{
-        padding: '!px-0 !pt-6 !pb-12',
-        constrained: 'min-w-[40%] max-w-[90%]',
+        padding: '!px-0 !pt-8 !pb-12 max-md:!pb-8 max-md:!px-2',
+        constrained:
+          'min-w-[40%] max-w-[95%] max-lg:min-w-[50%] max-md:min-w-[60%] max-sm:min-w-[80%]',
       }"
-      class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-12 rounded-custom_border_radius"
+      class="bg-custom_color-bg_section flex flex-col justify-between items-center gap-12 max-lg:gap-10 max-md:gap-8 max-sm:gap-6 rounded-custom_border_radius"
     >
       <h1 class="pb-2">Log in</h1>
       <div
-        class="flex flex-col items-center gap-14 overflow-y-scroll max-h-[60vh]"
+        class="flex flex-col items-center gap-14 max-lg:gap-10 max-md:gap-8 overflow-y-scroll max-h-[60vh]"
       >
-        <div class="flex flex-col min-w-[70%] max-w-[85%]">
+        <div class="flex flex-col min-w-[70%] max-w-[80%]">
           <h6 class="px-5">Username</h6>
           <UInput
             v-model="username"
             :ui="{
-              placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
+              placeholder: '!px-5 !py-4 max-lg:!py-2 max-md:!py-1 font-light',
               size: {
                 sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
               },
             }"
           />
         </div>
-        <div class="flex flex-col min-w-[70%] max-w-[85%]">
+        <div class="flex flex-col min-w-[70%] max-w-[80%]">
           <h6 class="px-5">Password</h6>
           <UInput
             v-model="password"
             type="password"
             :ui="{
-              placeholder: '!px-5 !py-4 max-lg:!py-2 font-light',
+              placeholder: '!px-5 !py-4 max-lg:!py-2 max-md:!py-1 font-light',
               size: {
                 sm: 'text-4xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl',
               },
@@ -82,7 +91,7 @@ const handleLogin = async () => {
           />
         </div>
         <div
-          class="flex flex-col justify-center gap-1 items-center min-w-full py-5"
+          class="flex flex-col justify-center gap-1 items-center min-w-full py-5 max-lg:py-4 max-md:py-3 max-sm:py-2"
         >
           <div v-if="loginError" class="text-red-500 text-xl pb-1">
             {{ loginError }}
@@ -106,7 +115,7 @@ const handleLogin = async () => {
           </p>
         </div>
         <div
-          class="flex flex-col justify-center items-center gap-2 min-w-[85%] max-w-[85%] pt-2"
+          class="flex flex-col justify-center items-center gap-2 min-w-[85%] max-w-[85%] max-md:min-w-[80%] max-md:max-w-[80%] pt-2 max-md:pt-0"
         >
           <UDivider
             size="xs"

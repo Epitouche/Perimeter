@@ -1,12 +1,26 @@
 <script setup lang="ts">
+/**
+ * @description Loading screen component that shows a loading spinner for a given amount of time
+ */
+
+/**
+ * @description If the loading screen should be shown, show it for the given amount of time
+ */
 const props = defineProps<{
-  timeout: number;
-  isLoading: boolean;
+  timeout: number; // The amount of time to show the loading screen for
+  isLoading: boolean; // Whether the loading screen should be shown
 }>();
 
+/**
+ * @emit Emits an event to update the isLoading prop
+ */
 const emit = defineEmits(["update:isLoading"]);
+
 const timedOut = ref(false);
 
+/**
+ * @description After the timeout has passed, set timedOut to true and emit an event to hide the loading screen
+ */
 onMounted(() => {
   setTimeout(() => {
     timedOut.value = true;

@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Send the request to delete an area with the given ID to the backend.
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);

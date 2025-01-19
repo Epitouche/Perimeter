@@ -1,4 +1,4 @@
-# ACTION-REACTION
+# Area Project
 
 ## Authors
 
@@ -12,13 +12,18 @@
 
 ## Table of Contents
 
-- [ACTION-REACTION](#action-reaction)
+- [Area Project](#area-project)
   - [Authors](#authors)
   - [Table of Contents](#table-of-contents)
   - [General Info](#general-info)
   - [Features](#features)
   - [Usage](#usage)
   - [Documentation](#documentation)
+    - [Frontend documentation](#frontend-documentation)
+    - [Mobile documentation](#mobile-documentation)
+    - [Backend Documentation](#backend-documentation)
+    - [Application Documentation](#application-documentation)
+    - [Other Documentation](#other-documentation)
     - [Proof of Concept (POC)](#proof-of-concept-poc)
       - [Frontend POCs](#frontend-pocs)
       - [Backend POCs](#backend-pocs)
@@ -32,7 +37,6 @@
     - [Tools Tech](#tools-tech)
   - [Accessibility](#accessibility)
     - [Visual](#visual)
-    - [Auditory](#auditory)
     - [Other](#other)
   - [Roles](#roles)
     - [Frontend](#frontend)
@@ -66,16 +70,33 @@ docker compose up --build
 
 ## Documentation
 
-- [Developer Documentation](./docs/developerDocumentation.md)
-- [Service Documentation](./docs/services.md)
-- [Database Documentation](./docs/database.md)
-- [Oauth Documentation](./docs/oauth.md)
-- [Server API Documentation](./docs/serverApi.md)
-- [Dev Container](./docs/devContainer.md)
-- [Test Documentation](./docs/test.md)
-- [GitHub Project](https://github.com/orgs/Epitouche/projects/1/views/1)
-- [Mobile developer documentation](./docs/developerDocMobile.md)
-- [Mobile user documentation](./docs/userDocMobile.md)
+### Frontend documentation
+
+- [User Documentation](./docs/frontend/userDocFrontend.md)
+- [Graphic Chart](./docs/frontend/graphicChart.md)
+
+### Mobile documentation
+
+- [User Documentation](./docs/mobile/userDocMobile.md)
+- Developer Documentation: launch project ==> localhost:6062
+- [Developer Documentation](./docs/mobile/developerDocMobile.md)
+
+### Backend Documentation
+
+- Developer Documentation: launch project ==> localhost:6060
+- [Database Documentation](./docs/backend/databaseDoc.md)
+- [Server API Documentation](./docs/backend/serverApiDoc.md)
+
+### Application Documentation
+
+- [Oauth Documentation](./docs/app/oauthDoc.md)
+- [Services Documentation](./docs/app/servicesDoc.md)
+
+### Other Documentation
+
+- [Dev Container Documentation](./docs/other/devContainerDoc.md)
+- [Developer Repository Documentation](./docs/other/developerDocRepo.md)
+- [Test Documentation](./docs/other/testDoc.md)
 
 ### Proof of Concept (POC)
 
@@ -149,12 +170,6 @@ A comparative study of different backend technologies is available:
 ### Visual
 
 - Daltonism: High contrast color palette
-- Dark mode
-- Zoom
-
-### Auditory
-
-- Closed captioning for audio media
 
 ### Other
 

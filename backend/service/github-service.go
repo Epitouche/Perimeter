@@ -1111,7 +1111,11 @@ func (service *githubService) GithubReactionGetLatestCommitInRepo(
 		return err.Error()
 	}
 
-	return commitList[0].Commit.Author.Name + " commit " + commitList[0].Commit.Message + " in " + optionJSON.RepoName + " repository, at " + commitList[0].Commit.Author.Date.String()
+	if (len(commitList)) == 0 {
+		return "No commit found in " + optionJSON.RepoName + " repository"
+	} else {
+		return commitList[0].Commit.Author.Name + " commit " + commitList[0].Commit.Message + " in " + optionJSON.RepoName + " repository, at " + commitList[0].Commit.Author.Date.String()
+	}
 }
 
 // GithubReactionGetLatestWorkflowRunInRepo retrieves the latest workflow run in a specified GitHub repository.
@@ -1158,5 +1162,9 @@ func (service *githubService) GithubReactionGetLatestWorkflowRunInRepo(
 		return err.Error()
 	}
 
-	return workflowList.WorkflowRuns[0].Name + " workflow run in " + optionJSON.RepoName + " repository, at " + workflowList.WorkflowRuns[0].CreatedAt.String()
+	if workflowList.TotalCount == 0 {
+		return "No workflow run found in " + optionJSON.RepoName + " repository"
+	} else {
+		return workflowList.WorkflowRuns[0].Name + " workflow run in " + optionJSON.RepoName + " repository, at " + workflowList.WorkflowRuns[0].CreatedAt.String()
+	}
 }

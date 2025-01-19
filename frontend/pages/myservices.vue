@@ -11,26 +11,32 @@ const errorMessage = ref<string | null>(null);
 const services = ref<ServiceInfo[]>([]);
 const searchQuery = ref("");
 
+/**
+ * @description Fetches the services from the server.
+ */
 onMounted(() => {
   loadServices();
 });
 
+/**
+ * @description Loads the services from the server.
+ */
 const loadServices = async () => {
   try {
     errorMessage.value = null;
     services.value = await fetchServices();
-    console.log("Services loaded:", services.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
     console.error("Error loading services:", error);
   }
 };
 
+/**
+ * @description Watches the search query and filters the services based on the query.
+ */
 const filteredApps = computed(() => {
-  console.log("Search Query:", searchQuery.value);
-  console.log("Services:", services.value);
   return services.value.filter((app) =>
-    app.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+    app.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 </script>

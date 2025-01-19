@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 
+/**
+ * @description The reaction interface
+ * @interface Reaction
+ * @property {number} id - The id of the reaction
+ * @property {string} name - The name of the reaction
+ * @property {string} description - The description of the reaction
+ */
 interface Reaction {
   id: number;
   name: string;
@@ -22,6 +29,9 @@ const errorMessage = ref<string | null>(null);
 
 const serviceInfo = ref<ServiceInfo | null>(null);
 
+/**
+ * @description Fetches the service information
+ */
 const getServiceInfo = async () => {
   if (serviceId) {
     isLoading.value = true;
@@ -34,7 +44,6 @@ const getServiceInfo = async () => {
           serviceId: serviceId,
         },
       });
-      console.log("serviceInfo: ", serviceInfo.value);
     } catch (error: unknown) {
       errorMessage.value = handleErrorStatus(error);
 
@@ -48,6 +57,9 @@ const getServiceInfo = async () => {
   }
 };
 
+/**
+ * @description Fetches all the reactions
+ */
 const fetchReactions = async () => {
   isLoading.value = true;
   try {
@@ -59,8 +71,6 @@ const fetchReactions = async () => {
         service: serviceId,
       },
     });
-
-    console.log("reactions", reactions.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
@@ -72,6 +82,9 @@ const fetchReactions = async () => {
   }
 };
 
+/**
+ * @description Fetches the service information and reactions when the component is mounted
+ */
 onMounted(() => {
   getServiceInfo();
   fetchReactions();
@@ -79,28 +92,28 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-20">
+  <div class="flex flex-col gap-16">
     <div v-if="errorMessage">
       <div>Error: {{ errorMessage }}</div>
     </div>
-    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
+    <div v-else-if="isLoading"><h2>Loading...</h2></div>
     <UContainer
       v-else-if="serviceInfo"
       :ui="{ constrained: 'max-w-none' }"
-      class="py-10"
+      class="pt-10 max-sm:pt-3"
       :style="{ backgroundColor: serviceInfo.color }"
     >
-      <div class="px-10">
+      <div class="px-10 -mb-5 max-sm:mb-0 max-sm:px-0 max-sm:pb-5">
         <BackButton link="/workflow/reactions" :is-white="true" />
       </div>
-      <div class="flex flex-col justify-center items-center gap-2">
+      <div class="flex flex-col justify-center items-center gap-0 pb-5">
         <h1 class="text-white">Add a reaction</h1>
         <img
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"
-          class="w-[10vw] h-[10vh]"
+          class="w-[12vw] h-[12vh] max-sm:w-[25vw] max-sm:h-[25vh] max-sm:-my-10"
         />
-        <h2 class="capitalize text-white pt-8">
+        <h2 class="capitalize text-white">
           {{ serviceInfo.name }}
         </h2>
       </div>
@@ -115,7 +128,7 @@ onMounted(() => {
         :service-info="serviceInfo"
       />
     </div>
-    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
+    <div v-else-if="isLoading"><h2>Loading...</h2></div>
   </div>
 </template>
 

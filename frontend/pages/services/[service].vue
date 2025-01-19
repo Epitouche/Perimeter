@@ -1,4 +1,10 @@
 <script setup lang="ts">
+/**
+ * @description This page is used to connect to a service.
+ * It is called by the service provider after the user has authorized the connection.
+ *
+ * @param {string} service - The service to connect to.
+ */
 interface ApiResponse {
   token?: string;
 }
@@ -7,10 +13,16 @@ const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
 const token = useCookie("token");
 
+/**
+ * @description Connect to the service.
+ */
 onMounted(() => {
   connectToService();
 });
 
+/**
+ * @description Connect to the service.
+ */
 async function connectToService() {
   const route = useRoute();
   const code = route.query["code"];
@@ -34,7 +46,7 @@ async function connectToService() {
         },
       }),
       new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout")), 5000),
+        setTimeout(() => reject(new Error("Timeout")), 5000)
       ),
     ]);
 
@@ -51,6 +63,10 @@ async function connectToService() {
   }
 }
 
+/**
+ * @description Show an error message and redirect to the login page.
+ * @param {string} message - The error message to show.
+ */
 function showError(message: string) {
   errorMessage.value = message;
   console.error(message);

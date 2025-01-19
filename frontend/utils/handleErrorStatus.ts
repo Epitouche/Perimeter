@@ -1,6 +1,9 @@
 export const handleErrorStatus = (error: unknown): string => {
   const token = useCookie("token");
 
+  /**
+   * If the error is an instance of an Error object, we can extract the status code and message
+   */
   if (typeof error === "object" && error !== null) {
     const statusCode = (error as { statusCode?: number }).statusCode;
     const message =

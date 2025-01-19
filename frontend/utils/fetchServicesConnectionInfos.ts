@@ -2,8 +2,14 @@
 import { handleErrorStatus } from "./handleErrorStatus";
 import type { ServiceResponse } from "~/interfaces/serviceResponse";
 
+/**
+ * Fetches the service connection information.
+ *
+ * @param token - User token
+ * @returns - Service connection information
+ */
 export async function servicesConnectionInfos(
-  token: string,
+  token: string
 ): Promise<ServiceResponse> {
   try {
     const response = await $fetch<ServiceResponse>("/api/auth/service/infos", {

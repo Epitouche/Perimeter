@@ -17,6 +17,9 @@ const searchQuery = ref<string>("");
 
 const dateSort = ref(false);
 
+/**
+ * @description Fetches the areas from the server.
+ */
 const fetchAreas = async () => {
   try {
     errorMessage.value = null;
@@ -28,7 +31,6 @@ const fetchAreas = async () => {
     });
     areas.value = result;
     filteredAreas.value = result;
-    //console.log("filteredAreas: ", filteredAreas.value);
   } catch (error: unknown) {
     errorMessage.value = handleErrorStatus(error);
 
@@ -41,6 +43,11 @@ const fetchAreas = async () => {
   }
 };
 
+/**
+ * @description Watches the search query and filters the areas based on the query.
+ *
+ * @param {string} newQuery - The new search query.
+ */
 watch(searchQuery, (newQuery) => {
   const lowerQuery = newQuery.toLowerCase();
   filteredAreas.value = areas.value.filter(
@@ -48,10 +55,15 @@ watch(searchQuery, (newQuery) => {
       area.action.service.name.toLowerCase().includes(lowerQuery) ||
       area.reaction.service.name.toLowerCase().includes(lowerQuery) ||
       area.action.name.toLowerCase().includes(lowerQuery) ||
-      area.reaction.name.toLowerCase().includes(lowerQuery),
+      area.reaction.name.toLowerCase().includes(lowerQuery)
   );
 });
 
+/**
+ * @description Watches the date sort and sorts the areas based on the date.
+ *
+ * @param {boolean} newSort - The new date sort.
+ */
 watch(dateSort, (newSort) => {
   const sortFn = (a: Area, b: Area) =>
     newSort
@@ -60,6 +72,9 @@ watch(dateSort, (newSort) => {
   filteredAreas.value.sort(sortFn);
 });
 
+/**
+ * @description The items for the dropdown.
+ */
 const items = [
   [
     {
@@ -69,6 +84,9 @@ const items = [
   ],
 ];
 
+/**
+ * @description The items for the dropdown.
+ */
 onMounted(() => {
   fetchAreas();
 });
@@ -117,7 +135,10 @@ onMounted(() => {
       <div v-else-if="filteredAreas.length === 0" class="w-full">
         <p>No areas found, create some!</p>
       </div>
-      <div v-else class="w-[95%] overflow-y-scroll max-h-[64vh]">
+      <div
+        v-else
+        class="w-[95%] overflow-y-scroll max-h-[64vh] max-lg:max-h-[55vh]"
+      >
         <AreaCardContainer :areas="filteredAreas" @refresh-areas="fetchAreas" />
       </div>
     </div>

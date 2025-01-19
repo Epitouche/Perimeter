@@ -1,5 +1,8 @@
 import { handleError } from "~/utils/handleErrors";
 
+/**
+ * Sends all the necessary data to the server to create a new workflow
+ */
 export default defineEventHandler(async (event) => {
   try {
     const params = await readBody(event);

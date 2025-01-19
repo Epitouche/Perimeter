@@ -1,4 +1,19 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+
+  "include": [
+    "global.d.ts",
+    "interfaces/**/*",
+    "middleware/**/*",
+    "server/**/*",
+    "stores/**/*",
+    "utils/**/*"
+  ],
+
+  "compilerOptions": {
+    "types": ["@nuxt/types", "@nuxt/types/config", "nuxt"],
+    "noImplicitAny": false,
+    "strict": true
+  }
 }

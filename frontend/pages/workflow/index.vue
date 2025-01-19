@@ -20,19 +20,17 @@ const title = ref<string>();
 const description = ref<string>();
 const refreshRate = ref<number>();
 
+/**
+ * @description Handles the creation of a new workflow
+ */
 const validateCreation = () => {
   creationPopup.value = !creationPopup.value;
 };
 
+/**
+ * @description Handles the creation of a new workflow
+ */
 const onCreate = async () => {
-  // console.log("actionId:", websiteStore.actionId);
-  // console.log("actionOptions:", websiteStore.actionOptions);
-  // console.log("reactionId:", websiteStore.reactionId);
-  // console.log("reactionOptions:", websiteStore.reactionOptions);
-  // console.log("title: ", title.value);
-  // console.log("description: ", description.value);
-  // console.log("refreshRate: ", refreshRate.value);
-
   if (!title.value || !description.value || !refreshRate.value) {
     alert("Please fill out all fields");
     return;
@@ -79,13 +77,16 @@ const onCreate = async () => {
   }
 };
 
+/**
+ * @description Handles the cancelation of the workflow creation
+ */
 const onCancel = () => {
   websiteStore.resetWorkflowPage();
   router.push("/workflow");
 };
 
 function validateOptions(
-  options: Record<string, unknown>,
+  options: Record<string, unknown>
 ): Record<string, unknown> {
   return Object.fromEntries(
     Object.entries(options).map(([key, value]) => {
@@ -93,10 +94,13 @@ function validateOptions(
         return [key, Number(value)];
       }
       return [key, value];
-    }),
+    })
   );
 }
 
+/**
+ * @description Handles the loading of the workflow state
+ */
 onMounted(() => {
   isLoading.value = true;
   try {
@@ -108,7 +112,7 @@ onMounted(() => {
   }
 
   const getQueryParam = (
-    param: LocationQueryValue | LocationQueryValue[] | undefined,
+    param: LocationQueryValue | LocationQueryValue[] | undefined
   ): string | null => {
     if (Array.isArray(param)) {
       return param.length > 0 ? String(param[0]) : null;
@@ -134,7 +138,7 @@ onMounted(() => {
         console.error(
           "Failed to parse actionOptions:",
           actionOptionsString,
-          err,
+          err
         );
         actionOptions = {};
       }
@@ -163,7 +167,7 @@ onMounted(() => {
         console.error(
           "Failed to parse reactionOptions:",
           reactionOptionsString,
-          err,
+          err
         );
         reactionOptions = {};
       }
@@ -171,7 +175,7 @@ onMounted(() => {
     reactionOptions = validateOptions(reactionOptions);
     websiteStore.reactionOptions = reactionOptions;
     websiteStore.reactionServiceId = getQueryParam(
-      route.query.reactionServiceId,
+      route.query.reactionServiceId
     );
     websiteStore.onReactionSelected();
   }
@@ -187,22 +191,25 @@ onMounted(() => {
       v-if="createdMessage"
       class="flex justify-center items-center h-screen w-screen"
     >
-      <h1>{{ createdMessage }}</h1>
+      <h1 class="text-center">{{ createdMessage }}</h1>
     </div>
     <div v-if="showPageContent">
       <div v-if="websiteStore.showNavBar" class="pb-10">
         <NavigationBar />
       </div>
-      <div v-if="websiteStore.showCancelButton" class="pt-10 pl-10">
+      <div
+        v-if="websiteStore.showCancelButton"
+        class="pt-10 pl-10 max-sm:pt-3 max-sm:pl-2"
+      >
         <UButton
-          class="bg-white text-custom_color-text p-4 max-lg:py-2 max-sm:py-1 !border-custom_border_width border-custom_color-border"
+          class="bg-white text-custom_color-text p-4 max-lg:py-2 !border-custom_border_width border-custom_color-border"
           tabindex="0"
           @click="onCancel()"
           ><h6>Cancel</h6></UButton
         >
       </div>
 
-      <div class="flex flex-col justify-center items-center gap-10">
+      <div class="flex flex-col justify-center items-center gap-10 max-sm:pt-5">
         <h1 class="pb-5">Workflow</h1>
         <div v-if="isLoading"><h4>Loading...</h4></div>
         <div class="flex flex-col justify-center items-center w-full">
@@ -233,7 +240,7 @@ onMounted(() => {
         </div>
         <div v-if="websiteStore.showCreateButton" class="pt-10">
           <UButton
-            class="px-8 py-7 max-lg:py-4 max-sm:py-2"
+            class="px-8 py-7 max-lg:py-4"
             tabindex="0"
             @click="validateCreation"
             ><h5>Create</h5></UButton

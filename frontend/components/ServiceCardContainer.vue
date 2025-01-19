@@ -2,9 +2,12 @@
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 import type { Token, ServiceResponse } from "~/interfaces/serviceResponse";
 
+/**
+ * @description The list of services to be displayed of a type (action or reaction)
+ */
 const props = defineProps<{
-  type: string;
-  services: ServiceInfo[];
+  type: string; // The type name (action or reaction)
+  services: ServiceInfo[]; // The list of services to display
 }>();
 
 const tokenCookie = useCookie("token");
@@ -13,16 +16,23 @@ const serviceConnected = ref<string[]>([]);
 const tokens = ref<Token[]>([]);
 const infosConnection = ref<ServiceResponse | null>(null);
 
+/**
+ * @description The hover state of each service card
+ */
 const hover = reactive<{ [key: number]: boolean }>(
-  Object.fromEntries(props.services.map((service) => [service.id, false])),
+  Object.fromEntries(props.services.map((service) => [service.id, false]))
 );
 
-const isLongText = (text: string): boolean => text.length > 8;
+/**
+ * @description Check if the text is longer than 10 characters
+ * @param text The text to check
+ * @returns True if the text is long, false otherwise
+ */
+const isLongText = (text: string): boolean => text.length > 10;
 
-onMounted(() => {
-  loadConnectionInfos();
-});
-
+/**
+ * @description Load the service connection information
+ */
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
@@ -32,7 +42,7 @@ async function loadConnectionInfos() {
         tokens.value = infosConnection.value.tokens;
 
         serviceConnected.value = tokens.value.map(
-          (token) => token.service.name,
+          (token) => token.service.name
         );
       }
     }
@@ -42,9 +52,14 @@ async function loadConnectionInfos() {
   }
 }
 
+/**
+ * @description Check if the service is connected or invalid
+ * @param appName The name of the service
+ * @returns True if the service is connected or invalid, false otherwise
+ */
 const isServiceConnectedOrInvalid = (appName: string): boolean => {
   const matchingService = props.services.find(
-    (service) => service.name.toLowerCase() === appName.toLowerCase(),
+    (service) => service.name.toLowerCase() === appName.toLowerCase()
   );
 
   if (
@@ -56,9 +71,23 @@ const isServiceConnectedOrInvalid = (appName: string): boolean => {
   return false;
 };
 
+/**
+ * @description Format the name of the service
+ * @param name The name of the service
+ * @returns The formatted name
+ */
 function formatName(name: string): string {
   return name.replace(/([a-z])([A-Z])/g, "$1 $2");
 }
+
+/**
+ * @description Get the service connection information
+ * @param token The token to use
+ * @returns The service connection information
+ */
+onMounted(() => {
+  loadConnectionInfos();
+});
 </script>
 
 <template>
@@ -105,6 +134,8 @@ function formatName(name: string): string {
         :ui="{ padding: '!px-0 !py-5', constrained: 'max-w-none' }"
         class="custom_card flex flex-col !gap-0 text-white overflow-hidden opacity-40 cursor-not-allowed"
         :style="{ backgroundColor: service.color }"
+        @mouseenter="hover[service.id] = true"
+        @mouseleave="hover[service.id] = false"
       >
         <img
           v-if="!hover[service.id]"

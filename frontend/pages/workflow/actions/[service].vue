@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import type { ServiceInfo } from "@/interfaces/serviceinfo";
 
+/**
+ * @description This page is used to add an action to a service.
+ */
+
 definePageMeta({
   layout: "nonavbar",
   middleware: "auth",
 });
 
+/**
+ * @description This type is used to define the structure of an action.
+ * @property {number} id
+ * @property {string} name
+ * @property {string} description
+ * @property {string} [option]
+ */
 interface ActionType {
   id: number;
   name: string;
@@ -22,6 +33,9 @@ const actions = ref<ActionType[] | null>(null);
 const errorMessage = ref<string | null>(null);
 const serviceInfo = ref<ServiceInfo | null>(null);
 
+/**
+ * @description This function fetches the service information.
+ */
 const getServiceInfo = async () => {
   if (!serviceId) return;
 
@@ -63,6 +77,11 @@ const fetchActions = async () => {
   }
 };
 
+/**
+ * @description This function handles the error status.
+ * @param {unknown} error
+ * @returns {string}
+ */
 onMounted(() => {
   getServiceInfo();
   fetchActions();
@@ -70,26 +89,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-20">
+  <div class="flex flex-col gap-16">
     <div v-if="errorMessage">
       <div>Error: {{ errorMessage }}</div>
     </div>
-    <div v-else-if="isLoading" class="text-xl font-semibold">Loading...</div>
+    <div v-else-if="isLoading"><h2>Loading...</h2></div>
     <UContainer
       v-else-if="serviceInfo"
       :ui="{ constrained: 'max-w-none' }"
-      class="py-10"
+      class="pt-10 max-sm:pt-3"
       :style="{ backgroundColor: serviceInfo.color }"
     >
-      <div class="px-10">
+      <div class="px-10 -mb-5 max-sm:mb-0 max-sm:px-0 max-sm:pb-5">
         <BackButton link="/workflow/actions" :is-white="true" />
       </div>
-      <div class="flex flex-col justify-center items-center gap-5">
+      <div class="flex flex-col justify-center items-center gap-0 pb-5">
         <h1 class="text-white">Add an action</h1>
         <img
           :src="serviceInfo.icon"
           :alt="serviceInfo.name"
-          class="w-[10vw] h-[10vh]"
+          class="w-[12vw] h-[12vh] max-sm:w-[25vw] max-sm:h-[25vh] max-sm:-my-10"
         />
         <h2 class="capitalize text-white">
           {{ serviceInfo.name }}
@@ -103,6 +122,7 @@ onMounted(() => {
         :service-info="serviceInfo"
       />
     </div>
+    <div v-else-if="isLoading"><h2>Loading...</h2></div>
   </div>
 </template>
 
