@@ -3,6 +3,14 @@ import { ref, watch } from "vue";
 
 export default {
   name: "EditableInput",
+  /**
+   * The name of the input field
+   * @type {String}
+   * @required
+   * The value of the input field
+   * @type {String}
+   * @default ""
+   */
   props: {
     name: {
       type: String,
@@ -13,6 +21,9 @@ export default {
       default: "",
     },
   },
+  /**
+   * emits the updated value of the input field
+   */
   emits: ["update:modelValue"],
   setup(props, { emit }) {
     const isEditable = ref(false);
@@ -22,7 +33,7 @@ export default {
       () => props.modelValue,
       (newValue) => {
         inputValue.value = newValue;
-      },
+      }
     );
 
     const toggleEdit = () => {

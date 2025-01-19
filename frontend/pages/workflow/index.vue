@@ -77,7 +77,7 @@ const onCancel = () => {
 };
 
 function validateOptions(
-  options: Record<string, unknown>,
+  options: Record<string, unknown>
 ): Record<string, unknown> {
   return Object.fromEntries(
     Object.entries(options).map(([key, value]) => {
@@ -85,7 +85,7 @@ function validateOptions(
         return [key, Number(value)];
       }
       return [key, value];
-    }),
+    })
   );
 }
 
@@ -100,7 +100,7 @@ onMounted(() => {
   }
 
   const getQueryParam = (
-    param: LocationQueryValue | LocationQueryValue[] | undefined,
+    param: LocationQueryValue | LocationQueryValue[] | undefined
   ): string | null => {
     if (Array.isArray(param)) {
       return param.length > 0 ? String(param[0]) : null;
@@ -126,7 +126,7 @@ onMounted(() => {
         console.error(
           "Failed to parse actionOptions:",
           actionOptionsString,
-          err,
+          err
         );
         actionOptions = {};
       }
@@ -155,7 +155,7 @@ onMounted(() => {
         console.error(
           "Failed to parse reactionOptions:",
           reactionOptionsString,
-          err,
+          err
         );
         reactionOptions = {};
       }
@@ -163,7 +163,7 @@ onMounted(() => {
     reactionOptions = validateOptions(reactionOptions);
     websiteStore.reactionOptions = reactionOptions;
     websiteStore.reactionServiceId = getQueryParam(
-      route.query.reactionServiceId,
+      route.query.reactionServiceId
     );
     websiteStore.onReactionSelected();
   }
@@ -241,7 +241,7 @@ onMounted(() => {
           <div
             class="flex flex-col justify-center items-center gap-10 bg-white px-14 py-10 max-lg:px-12 max-md:px-8 max-sm:px-2 border-custom_border_width rounded-custom_border_radius shadow-lg w-fit max-w-[90%]"
           >
-            <h3 class="text-center">You're about to<br >create a new area!</h3>
+            <h3 class="text-center">You're about to<br />create a new area!</h3>
             <div class="flex flex-col gap-1 min-w-[90%] max-w-[95%]">
               <h6 class="px-5">Title</h6>
               <UInput

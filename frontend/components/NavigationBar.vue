@@ -6,10 +6,9 @@ const errorMessage = ref<string | null>(null);
 const username = ref<string>("");
 const infosConnection = ref<ServiceResponse | null>(null);
 
-onMounted(() => {
-  loadConnectionInfos();
-});
-
+/**
+ * Load service connection information
+ */
 async function loadConnectionInfos() {
   try {
     if (tokenCookie.value) {
@@ -28,11 +27,17 @@ async function loadConnectionInfos() {
   }
 }
 
+/**
+ * Clear token and logout
+ */
 const clearTokenAndLogout = () => {
   const tokenCookie = useCookie("token");
   tokenCookie.value = null;
 };
 
+/**
+ * Items for the dropdown
+ */
 const items = [
   [
     {
@@ -49,6 +54,13 @@ const items = [
     },
   ],
 ];
+
+/**
+ * When the component is mounted, load the service connection information
+ */
+onMounted(() => {
+  loadConnectionInfos();
+});
 </script>
 
 <template>
@@ -61,7 +73,7 @@ const items = [
         src="../public/PerimeterIcon.png"
         alt="perimeter-icon"
         style="width: 18%; height: 18%"
-      >
+      />
       <h5>Perimeter</h5>
     </div>
 

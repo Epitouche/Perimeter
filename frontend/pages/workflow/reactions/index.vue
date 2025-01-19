@@ -36,7 +36,7 @@ const fetchServices = async () => {
 
 watch(searchQuery, (newQuery) => {
   filteredServices.value = services.value.filter((service) =>
-    service.name.toLowerCase().includes(newQuery.toLowerCase()),
+    service.name.toLowerCase().includes(newQuery.toLowerCase())
   );
 });
 
