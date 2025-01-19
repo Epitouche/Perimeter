@@ -13,14 +13,14 @@
     - [5. GitHub (GitHub Service)](#5-github-github-service)
     - [6. Dropbox (Dropbox Service)](#6-dropbox-dropbox-service)
   - [Optional Services](#optional-services)
-    - [7. YouTube (Google Service)](#7-youtube-google-service)
-    - [8. Facebook (Meta Service)](#8-facebook-meta-service)
-    - [9. Instagram (Meta Service)](#9-instagram-meta-service)
-    - [10. RSS Feed (RSS Service)](#10-rss-feed-rss-service)
-    - [11. X (X Service)](#11-x-x-service)
-    - [12. Google Drive (Google Service)](#12-google-drive-google-service)
-    - [13. Google Calendar (Google Service)](#13-google-calendar-google-service)
-    - [14. Outlook (Microsoft Service)](#14-outlook-microsoft-service)
+    - [7. Outlook (Microsoft Service)](#7-outlook-microsoft-service)
+    - [8. YouTube (Google Service)](#8-youtube-google-service)
+    - [9. Facebook (Meta Service)](#9-facebook-meta-service)
+    - [10. Instagram (Meta Service)](#10-instagram-meta-service)
+    - [11. RSS Feed (RSS Service)](#11-rss-feed-rss-service)
+    - [12. X (X Service)](#12-x-x-service)
+    - [13. Google Drive (Google Service)](#13-google-drive-google-service)
+    - [14. Google Calendar (Google Service)](#14-google-calendar-google-service)
     - [15. OneDrive (Microsoft Service)](#15-onedrive-microsoft-service)
 
 ---
@@ -52,11 +52,13 @@ API limit:
 
 **Actions:**
 
-- [ ] **Get user’s current playback information**
+- [x] **Get user’s current playback music**
   - [API Reference](https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback)
 
 **Reactions:**
 
+- [x] **Next Music**
+- [x] **Previous Music**
 - [ ] **Start playback**
   - [API Reference](https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback)
 - [ ] **Pause playback**
@@ -72,13 +74,16 @@ API limit: 1,000 requests per day to obtain current weather data, forecasts, etc
 
 **Actions:**
 
-- [ ] **Temperature below or above T**
-- [ ] **Fetch weather forecast**
+- [x] **Temperature above T**
+- [x] **Temperature below T**
+- [x] **Temperature equal T**
+- [x] **Fetch weather forecast**
 
 **Reactions:**
 
-- [ ] **Display current weather**
+- [x] **Display current weather**
   - [API Reference](https://openweathermap.org/api/one-call-3#weather_overview)
+- [x] **Display current temperature**
 
 ---
 
@@ -90,11 +95,11 @@ API limit: we don't find it
 
 **Actions:**
 
-- [ ] **Trigger at specific time T**
+- [x] **Trigger at specific time T**
 
 **Reactions:**
 
-- [ ] **Get current time**
+- [x] **Get current time**
 
 ---
 
@@ -106,13 +111,13 @@ API limit: up to 10 000 calls API per day for app using OAuth2
 
 **Actions:**
 
-- [ ] **Receive a message**
+- [x] **Receive a message**
 - [ ] Receive a message from user X
 - [ ] Receive a message with a subject containing the word X
 
 **Reactions:**
 
-- [ ] **Send message M to recipient D**
+- [x] **Send message M to recipient D**
   - [API Guide](https://developers.google.com/gmail/api/guides/sending)
   - [API Reference](https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send)
 
@@ -128,14 +133,17 @@ API limit: All of these requests count towards your personal rate limit of 5,000
 
 - [ ] Create a new repository
 - [ ] **Create a branch in repository R**
-- [ ] Commit a file in branch B of repository R
+- [x] new Commit a file in repository R
+- [x] new pull request in repository R
+- [x] new workflow run in repository R
 
 **Reactions:**
 
 - [ ] **Create a branch in repository R**
   - [Branch API](https://docs.github.com/en/rest/branches/branches?apiVersion=2022-11-28#get-a-branch)
-- [ ] **Commit a file in branch B of repository R**
+- [x] **Get Commit in repository R**
   - [File Contents API](https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#create-or-update-file-contents)
+- [x] Get workflow run in repository R
 
 ---
 
@@ -147,7 +155,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 **Actions:**
 
-- [ ] **New file added**
+- [x] **New file added in folder F**
 
 **Reactions:**
 
@@ -155,12 +163,27 @@ API limit: no obvious limit, but get code `429` when limit reach.
   - [API Reference](https://www.dropbox.com/developers/documentation/http/documentation#files-upload)
 - [ ] **Download file**
   - [API Reference](https://www.dropbox.com/developers/documentation/http/documentation#files-download)
+- [x] Download file content in dropbox file
 
 ---
 
 ## Optional Services
 
-### 7. YouTube (Google Service)
+### 7. Outlook (Microsoft Service)
+
+[Outlook API Documentation](https://learn.microsoft.com/en-us/outlook/rest/reference)
+
+**Actions:**
+
+- [x] **Receive a message**
+
+**Reactions:**
+
+- [x] **Send message M to recipient D**
+
+---
+
+### 8. YouTube (Google Service)
 
 [YouTube API Documentation](https://developers.google.com/youtube/v3/docs)
 
@@ -175,7 +198,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 ---
 
-### 8. Facebook (Meta Service)
+### 9. Facebook (Meta Service)
 
 [Facebook API Documentation](https://developers.facebook.com/docs/facebook-login/)
 
@@ -194,7 +217,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 ---
 
-### 9. Instagram (Meta Service)
+### 10. Instagram (Meta Service)
 
 [Instagram API Documentation](https://developers.facebook.com/docs/instagram-platform)
 
@@ -213,7 +236,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 ---
 
-### 10. RSS Feed (RSS Service)
+### 11. RSS Feed (RSS Service)
 
 **Actions:**
 
@@ -226,7 +249,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 ---
 
-### 11. X (X Service)
+### 12. X (X Service)
 
 [X API Documentation](https://developer.x.com/en/docs)
 
@@ -245,7 +268,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 ---
 
-### 12. Google Drive (Google Service)
+### 13. Google Drive (Google Service)
 
 [Google Drive API Documentation](https://developers.google.com/drive)
 
@@ -263,7 +286,7 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 ---
 
-### 13. Google Calendar (Google Service)
+### 14. Google Calendar (Google Service)
 
 [Google Calendar API Documentation](https://developers.google.com/calendar)
 
@@ -277,12 +300,6 @@ API limit: no obvious limit, but get code `429` when limit reach.
 
 - [ ] Add an event
   - [API Reference](https://developers.google.com/calendar/api/v3/reference/events/insert)
-
----
-
-### 14. Outlook (Microsoft Service)
-
-[Outlook API Documentation](https://learn.microsoft.com/en-us/outlook/rest/reference)
 
 ---
 
