@@ -37,7 +37,7 @@ export const useWebsiteStore = defineStore("websiteStore", {
   }),
 
   actions: {
-    loadWorkflowState() {
+    loadWorkflowState(this: typeof useWebsiteStore.prototype) {
       const savedState = localStorage.getItem("workflowState");
 
       if (savedState) {
@@ -58,7 +58,7 @@ export const useWebsiteStore = defineStore("websiteStore", {
       }
     },
 
-    saveWorkflowState() {
+    saveWorkflowState(this: typeof useWebsiteStore.prototype) {
       const stateToSave = {
         actionId: this.actionId,
         actionOptions: this.actionOptions,
@@ -85,13 +85,13 @@ export const useWebsiteStore = defineStore("websiteStore", {
       );
     },
 
-    clearWorkflowState() {
+    clearWorkflowState(this: typeof useWebsiteStore.prototype) {
       this.$reset();
       localStorage.removeItem("workflowState");
       this.saveWorkflowState();
     },
 
-    onActionSelected() {
+    onActionSelected(this: typeof useWebsiteStore.prototype) {
       this.showNavBar = false;
       this.showCancelButton = true;
       this.reactionButtonisDisabled = false;
@@ -99,14 +99,14 @@ export const useWebsiteStore = defineStore("websiteStore", {
       this.saveWorkflowState();
     },
 
-    onReactionSelected() {
+    onReactionSelected(this: typeof useWebsiteStore.prototype) {
       this.showCreateButton = true;
       this.reactionIsSelected = true;
       this.reactionButtonisDisabled = false;
       this.saveWorkflowState();
     },
 
-    resetWorkflowPage() {
+    resetWorkflowPage(this: typeof useWebsiteStore.prototype) {
       this.actionId = null;
       this.reactionId = null;
       this.actionOptions = {};
