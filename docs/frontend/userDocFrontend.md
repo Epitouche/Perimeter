@@ -4,6 +4,24 @@ This guide aims to explain to the user how to make the most of the experience.
 
 ---
 
+## Table of Contents
+
+- [User Guide](#user-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Main Document](#main-document)
+  - [Keyboard Navigation](#keyboard-navigation)
+  - [Accessibility for Color Blind Users](#accessibility-for-color-blind-users)
+  - [Guide to Elements on the Perimeter Website](#guide-to-elements-on-the-perimeter-website)
+  - [Login Screen](#login-screen)
+  - [Navigation Bar](#navigation-bar)
+  - [My Services](#my-services)
+  - [Workflow](#workflow)
+  - [My Areas](#my-areas)
+
+## Main Document
+
+[main documentation](../../README.md)
+
 ## Keyboard Navigation
 
 All pages are navigable via the keyboard using the following keys:
@@ -35,14 +53,14 @@ Below are explanations of the available elements on the Perimeter site. Each exp
 *Register / Sign up is almost the same as the Log In page*
 
 
-![Login1 Screen](Login1_UserGuide.png)
+![Login1 Screen](images/user/Login1_UserGuide.png)
 
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Fields to log in to your account - *Left click / Tab*
 - **<span style="color: purple;">Purple Frame</span>** - Log in button - *Left Click / Enter*
 - **<span style="color: green;">Green Frame</span>** - Redirect to register / sign up page (if you want to create a new account without services connection) - *Left Click / Enter*
 - **<span style="color: brown;">Brown Frame</span>** - Scroll bar: use it to scroll down and access connections by service - *Mouse wheel / Tab*
-![Login2 Screen](Login2_UserGuide.png)
+![Login2 Screen](images/user/Login2_UserGuide.png)
 **Legend:**
 - **<span style="color: blue;">Blue Frame</span>** - Connect using OAuth2 from different services - *Left Click / Enter*
 
@@ -52,7 +70,7 @@ Below are explanations of the available elements on the Perimeter site. Each exp
 
 **Used to navigate to the different pages of the website**
 
-![Navigation Bar Screen](Navbar_UserGuide.png)
+![Navigation Bar Screen](images/user/Navbar_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Link to areas you have created - *Left Click / Enter*
 - **<span style="color: purple;">Purple Frame</span>** - Link to the page for creating areas (actions & reactions) - *Left Click / Enter*
@@ -60,7 +78,7 @@ Below are explanations of the available elements on the Perimeter site. Each exp
 Without being connected, you will have access to fewer options for actions and reactions - *Left Click / Enter*
 - **<span style="color: blue;">Blue Frame</span>** - User Panel: Click to open a panel where you can view your username, access settings, or log out (see image bellow) - *Left Click / Enter*
 
-![User Panel Screen](UserPanel_UserGuide.png)
+![User Panel Screen](images/user/UserPanel_UserGuide.png)
 **Legend:**
 **<span style="color: red;"> You can navigate in the panel using up & down arrows </span>**
 - **<span style="color: red;">Red Frame</span>** - Display your username
@@ -75,7 +93,7 @@ Without being connected, you will have access to fewer options for actions and r
 *(e.g., Receive a mail from gmail (Google) -> Skip the current music on Spotify)*
 **Without connecting to services, you will only have access to basic ones like Timer / Weather**
 
-![My Services Screen](MyServices_UserGuide.png)
+![My Services Screen](images/user/MyServices_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Search bar to filter services when searching for a specific name - *Left Click / Enter*
 - **<span style="color: purple;">Purple Frame</span>** - List of all services available to use for actions/reactions - *Left Click / Enter*
@@ -88,13 +106,13 @@ Without being connected, you will have access to fewer options for actions and r
 
 **Used to create your area. Take an action, a reaction, add a title and your area is created !**
 
-![Workflow Screen](Workflow_UserGuide.png)
+![Workflow Screen](images/user/Workflow_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Displays your Actions/Reactions based on the current stage of creation
 - **<span style="color: purple;">Purple Frame</span>** - Add an action to your workflow - *Left Click / Enter*
 - **<span style="color: green;">Green Frame</span>** - Non-clickable 'Add Reaction' button; you need to add an action first
 
-![Action1 Screen](Action1_UserGuide.png)
+![Action1 Screen](images/user/Action1_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Go back button - *Left Click / Enter*
 - **<span style="color: purple;">Purple Frame</span>** - Search bar: use it to find a specific service - *Left Click / Enter*
@@ -104,23 +122,23 @@ Without being connected, you will have access to fewer options for actions and r
 
 **Note: This action page will also apply to reactions. For any questions about selecting a reaction, please refer to this action guide**
 
-![Action2 Screen](Action2_UserGuide.png)
+![Action2 Screen](images/user/Action2_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Go back button, if you don't want to use this service anymore - *Left Click / Enter*
 - **<span style="color: blue;">Blue Frame</span>** - List of actions available for this service; interact to view more details and configure them - *Left click / Space*
 
-![Action3 Screen](Action3_UserGuide.png)
+![Action3 Screen](images/user/Action3_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Short description
 - **<span style="color: purple;">Purple Frame</span>** - Fields to configure the selected action. **Some actions, such as 'Receive a mail,' do not require configuration.** - *Left Click / Enter*
 - **<span style="color: green;">Green Frame</span>** - Cancel button - *Left Click / Enter*
 - **<span style="color: blue;">Blue Frame</span>** - Submit button - *Left Click / Enter*
 
-![Area Creation Screen](AreaCreation1_UserGuide.png)
+![Area Creation Screen](images/user/AreaCreation1_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Create Button, go to the last step - *Left Click / Enter*
 
-![Area Creation Screen](AreaCreation2_UserGuide.png)
+![Area Creation Screen](images/user/AreaCreation2_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Fields to configure your new area. Refresh Rate refers to the interval at which the area is attempted to execute - *Left Click / Tab*
 - **<span style="color: purple;">Purple Frame</span>** - Cancel Button, go back - *Left Click / Enter*
@@ -132,13 +150,13 @@ Without being connected, you will have access to fewer options for actions and r
 
 **This feature allows the user to view the areas he created. You can edit, disable, or delete areas as desired.**
 
-![MyAreas Screen](MyAreas_UserGuide.png)
+![MyAreas Screen](images/user/MyAreas_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Search bar: use it to find a specific area - *Left Click / Tab*
 - **<span style="color: purple;">Purple Frame</span>** - Filter your areas by creation date, either oldest first or newest first - *Left Click / Enter*
 - **<span style="color: green;">Green Frame</span>** - List of all the areas you have created. Interact with it to view details - *Left Click / Enter*
 
-![MyAreas2 Screen](MyAreas2_UserGuide.png)
+![MyAreas2 Screen](images/user/MyAreas2_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Enable or disable the current area by interacting with it - *Left Click / Tab*
 - **<span style="color: green;">Green Frame</span>** - Information on the actions/reactions present in your area
@@ -146,12 +164,12 @@ Without being connected, you will have access to fewer options for actions and r
 - **<span style="color: brown;">Brown Frame</span>** - Delete button: opens a confirmation for this deletion - *Left Click / Enter*
 - **<span style="color: grey;">Grey Frame</span>** - Display result of your area
 
-![MyAreas3 Screen](MyAreas3_UserGuide.png)
+![MyAreas3 Screen](images/user/MyAreas3_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Fields you can edit  - *Left Click / Tab*
 - **<span style="color: blue;">Blue Frame</span>** - Submit button - *Left Click / Enter*
 
-![Delete Screen](Delete_UserGuide.png)
+![Delete Screen](images/user/Delete_UserGuide.png)
 **Legend:**
 - **<span style="color: red;">Red Frame</span>** - Cancel button  - *Left Click / Enter*
 - **<span style="color: blue;">Blue Frame</span>** - Delete button **Action cannot be undone!** - *Left Click / Enter*
