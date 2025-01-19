@@ -11,7 +11,7 @@ defineProps<{
 }>();
 
 /**
- * Emits the search query
+ * @emit Emits the search query
  */
 const _emit = defineEmits(["update:searchQuery"]);
 </script>

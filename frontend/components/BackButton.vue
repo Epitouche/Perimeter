@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * The page to navigate to when the button is clicked.
+ * @description The page to navigate to when the button is clicked.
  */
 defineProps<{
   link: string; // The link to the page

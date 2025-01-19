@@ -4,7 +4,7 @@
  */
 
 /**
- * If the loading screen should be shown, show it for the given amount of time
+ * @description If the loading screen should be shown, show it for the given amount of time
  */
 const props = defineProps<{
   timeout: number; // The amount of time to show the loading screen for
@@ -12,14 +12,14 @@ const props = defineProps<{
 }>();
 
 /**
- * Emits an event to update the isLoading prop
+ * @emit Emits an event to update the isLoading prop
  */
 const emit = defineEmits(["update:isLoading"]);
 
 const timedOut = ref(false);
 
 /**
- * After the timeout has passed, set timedOut to true and emit an event to hide the loading screen
+ * @description After the timeout has passed, set timedOut to true and emit an event to hide the loading screen
  */
 onMounted(() => {
   setTimeout(() => {
