@@ -105,7 +105,7 @@ watch(
       :alt="serviceInfo ? `${serviceInfo.name}` : ''"
       class="p-0"
       :style="{ width: isLongText(typeName) ? '20%' : '15%' }"
-    />
+    >
     <h3
       v-if="countWords(formatName(typeName)) < 4"
       :class="[
