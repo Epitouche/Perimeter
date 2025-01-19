@@ -11,6 +11,15 @@ services:
       file: ./docker-compose.template.yaml
       service: client_mobile
 
+  client_mobile-documentation:
+    build:
+      context: ./mobile
+      target: documentation
+      dockerfile: Dockerfile
+    extends:
+      file: ./docker-compose.template.yaml
+      service: client_mobile-documentation
+
   client_web:
     build:
       context: ./frontend
@@ -22,19 +31,19 @@ services:
       file: ./docker-compose.template.yaml
       service: client_web
 
-  database:
-    extends:
-      file: ./docker-compose.template.yaml
-      service: database
-
-  mobile-documentation:
+  client_web-documentation:
     build:
-      context: ./mobile
+      context: ./frontend
       target: documentation
       dockerfile: Dockerfile
     extends:
       file: ./docker-compose.template.yaml
-      service: mobile-documentation
+      service: client_web-documentation
+
+  database:
+    extends:
+      file: ./docker-compose.template.yaml
+      service: database
 
   reverse-proxy:
     extends:
