@@ -168,7 +168,7 @@
 
 **Why React Native Aligns With Our Values:**  
 
-- **Inclusive Development**: Built-in accessibility props (`accessibilityLabel`, `accessibilityRole`) enable cross-platform compliance from day one  
+- **Inclusive Development**: Built-in accessibility props (`accessibilityLabel`, `accessibilityHint`) enable cross-platform compliance from day one  
 - **Rapid Iteration**: Hot reloading accelerates accessibility testing across iOS/Android simultaneously  
 - **Community Support**: Robust libraries like `react-native-a11y` simplify complex implementations (focus management, screen reader controls)  
 - **Cost Efficiency**: Achieve WCAG compliance in one codebase rather than dual native implementations  
