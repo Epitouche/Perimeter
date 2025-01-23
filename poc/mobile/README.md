@@ -18,6 +18,7 @@
   - [8. Use Cases](#8-use-cases)
   - [9. Popular Apps Built](#9-popular-apps-built)
   - [10. Long-Term Considerations](#10-long-term-considerations)
+  - [11. Accessibility](#11-accessibility)
   - [Conclusion](#conclusion)
 
 ---
@@ -145,15 +146,32 @@
 
 ---
 
+## 11. Accessibility
+
+- **Kotlin**:
+  - Native Android apps benefit from built-in accessibility services like TalkBack and full control over accessibility labels/hints.
+  - Direct access to Android's Accessibility API for custom implementations.
+  - Kotlin Multiplatform requires platform-specific accessibility implementations for iOS (using Swift Accessibility features).
+  - Strong type safety helps prevent accessibility-related runtime errors.
+
+- **React Native**:
+  - Provides cross-platform accessibility props (e.g., `accessible`, `accessibilityLabel`) that map to native iOS/Android features.
+  - Community-driven libraries like React Native A11y offer enhanced accessibility tools.
+  - May require native module bridging for advanced accessibility features (e.g., custom screen readers).
+  - Dynamic nature of JavaScript increases need for manual testing of accessibility features.
+
+---
+
 ## Conclusion
-- **Choose Kotlin** if:
-  - You need **native performance**.
-  - Your app requires extensive platform-specific customization.
-  - Your team is Android-focused or familiar with Kotlin/Java.
 
-- **Choose React Native** if:
-  - You need a **shared codebase** for iOS and Android with **faster time-to-market**.
-  - Your team is skilled in JavaScript/React.
-  - Your app doesn’t demand cutting-edge native features or performance.
+**After comprehensive analysis, we advocate React Native** as our primary cross-platform solution, with accessibility being a key factor:
 
-Both Kotlin and React Native are robust solutions but cater to different needs. Your decision should be based on your project’s goals, team expertise, and long-term vision.
+**Why React Native Aligns With Our Values:**  
+
+- **Inclusive Development**: Built-in accessibility props (`accessibilityLabel`, `accessibilityRole`) enable cross-platform compliance from day one  
+- **Rapid Iteration**: Hot reloading accelerates accessibility testing across iOS/Android simultaneously  
+- **Community Support**: Robust libraries like `react-native-a11y` simplify complex implementations (focus management, screen reader controls)  
+- **Cost Efficiency**: Achieve WCAG compliance in one codebase rather than dual native implementations  
+- **Future-Proofing**: Meta's ongoing investment in accessibility APIs (v0.73+ introduces enhanced text navigation)
+
+By choosing React Native, we commit to building apps that are both cross-platform efficient and accessibility-forward – a strategic balance for ethical and sustainable development.
