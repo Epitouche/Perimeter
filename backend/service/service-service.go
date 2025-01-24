@@ -219,6 +219,11 @@ func (service *serviceService) RedirectToServiceOauthPage(
 ) (authURL string, err error) {
 	clientID := ""
 
+	isProd := os.Getenv("IS_PRODUCTION")
+	if isProd == "" {
+		return "", schemas.ErrIsProductionNotSet
+	}
+
 	switch serviceName {
 	case schemas.Spotify:
 		clientID = os.Getenv("SPOTIFY_CLIENT_ID")
@@ -231,9 +236,16 @@ func (service *serviceService) RedirectToServiceOauthPage(
 			return "", schemas.ErrGoogleClientIdNotSet
 		}
 	case schemas.Github:
-		clientID = os.Getenv("GITHUB_CLIENT_ID")
-		if clientID == "" {
-			return "", schemas.ErrGithubClientIdNotSet
+		if isProd == "true" {
+			clientID = os.Getenv("GITHUB_PRODUCTION_CLIENT_ID")
+			if clientID == "" {
+				return "", schemas.ErrGithubProductionClientIdNotSet
+			}
+		} else {
+			clientID = os.Getenv("GITHUB_CLIENT_ID")
+			if clientID == "" {
+				return "", schemas.ErrGithubClientIdNotSet
+			}
 		}
 	case schemas.Dropbox:
 		clientID = os.Getenv("DROPBOX_CLIENT_ID")
