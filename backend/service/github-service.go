@@ -303,6 +303,8 @@ func (service *githubService) AuthGetServiceAccessToken(
 		return token, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	var result schemas.GitHubTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -311,8 +313,6 @@ func (service *githubService) AuthGetServiceAccessToken(
 			err,
 		)
 	}
-
-	resp.Body.Close()
 
 	token = schemas.Token{
 		Token: result.AccessToken,
@@ -358,9 +358,14 @@ func (service *githubService) GetUserEmail(accessToken string) (email string, er
 		return email, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return email, fmt.Errorf("unable to read error response because %w", err)
+		}
 		return email, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -373,8 +378,6 @@ func (service *githubService) GetUserEmail(accessToken string) (email string, er
 	if err != nil {
 		return email, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	for _, email := range result {
 		if email.Primary {
@@ -415,13 +418,13 @@ func (service *githubService) GetUserInfoAccount(
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	result := schemas.GithubUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	user = schemas.User{
 		Username: result.Login,
@@ -528,7 +531,10 @@ func (service *githubService) CommitList(
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return commitList, fmt.Errorf("unable to read error response: %w", err)
+		}
 		return commitList, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -610,11 +616,15 @@ func (service *githubService) PullRequestList(
 	if err != nil {
 		return pullRequestList, fmt.Errorf("unable to make request: %w", err)
 	}
-	defer resp.Body.Close() // Ensure the response body is closed to avoid resource leaks
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return pullRequestList, fmt.Errorf("unable to read error response: %w", err)
+		}
 		return pullRequestList, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -697,7 +707,10 @@ func (service *githubService) WorkflowRunList(
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return workflowRunList, fmt.Errorf("unable to read error response: %w", err)
+		}
 		return workflowRunList, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -826,11 +839,7 @@ func (service *githubService) GithubActionUpdateCommitInRepo(
 		channel <- response
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // GithubActionUpdatePullRequestInRepo checks for updates in a GitHub repository's pull requests and sends a notification if there are new updates.
@@ -942,11 +951,7 @@ func (service *githubService) GithubActionUpdatePullRequestInRepo(
 		channel <- response
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // GithubActionUpdateWorkflowRunInRepo checks for updates in GitHub workflow runs for a specified repository.
@@ -1064,11 +1069,7 @@ func (service *githubService) GithubActionUpdateWorkflowRunInRepo(
 		channel <- response
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions

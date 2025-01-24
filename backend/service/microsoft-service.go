@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -304,7 +305,10 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, _ := io.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return schemas.Token{}, fmt.Errorf("unable to read response body because %w", err)
+	}
 	fmt.Println("response body: ", string(bodyBytes))
 
 	var result schemas.MicrosoftTokenResponse
@@ -317,10 +321,17 @@ func (service *microsoftService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
+	var expiresIn int64
+	if result.ExpiresIn > math.MaxInt64 {
+		expiresIn = math.MaxInt64
+	} else {
+		expiresIn = int64(result.ExpiresIn)
+	}
+
 	token = schemas.Token{
 		Token:        result.AccessToken,
 		RefreshToken: result.RefreshToken,
-		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
+		ExpireAt:     time.Now().Add(time.Duration(expiresIn) * time.Second),
 	}
 	return token, nil
 }
@@ -487,14 +498,14 @@ func (service *microsoftService) MicrosoftActionEventStarting(
 					return
 				}
 				channel <- fmt.Sprintf("Event '%s' is starting at %s", event.Subject, event.Start.DateTime)
-				time.Sleep(time.Second * 10)
+				WaitAction(area)
 				return
 			}
 		}
 	}
 
 	println("no matching events found")
-	time.Sleep(time.Second * 10)
+	WaitAction(area)
 }
 
 // initializedMicrosoftStorageVariable initializes the Microsoft storage variable for a given area.
@@ -668,11 +679,7 @@ func (service *microsoftService) MicrosoftActionReceiveMail(
 		println("No new emails")
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions
@@ -762,7 +769,11 @@ func (service *microsoftService) MicrosoftReactionSendMail(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusAccepted {
-		bodyBytes, _ := io.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Error reading response body:", err)
+			return "Error reading response body: " + err.Error()
+		}
 		fmt.Println("Error sending email:", string(bodyBytes))
 		return "Error sending email: " + string(bodyBytes)
 	}
@@ -867,7 +878,11 @@ func (service *microsoftService) MicrosoftReactionCreateEvent(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
-		bodyBytes, _ := io.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Error reading response body:", err)
+			return "Error reading response body: " + err.Error()
+		}
 		fmt.Println("Error creating event:", string(bodyBytes))
 		return "Error creating event: " + string(bodyBytes)
 	}

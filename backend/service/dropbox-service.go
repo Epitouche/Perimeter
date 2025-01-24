@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -289,6 +290,8 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	var result schemas.DropboxTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -302,12 +305,17 @@ func (service *dropboxService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
-	resp.Body.Close()
+	var expiresIn int64
+	if result.ExpiresIn > math.MaxInt64 {
+		expiresIn = math.MaxInt64
+	} else {
+		expiresIn = int64(result.ExpiresIn)
+	}
 
 	token = schemas.Token{
 		Token:        result.AccessToken,
 		RefreshToken: result.RefreshToken,
-		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
+		ExpireAt:     time.Now().Add(time.Duration(expiresIn) * time.Second),
 	}
 	return token, nil
 }
@@ -345,13 +353,13 @@ func (service *dropboxService) GetUserInfo(
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	result := schemas.DropboxUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	user = schemas.User{
 		Email:    result.Email,
@@ -422,7 +430,10 @@ func (service *dropboxService) GetUserFolderAndFileList(
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("unable to read error response: %w", err)
+		}
 		return nil, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -585,7 +596,10 @@ func (service *dropboxService) SaveUrl(
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fileJobStatus, fmt.Errorf("unable to read error response: %w", err)
+		}
 		return fileJobStatus, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -647,7 +661,10 @@ func (service *dropboxService) SaveUrlCheckJobStatus(
 
 	if resp.StatusCode != http.StatusOK {
 		// Read and log the error response for debugging
-		errorBody, _ := io.ReadAll(resp.Body)
+		errorBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return saveUrlFile, fmt.Errorf("unable to read error response: %w", err)
+		}
 		return saveUrlFile, fmt.Errorf(
 			"unexpected status code: %d, response: %s",
 			resp.StatusCode,
@@ -807,11 +824,7 @@ func (service *dropboxService) DropboxActionUpdateInFolder(
 		channel <- response
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions

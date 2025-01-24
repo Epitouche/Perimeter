@@ -2,6 +2,8 @@ package service
 
 import (
 	"fmt"
+	"math"
+	"time"
 
 	"area/repository"
 	"area/schemas"
@@ -157,4 +159,23 @@ func (service *actionService) GetActionsInfo(id uint64) (response []schemas.Acti
 		return response, fmt.Errorf("error when get actions info: %w", err)
 	}
 	return response, nil
+}
+
+func WaitAction(area schemas.Area) {
+	var refreshRate int64
+	if area.Action.MinimumRefreshRate > area.ActionRefreshRate {
+		if area.Action.MinimumRefreshRate > math.MaxInt64 {
+			refreshRate = math.MaxInt64
+		} else {
+			refreshRate = 10
+		}
+		time.Sleep(time.Second * time.Duration(refreshRate))
+	} else {
+		if area.ActionRefreshRate > math.MaxInt64 {
+			refreshRate = math.MaxInt64
+		} else {
+			refreshRate = 10
+		}
+		time.Sleep(time.Second * time.Duration(refreshRate))
+	}
 }

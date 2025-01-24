@@ -64,7 +64,10 @@ func TestConnectionMissingEnvVars(t *testing.T) {
 
 		// Restore original environment variables
 		for key, value := range originalEnv {
-			os.Setenv(key, value)
+			err := os.Setenv(key, value)
+			if err != nil {
+				t.Errorf("Failed to restore environment variable %s: %v", key, err)
+			}
 		}
 	}()
 
