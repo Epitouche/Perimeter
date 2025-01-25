@@ -79,9 +79,8 @@ onMounted(() => {
         </div>
         <div
           v-else-if="errorMessage"
-          class="flex justify-center items-center w-full h-full"
         >
-          <h3>Error: {{ errorMessage }}</h3>
+          <UAlert color="red" variant="solid" title="ERROR":description="errorMessage" class="justify-center items-center gap-5 w-[15%]"/>
         </div>
         <div
           v-else-if="filteredServices.length"

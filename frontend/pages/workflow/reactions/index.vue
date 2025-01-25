@@ -72,7 +72,9 @@ onMounted(() => {
           <SearchBar v-model:search-query="searchQuery" tabindex="0" />
         </div>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
-        <div v-else-if="errorMessage">Error: {{ errorMessage }}</div>
+        <div v-else-if="errorMessage">
+          <UAlert color="red" variant="solid" title="ERROR":description="errorMessage" class="justify-center items-center gap-5 w-[15%]"/>
+        </div>
         <div
           v-else-if="filteredServices.length"
           class="flex flex-row justify-evenly items-center w-full"

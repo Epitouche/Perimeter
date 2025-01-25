@@ -67,7 +67,7 @@ const clearTokenAndLogout = () => {
 <template>
   <div class="flex flex-col justify-center items-center w-full">
     <h1 class="py-5">Settings</h1>
-    <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <UAlert v-if="errorMessage" color="red" variant="solid" title="ERROR":description="errorMessage" class="justify-center items-center gap-5 w-[15%]"/>
     <div
       v-else
       class="flex flex-col justify-center items-center gap-16 min-w-[60%] max-lg:max-w-[70%] max-md:max-w-[85%] max-sm:max-w-full h-full py-10 rounded-custom_border_radius bg-custom_color-bg_section"
