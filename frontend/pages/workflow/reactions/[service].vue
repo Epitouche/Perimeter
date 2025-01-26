@@ -94,7 +94,13 @@ onMounted(() => {
 <template>
   <div class="flex flex-col gap-16">
     <div v-if="errorMessage">
-      <UAlert color="red" variant="solid" title="ERROR":description="errorMessage" class="justify-center items-center gap-5 w-[15%]"/>
+      <UAlert
+        color="red"
+        variant="solid"
+        title="ERROR"
+        :description="errorMessage"
+        class="justify-center items-center gap-5 w-[15%]"
+      />
     </div>
     <div v-else-if="isLoading"><h2>Loading...</h2></div>
     <UContainer

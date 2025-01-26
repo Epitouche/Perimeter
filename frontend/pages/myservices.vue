@@ -44,7 +44,14 @@ const filteredApps = computed(() => {
 <template>
   <div class="flex flex-col justify-center items-center gap-10 w-full">
     <h1 class="pt-5">My Services</h1>
-    <UAlert v-if="errorMessage" color="red" variant="solid" title="ERROR":description="errorMessage" class="justify-center items-center gap-5 w-[15%]"/>
+    <UAlert
+      v-if="errorMessage"
+      color="red"
+      variant="solid"
+      title="ERROR"
+      :description="errorMessage"
+      class="justify-center items-center gap-5 w-[15%]"
+    />
     <div
       v-else
       class="flex flex-col justify-center items-center gap-10 w-[90%] h-full p-10 rounded-custom_border_radius bg-custom_color-bg_section"

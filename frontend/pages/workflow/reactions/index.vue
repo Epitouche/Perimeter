@@ -73,7 +73,13 @@ onMounted(() => {
         </div>
         <div v-if="isLoading" class="text-xl font-semibold">Loading...</div>
         <div v-else-if="errorMessage">
-          <UAlert color="red" variant="solid" title="ERROR":description="errorMessage" class="justify-center items-center gap-5 w-[15%]"/>
+          <UAlert
+            color="red"
+            variant="solid"
+            title="ERROR"
+            :description="errorMessage"
+            class="justify-center items-center gap-5 w-[15%]"
+          />
         </div>
         <div
           v-else-if="filteredServices.length"
