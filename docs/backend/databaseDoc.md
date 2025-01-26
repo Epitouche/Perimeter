@@ -20,7 +20,7 @@ erDiagram
         string email
         string username
         string password
-        id token_auth_service FK
+        int token_auth_service FK
         datetime created_at
         datetime updated_at
     }
