@@ -50,7 +50,7 @@ RUN mkdir -p godoc
 COPY . .
 RUN godoc-static -link-index -site-name="AREA Documentation" -site-description-file=DevDoc.md -destination=godoc .
 
-FROM node:20-alpine AS redoc-dependencies
+FROM node:22-alpine AS redoc-dependencies
 
 WORKDIR /app
 
