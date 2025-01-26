@@ -223,6 +223,8 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 		return schemas.TimeApiResponse{}, schemas.ErrDoRequest
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		return schemas.TimeApiResponse{}, fmt.Errorf("error status code %d", resp.StatusCode)
 	}
@@ -233,7 +235,6 @@ func getActualTime() (schemas.TimeApiResponse, error) {
 		return schemas.TimeApiResponse{}, schemas.ErrDecode
 	}
 
-	resp.Body.Close()
 	return result, nil
 }
 
@@ -348,11 +349,7 @@ func (service *timerService) TimerActionSpecificHour(
 		}
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions

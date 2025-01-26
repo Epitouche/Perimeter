@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -257,6 +258,8 @@ func (service *googleService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	var result schemas.GoogleTokenResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -270,12 +273,17 @@ func (service *googleService) AuthGetServiceAccessToken(
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
 
-	resp.Body.Close()
+	var expiresIn int64
+	if result.ExpiresIn > math.MaxInt64 {
+		expiresIn = math.MaxInt64
+	} else {
+		expiresIn = int64(result.ExpiresIn)
+	}
 
 	token = schemas.Token{
 		Token:        result.AccessToken,
 		RefreshToken: result.RefreshToken,
-		ExpireAt:     time.Now().Add(time.Duration(result.ExpiresIn) * time.Second),
+		ExpireAt:     time.Now().Add(time.Duration(expiresIn) * time.Second),
 	}
 	return token, nil
 }
@@ -312,12 +320,13 @@ func GetUserGmailProfile(accessToken string) (result schemas.GmailProfile, err e
 		return schemas.GmailProfile{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.GmailProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	resp.Body.Close()
 	return result, nil
 }
 
@@ -351,12 +360,13 @@ func GetUserGoogleProfile(accessToken string) (result schemas.GoogleProfile, err
 		return schemas.GoogleProfile{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.GoogleProfile{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	resp.Body.Close()
 	return result, nil
 }
 
@@ -632,11 +642,7 @@ func (service *googleService) GoogleActionReceiveMail(
 		}
 		if variable.Time.After(emailTime) {
 			println("no new emails")
-			if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-				time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-			} else {
-				time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-			}
+			WaitAction(area)
 			return
 		}
 		response := fmt.Sprintf("New email received from %s: object: %s",
@@ -664,11 +670,7 @@ func (service *googleService) GoogleActionReceiveMail(
 		println("No new emails")
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions
@@ -749,7 +751,10 @@ func (service *googleService) GoogleReactionSendMail(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		respBody, _ := io.ReadAll(resp.Body)
+		respBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "Error reading response body:" + err.Error()
+		}
 		fmt.Printf(
 			"Failed to send email. Status: %s, Response: %s\n",
 			resp.Status,

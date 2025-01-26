@@ -142,13 +142,14 @@ func (service *tokenService) GetUserInfo(accessToken string) (schemas.GmailUserI
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	result := schemas.GmailUserInfo{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		return schemas.GmailUserInfo{}, fmt.Errorf("unable to decode response because %w", err)
 	}
 
-	resp.Body.Close()
 	return result, nil
 }
 

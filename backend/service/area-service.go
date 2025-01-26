@@ -172,6 +172,13 @@ func (service *areaService) CreateArea(result schemas.AreaMessage, token string)
 		return "", fmt.Errorf("can't marshal default storage variable: %w", err)
 	}
 
+	var refreshRate uint64
+	if result.ActionRefreshRate < 0 {
+		refreshRate = 0
+	} else {
+		refreshRate = uint64(result.ActionRefreshRate)
+	}
+
 	newArea := schemas.Area{
 		User:              user,
 		ActionOption:      result.ActionOption,
@@ -181,7 +188,7 @@ func (service *areaService) CreateArea(result schemas.AreaMessage, token string)
 		Enable:            true,
 		Action:            areaAction,
 		Reaction:          areaReaction,
-		ActionRefreshRate: uint64(result.ActionRefreshRate),
+		ActionRefreshRate: refreshRate,
 		StorageVariable:   defaultStorageVariable,
 	}
 

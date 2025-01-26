@@ -312,6 +312,8 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 		return coordinates, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	var result []schemas.OpenWeatherMapCityCoordinatesResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -320,8 +322,6 @@ func getCoordinatesOfCity(city string) (coordinates struct {
 			err,
 		)
 	}
-
-	resp.Body.Close()
 
 	coordinates.Lat = result[0].Lat
 	coordinates.Lon = result[0].Lon
@@ -374,6 +374,8 @@ func getWeatherOfCoordinate(coordinates struct {
 		return weather, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	var result schemas.OpenWeatherMapCoordinatesWeatherResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -383,9 +385,8 @@ func getWeatherOfCoordinate(coordinates struct {
 		)
 	}
 
-	resp.Body.Close()
-
 	weather = result
+
 	return weather, nil
 }
 
@@ -527,11 +528,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificWeather(
 		}
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // OpenWeatherMapActionSpecificTemperature checks the current temperature of a specified city
@@ -616,11 +613,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionSpecificTemperature(
 		}
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // OpenWeatherMapActionAboveTemperature checks if the temperature in a specified city is above a given threshold.
@@ -695,11 +688,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionAboveTemperature(
 		}
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // OpenWeatherMapActionBelowTemperature checks if the temperature of a specified city
@@ -785,11 +774,7 @@ func (service *openWeatherMapService) OpenWeatherMapActionBelowTemperature(
 		}
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions

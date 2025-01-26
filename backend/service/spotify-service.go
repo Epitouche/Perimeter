@@ -257,9 +257,17 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		return schemas.Token{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		println("Status code", resp.StatusCode)
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return schemas.Token{}, fmt.Errorf(
+				"unable to read response body because %w",
+				err,
+			)
+		}
 		fmt.Printf("body: %+v\n", body)
 		return schemas.Token{}, fmt.Errorf(
 			"unable to get token because %v",
@@ -280,8 +288,6 @@ func (service *spotifyService) AuthGetServiceAccessToken(
 		fmt.Printf("Token exchange failed. Response body: %v\n", resp.Body)
 		return schemas.Token{}, schemas.ErrAccessTokenNotFoundInResponse
 	}
-
-	resp.Body.Close()
 
 	token = schemas.Token{
 		Token:        result.AccessToken,
@@ -332,6 +338,8 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 		return schemas.User{}, fmt.Errorf("unable to make request because %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		errorResponse := schemas.SpotifyErrorResponse{}
 		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
@@ -342,7 +350,6 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 			)
 		}
 
-		resp.Body.Close()
 		return schemas.User{}, fmt.Errorf(
 			"unable to get user info because %v %v",
 			errorResponse.Error.Status,
@@ -355,8 +362,6 @@ func (service *spotifyService) GetUserInfo(accessToken string) (user schemas.Use
 	if err != nil {
 		return schemas.User{}, fmt.Errorf("unable to decode response because %w", err)
 	}
-
-	resp.Body.Close()
 
 	user = schemas.User{
 		Username: result.DisplayName,
@@ -588,11 +593,7 @@ func (service *spotifyService) SpotifyActionMusicPlayed(
 		fmt.Println("No music is currently playing.")
 	}
 
-	if (area.Action.MinimumRefreshRate) > area.ActionRefreshRate {
-		time.Sleep(time.Second * time.Duration(area.Action.MinimumRefreshRate))
-	} else {
-		time.Sleep(time.Second * time.Duration(area.ActionRefreshRate))
-	}
+	WaitAction(area)
 }
 
 // Reactions functions

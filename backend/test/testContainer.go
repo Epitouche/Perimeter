@@ -48,8 +48,14 @@ func CreatePostgresContainer(t *testing.T, ctx context.Context) (testcontainers.
 		t.Fatalf("failed to get container port: %s", err)
 	}
 
-	os.Setenv("DB_HOST", host)
-	os.Setenv("DB_PORT", mappedPort.Port())
+	err = os.Setenv("DB_HOST", host)
+	if err != nil {
+		t.Fatalf("failed to set DB_HOST environment variable: %s", err)
+	}
+	err = os.Setenv("DB_PORT", mappedPort.Port())
+	if err != nil {
+		t.Fatalf("failed to set DB_PORT environment variable: %s", err)
+	}
 
 	return postgresContainer, nil
 }

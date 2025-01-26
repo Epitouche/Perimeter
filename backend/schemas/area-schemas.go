@@ -52,7 +52,7 @@ type Area struct {
 	Title             string          `                                                                    json:"title"               binding:"required"` // The title of the area
 	Description       string          `                                                                    json:"description"         binding:"required"` // The description of the area
 	StorageVariable   json.RawMessage `gorm:"type:jsonb"                                                   json:"storage_variable"`                       // The storage variable of the area
-	CreatedAt         time.Time       `gorm:"default:CURRENT_TIMESTAMP"                                    json:"createdAt"`                              // Time when the area was created
+	CreatedAt         time.Time       `gorm:"default:CURRENT_TIMESTAMP"                                    json:"created_at"`                             // Time when the area was created
 	UpdateAt          time.Time       `gorm:"default:CURRENT_TIMESTAMP"                                    json:"update_at"`                              // Time when the area was last updated
 	ActionRefreshRate uint64          `                                                                    json:"action_refresh_rate" binding:"required"` // The refresh rate for the action
 }
